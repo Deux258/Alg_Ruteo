@@ -3,7 +3,15 @@
 ## Alcance disponible
 
 SQL, topología, Docker y main están implementados para `scope=base,mode=snapshot`.
-El adaptador usa los GeoJSON auténticos de fase 1 y prueba su carga completa.
+El adaptador recorta los GeoJSON auténticos de fase 1 al polígono aportado por el usuario.
+
+Todos los módulos deben usar `config/proyecto.json:aoi_geojson` como límite de
+estudio. `bbox_wgs84` contiene su envolvente para solicitar datos; después deben
+filtrarse con el polígono real. El rectángulo antiguo queda en `legacy_bbox_wgs84`
+solo como procedencia. La infraestructura actual tiene 13 nodos y 62 arcos,
+sin bases candidatas; hay que regenerar la red y obtener bases para cubrir la
+nueva zona. Las ocho salidas pendientes no quedan territorialmente actualizadas
+por recortar únicamente la infraestructura.
 No se ha implementado el ET online, M1..M4/A1..A4, k alternativas, Yen, métricas
 de resiliencia ni Leaflet. Las tablas para esas funciones ya están disponibles.
 

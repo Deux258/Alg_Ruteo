@@ -42,6 +42,22 @@ def load_infrastructure(conn, path):
 
 def audit(conn, rid):
     report = conn.execute("SELECT routing.topology_report(%s) AS report",(UUID(str(rid)),)).fetchone()["report"]
+    area = conn.execute("SELECT lineage#>'{aoi,geometry}' AS geometry FROM routing.datasets WHERE run_id=%s AND dataset_key='I'", (rid,)).fetchone()
+    if not area or not area["geometry"]:
+        raise ValueError("Falta el polígono de estudio en el linaje")
+    report["spatial"] = conn.execute("""WITH a AS (
+        SELECT ST_Transform(ST_SetSRID(ST_GeomFromGeoJSON(%s),4326),32719) AS geom)
+        SELECT (SELECT count(*) FROM routing.nodes n CROSS JOIN a
+                WHERE run_id=%s AND NOT ST_Covers(a.geom,n.geom)) AS outside_nodes,
+               (SELECT count(*) FROM routing.edges e CROSS JOIN a
+                WHERE run_id=%s AND NOT ST_Covers(a.geom,e.geom)) AS outside_edges,
+               (SELECT count(*) FROM routing.nodes WHERE run_id=%s AND kind='base_candidata') AS candidate_bases,
+               ST_Area(a.geom)/1e6 AS area_km2 FROM a""",
+        (json.dumps(area["geometry"]),rid,rid,rid)).fetchone()
+    if report["spatial"]["outside_nodes"] or report["spatial"]["outside_edges"]:
+        raise ValueError("Infraestructura fuera del polígono de estudio")
+    report["warnings"] = [] if report["spatial"]["candidate_bases"] else [
+        "Sin bases candidatas en el recorte; no permite demostrar una misión desde una base"]
     report["invalid_edges"] = conn.execute("""SELECT count(*) AS n FROM routing.edges e
         JOIN routing.nodes a ON (a.run_id,a.id)=(e.run_id,e.source)
         JOIN routing.nodes b ON (b.run_id,b.id)=(e.run_id,e.target)

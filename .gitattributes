@@ -1,0 +1,6 @@
+# Bash y los checksums SQL deben ser iguales en Windows y Linux.
+main text eol=lf
+BD/*.sql text eol=lf
+BD/migraciones/*.sql text eol=lf
+# Conservar exactamente el GeoJSON suministrado y su SHA-256.
+datos/entrada/aoi/*.geojson -text

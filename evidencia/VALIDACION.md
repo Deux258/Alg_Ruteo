@@ -76,3 +76,8 @@ tener tablas vacías preparadas. M1 y A3 siguen pendientes como entregables de f
 
 La documentación y las pruebas locales se deben acompañar con evidencia de la
 ejecución Docker del equipo en la presentación; no reemplazarla por este documento.
+# Revisión posterior
+
+La validación Docker y la corrección territorial del 17 de octubre se documentan
+en [revision_2026-10-17/REVISION.md](revision_2026-10-17/REVISION.md).
+Las cifras de 85 nodos y 480 arcos de este archivo corresponden a la entrega original.

@@ -1,0 +1,17 @@
+{
+  "run_id": "b4d0f3af-fccb-5f0a-8731-36ba4594a94f",
+  "status": "ready",
+  "scope": "base",
+  "mode": "snapshot",
+  "phase2_complete": false,
+  "application": "foundation",
+  "study_area": {
+    "file": "datos/entrada/aoi/Zona_Delimitada_Valpo.geojson",
+    "sha256": "7d3a0472f2e7fdde88d6316f89c31d6da50914e06cabb6bf8bd270ce54c905b7",
+    "candidate_bases": 0
+  },
+  "mission_ready": false,
+  "warnings": [
+    "Sin bases candidatas; regenerar infraestructura para el nuevo AOI"
+  ]
+}

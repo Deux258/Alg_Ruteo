@@ -5,3 +5,4 @@ __pycache__
 datos/runs
 evidencia/local
 *.log
+tmp/

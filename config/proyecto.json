@@ -1,8 +1,10 @@
 {
   "project": "udp-ruteo-fase2", "analysis_srid": 32719,
-  "bbox_wgs84": [-71.59,-33.10,-71.49,-33.01],
+  "bbox_wgs84": [-71.66723294922228,-33.1122636505422,-71.54727801235427,-33.03885253538363],
+  "legacy_bbox_wgs84": [-71.59,-33.10,-71.49,-33.01],
+  "aoi_geojson": "datos/entrada/aoi/Zona_Delimitada_Valpo.geojson",
   "snapshot_directory": "datos/entrada/fase1",
   "snapshot_observed_at": "2026-10-16T18:46:07.406713+00:00",
   "schema_version": 1,
-  "notes": "Adaptador de una red previamente construida; no reemplaza el ET online de Ignacio."
+  "notes": "aoi_geojson es el límite obligatorio; bbox_wgs84 es su envolvente para consultas. legacy_bbox_wgs84 documenta fase1. Recortar la red preexistente no cubre toda la nueva zona ni aporta bases nuevas."
 }

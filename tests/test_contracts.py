@@ -19,7 +19,7 @@ class Contracts(unittest.TestCase):
         cls.doc=prepare_snapshot(cls.config)
 
     def test_real_snapshot_counts(self):
-        self.assertEqual((len(self.doc['nodes']),len(self.doc['edges'])),(85,480))
+        self.assertEqual((len(self.doc['nodes']),len(self.doc['edges'])),(13,62))
 
     def test_repeated_snapshot_is_deterministic(self):
         self.assertEqual(self.doc,prepare_snapshot(self.config))

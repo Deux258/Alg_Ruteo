@@ -2,8 +2,16 @@
 
 Implementación de la base de integración del proyecto de vigilancia forestal.
 Incluye el esquema completo de 22 tablas, imagen del modelo, carga topológica,
-auditoría, contenedores y orquestador raíz. La prueba inicial usa la red conservada
-de fase 1: **85 nodos, 480 arcos dirigidos y dos componentes (75 y 10 nodos)**.
+auditoría, contenedores y orquestador raíz. Desde la revisión del 17 de octubre,
+usa el **polígono adjunto de Valparaíso (54,92 km²)** como límite obligatorio:
+**13 nodos, 62 arcos dirigidos y una componente**. Conserva intacta la red de fase 1
+(85 nodos y 480 arcos) y la recorta en cada extracción.
+
+**Limitación territorial:** ninguna de las ocho bases originales cae dentro del
+polígono. El recorte permite comprobar SQL, carga y Dijkstra entre nodos de
+vigilancia, pero no una misión desde una base ni la cobertura del polígono completo.
+El ET online de infraestructura debe regenerar la malla y obtener bases para la
+nueva zona. No se inventan ubicaciones ni enlaces. Ver [revisión](evidencia/revision_2026-10-17/REVISION.md).
 
 Esta entrega implementa el **alcance base de Diego Muñoz**. Los ocho ETL de
 metadata/amenazas, las alternativas de ruteo y Leaflet se integran mediante los
@@ -94,10 +102,17 @@ generada por PostGIS: no se importa ni se acepta un costo suministrado por el JS
 Ambos sentidos son arcos explícitos y `reverse_cost=-1`. Los índices GiST cubren las
 geometrías de infraestructura, cobertura y amenazas.
 
-Los dos componentes no se conectan artificialmente. La auditoría conserva tamaños
+Las componentes no se conectan artificialmente. La auditoría conserva tamaños
 y detecta nodos aislados, FK inválidas, extremos incoherentes y longitudes nulas.
 La prueba Dijkstra incluida es una comprobación de disponibilidad y costo; **no es
 la implementación de k rutas de Eduardo**.
+
+`config/proyecto.json` referencia `datos/entrada/aoi/Zona_Delimitada_Valpo.geojson`.
+Su `bbox_wgs84` es solo la envolvente para descargas: el adaptador y el cargador
+comprueban el polígono completo, incluyendo bordes y respetando huecos. El hash
+del GeoJSON y su geometría quedan en el linaje del dataset. PostGIS verifica
+nuevamente la cobertura de los nodos y arcos cargados antes de publicar el run.
+El cambio crea otro run; conserva las instantáneas publicadas anteriormente.
 
 El rol `routing_web` solo tiene lectura y timeout de consulta; sus credenciales son
 distintas de las de carga. No se recibe SQL desde formularios ni desde archivos de datos.
@@ -140,11 +155,10 @@ por el backend del equipo y conservar un `/health` que refleje su alcance real.
 - Pruebas SQL y de integración ejecutadas con **PostgreSQL 16.15, PostGIS 3.4.2 y
   pgRouting 3.6.1 reales**, fuera de Docker. Ver [evidencia/VALIDACION.md](evidencia/VALIDACION.md).
 
-**Límite de validación:** este entorno no tiene Docker Engine. No se ejecutaron
-`docker build` ni el arranque integral de los contenedores. La combinación exacta
-de las imágenes fijadas debe verificarse con `./main probar` y luego `./main` en la
-máquina del equipo. El job de GitLab realiza las pruebas dentro de contenedores si
-el runner soporta `services`; no se afirma que ese job ya se ejecutó.
+**Revisión local del 17 de octubre:** se ejecutaron la construcción Docker, las
+pruebas con las imágenes fijadas y `main` en Docker Desktop. La evidencia nueva
+está en `evidencia/revision_2026-10-17/`; las cifras anteriores describen la
+validación original. El job de GitLab no se ha ejecutado como parte de esta revisión.
 
 ## Incorporar al GitLab UDP
 

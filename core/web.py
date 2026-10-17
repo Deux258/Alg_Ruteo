@@ -23,6 +23,12 @@ def status(conn):
     row["run_id"]=str(row["run_id"])
     row["phase2_complete"]=False
     row["application"]="foundation"
+    area=conn.execute("""SELECT lineage#>>'{aoi,file}' AS file, lineage#>>'{aoi,sha256}' AS sha256,
+        (SELECT count(*) FROM routing.nodes WHERE run_id=%s AND kind='base_candidata') AS candidate_bases
+        FROM routing.datasets WHERE run_id=%s AND dataset_key='I'""", (row["run_id"],row["run_id"])).fetchone()
+    row["study_area"]=area
+    row["mission_ready"]=bool(area and area["candidate_bases"])
+    row["warnings"]=[] if row["mission_ready"] else ["Sin bases candidatas; regenerar infraestructura para el nuevo AOI"]
     return row
 
 

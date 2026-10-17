@@ -18,6 +18,8 @@ en SQL. Es un JSON interno con dos listas, no una FeatureCollection mixta.
 | analysis_srid | entero `32719` | CRS métrico de la BD, UTM 19S. La carga transforma, no solo cambia la etiqueta SRID. |
 | input_hash | SHA-256 hexadecimal | Hash canónico de nodos, arcos, CRS, linaje y versión del adaptador. |
 | lineage.nodes / lineage.edges | objeto | Archivo relativo y SHA-256 del GeoJSON de entrada conservado. |
+| lineage.aoi | objeto | Archivo del polígono, SHA-256, geometría WGS84 y predicado `covers` (borde incluido). |
+| lineage.spatial_filter | objeto | Conteos de entrada y nodos/arcos excluidos por el polígono. |
 | extraction_mode | `snapshot` | Reconstrucción de datos existentes. No se presenta como descarga online. |
 | nodes | lista no vacía | Nodos que se cargan en `routing.nodes`. |
 | edges | lista no vacía | Arcos dirigidos que se cargan en `routing.edges`. |
@@ -48,7 +50,11 @@ clima, estado y tiempos del GeoJSON legado; no alteran el grafo base.
 
 La validación compara extremos en WGS84 (1e-9 grados); SQL comprueba nuevamente
 los extremos proyectados con tolerancia de 1 mm. No se hace snapping automático.
-Un grafo con dos componentes se informa como tal: no se añaden puentes ficticios.
+Las componentes se informan como tales: no se añaden puentes ficticios.
+El adaptador v2 conserva solo nodos y arcos completos cubiertos por el polígono
+configurado. No corta líneas para crear extremos ficticios. El recorte actual
+produce 13 nodos y 62 arcos; no conserva ninguna base. El cargador vuelve a validar
+el polígono y el auditor PostGIS comprueba la infraestructura almacenada.
 
 ## Salidas y documentación operativa
 

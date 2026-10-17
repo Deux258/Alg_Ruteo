@@ -8,6 +8,10 @@ from datetime import datetime
 from pathlib import Path
 from uuid import UUID, NAMESPACE_URL, uuid5
 
+from shapely.geometry import shape
+
+from core.area import load_area
+
 ROOT = Path(__file__).resolve().parents[1]
 
 
@@ -42,7 +46,7 @@ def point(coords):
     return coords
 
 
-def validate_infrastructure(doc):
+def validate_infrastructure(doc, config=None):
     from jsonschema import Draft202012Validator
     schema = json.loads((ROOT / "Infraestructura/infraestructura.schema.json").read_text())
     Draft202012Validator(schema).validate(doc)
@@ -51,6 +55,12 @@ def validate_infrastructure(doc):
         raise ValueError("dataset_id no corresponde al run y a I")
     validate_timestamp(doc["observed_at"])
     validate_timestamp(doc["extracted_at"])
+    config = config or json.loads((ROOT / "config/proyecto.json").read_text(encoding="utf-8"))
+    area_path = ROOT / config["aoi_geojson"]
+    area = load_area(area_path)
+    aoi_lineage = doc["lineage"].get("aoi", {})
+    if aoi_lineage.get("sha256") != sha256(area_path) or aoi_lineage.get("geometry") != json.loads(json.dumps(area.__geo_interface__)):
+        raise ValueError("El linaje no corresponde al polígono de estudio")
     ids, keys = {}, set()
     for node in doc["nodes"]:
         if node["id"] in ids or node["natural_key"] in keys:
@@ -58,6 +68,8 @@ def validate_infrastructure(doc):
         if node["id"] != stable_id(node["natural_key"]):
             raise ValueError("ID de nodo no corresponde a su clave natural")
         ids[node["id"]] = point(node["geometry"]["coordinates"])
+        if not area.covers(shape(node["geometry"])):
+            raise ValueError("Nodo fuera del polígono de estudio")
         keys.add(node["natural_key"])
     edge_ids, pairs = set(), set()
     node_keys = {n["id"]: n["natural_key"] for n in doc["nodes"]}
@@ -74,6 +86,8 @@ def validate_infrastructure(doc):
         coords = edge["geometry"]["coordinates"]
         for c in coords:
             point(c)
+        if not area.covers(shape(edge["geometry"])):
+            raise ValueError("Arco fuera del polígono de estudio")
         if any(abs(a - b) > 1e-9 for a, b in zip(coords[0], ids[s])) or any(
             abs(a - b) > 1e-9 for a, b in zip(coords[-1], ids[t])
         ):
@@ -84,7 +98,7 @@ def validate_infrastructure(doc):
         pairs.add((s, t))
     semantic = dict(nodes=doc["nodes"], edges=doc["edges"], crs=doc["crs"],
                     analysis_srid=doc["analysis_srid"], lineage=doc["lineage"],
-                    observed_at=doc["observed_at"], extracted_at=doc["extracted_at"], builder="fase1-adapter-v1")
+                    observed_at=doc["observed_at"], extracted_at=doc["extracted_at"], builder="fase1-polygon-adapter-v2")
     if hashlib.sha256(canonical(semantic)).hexdigest() != doc["input_hash"]:
         raise ValueError("El contenido no corresponde a input_hash")
     return doc
@@ -94,6 +108,8 @@ def prepare_snapshot(config: dict, run_id: str | None = None):
     if config["analysis_srid"] != 32719:
         raise ValueError("El contrato versión 1 requiere EPSG:32719")
     folder = ROOT / config["snapshot_directory"]
+    area_path = ROOT / config["aoi_geojson"]
+    area = load_area(area_path)
     paths = {k: folder / v for k, v in {"nodes": "nodos.geojson", "edges": "aristas.geojson"}.items()}
     raw = {k: json.loads(p.read_text()) for k, p in paths.items()}
     for value in raw.values():
@@ -108,9 +124,8 @@ def prepare_snapshot(config: dict, run_id: str | None = None):
         if geom["type"] != "Point":
             raise ValueError("Nodo no es Point")
         coords = point(geom["coordinates"])
-        west,south,east,north = config["bbox_wgs84"]
-        if not (west-1e-9 <= coords[0] <= east+1e-9 and south-1e-9 <= coords[1] <= north+1e-9):
-            raise ValueError("Nodo fuera del AOI configurado; el snapshot no corresponde al proyecto")
+        if not area.covers(shape(geom)):
+            continue
         old = p["id"]
         if isinstance(old, bool) or not isinstance(old, int) or old in old_to_new:
             raise ValueError("ID legado inválido o duplicado")
@@ -136,6 +151,10 @@ def prepare_snapshot(config: dict, run_id: str | None = None):
     edges = []
     for f in raw["edges"]["features"]:
         p, geom = f["properties"], f["geometry"]
+        if p["origen"] not in old_to_new or p["destino"] not in old_to_new:
+            continue
+        if not area.covers(shape(geom)):
+            continue
         s, t = old_to_new[p["origen"]], old_to_new[p["destino"]]
         key = f"arc:{node_keys[s]}->{node_keys[t]}"
         physical = "corridor:" + "|".join(sorted([node_keys[s], node_keys[t]]))
@@ -144,18 +163,23 @@ def prepare_snapshot(config: dict, run_id: str | None = None):
     nodes.sort(key=lambda n: n["id"])
     edges.sort(key=lambda e: e["id"])
     lineage = {k: {"file": str(p.relative_to(ROOT)), "sha256": sha256(p)} for k, p in paths.items()}
+    lineage["aoi"] = {"file": area_path.relative_to(ROOT).as_posix(), "sha256": sha256(area_path),
+                      "geometry": json.loads(json.dumps(area.__geo_interface__)), "predicate": "covers"}
+    lineage["spatial_filter"] = {"input_nodes": len(raw["nodes"]["features"]),
+        "input_edges": len(raw["edges"]["features"]), "excluded_nodes": len(raw["nodes"]["features"])-len(nodes),
+        "excluded_edges": len(raw["edges"]["features"])-len(edges)}
     lineage["configuration_sha256"] = hashlib.sha256(canonical(config)).hexdigest()
     observed = config["snapshot_observed_at"]
     semantic = dict(nodes=nodes, edges=edges, crs="EPSG:4326", analysis_srid=config["analysis_srid"],
-                    lineage=lineage, observed_at=observed, extracted_at=observed, builder="fase1-adapter-v1")
+                    lineage=lineage, observed_at=observed, extracted_at=observed, builder="fase1-polygon-adapter-v2")
     input_hash = hashlib.sha256(canonical(semantic)).hexdigest()
-    rid = str(UUID(run_id)) if run_id else str(uuid5(NAMESPACE_URL, "udp:infra-v1:" + input_hash))
+    rid = str(UUID(run_id)) if run_id else str(uuid5(NAMESPACE_URL, "udp:infra-polygon-v2:" + input_hash))
     doc = dict(schema_version="1.0", run_id=rid,
                dataset_id=str(uuid5(UUID(rid), "I")), dataset_key="I", source_id="DERIVED_GRAPH",
                observed_at=observed, extracted_at=observed, crs="EPSG:4326", analysis_srid=32719,
                input_hash=input_hash, lineage=lineage,
                extraction_mode="snapshot", nodes=nodes, edges=edges)
-    return validate_infrastructure(doc)
+    return validate_infrastructure(doc, config)
 
 
 def write_json(path: Path, value):

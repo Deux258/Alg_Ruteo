@@ -93,7 +93,7 @@ class DatabaseIntegration(unittest.TestCase):
     def test_load_and_repeated_load(self):
         self.assertFalse(self.load()['idempotent'])
         self.assertTrue(self.load()['idempotent'])
-        self.assertEqual(verify_counts(self.conn,self.rid,'base'),{'I':565})
+        self.assertEqual(verify_counts(self.conn,self.rid,'base'),{'I':75})
 
     def test_real_geometry_and_length_in_km(self):
         self.load()
@@ -124,18 +124,24 @@ class DatabaseIntegration(unittest.TestCase):
                 self.conn.execute('SET CONSTRAINTS ALL IMMEDIATE')
         self.assertEqual(audit(self.conn,self.rid)['invalid_edges'],0)
 
-    def test_snapshot_preserves_disconnected_components(self):
+    def test_polygon_snapshot_has_one_component_and_no_outside_geometry(self):
         self.load();report=audit(self.conn,self.rid)
-        self.assertEqual((report['nodes'],report['directed_edges'],report['strong_count']),(85,480,2))
-        self.assertEqual(sorted(x['size'] for x in report['strong_components']),[10,75])
+        self.assertEqual((report['nodes'],report['directed_edges'],report['strong_count']),(13,62,1))
+        self.assertEqual(sorted(x['size'] for x in report['strong_components']),[13])
+        self.assertEqual(report['spatial']['outside_nodes'],0)
+        self.assertEqual(report['spatial']['outside_edges'],0)
+        self.assertEqual(report['spatial']['candidate_bases'],0)
+        self.assertTrue(report['warnings'])
         self.assertEqual(report['isolated_nodes'],0)
 
-    def test_no_dijkstra_path_across_components(self):
+    def test_no_dijkstra_path_after_isolating_a_source(self):
         self.load()
-        rows=self.conn.execute('''SELECT component,min(node) AS node FROM pgr_strongComponents(routing.edge_sql(%s))
-            GROUP BY component ORDER BY component''',(self.rid,)).fetchall()
-        result=self.conn.execute('SELECT * FROM pgr_dijkstra(routing.edge_sql(%s),%s::bigint,%s::bigint,true)',
-            (self.rid,rows[0]['node'],rows[1]['node'])).fetchall()
+        source,target=self.doc['edges'][0]['source'],self.doc['edges'][0]['target']
+        from psycopg import sql
+        query=sql.SQL('SELECT id,source,target,length_km AS cost FROM routing.edges WHERE run_id={} AND source<>{} AND target<>{}').format(
+            sql.Literal(self.rid),sql.Literal(source),sql.Literal(source)).as_string(self.conn)
+        result=self.conn.execute('SELECT * FROM pgr_dijkstra(%s,%s::bigint,%s::bigint,true)',
+            (query,source,target)).fetchall()
         self.assertEqual(result,[])
 
     def test_dijkstra_cost_equals_sum_of_lengths(self):
@@ -177,7 +183,7 @@ class DatabaseIntegration(unittest.TestCase):
 
     def test_view_exposes_only_the_published_snapshot(self):
         self.load();self.publish()
-        self.assertEqual(self.conn.execute('SELECT count(*) AS n FROM routing.graph_base_edges').fetchone()['n'],480)
+        self.assertEqual(self.conn.execute('SELECT count(*) AS n FROM routing.graph_base_edges').fetchone()['n'],62)
         self.assertEqual(self.conn.execute('SELECT DISTINCT run_id FROM routing.graph_base_edges').fetchone()['run_id'],self.rid)
 
     def test_cross_run_references_fail(self):
@@ -195,7 +201,7 @@ class DatabaseIntegration(unittest.TestCase):
         self.load();modified=copy.deepcopy(self.doc);modified['lineage']['extra']='cambio'
         write_json(self.file,modified)
         with self.assertRaises(ValueError):load_infrastructure(self.conn,self.file)
-        self.assertEqual(verify_counts(self.conn,self.rid,'base')['I'],565)
+        self.assertEqual(verify_counts(self.conn,self.rid,'base')['I'],75)
 
     def test_web_database_role_is_read_only(self):
         info=self.conn.info
@@ -210,7 +216,7 @@ class DatabaseIntegration(unittest.TestCase):
         # Dos ejecuciones completas del alcance base, incluyendo procesos ET/carga.
         a=run('base','snapshot');b=run('base','snapshot')
         self.assertEqual(a['run_id'],b['run_id']);self.assertTrue(b['idempotent'])
-        self.assertEqual(b['counts'],{'I':565})
+        self.assertEqual(b['counts'],{'I':75})
 
     def test_http_health_and_topology_use_published_data(self):
         self.load();self.publish()
@@ -221,7 +227,9 @@ class DatabaseIntegration(unittest.TestCase):
             with urllib.request.urlopen(root+'/health') as r:data=json.load(r)
             self.assertEqual(data['status'],'ready');self.assertFalse(data['phase2_complete'])
             with urllib.request.urlopen(root+'/api/topologia') as r:data=json.load(r)
-            self.assertEqual(data['topology']['directed_edges'],480)
+            self.assertEqual(data['topology']['directed_edges'],62)
+            self.assertFalse(data['mission_ready'])
+            self.assertTrue(data['warnings'])
             with self.assertRaises(urllib.error.HTTPError) as ctx:urllib.request.urlopen(root+'/no-existe')
             self.assertEqual(ctx.exception.code,404)
         finally:
