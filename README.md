@@ -1,181 +1,97 @@
-# Fase 2: SQL, topología, Docker y main — Diego Muñoz
+# Ruteo vial reproducible en Valparaíso
 
-Implementación de la base de integración del proyecto de vigilancia forestal.
-Incluye el esquema completo de 22 tablas, imagen del modelo, carga topológica,
-auditoría, contenedores y orquestador raíz. Desde la revisión del 17 de octubre,
-usa el **polígono adjunto de Valparaíso (54,92 km²)** como límite obligatorio:
-**13 nodos, 62 arcos dirigidos y una componente**. Conserva intacta la red de fase 1
-(85 nodos y 480 arcos) y la recorta en cada extracción.
+Aplicación Docker con PostgreSQL, PostGIS, pgRouting y Leaflet. Reconstruye calles
+reales de OpenStreetMap dentro del polígono suministrado y calcula rutas desde una
+instalación real del catálogo SENAPRED. Conserva el SQL y los snapshots anteriores;
+las extensiones se aplican mediante una migración explícita.
 
-**Limitación territorial:** ninguna de las ocho bases originales cae dentro del
-polígono. El recorte permite comprobar SQL, carga y Dijkstra entre nodos de
-vigilancia, pero no una misión desde una base ni la cobertura del polígono completo.
-El ET online de infraestructura debe regenerar la malla y obtener bases para la
-nueva zona. No se inventan ubicaciones ni enlaces. Ver [revisión](evidencia/revision_2026-10-17/REVISION.md).
+**Origen geográfico:** 8.ª Comisaría Florida, Valparaíso, registro SENAPRED
+CARABINEROS `2872`, coordenadas **[-71.621817, -33.053137]**. La municipalidad
+corrobora la instalación y su domicilio Mariana Sarraeta 136, Cerro Florida.
+El cálculo empieza en el nodo OSM `13049981860`, a **5,75 m** del punto del catálogo.
+No se inventa un acceso entre ambos. La selección como origen de referencia no
+implica operación ni autorización institucional para usar el recinto.
 
-Esta entrega implementa el **alcance base de Diego Muñoz**. Los ocho ETL de
-metadata/amenazas, las alternativas de ruteo y Leaflet se integran mediante los
-contratos documentados; no se presentan como funcionalidades terminadas aquí.
-`M1` y `A3` también quedan pendientes: aunque figuran como fuentes asignadas a Diego
-en la distribución grupal, esta solicitud se limita a SQL, topología, Docker y main.
+La instantánea genera **15.499 nodos y 28.974 arcos dirigidos**. El límite es
+exactamente el GeoJSON adjunto de **54,92 km²**, no el límite administrativo completo
+de la comuna. Desde la base se alcanzan **13.249 nodos**; otros 2.250 no son
+alcanzables con este perfil y límite, y no se conectan artificialmente.
 
-## Ejecutar desde cero
+## Ejecutar
 
-Requiere Docker Engine/Desktop activo y **Docker Compose v2.20 o posterior**.
-En Windows usar Docker Desktop con WSL2 y abrir una terminal Bash de WSL en la
-carpeta del proyecto. No se necesita instalar Python, PostGIS ni PostgreSQL en el host.
+Requiere Docker Desktop/Engine activo y Docker Compose. En Windows usar Bash de
+Git o WSL con Docker disponible. El host no necesita Python ni PostgreSQL.
 
 ```bash
 chmod +x main
+./main probar
 ./main
 ```
 
-`main` genera `.env` con dos contraseñas aleatorias si no existe; no es necesario
-copiar `.env.example`. Si se crea `.env` manualmente, completar los dos secretos.
-No subir `.env` a Git. Para usar otro puerto, ajustar `WEB_PORT` antes de iniciar.
-
-Al terminar:
-
-- Sitio de diagnóstico: `http://127.0.0.1:8080`.
-- Estado JSON: `http://127.0.0.1:8080/health`.
-- Auditoría: `http://127.0.0.1:8080/api/topologia`.
-- Resultado por ejecución: `datos/runs/<UUID>/resumen.json`, JSON y logs de cada paso.
-
-El sitio de diagnóstico informa `application=foundation` y `phase2_complete=false`.
-No reemplaza la interfaz Leaflet del equipo. No se expone el puerto PostgreSQL al host.
+Abrir http://127.0.0.1:8080 . `main` crea `.env` con contraseñas aleatorias si no
+existe. No versionar ese archivo. `WEB_PORT=18081 ./main` permite otro puerto.
 
 ```bash
-./main probar       # BD de prueba separada, efímera, e integración obligatoria
+./main iniciar --mode online  # descarga OSM y dos capas SENAPRED; reconstruye
+./main                       # reconstruye desde originales, sin consultas externas
 ./main estado
-./main logs
-./main detener      # conserva la BD y los snapshots
+./main detener               # conserva datos; nunca borra volúmenes
 ```
 
-`./main probar` produce `evidencia/local/pruebas.json` y `pruebas.log`. Para borrar
-solamente los contenedores de prueba: `docker compose -f compose.test.yaml down`.
-El proyecto de pruebas tiene otro nombre y usa tmpfs, sin volumen de datos persistente.
-`main` nunca ejecuta `down -v` sobre la BD de trabajo.
+El arranque aplica SQL y migraciones, ejecuta ET/carga, valida geometrías,
+conectividad y rutas desde la base, publica atómicamente y habilita la web. Un
+error no sustituye el run publicado. Repetir el mismo snapshot conserva su run y
+no duplica datos. Una actualización online conserva las respuestas originales,
+consultas y hashes. Los fallos de proveedor se informan explícitamente.
 
-## Qué hace main
+`main probar` usa otra BD, efímera en `tmpfs`, y guarda los resultados en
+`evidencia/local`. El [informe vial](evidencia/red_vial_2026-10-17/INFORME.md)
+recoge las pruebas y el arranque desde una BD vacía.
 
-1. Comprueba Docker/Compose y la configuración; construye la imagen Python fijada.
-2. Valida el alcance solicitado **antes** de iniciar la BD. No acepta como completa
-   una integración con ET/cargadores pendientes.
-3. Inicia la BD y espera su healthcheck. Aplica SQL y migraciones con checksum.
-4. Ejecuta cada ET y su cargador como procesos dentro del contenedor ETL.
-5. Reconcilia conteos, valida topología y ejecuta una consulta real `pgr_dijkstra`
-   cuyo único costo es la longitud en kilómetros.
-6. Publica atómicamente el run validado. Una carga fallida conserva la publicación anterior.
-7. Habilita el servicio web y comprueba `/health`. Un error retorna código distinto de cero.
+## Representación y alcance
 
-El arranque normal usa `snapshot`: adapta datos auténticos ya construidos en fase 1.
-**No descarga fuentes nuevas ni reconstruye la malla desde CONAF.** El ET online
-de infraestructura corresponde a la integración con Ignacio. Los modos aún no
-implementados fallan explícitamente:
+Cada arco corresponde a vértices consecutivos de una vía OSM. Se conservan todos
+los vértices de forma y su procedencia. Las calles se conectan únicamente por
+nodos OSM compartidos; un cruce visual a distinta cota no crea una intersección.
 
-```bash
-./main iniciar --scope completo   # rechazado mientras falten M1..M4/A1..A4
-./main iniciar --mode online      # rechazado hasta integrar el ET online
-```
+El perfil de **vehículo liviano** respeta sentidos, rotondas, accesos y barreras
+conocidas. Excluye escaleras, sendas peatonales, accesos restringidos y condiciones
+o dimensiones que no puede resolver. Se excluyen segmentos no completamente
+cubiertos por el polígono, sin fabricar extremos para ampliar la red.
 
-El mismo snapshot base produce el mismo run y no duplica filas. Un run explícito
-se puede crear con `./main iniciar --run-id UUID`. En alcance completo futuro se
-crea un run nuevo por actualización, porque la metadata dinámica puede cambiar.
+Las restricciones de giro OSM se convierten en secuencias de arcos prohibidas.
+Un autómata conserva esa memoria, incluida la restricción con vía intermedia,
+y `pgr_dijkstra` encuentra el mínimo sobre las transiciones permitidas. El costo
+de cada paso es únicamente `ST_Length(geom_32719)/1000`. La consulta clásica de
+Dijkstra sin giros se conserva como referencia interna.
 
-## Base de datos y topología
+El límite se verifica en **WGS84**; las longitudes se calculan en **EPSG:32719**.
+Reproyectar un anillo de segmentos rectos cambia su interpolación entre vértices:
+no se utiliza ese efecto ni un buffer para modificar el límite suministrado.
 
-- [Modelo en PNG](BD/diagrama.png), [SVG ampliable](BD/diagrama.svg) y [fuente DOT](BD/diagrama.dot).
-- [SQL desde cero](BD/crear_bd.sql): extensiones, esquema, 22 tablas, índices, vistas,
-  restricciones y funciones. Docker crea la base vacía mediante `POSTGRES_DB`.
-- [Consultas de verificación](BD/consultas_verificacion.sql).
-- [Migraciones](BD/migraciones/README.md): versiones aplicadas inmutables; el arranque
-  no depende de scripts de `/docker-entrypoint-initdb.d` que solo corren con volumen vacío.
+La aplicación no incluye tráfico, cierres actuales ni comprobación en terreno de
+la señalización. Hay componentes no alcanzables por límites, sentidos y datos;
+la aplicación lo informa y rechaza esas rutas.
 
-Las claves de datos son `(run_id,id)` y las FK compuestas impiden referenciar
-nodos o enlaces de otra instantánea. Los IDs BIGINT se calculan desde claves
-naturales, sin depender de la posición en el GeoJSON. Una colisión aborta la carga.
-Los datos de un run listo son inmutables; rutas y evaluaciones nuevas se pueden
-asociar a ese run sin cambiar la infraestructura.
+## Fuentes y documentación
 
-Las geometrías se **transforman** de WGS84 a EPSG:32719. `length_km` es una columna
-generada por PostGIS: no se importa ni se acepta un costo suministrado por el JSON.
-Ambos sentidos son arcos explícitos y `reverse_cost=-1`. Los índices GiST cubren las
-geometrías de infraestructura, cobertura y amenazas.
+- [Originales, licencias y regeneración](datos/entrada/vial/README.md).
+- [Polígono y diccionario espacial](datos/entrada/aoi/README.md).
+- [Contrato de infraestructura y cargador](Infraestructura/DICCIONARIO.md).
+- [SQL inicial](BD/crear_bd.sql) y [migración vial](BD/migraciones/002_red_vial.sql).
+- [Modelo ampliado](BD/diagrama_vial.svg).
+- [Interfaz y APIs](Sitio%20Web/README.md).
+- [Informe, mapas, rutas y pruebas](evidencia/red_vial_2026-10-17/INFORME.md).
 
-Las componentes no se conectan artificialmente. La auditoría conserva tamaños
-y detecta nodos aislados, FK inválidas, extremos incoherentes y longitudes nulas.
-La prueba Dijkstra incluida es una comprobación de disponibilidad y costo; **no es
-la implementación de k rutas de Eduardo**.
+Bomberos 104, Laguna Verde, se investigó y descartó: el polígono interrumpe su
+calle y solo deja unos 98 m de recorrido desde ella. No se relajó el límite para
+aparentar conectividad.
 
-`config/proyecto.json` referencia `datos/entrada/aoi/Zona_Delimitada_Valpo.geojson`.
-Su `bbox_wgs84` es solo la envolvente para descargas: el adaptador y el cargador
-comprueban el polígono completo, incluyendo bordes y respetando huecos. El hash
-del GeoJSON y su geometría quedan en el linaje del dataset. PostGIS verifica
-nuevamente la cobertura de los nodos y arcos cargados antes de publicar el run.
-El cambio crea otro run; conserva las instantáneas publicadas anteriormente.
+`config/proyecto.json` selecciona la red vial. `config/proyecto_legacy.json`
+conserva la malla anterior para regresiones. Los originales de fase 1 y sus
+informes permanecen intactos. El DDL inicial no se reescribe: ahora hay **25 tablas**,
+con tres nuevas para la base, los estados y las transiciones.
 
-El rol `routing_web` solo tiene lectura y timeout de consulta; sus credenciales son
-distintas de las de carga. No se recibe SQL desde formularios ni desde archivos de datos.
-
-## Integración con el equipo
-
-Leer [docs/INTEGRACION.md](docs/INTEGRACION.md). `config/pipeline.json` declara las
-nueve salidas, sus dependencias, comandos ET, cargador, archivo de salida y diccionario.
-Los ocho módulos pendientes están desactivados, sin scripts vacíos que simulen éxito.
-
-| Módulo | Destino preparado |
-|---|---|
-| I | `nodes`, `edges` |
-| M1 | `base_metadata` |
-| M2 | `landcover` |
-| M3 | `node_elevation` |
-| M4 | `weather` |
-| A1 | `hazards` + `weather_hazards` |
-| A2 | `hazards` + `thermal_events` |
-| A3 | `hazards` + `airspace_zones` |
-| A4 | `hazards` + `historical_risk` |
-
-Cada cargador debe registrar `routing.datasets` con el conteo real, fuente, SHA-256,
-hora y linaje. El cargador consume el archivo guardado; no vuelve a llamar la API.
-Una colección de amenazas vacía requiere una consulta exitosa documentada. Un error
-HTTP o de parsing no se transforma en cero amenazas.
-
-Los futuros cálculos propuestos usan otras consultas/vistas; `graph_base_edges` solo
-depende de `edges` y `publication`, sin pesos, amenazas ni preferencias.
-Para Leaflet y rutas comparadas, reemplazar la orden del servicio `web` en Compose
-por el backend del equipo y conservar un `/health` que refleje su alcance real.
-
-## Versiones y verificación efectuada
-
-- BD Docker fijada por digest: `pgrouting/pgrouting:16-3.5-3.8.0`.
-- Python Docker: `3.12.12-slim-bookworm`, también por digest.
-- Dependencias Python y hashes: `requirements.lock`; entradas directas en `requirements.in`.
-- Se verificó la existencia y el digest de ambas imágenes en el registro.
-- Ambos Compose pasaron `config --quiet` con Docker Compose real 2.40.3.
-- Pruebas SQL y de integración ejecutadas con **PostgreSQL 16.15, PostGIS 3.4.2 y
-  pgRouting 3.6.1 reales**, fuera de Docker. Ver [evidencia/VALIDACION.md](evidencia/VALIDACION.md).
-
-**Revisión local del 17 de octubre:** se ejecutaron la construcción Docker, las
-pruebas con las imágenes fijadas y `main` en Docker Desktop. La evidencia nueva
-está en `evidencia/revision_2026-10-17/`; las cifras anteriores describen la
-validación original. El job de GitLab no se ha ejecutado como parte de esta revisión.
-
-## Incorporar al GitLab UDP
-
-Copiar el contenido de este paquete a una rama del proyecto del equipo. Revisar
-conflictos con archivos existentes; no reemplazar el trabajo ajeno a ciegas. Ejecutar
-`./main probar`, `./main` dos veces y conservar evidencia del run publicado. Versionar
-código, SQL, diagrama, contratos y snapshot de entrada; excluir `.env` y salidas de ejecución.
-
-No se realizó un push: no se recibió la URL del repositorio específico ni acceso a él.
-La plataforma objetivo sigue siendo GitLab UDP; no se creó un repositorio en GitHub.
-
-## Archivos de datos y evidencia
-
-El [diccionario de I](Infraestructura/DICCIONARIO.md) documenta la única salida ETL
-implementada y su cargador. El [diccionario de entradas](datos/entrada/fase1/README.md)
-explica los GeoJSON legados y el manifiesto. Los archivos de configuración, esquemas
-y evidencia no se cuentan como nuevas APIs ni como datasets de metadata/amenazas.
-
-La fuente AIP manual y los riesgos históricos conservan sus limitaciones de fase 1;
-esta entrega no los transforma en ET automatizados ni en alertas actuales.
+La entrega grupal completa continúa separada de esta aplicación vial: los ocho
+ETL de metadata/amenazas y la evaluación resiliente de fase 3 siguen pendientes.
+`phase2_complete=false` conserva esa distinción.

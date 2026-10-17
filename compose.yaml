@@ -36,7 +36,9 @@ services:
     environment:
       <<: *db-env
       WEB_DB_PASSWORD: ${WEB_DB_PASSWORD:?Ejecutar ./main para generar .env}
-    volumes: [./datos/runs:/app/datos/runs]
+    volumes:
+      - ./datos/runs:/app/datos/runs
+      - ./datos/entrada/vial:/app/datos/entrada/vial
     depends_on:
       db: {condition: service_healthy}
     restart: 'no'

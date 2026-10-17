@@ -33,10 +33,27 @@ def load_infrastructure(conn, path):
             cur.executemany("""INSERT INTO routing.nodes(run_id,id,natural_key,kind,source_record_id,geom)
                 VALUES(%s,%s,%s,%s,%s,ST_Transform(ST_SetSRID(ST_GeomFromGeoJSON(%s),4326),32719))""",
                 [(rid,n["id"],n["natural_key"],n["kind"],n["source_record_id"],json.dumps(n["geometry"])) for n in doc["nodes"]])
-            cur.executemany("""INSERT INTO routing.edges(run_id,id,natural_key,source,target,physical_key,geom)
-                VALUES(%s,%s,%s,%s,%s,%s,ST_Transform(ST_SetSRID(ST_GeomFromGeoJSON(%s),4326),32719))""",
-                [(rid,e["id"],e["natural_key"],e["source"],e["target"],e["physical_key"],json.dumps(e["geometry"])) for e in doc["edges"]])
+            cur.executemany("""INSERT INTO routing.edges(run_id,id,natural_key,source,target,physical_key,geom,road_origin)
+                VALUES(%s,%s,%s,%s,%s,%s,ST_Transform(ST_SetSRID(ST_GeomFromGeoJSON(%s),4326),32719),%s)""",
+                [(rid,e["id"],e["natural_key"],e["source"],e["target"],e["physical_key"],json.dumps(e["geometry"]),Jsonb(e.get('osm',[]))) for e in doc["edges"]])
+        if doc['schema_version']=='2.0':
+            from core.turns import state_graph
+            base=doc['lineage']['base']
+            conn.execute("""INSERT INTO routing.base_locations(run_id,provider_id,source_id,node_id,name,address,geom,provenance)
+                VALUES(%s,%s,%s,%s,%s,%s,ST_Transform(ST_SetSRID(ST_GeomFromGeoJSON(%s),4326),32719),%s)""",
+                (rid,base['provider_id'],base['source_id'],base['routing_node_id'],base['name'],base['address'],json.dumps(base['geometry']),Jsonb(base)))
+            states,transitions=state_graph(doc['edges'],doc['lineage']['turn_restrictions']['forbidden_paths'])
+            with conn.cursor() as cur:
+                with cur.copy('COPY routing.road_states(run_id,id,edge_id,context) FROM STDIN') as stream:
+                    for state in states:stream.write_row((rid,state['id'],state['edge_id'],state['context']))
+                with cur.copy('COPY routing.road_transitions(run_id,id,source,target,edge_id) FROM STDIN') as stream:
+                    for transition in transitions:stream.write_row((rid,transition['id'],transition['source'],transition['target'],transition['edge_id']))
         conn.execute("SET CONSTRAINTS ALL IMMEDIATE")
+        if doc['schema_version']=='2.0':
+            # El grafo crece varios órdenes de magnitud respecto de la malla
+            # legada. Las consultas de validación necesitan estadísticas actuales.
+            for table in ['nodes','edges','road_states','road_transitions']:
+                conn.execute('ANALYZE routing.'+table)
     return {"idempotent": False, "nodes":len(doc["nodes"]), "edges":len(doc["edges"])}
 
 
@@ -46,13 +63,13 @@ def audit(conn, rid):
     if not area or not area["geometry"]:
         raise ValueError("Falta el polígono de estudio en el linaje")
     report["spatial"] = conn.execute("""WITH a AS (
-        SELECT ST_Transform(ST_SetSRID(ST_GeomFromGeoJSON(%s),4326),32719) AS geom)
+        SELECT ST_SetSRID(ST_GeomFromGeoJSON(%s),4326) AS geom)
         SELECT (SELECT count(*) FROM routing.nodes n CROSS JOIN a
-                WHERE run_id=%s AND NOT ST_Covers(a.geom,n.geom)) AS outside_nodes,
+                WHERE run_id=%s AND NOT ST_Covers(a.geom,ST_Transform(n.geom,4326))) AS outside_nodes,
                (SELECT count(*) FROM routing.edges e CROSS JOIN a
-                WHERE run_id=%s AND NOT ST_Covers(a.geom,e.geom)) AS outside_edges,
+                WHERE run_id=%s AND NOT ST_Covers(a.geom,ST_Transform(e.geom,4326))) AS outside_edges,
                (SELECT count(*) FROM routing.nodes WHERE run_id=%s AND kind='base_candidata') AS candidate_bases,
-               ST_Area(a.geom)/1e6 AS area_km2 FROM a""",
+               ST_Area(ST_Transform(a.geom,32719))/1e6 AS area_km2 FROM a""",
         (json.dumps(area["geometry"]),rid,rid,rid)).fetchone()
     if report["spatial"]["outside_nodes"] or report["spatial"]["outside_edges"]:
         raise ValueError("Infraestructura fuera del polígono de estudio")
@@ -74,4 +91,7 @@ def audit(conn, rid):
         raise ValueError("Prueba pgr_dijkstra sin resultado válido")
     report["dijkstra_smoke"] = {"source":sample["source"],"target":sample["target"],
                                  "distance_km":result[-1]["agg_cost"],"steps":len(result)-1}
+    if conn.execute('SELECT 1 FROM routing.base_locations WHERE run_id=%s',(rid,)).fetchone():
+        from core.routing import audit_roads
+        report['road_routing']=audit_roads(conn,rid)
     return report

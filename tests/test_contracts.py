@@ -15,7 +15,7 @@ from core.web import safe_numbers
 class Contracts(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.config=json.loads((ROOT/'config/proyecto.json').read_text())
+        cls.config=json.loads((ROOT/'config/proyecto_legacy.json').read_text())
         cls.doc=prepare_snapshot(cls.config)
 
     def test_real_snapshot_counts(self):
@@ -91,9 +91,10 @@ class Contracts(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,'M1'):
             preflight('completo','snapshot')
 
-    def test_online_preflight_is_explicitly_unavailable(self):
+    def test_online_preflight_requires_a_real_extractor(self):
+        m=json.loads((ROOT/'config/pipeline.json').read_text());m['steps'][0]['modes']=['snapshot']
         with self.assertRaisesRegex(ValueError,'online'):
-            preflight('base','online')
+            preflight('base','online',m)
 
     def test_dependencies_cannot_cycle(self):
         m=json.loads((ROOT/'config/pipeline.json').read_text());m['steps'][0]['depends_on']=['I']

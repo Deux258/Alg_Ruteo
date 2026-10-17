@@ -38,7 +38,7 @@ class DatabaseIntegration(unittest.TestCase):
             raise unittest.SkipTest('BD no configurada; ejecutar ./main probar para integración real')
         cls.conn=connect()
         cls.versions=apply_schema(cls.conn)
-        cls.config=json.loads((ROOT/'config/proyecto.json').read_text())
+        cls.config=json.loads((ROOT/'config/proyecto_legacy.json').read_text())
         cls.conn.execute("INSERT INTO routing.sources(source_id,product) VALUES('DERIVED_GRAPH','fixture fase1') ON CONFLICT DO NOTHING")
         os.environ.setdefault('WEB_DB_PASSWORD','test-reader-ephemeral-only')
         create_reader(cls.conn)
@@ -79,7 +79,7 @@ class DatabaseIntegration(unittest.TestCase):
 
     def test_additional_migration_is_applied_once_and_protected(self):
         with tempfile.TemporaryDirectory() as folder:
-            path=Path(folder)/'002_prueba.sql'
+            path=Path(folder)/'900_prueba.sql'
             path.write_text('CREATE TABLE routing.migration_test_owned_by_test(id integer);')
             try:
                 apply_migrations(self.conn,Path(folder));apply_migrations(self.conn,Path(folder))
@@ -88,7 +88,7 @@ class DatabaseIntegration(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError,'cambió'):apply_migrations(self.conn,Path(folder))
             finally:
                 self.conn.execute('DROP TABLE IF EXISTS routing.migration_test_owned_by_test')
-                self.conn.execute('DELETE FROM routing.schema_migrations WHERE version=2')
+                self.conn.execute('DELETE FROM routing.schema_migrations WHERE version=900')
 
     def test_load_and_repeated_load(self):
         self.assertFalse(self.load()['idempotent'])
@@ -216,7 +216,9 @@ class DatabaseIntegration(unittest.TestCase):
         # Dos ejecuciones completas del alcance base, incluyendo procesos ET/carga.
         a=run('base','snapshot');b=run('base','snapshot')
         self.assertEqual(a['run_id'],b['run_id']);self.assertTrue(b['idempotent'])
-        self.assertEqual(b['counts'],{'I':75})
+        cfg=json.loads((ROOT/'config/proyecto.json').read_text())
+        doc=prepare_snapshot(cfg)
+        self.assertEqual(b['counts'],{'I':len(doc['nodes'])+len(doc['edges'])})
 
     def test_http_health_and_topology_use_published_data(self):
         self.load();self.publish()

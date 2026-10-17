@@ -1,0 +1,38 @@
+{
+  "features": [
+    {
+      "geometry": {
+        "coordinates": [
+          -71.621817,
+          -33.053137
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "name": "8VA. COM. FLORIDA VALPO.",
+        "provider_id": "2872",
+        "role": "real_facility",
+        "source": "SENAPRED CARABINEROS"
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.6217814,
+          -33.0531793
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "access_modelled": false,
+        "node_id": "8716049048730704023",
+        "offset_m": 5.752035686119725,
+        "osm_node_id": "13049981860",
+        "role": "routing_origin"
+      },
+      "type": "Feature"
+    }
+  ],
+  "type": "FeatureCollection"
+}

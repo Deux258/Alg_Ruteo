@@ -1,4 +1,43 @@
-# Contrato I: infraestructura.json, versión 1.0
+# Contrato I: infraestructura.json, versiones 1.0 (legada) y 2.0 (vial)
+
+## Versión vial activa
+
+El formato 2.0 usa `source_id=DERIVED_ROADS`. `observed_at` es el timestamp de la
+base OSM; `extracted_at` es la fecha de descarga del manifiesto. `extraction_mode`
+puede ser `snapshot` u `online`: este último descarga fuentes antes de reconstruir.
+`natural_key=osm:node:ID_OSM` identifica cada nodo vial original;
+`source_record_id` conserva su ID OSM y `kind` es `vial` o `base_candidata` para
+el nodo donde empieza el cálculo. La instalación real se conserva por separado
+en `lineage.base.geometry` y en `routing.base_locations`.
+
+Cada arco añade `osm`, una lista de procedencias: `way_id` (ID OSM),
+`segment_index` (índice desde cero), `from_node/to_node` (orden original de
+vértices) y `tags` (etiquetas originales). Su sentido debe ser compatible con
+esas etiquetas. La geometría corresponde exactamente al segmento publicado;
+no se permiten atajos rectilíneos entre calles cercanas. Las referencias y
+etiquetas se almacenan en `edges.road_origin`.
+
+El linaje vial también contiene `builder`, `manifest` (archivo/hash), `sources`
+(los originales y consultas del proveedor), `road_profile` (clases, exclusiones
+y ausencia de conexiones artificiales), `spatial_filter` (conteos por motivo)
+y `turn_restrictions` (`forbidden_paths`, relaciones aplicadas y excluidas).
+`lineage.base` incluye ID/proveedor, nombre, dirección corroborada, geometría
+original, atributos originales, URL institucional, nodo OSM de incorporación y
+separación aproximada en metros. PostGIS registra también la separación métrica
+precisa. El trayecto instalación-calle no está modelado ni incluido en el costo.
+
+`road_states` y `road_transitions` son estados lógicos de giro; no representan
+calles ni intersecciones adicionales. Sus costos se obtienen de los arcos físicos
+y `pgr_dijkstra` no puede recorrer secuencias prohibidas, incluidas vías intermedias.
+`datasets.validation` contiene la auditoría derivada, conteos, base verificada,
+destinos de ejemplo y alcanzabilidad; no altera el hash de los originales.
+
+La pertenencia al área se evalúa en WGS84 mediante `covers`, sin buffer. Las
+longitudes se calculan en EPSG:32719. El cargador verifica de nuevo el origen de
+cada nodo/arco contra los originales conservados y exige el mismo polígono.
+
+La tabla siguiente documenta el formato legado, que continúa soportado para
+regresiones. Sus cifras de 13 nodos/62 arcos corresponden a la malla anterior.
 
 Productor: `python -m Infraestructura.preparar_snapshot`. Cargador asociado:
 `python -m Infraestructura.cargar RUTA/infraestructura.json`.

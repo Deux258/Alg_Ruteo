@@ -96,15 +96,27 @@ def validate_infrastructure(doc, config=None):
             raise ValueError("Arco de longitud cero")
         edge_ids.add(edge["id"])
         pairs.add((s, t))
+    builder = "fase1-polygon-adapter-v2"
+    if doc['schema_version'] == '2.0':
+        from core.roads import validate_road_provenance
+        validate_road_provenance(doc, config)
+        builder = 'osm-road-adapter-v1'
+    elif doc['source_id'] != 'DERIVED_GRAPH':
+        raise ValueError('Fuente incompatible con versión del contrato')
     semantic = dict(nodes=doc["nodes"], edges=doc["edges"], crs=doc["crs"],
                     analysis_srid=doc["analysis_srid"], lineage=doc["lineage"],
-                    observed_at=doc["observed_at"], extracted_at=doc["extracted_at"], builder="fase1-polygon-adapter-v2")
+                    observed_at=doc["observed_at"], extracted_at=doc["extracted_at"], builder=builder)
     if hashlib.sha256(canonical(semantic)).hexdigest() != doc["input_hash"]:
         raise ValueError("El contenido no corresponde a input_hash")
     return doc
 
 
-def prepare_snapshot(config: dict, run_id: str | None = None):
+def prepare_snapshot(config: dict, run_id: str | None = None, extraction_mode='snapshot'):
+    if config.get('network_type') == 'osm_motorcar':
+        from core.roads import build_road_snapshot
+        return build_road_snapshot(config,run_id,extraction_mode)
+    if extraction_mode != 'snapshot':
+        raise ValueError('La malla legada no tiene modo online')
     if config["analysis_srid"] != 32719:
         raise ValueError("El contrato versión 1 requiere EPSG:32719")
     folder = ROOT / config["snapshot_directory"]

@@ -11,4 +11,7 @@ versión nueva de datos y una migración compatible con los snapshots conservado
 
 Para una creación manual desde cero, ejecutar primero `crear_bd.sql` y luego las
 migraciones en orden. `main` realiza este proceso en cada arranque y omite las ya
-aplicadas. La entrega inicial no necesita una migración 002 ficticia.
+aplicadas. `002_red_vial.sql` es una migración real: añade procedencia vial,
+auditoría derivada y las tablas `base_locations`, `road_states` y
+`road_transitions`. Amplía los tipos de nodo sin cambiar ni borrar snapshots
+anteriores. `crear_bd.sql` permanece inmutable.

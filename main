@@ -12,8 +12,9 @@ Uso: ./main [iniciar|probar|estado|detener|logs] [opciones]
   detener                   Detiene servicios; conserva volúmenes.
   logs                      Muestra logs recientes sin imprimir credenciales.
 Opciones de iniciar: --scope base|completo --mode snapshot|online --run-id UUID
-El alcance base está implementado. Completo/online requieren integrar los ETL
-de config/pipeline.json; se rechazan explícitamente mientras estén pendientes.
+El modo snapshot reconstruye calles desde originales conservados, sin red externa.
+--mode online actualiza OSM y SENAPRED antes de reconstruir. El alcance completo
+requiere integrar los ETL de metadata/amenazas pendientes.
 TXT
 }
 if [[ "${1:-}" == '-h' || "${1:-}" == '--help' ]]; then help; exit 0; fi
@@ -56,7 +57,7 @@ case "$action" in
     "${compose[@]}" run --rm --no-deps etl "${args[@]}"
     "${compose[@]}" up -d --no-deps --wait web
     "${compose[@]}" exec -T web python -m core.health --scope "$scope"
-    printf 'Sitio de diagnóstico: http://%s\n' "$("${compose[@]}" port web 8000)"
+    printf 'Aplicación vial: http://%s\n' "$("${compose[@]}" port web 8000)"
     ;;
   probar)
     docker compose --env-file .env -f compose.test.yaml up --build --abort-on-container-exit --exit-code-from tests

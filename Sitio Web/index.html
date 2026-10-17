@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Ruteo vial · Valparaíso</title>
+    <link rel="stylesheet" href="/vendor/leaflet.css" />
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <header>
+      <div>
+        <p class="eyebrow">VALPARAÍSO, CHILE</p>
+        <h1>Ruteo por calles</h1>
+      </div>
+      <a href="/api/topologia">Datos y diagnóstico ↗</a>
+    </header>
+    <main>
+      <aside>
+        <section>
+          <span class="label">ORIGEN</span>
+          <h2 id="base-name">Cargando base…</h2>
+          <p id="base-address"></p>
+          <p class="small" id="base-position"></p>
+          <p class="note" id="base-offset"></p>
+        </section>
+        <section>
+          <label for="destinations">Destinos alcanzables de ejemplo</label
+          ><select id="destinations">
+            <option value="">Seleccionar destino</option></select
+          ><button id="calculate" disabled>Calcular ruta mínima</button>
+          <p class="small">
+            También puedes hacer clic en una calle dentro del límite verde.
+          </p>
+          <div id="result" role="status" aria-live="polite">
+            Cargando red vial…
+          </div>
+        </section>
+        <section class="legend">
+          <p><i class="line green"></i>Límite del área de estudio</p>
+          <p><i class="line grey"></i>Calles incluidas en la red</p>
+          <p><i class="line blue"></i>Ruta calculada con Dijkstra</p>
+          <p><i class="dot orange"></i>Cuartel real del catálogo SENAPRED</p>
+          <p><i class="dot blue"></i>Origen vial sobre una calle OSM</p>
+        </section>
+        <footer>
+          <p id="network-counts"></p>
+          <p>Vehículo liviano · costo por longitud · sentidos y giros OSM.</p>
+          <p>
+            Sin tráfico ni cierres en tiempo real. El acceso interior del
+            cuartel no está modelado.
+          </p>
+          <label class="toggle"
+            ><input id="tiles" type="checkbox" /> Mostrar mapa base OSM
+            (requiere internet)</label
+          >
+          <p>
+            © OpenStreetMap contributors · ODbL<br />Base: SENAPRED,
+            Servicios_2024.
+          </p>
+        </footer>
+      </aside>
+      <div id="map" aria-label="Mapa de rutas viales de Valparaíso"></div>
+    </main>
+    <script src="/vendor/leaflet.js"></script>
+    <script src="/app.js"></script>
+  </body>
+</html>

@@ -1,10 +1,13 @@
-"""Servicio de diagnóstico. La interfaz Leaflet corresponde a Diego Hidalgo."""
+"""Aplicación Leaflet y API de consulta de la instantánea vial publicada."""
 import json
 import logging
 import os
+import mimetypes
+from urllib.parse import urlsplit,parse_qs
 from http.server import BaseHTTPRequestHandler,ThreadingHTTPServer
 
 from core.db import connect
+from core.contracts import ROOT
 
 
 def safe_numbers(value):
@@ -29,27 +32,63 @@ def status(conn):
     row["study_area"]=area
     row["mission_ready"]=bool(area and area["candidate_bases"])
     row["warnings"]=[] if row["mission_ready"] else ["Sin bases candidatas; regenerar infraestructura para el nuevo AOI"]
+    dataset=conn.execute("SELECT source_id,validation FROM routing.datasets WHERE run_id=%s AND dataset_key='I'",(row['run_id'],)).fetchone()
+    row['routing_ready']=bool(dataset and dataset['validation'].get('road_routing',{}).get('ready'))
+    if dataset and dataset['source_id']=='DERIVED_ROADS':
+        row['application']='road_routing'
+        row['mission_ready']=row['routing_ready']
+        row['warnings']=['Acceso entre el cuartel y el nodo vial no modelado; sin tráfico ni cierres actuales']
+        row['network']={k:dataset['validation'].get(k) for k in ['nodes','directed_edges','strong_count','weak_count']}
+        row['base']=dataset['validation'].get('road_routing',{}).get('base')
     return row
 
 
 class Handler(BaseHTTPRequestHandler):
     def do_GET(self):
-        if self.path=="/":
-            body=("<!doctype html><html lang='es'><meta charset='utf-8'><title>Base de ruteo</title>"
-                  "<h1>Base SQL y topología</h1><p>Servicio de diagnóstico de la parte de Diego Muñoz.</p>"
-                  "<p>La interfaz Leaflet y la comparación de algoritmos se integran en los módulos del equipo.</p>"
-                  "<ul><li><a href='/health'>Estado</a></li><li><a href='/api/topologia'>Auditoría topológica</a></li></ul></html>").encode()
-            return self.reply(200,body,"text/html; charset=utf-8")
-        if self.path not in ("/health","/api/topologia"):
+        parsed=urlsplit(self.path); path=parsed.path
+        static={'/':'index.html','/app.js':'app.js','/style.css':'style.css',
+                '/vendor/leaflet.js':'vendor/leaflet.js','/vendor/leaflet.css':'vendor/leaflet.css'}
+        if path in static:
+            file=ROOT/'Sitio Web'/static[path]
+            if file.is_file():
+                return self.reply(200,file.read_bytes(),mimetypes.guess_type(str(file))[0] or 'application/octet-stream')
+        if path not in ("/health","/api/topologia","/api/mapa","/api/ruta","/api/nodo"):
             return self.reply(404,b'{"error":"not_found"}')
         try:
             with connect() as conn:
                 current=status(conn)
                 if not current:
                     return self.reply(503,b'{"status":"not_ready"}')
-                if self.path=="/api/topologia":
+                if path=="/api/topologia":
                     current["topology"]=conn.execute("SELECT routing.topology_report(%s) AS report",(current["run_id"],)).fetchone()["report"]
+                    current['validation']=conn.execute("SELECT validation FROM routing.datasets WHERE run_id=%s AND dataset_key='I'",(current['run_id'],)).fetchone()['validation']
+                elif path=='/api/mapa':
+                    from core.routing import map_data
+                    current=map_data(conn,current['run_id'])
+                elif path=='/api/ruta':
+                    from core.routing import route
+                    params=parse_qs(parsed.query)
+                    text=params.get('destino',[''])[0]
+                    if not text.isdecimal() or not 0<int(text)<2**63:raise ValueError('destino debe ser un ID vial válido')
+                    current=route(conn,current['run_id'],int(text))
+                elif path=='/api/nodo':
+                    import math
+                    params=parse_qs(parsed.query)
+                    lon=float(params.get('lon',['nan'])[0]);lat=float(params.get('lat',['nan'])[0])
+                    if not math.isfinite(lon) or not math.isfinite(lat) or not -180<=lon<=180 or not -90<=lat<=90:
+                        raise ValueError('Coordenadas WGS84 inválidas')
+                    current=conn.execute("""WITH p AS (SELECT ST_SetSRID(ST_MakePoint(%s,%s),4326) AS wgs),
+                        a AS (SELECT ST_SetSRID(ST_GeomFromGeoJSON((lineage#>'{aoi,geometry}')::text),4326) AS geom
+                        FROM routing.datasets WHERE run_id=%s AND dataset_key='I')
+                        SELECT n.id::text,ST_Distance(n.geom,ST_Transform(p.wgs,32719)) AS offset_m,
+                        ST_AsGeoJSON(ST_Transform(n.geom,4326))::jsonb AS geometry
+                        FROM routing.nodes n CROSS JOIN p CROSS JOIN a
+                        WHERE n.run_id=%s AND ST_Covers(a.geom,p.wgs) AND ST_DWithin(n.geom,ST_Transform(p.wgs,32719),100)
+                        ORDER BY n.geom<->ST_Transform(p.wgs,32719),n.id LIMIT 1""",(lon,lat,current['run_id'],current['run_id'])).fetchone()
+                    if not current:raise ValueError('Selecciona un punto dentro del polígono y a menos de 100 m de una calle de la red')
             return self.reply(200,json.dumps(safe_numbers(current),ensure_ascii=False,default=str).encode())
+        except ValueError as exc:
+            return self.reply(422,json.dumps({'error':str(exc)},ensure_ascii=False).encode())
         except Exception:
             logging.exception("Consulta de diagnóstico falló")
             return self.reply(503,b'{"status":"database_unavailable"}')

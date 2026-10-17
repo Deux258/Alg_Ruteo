@@ -2,18 +2,19 @@
 
 ## Alcance disponible
 
-SQL, topología, Docker y main están implementados para `scope=base,mode=snapshot`.
-El adaptador recorta los GeoJSON auténticos de fase 1 al polígono aportado por el usuario.
+SQL, topología, Docker, main, extracción vial online y Leaflet están implementados
+para `scope=base`. `snapshot` regenera desde originales conservados; `online`
+descarga OSM y dos capas SENAPRED y después regenera. El contrato vial es 2.0.
 
 Todos los módulos deben usar `config/proyecto.json:aoi_geojson` como límite de
 estudio. `bbox_wgs84` contiene su envolvente para solicitar datos; después deben
 filtrarse con el polígono real. El rectángulo antiguo queda en `legacy_bbox_wgs84`
-solo como procedencia. La infraestructura actual tiene 13 nodos y 62 arcos,
-sin bases candidatas; hay que regenerar la red y obtener bases para cubrir la
-nueva zona. Las ocho salidas pendientes no quedan territorialmente actualizadas
-por recortar únicamente la infraestructura.
-No se ha implementado el ET online, M1..M4/A1..A4, k alternativas, Yen, métricas
-de resiliencia ni Leaflet. Las tablas para esas funciones ya están disponibles.
+solo como procedencia. La red vial activa tiene 15.499 nodos, 28.974 arcos y una
+base real de origen (8.ª Comisaría Florida, SENAPRED CARABINEROS 2872). El nodo
+OSM de incorporación y la instalación se conservan separados. No se inventa un
+acceso. Las salidas M1..M4/A1..A4, k alternativas, Yen y métricas de resiliencia
+siguen pendientes; no se presentan como parte terminada de esta aplicación vial.
+Las tablas para integrarlas se conservan. El esquema completo tiene 25 tablas.
 
 ## Dar de alta un ET y un cargador
 
@@ -43,8 +44,8 @@ completo mientras falte algún dataset. El perfil base ejecuta solamente I, incl
 si se habilitan las otras entradas, para mantener una comprobación mínima aislada.
 La publicación de `scope=completo` exige los nueve datasets y conteos reconciliados.
 
-Para integrar el ET online de infraestructura, conservar los IDs y el contrato I,
-habilitar `online` en su entrada y reemplazar su comando ET. El main crea un run
+Para reemplazar o ampliar el ET vial existente, conservar los IDs y el contrato I.
+El main crea un run
 staging, toma `input_hash` de la salida I validada y luego llama su cargador. El
 productor debe identificar `extraction_mode=online` y conservar los originales y su
 linaje. No descargar datos nuevos para luego etiquetarlos como snapshot antiguo.
@@ -59,7 +60,7 @@ Los JSON tienen en su raíz, y los GeoJSON en un miembro `etl`, el sobre:
 | run_id | UUID recibido por el ET; todos los archivos del mismo flujo lo conservan. |
 | dataset_id | `uuid5(UUID(run_id), dataset_key)`; estable para ese run/salida. |
 | dataset_key | Una de I, M1..M4, A1..A4. |
-| source_id | Producto real S1..S7 según la asignación; I usa DERIVED_GRAPH. |
+| source_id | Producto real S1..S7 según la asignación; I vial usa DERIVED_ROADS, el legado DERIVED_GRAPH. |
 | observed_at / extracted_at | Fechas con zona UTC. Documentar el significado de observación, adquisición y validez. |
 | lineage | URL/consulta sin secretos, originales, hashes, parámetros, cobertura, paginación y transformaciones. |
 
@@ -105,8 +106,10 @@ run_id y length_km. Cost es longitud en km; reverse_cost es -1 porque cada senti
 es una fila. `routing.edge_sql(run_uuid)` produce una consulta controlada por run,
 útil para pruebas de pgRouting y algoritmos. No recibe texto SQL arbitrario.
 
-El cálculo de dos rutas distintas y su comparación corresponde a Eduardo. La
-consulta de humo de esta entrega no satisface por sí sola el criterio k>=2.
+La aplicación vial usa `routing.road_path` y `routing.road_state_sql` para respetar
+giros. No sustituirlos por `edge_sql` en la interfaz, porque este último es la
+referencia sin memoria de giros. Hay tres destinos demostrativos; no representan
+k alternativas al mismo destino. Ese cálculo y su comparación siguen pendientes.
 Las preferencias y amenazas deben afectar consultas propuestas separadas, nunca
 la columna generada de longitud ni la vista base.
 
@@ -116,13 +119,13 @@ convertirlos a BIGINT validado en el backend. `core.web.safe_numbers` protege lo
 IDs grandes del diagnóstico. No usar `parseInt` para convertirlos en Number.
 Transformar geometrías web a EPSG:4326; no publicar coordenadas UTM como GeoJSON WGS84.
 
-Para integrar el frontend/backend de Diego Hidalgo, cambiar `web.command` en
-Compose, mantener el rol de lectura y entregar `/health` con run_id, status y
-alcance real. El diagnóstico actual nunca afirma `phase2_complete=true`.
+Leaflet y el backend vial están en `Sitio Web` y `core.web`. Para ampliarlos,
+mantener el rol de lectura y `/health` con run_id, status y alcance real.
+La aplicación actual nunca afirma `phase2_complete=true`.
 
 ## Antes de declarar la fase completa
 
-Habilitar y probar los nueve ET/cargadores, integrar Leaflet y los algoritmos,
+Habilitar y probar los nueve ET/cargadores, ampliar Leaflet y los algoritmos,
 ejecutar main en frío y repetido en Docker, verificar casos sin ruta y completar la
 matriz de rúbrica en la presentación. La estructura preparada de tablas no acredita
 por sí misma adquisición de fuentes ni implementación de los módulos pendientes.

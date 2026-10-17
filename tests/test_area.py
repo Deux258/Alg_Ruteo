@@ -13,7 +13,7 @@ from core.contracts import ROOT, prepare_snapshot, validate_infrastructure
 class StudyArea(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.config = json.loads((ROOT/'config/proyecto.json').read_text(encoding='utf-8'))
+        cls.config = json.loads((ROOT/'config/proyecto_legacy.json').read_text(encoding='utf-8'))
         cls.area = load_area(ROOT/cls.config['aoi_geojson'])
         cls.doc = prepare_snapshot(cls.config)
 

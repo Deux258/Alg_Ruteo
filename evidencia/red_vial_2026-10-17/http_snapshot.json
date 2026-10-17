@@ -1,0 +1,92 @@
+{
+  "recorded_at_utc": "2026-10-17T22:20:37.325198+00:00",
+  "url": "http://127.0.0.1:18081",
+  "successful": true,
+  "checks": [
+    {
+      "path": "/health",
+      "status": 200,
+      "response": {
+        "run_id": "4718c905-d0bf-52bf-a82b-33525cc936fd",
+        "status": "ready",
+        "scope": "base",
+        "mode": "snapshot",
+        "phase2_complete": false,
+        "application": "road_routing",
+        "study_area": {
+          "file": "datos/entrada/aoi/Zona_Delimitada_Valpo.geojson",
+          "sha256": "7d3a0472f2e7fdde88d6316f89c31d6da50914e06cabb6bf8bd270ce54c905b7",
+          "candidate_bases": 1
+        },
+        "mission_ready": true,
+        "warnings": [
+          "Acceso entre el cuartel y el nodo vial no modelado; sin tráfico ni cierres actuales"
+        ],
+        "routing_ready": true,
+        "network": {
+          "nodes": 15499,
+          "directed_edges": 28974,
+          "strong_count": 1459,
+          "weak_count": 109
+        },
+        "base": {
+          "name": "8VA. COM. FLORIDA VALPO.",
+          "address": "Mariana Sarraeta 136, Cerro Florida",
+          "node_id": "8716049048730704023",
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              -71.621817,
+              -33.053137
+            ]
+          },
+          "provider_id": "2872",
+          "road_origin": {
+            "type": "Point",
+            "coordinates": [
+              -71.6217814,
+              -33.0531793
+            ]
+          },
+          "road_offset_m": 5.752035686119725
+        }
+      }
+    },
+    {
+      "path": "/api/nodo?lon=-71.6217814&lat=-33.0531793",
+      "status": 200,
+      "response": {
+        "id": "8716049048730704023",
+        "offset_m": 0.0,
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -71.6217814,
+            -33.0531793
+          ]
+        }
+      }
+    },
+    {
+      "path": "/api/nodo?lon=-71.5&lat=-33.05",
+      "status": 422,
+      "response": {
+        "error": "Selecciona un punto dentro del polígono y a menos de 100 m de una calle de la red"
+      }
+    },
+    {
+      "path": "/api/ruta?destino=abc",
+      "status": 422,
+      "response": {
+        "error": "destino debe ser un ID vial válido"
+      }
+    },
+    {
+      "path": "/api/ruta?destino=2648934237786465",
+      "status": 422,
+      "response": {
+        "error": "No existe una ruta permitida entre origen y destino dentro del polígono"
+      }
+    }
+  ]
+}

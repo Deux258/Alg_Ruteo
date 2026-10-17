@@ -103,9 +103,12 @@ def run(scope="base",mode="snapshot",run_id=None):
     config=json.loads((ROOT/"config/proyecto.json").read_text())
     if config["analysis_srid"]!=32719:
         raise ValueError("Esta versión de SQL requiere EPSG:32719")
+    if mode=='online':
+        from Infraestructura.descargar_vial import download
+        download(config)
     # En completo los ET externos pueden cambiar: una actualización usa nuevo run.
-    rid=str(UUID(run_id)) if run_id else (prepare_snapshot(config)["run_id"] if scope=="base" and mode=="snapshot" else str(uuid4()))
-    initial=prepare_snapshot(config,rid) if mode=="snapshot" else None
+    initial=prepare_snapshot(config,run_id,mode)
+    rid=initial['run_id']
     input_hash=initial["input_hash"] if initial else __import__('hashlib').sha256(rid.encode()).hexdigest()
     folder=ROOT/"datos/runs"/rid;folder.mkdir(parents=True,exist_ok=True)
     report={"run_id":rid,"scope":scope,"mode":mode,"steps":[],"phase2_complete":False}
@@ -134,6 +137,10 @@ def run(scope="base",mode="snapshot",run_id=None):
                         conn.execute("INSERT INTO routing.sources(source_id,product,url) VALUES(%s,%s,%s) ON CONFLICT(source_id) DO NOTHING",(s["id"],s["product"],s["url"]))
                     conn.execute("""INSERT INTO routing.sources(source_id,product,description)
                         VALUES('DERIVED_GRAPH','Red académica fase 1','Malla derivada S1/S2, adaptada sin pesos ni amenazas') ON CONFLICT DO NOTHING""")
+                    for source in [('DERIVED_ROADS','Red vial OSM / base SENAPRED','https://www.openstreetmap.org/copyright'),
+                                   ('SENAPRED_BOMBEROS','SENAPRED Servicios_2024 / BOMBEROS','https://services5.arcgis.com/i7S5PSnIJAUcWvSE/arcgis/rest/services/Servicios_2024/FeatureServer/1'),
+                                   ('SENAPRED_CARABINEROS','SENAPRED Servicios_2024 / CARABINEROS','https://services5.arcgis.com/i7S5PSnIJAUcWvSE/arcgis/rest/services/Servicios_2024/FeatureServer/3')]:
+                        conn.execute('INSERT INTO routing.sources(source_id,product,url) VALUES(%s,%s,%s) ON CONFLICT DO NOTHING',source)
                 for step in steps:
                     output=folder/step["output"];output.parent.mkdir(parents=True,exist_ok=True)
                     values=dict(run_id=rid,output=str(output),root=str(ROOT),mode=mode)
@@ -153,6 +160,8 @@ def run(scope="base",mode="snapshot",run_id=None):
             report["counts"]=verify_counts(conn,rid,scope)
             report["topology"]=audit(conn,rid)
             with conn.transaction():
+                conn.execute("UPDATE routing.datasets SET validation=%s WHERE run_id=%s AND dataset_key='I' AND EXISTS(SELECT 1 FROM routing.runs WHERE run_id=%s AND status='staging')",
+                             (Jsonb(report['topology']),rid,rid))
                 conn.execute("SELECT routing.publish_run(%s,%s)",(rid,scope))
             report["status"]="ready"
         except Exception as exc:
@@ -165,7 +174,9 @@ def run(scope="base",mode="snapshot",run_id=None):
             report["recorded_at_utc"]=datetime.now(timezone.utc).isoformat()
             write_json(folder/"resumen.json",report)
             conn.execute("SELECT pg_advisory_unlock(74260103)")
-    print(json.dumps(report,ensure_ascii=False,default=str))
+    compact={k:v for k,v in report.items() if k not in {'versions','topology'}}
+    compact['topology']={k:v for k,v in report.get('topology',{}).items() if k not in {'strong_components','weak_components'}}
+    print(json.dumps(compact,ensure_ascii=False,default=str))
     return report
 
 
