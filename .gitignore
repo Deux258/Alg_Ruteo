@@ -1,0 +1,7 @@
+.env
+__pycache__/
+*.pyc
+.venv/
+datos/runs/
+evidencia/local/
+*.log

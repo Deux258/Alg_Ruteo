@@ -1,0 +1,8 @@
+{
+  "project": "udp-ruteo-fase2", "analysis_srid": 32719,
+  "bbox_wgs84": [-71.59,-33.10,-71.49,-33.01],
+  "snapshot_directory": "datos/entrada/fase1",
+  "snapshot_observed_at": "2026-10-16T18:46:07.406713+00:00",
+  "schema_version": 1,
+  "notes": "Adaptador de una red previamente construida; no reemplaza el ET online de Ignacio."
+}

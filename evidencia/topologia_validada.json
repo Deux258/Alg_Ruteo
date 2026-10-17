@@ -1,0 +1,56 @@
+{
+  "counts": {
+    "I": 565
+  },
+  "duration_s": 0.041,
+  "idempotent": true,
+  "mode": "snapshot",
+  "phase2_complete": false,
+  "recorded_at_utc": "2026-10-17T01:21:58.202959+00:00",
+  "run_id": "a9ac53de-aa0d-554b-99ca-120f13850d7b",
+  "scope": "base",
+  "status": "ready",
+  "steps": [],
+  "topology": {
+    "dijkstra_smoke": {
+      "distance_km": 0.8,
+      "source": 7768945858957426996,
+      "steps": 1,
+      "target": 440781798167006522
+    },
+    "directed_edges": 480,
+    "invalid_edges": 0,
+    "isolated_nodes": 0,
+    "length_unit": "km",
+    "nodes": 85,
+    "reverse_cost": -1,
+    "srid": 32719,
+    "strong_components": [
+      {
+        "component": 92062789866149027,
+        "size": 75
+      },
+      {
+        "component": 816993815951233481,
+        "size": 10
+      }
+    ],
+    "strong_count": 2,
+    "weak_components": [
+      {
+        "component": 92062789866149027,
+        "size": 75
+      },
+      {
+        "component": 816993815951233481,
+        "size": 10
+      }
+    ],
+    "weak_count": 2
+  },
+  "versions": {
+    "pgrouting": "3.6.1",
+    "postgis": "POSTGIS=\"3.4.2 c19ce56\" [EXTENSION] PGSQL=\"160\" GEOS=\"3.12.1-CAPI-1.18.1\" PROJ=\"9.4.0 NETWORK_ENABLED=OFF URL_ENDPOINT=https://cdn.proj.org USER_WRITABLE_DIRECTORY=/root/.local/share/proj DATABASE_PATH=/workspace/scratch/5eacee8f170c/tmp/pgroot/usr/share/proj/proj.db\" LIBXML=\"2.9.14\" LIBJSON=\"0.17\" LIBPROTOBUF=\"1.4.1\" WAGYU=\"0.5.0 (Internal)\"",
+    "postgres": "PostgreSQL 16.15 (Ubuntu 16.15-0ubuntu0.24.04.1) on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0, 64-bit"
+  }
+}

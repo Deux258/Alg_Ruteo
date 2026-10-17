@@ -1,0 +1,8 @@
+{
+  "cli_version": "2.40.3+ds1-0ubuntu1~24.04.1",
+  "compose.yaml": "config --quiet: exit 0",
+  "compose.test.yaml": "config --quiet: exit 0",
+  "docker_engine_available": false,
+  "docker_build_executed": false,
+  "docker_runtime_executed": false
+}

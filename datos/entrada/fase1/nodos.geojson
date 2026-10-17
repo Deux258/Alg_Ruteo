@@ -1,0 +1,2053 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.58849373509953,
+          -33.087789891510134
+        ]
+      },
+      "properties": {
+        "id": 0,
+        "x": 258400.0,
+        "y": 6336000.0,
+        "lon": -71.58849373509953,
+        "lat": -33.087789891510134,
+        "elevacion_m": 422.044677734375,
+        "cobertura": "Bosques",
+        "meteo_celda_lon": -71.5,
+        "meteo_celda_lat": -33.0,
+        "tipo": "vigilancia",
+        "fuente": "malla UTM sobre CONAF 2019",
+        "id_fuente": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.58828241884363,
+          -33.08058107321515
+        ]
+      },
+      "properties": {
+        "id": 1,
+        "x": 258400.0,
+        "y": 6336800.0,
+        "lon": -71.58828241884363,
+        "lat": -33.08058107321515,
+        "elevacion_m": 343.45758056640625,
+        "cobertura": "Bosques",
+        "meteo_celda_lon": -71.5,
+        "meteo_celda_lat": -33.0,
+        "tipo": "vigilancia",
+        "fuente": "malla UTM sobre CONAF 2019",
+        "id_fuente": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.58743790634026,
+          -33.05174570460016
+        ]
+      },
+      "properties": {
+        "id": 2,
+        "x": 258400.0,
+        "y": 6340000.0,
+        "lon": -71.58743790634026,
+        "lat": -33.05174570460016,
+        "elevacion_m": 144.55189514160156,
+        "cobertura": "Bosques",
+        "meteo_celda_lon": -71.5,
+        "meteo_celda_lat": -33.0,
+        "tipo": "vigilancia",
+        "fuente": "malla UTM sobre CONAF 2019",
+        "id_fuente": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.58014080899324,
+          -33.09517637262145
+        ]
+      },
+      "properties": {
+        "id": 3,
+        "x": 259200.0,
+        "y": 6335200.0,
+        "lon": -71.58014080899324,
+        "lat": -33.09517637262145,
+        "elevacion_m": 438.5391540527344,
+        "cobertura": "Bosques",
+        "meteo_celda_lon": -71.5,
+        "meteo_celda_lat": -33.0,
+        "tipo": "vigilancia",
+        "fuente": "malla UTM sobre CONAF 2019",
+        "id_fuente": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.5799301148957,
+          -33.08796751528331
+        ]
+      },
+      "properties": {
+        "id": 4,
+        "x": 259200.0,
+        "y": 6336000.0,
+        "lon": -71.5799301148957,
+        "lat": -33.08796751528331,
+        "elevacion_m": 349.4732360839844,
+        "cobertura": "Bosques",
+        "meteo_celda_lon": -71.5,
+        "meteo_celda_lat": -33.0,
+        "tipo": "vigilancia",
+        "fuente": "malla UTM sobre CONAF 2019",
+        "id_fuente": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.57971949585219,
+          -33.08075864840655
+        ]
+      },
+      "properties": {
+        "id": 5,
+        "x": 259200.0,
+        "y": 6336800.0,
+        "lon": -71.57971949585219,
+        "lat": -33.08075864840655,
+        "elevacion_m": 323.7405090332031,
+        "cobertura": "Bosques",
+        "meteo_celda_lon": -71.5,
+        "meteo_celda_lat": -33.0,
+        "tipo": "vigilancia",
+        "fuente": "malla UTM sobre CONAF 2019",
+        "id_fuente": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.57950895183778,
+          -33.07354977199262
+        ]
+      },
+      "properties": {
+        "id": 6,
+        "x": 259200.0,
+        "y": 6337600.0,
+        "lon": -71.57950895183778,
+        "lat": -33.07354977199262,
+        "elevacion_m": 198.6352996826172,
+        "cobertura": "Bosques",
+        "meteo_celda_lon": -71.5,
+        "meteo_celda_lat": -33.0,
+        "tipo": "vigilancia",
+        "fuente": "malla UTM sobre CONAF 2019",
+        "id_fuente": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.57929848282757,
+          -33.066340886042916
+        ]
+      },
+      "properties": {
+        "id": 7,
+        "x": 259200.0,
+        "y": 6338400.0,
+        "lon": -71.57929848282757,
+        "lat": -33.066340886042916,
+        "elevacion_m": 186.11181640625,
+        "cobertura": "Bosques",
+        "meteo_celda_lon": -71.5,
+        "meteo_celda_lat": -33.0,
+        "tipo": "vigilancia",
+        "fuente": "malla UTM sobre CONAF 2019",
+        "id_fuente": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.57157641625005,
+          -33.09535345743648
+        ]
+      },
+      "properties": {
+        "id": 8,
+        "x": 260000.0,
+        "y": 6335200.0,
+        "lon": -71.57157641625005,
+        "lat": -33.09535345743648,
+        "elevacion_m": 434.7635192871094,
+        "cobertura": "Bosques",
+        "meteo_celda_lon": -71.5,
+        "meteo_celda_lat": -33.0,
+        "tipo": "vigilancia",
+        "fuente": "malla UTM sobre CONAF 2019",
+        "id_fuente": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.57136641963783,
+          -33.08814455166929
+        ]
+      },
+      "properties": {
+        "id": 9,
+        "x": 260000.0,
+        "y": 6336000.0,
+        "lon": -71.57136641963783,
+        "lat": -33.08814455166929,
+        "elevacion_m": 368.793701171875,
+        "cobertura": "Bosques",
+        "meteo_celda_lon": -71.5,
+        "meteo_celda_lat": -33.0,
+        "tipo": "vigilancia",
+        "fuente": "malla UTM sobre CONAF 2019",
+        "id_fuente": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.57115649783164,
+          -33.080935636371215
+        ]
+      },
+      "properties": {
+        "id": 10,
+        "x": 260000.0,
+        "y": 6336800.0,
+        "lon": -71.57115649783164,
+        "lat": -33.080935636371215,
+        "elevacion_m": 244.86988830566406,
+        "cobertura": "Bosques",
+        "meteo_celda_lon": -71.5,
+        "meteo_celda_lat": -33.0,
+        "tipo": "vigilancia",
+        "fuente": "malla UTM sobre CONAF 2019",
+        "id_fuente": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.56301194867599,
+          -33.09552995468644
+        ]
+      },
+      "properties": {
+        "id": 11,
+        "x": 260800.0,
+        "y": 6335200.0,
+        "lon": -71.56301194867599,
+        "lat": -33.09552995468644,
+        "elevacion_m": 368.3692626953125,
+        "cobertura": "Bosques",
+        "meteo_celda_lon": -71.5,
+        "meteo_celda_lat": -33.0,
+        "tipo": "vigilancia",
+        "fuente": "malla UTM sobre CONAF 2019",
+        "id_fuente": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.56280264957392,
+          -33.08832100065068
+        ]
+      },
+      "properties": {
+        "id": 12,
+        "x": 260800.0,
+        "y": 6336000.0,
+        "lon": -71.56280264957392,
+        "lat": -33.08832100065068,
+        "elevacion_m": 290.3757629394531,
+        "cobertura": "Bosques",
+        "meteo_celda_lon": -71.5,
+        "meteo_celda_lat": -33.0,
+        "tipo": "vigilancia",
+        "fuente": "malla UTM sobre CONAF 2019",
+        "id_fuente": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.56259342502989,
+          -33.08111203709176
+        ]
+      },
+      "properties": {
+        "id": 13,
+        "x": 260800.0,
+        "y": 6336800.0,
+        "lon": -71.56259342502989,
+        "lat": -33.08111203709176,
+        "elevacion_m": 207.57925415039062,
+        "cobertura": "Bosques",
+        "meteo_celda_lon": -71.5,
+        "meteo_celda_lat": -33.0,
+        "tipo": "vigilancia",
+        "fuente": "malla UTM sobre CONAF 2019",
+        "id_fuente": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.5623842750191,
+          -33.07390306401111
+        ]
+      },
+      "properties": {
+        "id": 14,
+        "x": 260800.0,
+        "y": 6337600.0,
+        "lon": -71.5623842750191,
+        "lat": -33.07390306401111,
+        "elevacion_m": 266.2635803222656,
+        "cobertura": "Bosques",
+        "meteo_celda_lon": -71.5,
+        "meteo_celda_lat": -33.0,
+        "tipo": "vigilancia",
+        "fuente": "malla UTM sobre CONAF 2019",
+        "id_fuente": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.5613396420982,
+          -33.03785805583173
+        ]
+      },
+      "properties": {
+        "id": 15,
+        "x": 260800.0,
+        "y": 6341600.0,
+        "lon": -71.5613396420982,
+        "lat": -33.03785805583173,
+        "elevacion_m": 142.34266662597656,
+        "cobertura": "Bosques",
+        "meteo_celda_lon": -71.5,
+        "meteo_celda_lat": -33.0,
+        "tipo": "vigilancia",
+        "fuente": "malla UTM sobre CONAF 2019",
+        "id_fuente": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.55444740651913,
+          -33.095705864354
+        ]
+      },
+      "properties": {
+        "id": 16,
+        "x": 261600.0,
+        "y": 6335200.0,
+        "lon": -71.55444740651913,
+        "lat": -33.095705864354,
+        "elevacion_m": 312.3505554199219,
+        "cobertura": "Bosques",
+        "meteo_celda_lon": -71.5,
+        "meteo_celda_lat": -33.0,
+        "tipo": "vigilancia",
+        "fuente": "malla UTM sobre CONAF 2019",
+        "id_fuente": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.554238804952,
+          -33.088496862210185
+        ]
+      },
+      "properties": {
+        "id": 17,
+        "x": 261600.0,
+        "y": 6336000.0,
+        "lon": -71.554238804952,
+        "lat": -33.088496862210185,
+        "elevacion_m": 276.46453857421875,
+        "cobertura": "Bosques",
+        "meteo_celda_lon": -71.5,
+        "meteo_celda_lat": -33.0,
+        "tipo": "vigilancia",
+        "fuente": "malla UTM sobre CONAF 2019",
+        "id_fuente": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.5540302776949,
+          -33.08128785055089
+        ]
+      },
+      "properties": {
+        "id": 18,
+        "x": 261600.0,
+        "y": 6336800.0,
+        "lon": -71.5540302776949,
+        "lat": -33.08128785055089,
+        "elevacion_m": 330.50830078125,
+        "cobertura": "Bosques",
+        "meteo_celda_lon": -71.5,
+        "meteo_celda_lat": -33.0,
+        "tipo": "vigilancia",
+        "fuente": "malla UTM sobre CONAF 2019",
+        "id_fuente": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.55382182472309,
+          -33.07407882937756
+        ]
+      },
+      "properties": {
+        "id": 19,
+        "x": 261600.0,
+        "y": 6337600.0,
+        "lon": -71.55382182472309,
+        "lat": -33.07407882937756,
+        "elevacion_m": 331.432373046875,
+        "cobertura": "Bosques",
+        "meteo_celda_lon": -71.5,
+        "meteo_celda_lat": -33.0,
+        "tipo": "vigilancia",
+        "fuente": "malla UTM sobre CONAF 2019",
+        "id_fuente": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.55361344601192,
+          -33.06686979869159
+        ]
+      },
+      "properties": {
+        "id": 20,
+        "x": 261600.0,
+        "y": 6338400.0,
+        "lon": -71.55361344601192,
+        "lat": -33.06686979869159,
+        "elevacion_m": 327.4884033203125,
+        "cobertura": "Bosques",
+        "meteo_celda_lon": -71.5,
+        "meteo_celda_lat": -33.0,
+        "tipo": "vigilancia",
+        "fuente": "malla UTM sobre CONAF 2019",
+        "id_fuente": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.55340514153674,
+          -33.059660758494424
+        ]
+      },
+      "properties": {
+        "id": 21,
+        "x": 261600.0,
+        "y": 6339200.0,
+        "lon": -71.55340514153674,
+        "lat": -33.059660758494424,
+        "elevacion_m": 306.1827697753906,
+        "cobertura": "Bosques",
+        "meteo_celda_lon": -71.5,
+        "meteo_celda_lat": -33.0,
+        "tipo": "vigilancia",
+        "fuente": "malla UTM sobre CONAF 2019",
+        "id_fuente": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.55319691127292,
+          -33.05245170878748
+        ]
+      },
+      "properties": {
+        "id": 22,
+        "x": 261600.0,
+        "y": 6340000.0,
+        "lon": -71.55319691127292,
+        "lat": -33.05245170878748,
+        "elevacion_m": 242.97613525390625,
+        "cobertura": "Bosques",
+        "meteo_celda_lon": -71.5,
+        "meteo_celda_lat": -33.0,
+        "tipo": "vigilancia",
+        "fuente": "malla UTM sobre CONAF 2019",
+        "id_fuente": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.55278067328078,
+          -33.03803358084995
+        ]
+      },
+      "properties": {
+        "id": 23,
+        "x": 261600.0,
+        "y": 6341600.0,
+        "lon": -71.55278067328078,
+        "lat": -33.03803358084995,
+        "elevacion_m": 122.03397369384766,
+        "cobertura": "Praderas y Matorrales",
+        "meteo_celda_lon": -71.5,
+        "meteo_celda_lat": -33.0,
+        "tipo": "vigilancia",
+        "fuente": "malla UTM sobre CONAF 2019",
+        "id_fuente": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.55257266550326,
+          -33.030824502622195
+        ]
+      },
+      "properties": {
+        "id": 24,
+        "x": 261600.0,
+        "y": 6342400.0,
+        "lon": -71.55257266550326,
+        "lat": -33.030824502622195,
+        "elevacion_m": 47.661441802978516,
+        "cobertura": "Bosques",
+        "meteo_celda_lon": -71.5,
+        "meteo_celda_lat": -33.0,
+        "tipo": "vigilancia",
+        "fuente": "malla UTM sobre CONAF 2019",
+        "id_fuente": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.54588279002758,
+          -33.095881186421884
+        ]
+      },
+      "properties": {
+        "id": 25,
+        "x": 262400.0,
+        "y": 6335200.0,
+        "lon": -71.54588279002758,
+        "lat": -33.095881186421884,
+        "elevacion_m": 333.2090148925781,
+        "cobertura": "Bosques",
+        "meteo_celda_lon": -71.5,
+        "meteo_celda_lat": -33.0,
+        "tipo": "vigilancia",
+        "fuente": "malla UTM sobre CONAF 2019",
+        "id_fuente": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.54567488602011,
+          -33.08867213633052
+        ]
+      },
+      "properties": {
+        "id": 26,
+        "x": 262400.0,
+        "y": 6336000.0,
+        "lon": -71.54567488602011,
+        "lat": -33.08867213633052,
+        "elevacion_m": 311.10052490234375,
+        "cobertura": "Bosques",
+        "meteo_celda_lon": -71.5,
+        "meteo_celda_lat": -33.0,
+        "tipo": "vigilancia",
+        "fuente": "malla UTM sobre CONAF 2019",
+        "id_fuente": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.5454670560746,
+          -33.08146307673135
+        ]
+      },
+      "properties": {
+        "id": 27,
+        "x": 262400.0,
+        "y": 6336800.0,
+        "lon": -71.5454670560746,
+        "lat": -33.08146307673135,
+        "elevacion_m": 299.72003173828125,
+        "cobertura": "Bosques",
+        "meteo_celda_lon": -71.5,
+        "meteo_celda_lat": -33.0,
+        "tipo": "vigilancia",
+        "fuente": "malla UTM sobre CONAF 2019",
+        "id_fuente": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.54525930016644,
+          -33.07425400762579
+        ]
+      },
+      "properties": {
+        "id": 28,
+        "x": 262400.0,
+        "y": 6337600.0,
+        "lon": -71.54525930016644,
+        "lat": -33.07425400762579,
+        "elevacion_m": 375.83599853515625,
+        "cobertura": "Bosques",
+        "meteo_celda_lon": -71.5,
+        "meteo_celda_lat": -33.0,
+        "tipo": "vigilancia",
+        "fuente": "malla UTM sobre CONAF 2019",
+        "id_fuente": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.54505161827105,
+          -33.067044929015246
+        ]
+      },
+      "properties": {
+        "id": 29,
+        "x": 262400.0,
+        "y": 6338400.0,
+        "lon": -71.54505161827105,
+        "lat": -33.067044929015246,
+        "elevacion_m": 340.5294494628906,
+        "cobertura": "Bosques",
+        "meteo_celda_lon": -71.5,
+        "meteo_celda_lat": -33.0,
+        "tipo": "vigilancia",
+        "fuente": "malla UTM sobre CONAF 2019",
+        "id_fuente": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.54484401036385,
+          -33.05983584090117
+        ]
+      },
+      "properties": {
+        "id": 30,
+        "x": 262400.0,
+        "y": 6339200.0,
+        "lon": -71.54484401036385,
+        "lat": -33.05983584090117,
+        "elevacion_m": 259.0452575683594,
+        "cobertura": "Bosques",
+        "meteo_celda_lon": -71.5,
+        "meteo_celda_lat": -33.0,
+        "tipo": "vigilancia",
+        "fuente": "malla UTM sobre CONAF 2019",
+        "id_fuente": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.54463647642028,
+          -33.05262674328496
+        ]
+      },
+      "properties": {
+        "id": 31,
+        "x": 262400.0,
+        "y": 6340000.0,
+        "lon": -71.54463647642028,
+        "lat": -33.05262674328496,
+        "elevacion_m": 211.8961639404297,
+        "cobertura": "Bosques",
+        "meteo_celda_lon": -71.5,
+        "meteo_celda_lat": -33.0,
+        "tipo": "vigilancia",
+        "fuente": "malla UTM sobre CONAF 2019",
+        "id_fuente": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.53731809944945,
+          -33.096055920872885
+        ]
+      },
+      "properties": {
+        "id": 32,
+        "x": 263200.0,
+        "y": 6335200.0,
+        "lon": -71.53731809944945,
+        "lat": -33.096055920872885,
+        "elevacion_m": 352.80914306640625,
+        "cobertura": "Bosques",
+        "meteo_celda_lon": -71.5,
+        "meteo_celda_lat": -33.0,
+        "tipo": "vigilancia",
+        "fuente": "malla UTM sobre CONAF 2019",
+        "id_fuente": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.53711089302625,
+          -33.08884682299448
+        ]
+      },
+      "properties": {
+        "id": 33,
+        "x": 263200.0,
+        "y": 6336000.0,
+        "lon": -71.53711089302625,
+        "lat": -33.08884682299448,
+        "elevacion_m": 358.3070373535156,
+        "cobertura": "Praderas y Matorrales",
+        "meteo_celda_lon": -71.5,
+        "meteo_celda_lat": -33.0,
+        "tipo": "vigilancia",
+        "fuente": "malla UTM sobre CONAF 2019",
+        "id_fuente": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.53690376041693,
+          -33.081637715615926
+        ]
+      },
+      "properties": {
+        "id": 34,
+        "x": 263200.0,
+        "y": 6336800.0,
+        "lon": -71.53690376041693,
+        "lat": -33.081637715615926,
+        "elevacion_m": 355.3958435058594,
+        "cobertura": "Praderas y Matorrales",
+        "meteo_celda_lon": -71.5,
+        "meteo_celda_lat": -33.0,
+        "tipo": "vigilancia",
+        "fuente": "malla UTM sobre CONAF 2019",
+        "id_fuente": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.53669670159701,
+          -33.074428598738606
+        ]
+      },
+      "properties": {
+        "id": 35,
+        "x": 263200.0,
+        "y": 6337600.0,
+        "lon": -71.53669670159701,
+        "lat": -33.074428598738606,
+        "elevacion_m": 359.301513671875,
+        "cobertura": "Bosques",
+        "meteo_celda_lon": -71.5,
+        "meteo_celda_lat": -33.0,
+        "tipo": "vigilancia",
+        "fuente": "malla UTM sobre CONAF 2019",
+        "id_fuente": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.53504288451757,
+          -33.0167553219349
+        ]
+      },
+      "properties": {
+        "id": 36,
+        "x": 263200.0,
+        "y": 6344000.0,
+        "lon": -71.53504288451757,
+        "lat": -33.0167553219349,
+        "elevacion_m": 66.83378601074219,
+        "cobertura": "Bosques",
+        "meteo_celda_lon": -71.5,
+        "meteo_celda_lat": -33.0,
+        "tipo": "vigilancia",
+        "fuente": "malla UTM sobre CONAF 2019",
+        "id_fuente": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.5287533350329,
+          -33.09623006768985
+        ]
+      },
+      "properties": {
+        "id": 37,
+        "x": 264000.0,
+        "y": 6335200.0,
+        "lon": -71.5287533350329,
+        "lat": -33.09623006768985,
+        "elevacion_m": 417.1478271484375,
+        "cobertura": "Bosques",
+        "meteo_celda_lon": -71.5,
+        "meteo_celda_lat": -33.0,
+        "tipo": "vigilancia",
+        "fuente": "malla UTM sobre CONAF 2019",
+        "id_fuente": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.52854682621849,
+          -33.08902092218494
+        ]
+      },
+      "properties": {
+        "id": 38,
+        "x": 264000.0,
+        "y": 6336000.0,
+        "lon": -71.52854682621849,
+        "lat": -33.08902092218494,
+        "elevacion_m": 384.9365539550781,
+        "cobertura": "Bosques",
+        "meteo_celda_lon": -71.5,
+        "meteo_celda_lat": -33.0,
+        "tipo": "vigilancia",
+        "fuente": "malla UTM sobre CONAF 2019",
+        "id_fuente": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.52834039096989,
+          -33.08181176718748
+        ]
+      },
+      "properties": {
+        "id": 39,
+        "x": 264000.0,
+        "y": 6336800.0,
+        "lon": -71.52834039096989,
+        "lat": -33.08181176718748,
+        "elevacion_m": 369.57586669921875,
+        "cobertura": "Bosques",
+        "meteo_celda_lon": -71.5,
+        "meteo_celda_lat": -33.0,
+        "tipo": "vigilancia",
+        "fuente": "malla UTM sobre CONAF 2019",
+        "id_fuente": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.52813402926272,
+          -33.074602602698874
+        ]
+      },
+      "properties": {
+        "id": 40,
+        "x": 264000.0,
+        "y": 6337600.0,
+        "lon": -71.52813402926272,
+        "lat": -33.074602602698874,
+        "elevacion_m": 296.39971923828125,
+        "cobertura": "Bosques",
+        "meteo_celda_lon": -71.5,
+        "meteo_celda_lat": -33.0,
+        "tipo": "vigilancia",
+        "fuente": "malla UTM sobre CONAF 2019",
+        "id_fuente": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.5279277410725,
+          -33.06739342872053
+        ]
+      },
+      "properties": {
+        "id": 41,
+        "x": 264000.0,
+        "y": 6338400.0,
+        "lon": -71.5279277410725,
+        "lat": -33.06739342872053,
+        "elevacion_m": 284.63714599609375,
+        "cobertura": "Bosques",
+        "meteo_celda_lon": -71.5,
+        "meteo_celda_lat": -33.0,
+        "tipo": "vigilancia",
+        "fuente": "malla UTM sobre CONAF 2019",
+        "id_fuente": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.52772152637486,
+          -33.060184245253865
+        ]
+      },
+      "properties": {
+        "id": 42,
+        "x": 264000.0,
+        "y": 6339200.0,
+        "lon": -71.52772152637486,
+        "lat": -33.060184245253865,
+        "elevacion_m": 248.34164428710938,
+        "cobertura": "Bosques",
+        "meteo_celda_lon": -71.5,
+        "meteo_celda_lat": -33.0,
+        "tipo": "vigilancia",
+        "fuente": "malla UTM sobre CONAF 2019",
+        "id_fuente": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.52751538514539,
+          -33.05297505230032
+        ]
+      },
+      "properties": {
+        "id": 43,
+        "x": 264000.0,
+        "y": 6340000.0,
+        "lon": -71.52751538514539,
+        "lat": -33.05297505230032,
+        "elevacion_m": 227.38587951660156,
+        "cobertura": "Bosques",
+        "meteo_celda_lon": -71.5,
+        "meteo_celda_lat": -33.0,
+        "tipo": "vigilancia",
+        "fuente": "malla UTM sobre CONAF 2019",
+        "id_fuente": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.5273093173597,
+          -33.04576584986124
+        ]
+      },
+      "properties": {
+        "id": 44,
+        "x": 264000.0,
+        "y": 6340800.0,
+        "lon": -71.5273093173597,
+        "lat": -33.04576584986124,
+        "elevacion_m": 165.5734100341797,
+        "cobertura": "Bosques",
+        "meteo_celda_lon": -71.5,
+        "meteo_celda_lat": -33.0,
+        "tipo": "vigilancia",
+        "fuente": "malla UTM sobre CONAF 2019",
+        "id_fuente": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.52018849702607,
+          -33.09640362685567
+        ]
+      },
+      "properties": {
+        "id": 45,
+        "x": 264800.0,
+        "y": 6335200.0,
+        "lon": -71.52018849702607,
+        "lat": -33.09640362685567,
+        "elevacion_m": 425.9497985839844,
+        "cobertura": "Bosques",
+        "meteo_celda_lon": -71.5,
+        "meteo_celda_lat": -33.0,
+        "tipo": "vigilancia",
+        "fuente": "malla UTM sobre CONAF 2019",
+        "id_fuente": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.51998268584488,
+          -33.089194433884806
+        ]
+      },
+      "properties": {
+        "id": 46,
+        "x": 264800.0,
+        "y": 6336000.0,
+        "lon": -71.51998268584488,
+        "lat": -33.089194433884806,
+        "elevacion_m": 348.8038635253906,
+        "cobertura": "Bosques",
+        "meteo_celda_lon": -71.5,
+        "meteo_celda_lat": -33.0,
+        "tipo": "vigilancia",
+        "fuente": "malla UTM sobre CONAF 2019",
+        "id_fuente": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.51977694798146,
+          -33.08198523142894
+        ]
+      },
+      "properties": {
+        "id": 47,
+        "x": 264800.0,
+        "y": 6336800.0,
+        "lon": -71.51977694798146,
+        "lat": -33.08198523142894,
+        "elevacion_m": 333.7788391113281,
+        "cobertura": "Bosques",
+        "meteo_celda_lon": -71.5,
+        "meteo_celda_lat": -33.0,
+        "tipo": "vigilancia",
+        "fuente": "malla UTM sobre CONAF 2019",
+        "id_fuente": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.51957128341144,
+          -33.074776019489526
+        ]
+      },
+      "properties": {
+        "id": 48,
+        "x": 264800.0,
+        "y": 6337600.0,
+        "lon": -71.51957128341144,
+        "lat": -33.074776019489526,
+        "elevacion_m": 257.1781921386719,
+        "cobertura": "Bosques",
+        "meteo_celda_lon": -71.5,
+        "meteo_celda_lat": -33.0,
+        "tipo": "vigilancia",
+        "fuente": "malla UTM sobre CONAF 2019",
+        "id_fuente": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.51936569211048,
+          -33.06756679806794
+        ]
+      },
+      "properties": {
+        "id": 49,
+        "x": 264800.0,
+        "y": 6338400.0,
+        "lon": -71.51936569211048,
+        "lat": -33.06756679806794,
+        "elevacion_m": 240.05259704589844,
+        "cobertura": "Bosques",
+        "meteo_celda_lon": -71.5,
+        "meteo_celda_lat": -33.0,
+        "tipo": "vigilancia",
+        "fuente": "malla UTM sobre CONAF 2019",
+        "id_fuente": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.51916017405425,
+          -33.06035756716564
+        ]
+      },
+      "properties": {
+        "id": 50,
+        "x": 264800.0,
+        "y": 6339200.0,
+        "lon": -71.51916017405425,
+        "lat": -33.06035756716564,
+        "elevacion_m": 147.16322326660156,
+        "cobertura": "Bosques",
+        "meteo_celda_lon": -71.5,
+        "meteo_celda_lat": -33.0,
+        "tipo": "vigilancia",
+        "fuente": "malla UTM sobre CONAF 2019",
+        "id_fuente": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.51895472921845,
+          -33.05314832678399
+        ]
+      },
+      "properties": {
+        "id": 51,
+        "x": 264800.0,
+        "y": 6340000.0,
+        "lon": -71.51895472921845,
+        "lat": -33.05314832678399,
+        "elevacion_m": 128.54148864746094,
+        "cobertura": "Bosques",
+        "meteo_celda_lon": -71.5,
+        "meteo_celda_lat": -33.0,
+        "tipo": "vigilancia",
+        "fuente": "malla UTM sobre CONAF 2019",
+        "id_fuente": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.51874935757876,
+          -33.04593907692442
+        ]
+      },
+      "properties": {
+        "id": 52,
+        "x": 264800.0,
+        "y": 6340800.0,
+        "lon": -71.51874935757876,
+        "lat": -33.04593907692442,
+        "elevacion_m": 118.15965270996094,
+        "cobertura": "Bosques",
+        "meteo_celda_lon": -71.5,
+        "meteo_celda_lat": -33.0,
+        "tipo": "vigilancia",
+        "fuente": "malla UTM sobre CONAF 2019",
+        "id_fuente": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.51854405911088,
+          -33.038729817588354
+        ]
+      },
+      "properties": {
+        "id": 53,
+        "x": 264800.0,
+        "y": 6341600.0,
+        "lon": -71.51854405911088,
+        "lat": -33.038729817588354,
+        "elevacion_m": 22.205718994140625,
+        "cobertura": "Praderas y Matorrales",
+        "meteo_celda_lon": -71.5,
+        "meteo_celda_lat": -33.0,
+        "tipo": "vigilancia",
+        "fuente": "malla UTM sobre CONAF 2019",
+        "id_fuente": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.51162358567711,
+          -33.09657659835334
+        ]
+      },
+      "properties": {
+        "id": 54,
+        "x": 265600.0,
+        "y": 6335200.0,
+        "lon": -71.51162358567711,
+        "lat": -33.09657659835334,
+        "elevacion_m": 412.4561462402344,
+        "cobertura": "Bosques",
+        "meteo_celda_lon": -71.5,
+        "meteo_celda_lat": -33.0,
+        "tipo": "vigilancia",
+        "fuente": "malla UTM sobre CONAF 2019",
+        "id_fuente": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.51141847215354,
+          -33.089367358077006
+        ]
+      },
+      "properties": {
+        "id": 55,
+        "x": 265600.0,
+        "y": 6336000.0,
+        "lon": -71.51141847215354,
+        "lat": -33.089367358077006,
+        "elevacion_m": 395.0959167480469,
+        "cobertura": "Bosques",
+        "meteo_celda_lon": -71.5,
+        "meteo_celda_lat": -33.0,
+        "tipo": "vigilancia",
+        "fuente": "malla UTM sobre CONAF 2019",
+        "id_fuente": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.51121343169963,
+          -33.082158108323256
+        ]
+      },
+      "properties": {
+        "id": 56,
+        "x": 265600.0,
+        "y": 6336800.0,
+        "lon": -71.51121343169963,
+        "lat": -33.082158108323256,
+        "elevacion_m": 275.2808532714844,
+        "cobertura": "Bosques",
+        "meteo_celda_lon": -71.5,
+        "meteo_celda_lat": -33.0,
+        "tipo": "vigilancia",
+        "fuente": "malla UTM sobre CONAF 2019",
+        "id_fuente": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.51100846429111,
+          -33.074948849093516
+        ]
+      },
+      "properties": {
+        "id": 57,
+        "x": 265600.0,
+        "y": 6337600.0,
+        "lon": -71.51100846429111,
+        "lat": -33.074948849093516,
+        "elevacion_m": 231.66653442382812,
+        "cobertura": "Bosques",
+        "meteo_celda_lon": -71.5,
+        "meteo_celda_lat": -33.0,
+        "tipo": "vigilancia",
+        "fuente": "malla UTM sobre CONAF 2019",
+        "id_fuente": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.51080356990371,
+          -33.06773958038917
+        ]
+      },
+      "properties": {
+        "id": 58,
+        "x": 265600.0,
+        "y": 6338400.0,
+        "lon": -71.51080356990371,
+        "lat": -33.06773958038917,
+        "elevacion_m": 171.5645294189453,
+        "cobertura": "Bosques",
+        "meteo_celda_lon": -71.5,
+        "meteo_celda_lat": -33.0,
+        "tipo": "vigilancia",
+        "fuente": "malla UTM sobre CONAF 2019",
+        "id_fuente": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.51059874851323,
+          -33.06053030221165
+        ]
+      },
+      "properties": {
+        "id": 59,
+        "x": 265600.0,
+        "y": 6339200.0,
+        "lon": -71.51059874851323,
+        "lat": -33.06053030221165,
+        "elevacion_m": 252.3824920654297,
+        "cobertura": "Bosques",
+        "meteo_celda_lon": -71.5,
+        "meteo_celda_lat": -33.0,
+        "tipo": "vigilancia",
+        "fuente": "malla UTM sobre CONAF 2019",
+        "id_fuente": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.51039400009537,
+          -33.053321014562336
+        ]
+      },
+      "properties": {
+        "id": 60,
+        "x": 265600.0,
+        "y": 6340000.0,
+        "lon": -71.51039400009537,
+        "lat": -33.053321014562336,
+        "elevacion_m": 146.02255249023438,
+        "cobertura": "Praderas y Matorrales",
+        "meteo_celda_lon": -71.5,
+        "meteo_celda_lat": -33.0,
+        "tipo": "vigilancia",
+        "fuente": "malla UTM sobre CONAF 2019",
+        "id_fuente": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.5030586012342,
+          -33.09674898216583
+        ]
+      },
+      "properties": {
+        "id": 61,
+        "x": 266400.0,
+        "y": 6335200.0,
+        "lon": -71.5030586012342,
+        "lat": -33.09674898216583,
+        "elevacion_m": 456.4523010253906,
+        "cobertura": "Bosques",
+        "meteo_celda_lon": -71.5,
+        "meteo_celda_lat": -33.0,
+        "tipo": "vigilancia",
+        "fuente": "malla UTM sobre CONAF 2019",
+        "id_fuente": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.50285418539252,
+          -33.089539694744595
+        ]
+      },
+      "properties": {
+        "id": 62,
+        "x": 266400.0,
+        "y": 6336000.0,
+        "lon": -71.50285418539252,
+        "lat": -33.089539694744595,
+        "elevacion_m": 309.40631103515625,
+        "cobertura": "Bosques",
+        "meteo_celda_lon": -71.5,
+        "meteo_celda_lat": -33.0,
+        "tipo": "vigilancia",
+        "fuente": "malla UTM sobre CONAF 2019",
+        "id_fuente": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.50264984237239,
+          -33.08233039785349
+        ]
+      },
+      "properties": {
+        "id": 63,
+        "x": 266400.0,
+        "y": 6336800.0,
+        "lon": -71.50264984237239,
+        "lat": -33.08233039785349,
+        "elevacion_m": 300.76971435546875,
+        "cobertura": "Praderas y Matorrales",
+        "meteo_celda_lon": -71.5,
+        "meteo_celda_lat": -33.0,
+        "tipo": "vigilancia",
+        "fuente": "malla UTM sobre CONAF 2019",
+        "id_fuente": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.50244557214965,
+          -33.07512109149391
+        ]
+      },
+      "properties": {
+        "id": 64,
+        "x": 266400.0,
+        "y": 6337600.0,
+        "lon": -71.50244557214965,
+        "lat": -33.07512109149391,
+        "elevacion_m": 237.57565307617188,
+        "cobertura": "Bosques",
+        "meteo_celda_lon": -71.5,
+        "meteo_celda_lat": -33.0,
+        "tipo": "vigilancia",
+        "fuente": "malla UTM sobre CONAF 2019",
+        "id_fuente": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.50224137470009,
+          -33.06791177566726
+        ]
+      },
+      "properties": {
+        "id": 65,
+        "x": 266400.0,
+        "y": 6338400.0,
+        "lon": -71.50224137470009,
+        "lat": -33.06791177566726,
+        "elevacion_m": 283.93341064453125,
+        "cobertura": "Bosques",
+        "meteo_celda_lon": -71.5,
+        "meteo_celda_lat": -33.0,
+        "tipo": "vigilancia",
+        "fuente": "malla UTM sobre CONAF 2019",
+        "id_fuente": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.50203724999956,
+          -33.06070245037497
+        ]
+      },
+      "properties": {
+        "id": 66,
+        "x": 266400.0,
+        "y": 6339200.0,
+        "lon": -71.50203724999956,
+        "lat": -33.06070245037497,
+        "elevacion_m": 229.68563842773438,
+        "cobertura": "Bosques",
+        "meteo_celda_lon": -71.5,
+        "meteo_celda_lat": -33.0,
+        "tipo": "vigilancia",
+        "fuente": "malla UTM sobre CONAF 2019",
+        "id_fuente": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.50183319802389,
+          -33.0534931156184
+        ]
+      },
+      "properties": {
+        "id": 67,
+        "x": 266400.0,
+        "y": 6340000.0,
+        "lon": -71.50183319802389,
+        "lat": -33.0534931156184,
+        "elevacion_m": 53.52676010131836,
+        "cobertura": "Praderas y Matorrales",
+        "meteo_celda_lon": -71.5,
+        "meteo_celda_lat": -33.0,
+        "tipo": "vigilancia",
+        "fuente": "malla UTM sobre CONAF 2019",
+        "id_fuente": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.50142531215066,
+          -33.03907441771809
+        ]
+      },
+      "properties": {
+        "id": 68,
+        "x": 266400.0,
+        "y": 6341600.0,
+        "lon": -71.50142531215066,
+        "lat": -33.03907441771809,
+        "elevacion_m": 87.96260833740234,
+        "cobertura": "Bosques",
+        "meteo_celda_lon": -71.5,
+        "meteo_celda_lat": -33.0,
+        "tipo": "vigilancia",
+        "fuente": "malla UTM sobre CONAF 2019",
+        "id_fuente": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.49449354394554,
+          -33.096920778276235
+        ]
+      },
+      "properties": {
+        "id": 69,
+        "x": 267200.0,
+        "y": 6335200.0,
+        "lon": -71.49449354394554,
+        "lat": -33.096920778276235,
+        "elevacion_m": 464.28515625,
+        "cobertura": "Bosques",
+        "meteo_celda_lon": -71.5,
+        "meteo_celda_lat": -33.0,
+        "tipo": "vigilancia",
+        "fuente": "malla UTM sobre CONAF 2019",
+        "id_fuente": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.49428982580996,
+          -33.08971144387064
+        ]
+      },
+      "properties": {
+        "id": 70,
+        "x": 267200.0,
+        "y": 6336000.0,
+        "lon": -71.49428982580996,
+        "lat": -33.08971144387064,
+        "elevacion_m": 377.94952392578125,
+        "cobertura": "Bosques",
+        "meteo_celda_lon": -71.5,
+        "meteo_celda_lat": -33.0,
+        "tipo": "vigilancia",
+        "fuente": "malla UTM sobre CONAF 2019",
+        "id_fuente": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.49408618024782,
+          -33.0825021000027
+        ]
+      },
+      "properties": {
+        "id": 71,
+        "x": 267200.0,
+        "y": 6336800.0,
+        "lon": -71.49408618024782,
+        "lat": -33.0825021000027,
+        "elevacion_m": 338.2323913574219,
+        "cobertura": "Bosques",
+        "meteo_celda_lon": -71.5,
+        "meteo_celda_lat": -33.0,
+        "tipo": "vigilancia",
+        "fuente": "malla UTM sobre CONAF 2019",
+        "id_fuente": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.493882607235,
+          -33.07529274667379
+        ]
+      },
+      "properties": {
+        "id": 72,
+        "x": 267200.0,
+        "y": 6337600.0,
+        "lon": -71.493882607235,
+        "lat": -33.07529274667379,
+        "elevacion_m": 298.9228820800781,
+        "cobertura": "Bosques",
+        "meteo_celda_lon": -71.5,
+        "meteo_celda_lat": -33.0,
+        "tipo": "vigilancia",
+        "fuente": "malla UTM sobre CONAF 2019",
+        "id_fuente": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.49367910674742,
+          -33.06808338388531
+        ]
+      },
+      "properties": {
+        "id": 73,
+        "x": 267200.0,
+        "y": 6338400.0,
+        "lon": -71.49367910674742,
+        "lat": -33.06808338388531,
+        "elevacion_m": 206.05804443359375,
+        "cobertura": "Bosques",
+        "meteo_celda_lon": -71.5,
+        "meteo_celda_lat": -33.0,
+        "tipo": "vigilancia",
+        "fuente": "malla UTM sobre CONAF 2019",
+        "id_fuente": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.493475678761,
+          -33.060874011638674
+        ]
+      },
+      "properties": {
+        "id": 74,
+        "x": 267200.0,
+        "y": 6339200.0,
+        "lon": -71.493475678761,
+        "lat": -33.060874011638674,
+        "elevacion_m": 110.22150421142578,
+        "cobertura": "Praderas y Matorrales",
+        "meteo_celda_lon": -71.5,
+        "meteo_celda_lat": -33.0,
+        "tipo": "vigilancia",
+        "fuente": "malla UTM sobre CONAF 2019",
+        "id_fuente": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.49327232325166,
+          -33.05366462993528
+        ]
+      },
+      "properties": {
+        "id": 75,
+        "x": 267200.0,
+        "y": 6340000.0,
+        "lon": -71.49327232325166,
+        "lat": -33.05366462993528,
+        "elevacion_m": 58.88639831542969,
+        "cobertura": "Bosques",
+        "meteo_celda_lon": -71.5,
+        "meteo_celda_lat": -33.0,
+        "tipo": "vigilancia",
+        "fuente": "malla UTM sobre CONAF 2019",
+        "id_fuente": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.49306904019535,
+          -33.0464552387765
+        ]
+      },
+      "properties": {
+        "id": 76,
+        "x": 267200.0,
+        "y": 6340800.0,
+        "lon": -71.49306904019535,
+        "lat": -33.0464552387765,
+        "elevacion_m": 146.63877868652344,
+        "cobertura": "Praderas y Matorrales",
+        "meteo_celda_lon": -71.5,
+        "meteo_celda_lat": -33.0,
+        "tipo": "vigilancia",
+        "fuente": "malla UTM sobre CONAF 2019",
+        "id_fuente": null
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.57644399,
+          -33.05891770899999
+        ]
+      },
+      "properties": {
+        "id": 77,
+        "x": 259446.35435759812,
+        "y": 6339229.829903148,
+        "lon": -71.57644399,
+        "lat": -33.05891770899999,
+        "elevacion_m": 239.08753967285156,
+        "cobertura": "Áreas Urbanas e Industriales",
+        "meteo_celda_lon": -71.5,
+        "meteo_celda_lat": -33.0,
+        "tipo": "base_candidata",
+        "fuente": "SENAPRED Servicios_2024",
+        "id_fuente": 108,
+        "nombre": "Décima Quinta de Valparaíso"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.5747585889999,
+          -33.05033613999999
+        ]
+      },
+      "properties": {
+        "id": 78,
+        "x": 259580.41338979767,
+        "y": 6340185.44626827,
+        "lon": -71.5747585889999,
+        "lat": -33.05033613999999,
+        "elevacion_m": 230.23928833007812,
+        "cobertura": "Áreas Urbanas e Industriales",
+        "meteo_celda_lon": -71.5,
+        "meteo_celda_lat": -33.0,
+        "tipo": "base_candidata",
+        "fuente": "SENAPRED Servicios_2024",
+        "id_fuente": 110,
+        "nombre": "Décima Cuarta de Valparaíso"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.554721961,
+          -33.03458866399998
+        ]
+      },
+      "properties": {
+        "id": 79,
+        "x": 261409.36380540606,
+        "y": 6341977.6515952535,
+        "lon": -71.554721961,
+        "lat": -33.03458866399998,
+        "elevacion_m": 127.43293762207031,
+        "cobertura": "Áreas Urbanas e Industriales",
+        "meteo_celda_lon": -71.5,
+        "meteo_celda_lat": -33.0,
+        "tipo": "base_candidata",
+        "fuente": "SENAPRED Servicios_2024",
+        "id_fuente": 132,
+        "nombre": "Séptima de Viña del Mar"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.5318205949999,
+          -33.0284184239999
+        ]
+      },
+      "properties": {
+        "id": 80,
+        "x": 263532.24607523787,
+        "y": 6342713.764829379,
+        "lon": -71.5318205949999,
+        "lat": -33.0284184239999,
+        "elevacion_m": 12.08915901184082,
+        "cobertura": "Áreas Urbanas e Industriales",
+        "meteo_celda_lon": -71.5,
+        "meteo_celda_lat": -33.0,
+        "tipo": "base_candidata",
+        "fuente": "SENAPRED Servicios_2024",
+        "id_fuente": 133,
+        "nombre": "Tercera de Viña del Mar"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.5547885989999,
+          -33.0268069329999
+        ]
+      },
+      "properties": {
+        "id": 81,
+        "x": 261382.14829072377,
+        "y": 6342840.538527885,
+        "lon": -71.5547885989999,
+        "lat": -33.0268069329999,
+        "elevacion_m": 13.617977142333984,
+        "cobertura": "Áreas Urbanas e Industriales",
+        "meteo_celda_lon": -71.5,
+        "meteo_celda_lat": -33.0,
+        "tipo": "base_candidata",
+        "fuente": "SENAPRED Servicios_2024",
+        "id_fuente": 134,
+        "nombre": "Primera de Viña del Mar"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.54999677,
+          -33.025812878
+        ]
+      },
+      "properties": {
+        "id": 82,
+        "x": 261827.1511884237,
+        "y": 6342961.661520307,
+        "lon": -71.54999677,
+        "lat": -33.025812878,
+        "elevacion_m": 8.770769119262695,
+        "cobertura": "Áreas Urbanas e Industriales",
+        "meteo_celda_lon": -71.5,
+        "meteo_celda_lat": -33.0,
+        "tipo": "base_candidata",
+        "fuente": "SENAPRED Servicios_2024",
+        "id_fuente": 135,
+        "nombre": "Segunda de Viña del Mar"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.541224125,
+          -33.013063091999996
+        ]
+      },
+      "properties": {
+        "id": 83,
+        "x": 262612.5493868408,
+        "y": 6344395.536848208,
+        "lon": -71.541224125,
+        "lat": -33.013063091999996,
+        "elevacion_m": 10.857417106628418,
+        "cobertura": "Áreas Urbanas e Industriales",
+        "meteo_celda_lon": -71.5,
+        "meteo_celda_lat": -33.0,
+        "tipo": "base_candidata",
+        "fuente": "SENAPRED Servicios_2024",
+        "id_fuente": 136,
+        "nombre": "Cuarta de Viña del Mar"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.5398971939999,
+          -33.0176186639999
+        ]
+      },
+      "properties": {
+        "id": 84,
+        "x": 262748.7486902698,
+        "y": 6343893.298651656,
+        "lon": -71.5398971939999,
+        "lat": -33.0176186639999,
+        "elevacion_m": 15.644930839538574,
+        "cobertura": "Áreas Urbanas e Industriales",
+        "meteo_celda_lon": -71.5,
+        "meteo_celda_lat": -33.0,
+        "tipo": "base_candidata",
+        "fuente": "SENAPRED Servicios_2024",
+        "id_fuente": 1400,
+        "nombre": "Viña del Mar"
+      }
+    }
+  ]
+}

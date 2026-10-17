@@ -1,0 +1,75 @@
+digraph BD {
+  graph [rankdir=LR, bgcolor="white", pad=0.3, nodesep=0.3, ranksep=0.8,
+         fontname="DejaVu Sans", fontsize=22, labelloc=t,
+         label="Fase 2 | Modelo de base de datos (22 tablas)\nCampos principales; estructura completa en crear_bd.sql\nAzul: procedencia e infraestructura | Verde: metadata | Rojo: amenazas | Violeta: rutas"];
+  node [shape=record, fontname="DejaVu Sans", fontsize=12, style=filled,
+        fillcolor="#EDF5F7", color="#087E8B", margin="0.13,0.09"];
+  edge [color="#65788A", fontname="DejaVu Sans", fontsize=10, arrowsize=0.7];
+  subgraph cluster_trace {
+    label=""; color="#C3D9E3";
+    schema_migrations [label="{schema_migrations|PK version\lchecksum\lapplied_at\l}"];
+    sources [label="{sources|PK source_id\lproduct / url\l}"];
+    runs [label="{runs|PK run_id\linput_hash\lscope / mode / status\lconfiguration\l}"];
+    datasets [label="{datasets|PK dataset_id\lUQ (run_id,dataset_key)\lFK run_id / source_id\lrecord_count / status\lsha256 / lineage / UTC\l}"];
+    publication [label="{publication|PK singleton\lFK run_id\lpublished_at\l}"];
+  }
+  subgraph cluster_graph {
+    label="";color="#C3D9E3";
+    nodes [label="{nodes|PK (run_id,id)\lUQ (run_id,natural_key)\lkind / source_record_id\lgeom Point\l}"];
+    edges [label="{edges|PK (run_id,id)\lFK (run_id,source/target)\lUQ (run_id,source,target)\lphysical_key\lgeom LineString\llength_km GENERATED\l}"];
+  }
+  subgraph cluster_metadata {
+    label="";color="#C6DDD1";
+    node [fillcolor="#F0F7F2",color="#44805C"];
+    base_metadata [label="{base_metadata|PK (run_id,node_id)\lFK node / dataset M1\lprovider_id / name\lcommune / address\l}"];
+    landcover [label="{landcover|PK (run_id,id)\lFK dataset M2\lcategory / source_year\lgeom MultiPolygon\l}"];
+    node_elevation [label="{node_elevation|PK (run_id,node_id)\lFK node / dataset M3\lelevation_m / quality\l}"];
+    weather [label="{weather|PK (run_id,id)\lFK dataset M4\lcell Point / valid_at\ltemperature / wind / rain\l}"];
+  }
+  subgraph cluster_hazard {
+    label="";color="#E4C5BE";
+    node [fillcolor="#FCF3F0",color="#A56857"];
+    hazards [label="{hazards|PK (run_id,id)\lFK dataset A1..A4\lkind / state / validity\lgeom / model_version\lsynthetic\l}"];
+    weather_hazards [label="{weather_hazards|PK (run_id,hazard_id)\lFK hazard weather\lFK weather_id\lreason\l}"];
+    thermal_events [label="{thermal_events|PK (run_id,hazard_id)\lFK hazard thermal\lacquired_at / confidence\lFRP / buffer_m\l}"];
+    airspace_zones [label="{airspace_zones|PK (run_id,hazard_id)\lFK hazard airspace\lcode / limits / conditions\lpage / original_record\l}"];
+    historical_risk [label="{historical_risk|PK (run_id,hazard_id)\lFK hazard historical\lordinal_class / period\l}"];
+    edge_hazard [label="{edge_hazard|PK (run_id,edge_id,hazard_id)\lFK edge / hazard\loverlap_fraction / blocked\l}"];
+  }
+  subgraph cluster_routing {
+    label="";color="#D0C9E4";
+    node [fillcolor="#F6F2FC",color="#80639F"];
+    profiles [label="{profiles|PK (profile_key,version)\lthresholds / settings\llambda / detour_factor\l}"];
+    route_sets [label="{route_sets|PK (run_id,id)\lFK source / target\lFK profile + version\lmethod / requested_at\l}"];
+    routes [label="{routes|PK (run_id,id)\lFK set_id\lrank / length_km / score\lgeom LineString\l}"];
+    route_edges [label="{route_edges|PK (run_id,route_id,seq)\lFK route / edge\lUQ route + edge\l}"];
+    evaluations [label="{evaluations|PK (run_id,set_id,scenario_sha256)\lFK route_set\lscenario_count / unknown_count\lresilience / results\l}"];
+  }
+  sources -> datasets [label="1:N"];
+  runs -> datasets [label="1:N"];
+  runs -> publication [label="1:0..1"];
+  datasets -> nodes [label="I 1:N"];
+  datasets -> edges [label="I 1:N"];
+  nodes -> edges [label="origen / destino 1:N"];
+  datasets -> landcover [label="M2 1:N"];
+  datasets -> weather [label="M4 1:N"];
+  datasets -> base_metadata [label="M1 1:N"];
+  datasets -> node_elevation [label="M3 1:N"];
+  nodes -> base_metadata [label="1:0..1"];
+  nodes -> node_elevation [label="1:0..1"];
+  datasets -> hazards [label="A1..A4 1:N"];
+  hazards -> weather_hazards [label="1:0..1"];
+  hazards -> thermal_events [label="1:0..1"];
+  hazards -> airspace_zones [label="1:0..1"];
+  hazards -> historical_risk [label="1:0..1"];
+  weather -> weather_hazards [label="1:N"];
+  hazards -> edge_hazard [label="1:N"];
+  edges -> edge_hazard [label="1:N"];
+  profiles -> route_sets [label="1:N"];
+  nodes -> route_sets [label="origen / destino 1:N"];
+  runs -> route_sets [label="1:N"];
+  route_sets -> routes [label="1:N"];
+  routes -> route_edges [label="1:N"];
+  edges -> route_edges [label="1:N"];
+  route_sets -> evaluations [label="1:N"];
+}

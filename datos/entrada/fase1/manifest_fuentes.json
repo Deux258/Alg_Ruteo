@@ -1,0 +1,92 @@
+{
+  "bbox_wgs84": [
+    -71.59,
+    -33.1,
+    -71.49,
+    -33.01
+  ],
+  "fuentes": [
+    {
+      "id": "S1",
+      "product": "SENAPRED Servicios_2024/BOMBEROS",
+      "file": "datos/originales/bomberos.geojson",
+      "url": "https://services5.arcgis.com/i7S5PSnIJAUcWvSE/arcgis/rest/services/Servicios_2024/FeatureServer/1/query?where=1%3D1&geometry=-71.59%2C-33.1%2C-71.49%2C-33.01&geometryType=esriGeometryEnvelope&inSR=4326&spatialRel=esriSpatialRelIntersects&outFields=objectid_1%2Cnombre%2Cnombre_del%2Ccomuna%2Cdireccion%2Cactualizad&outSR=4326&f=geojson&resultRecordCount=2000",
+      "sha256": "123f0f8c27f30f4de5f9ad8be97b8ed9a4123fbbe4cafbbbc836c8807ae88b1f",
+      "bytes": 2347,
+      "observado_utc": "2026-10-16T18:40:11.733160+00:00",
+      "http_status": 200,
+      "verificacion": "bytes obtenidos y conservados"
+    },
+    {
+      "id": "S2",
+      "product": "CONAF Valparaíso 2019, distribuido por CIREN",
+      "file": "datos/originales/vegetacion.geojson",
+      "url": "https://esri.ciren.cl/server/rest/services/RECURSOS_VEGETACIONALES_Y_USOS_DE_LA_TIERRA_1/MapServer/5/query?where=1%3D1&geometry=-71.59%2C-33.1%2C-71.49%2C-33.01&geometryType=esriGeometryEnvelope&inSR=4326&spatialRel=esriSpatialRelIntersects&outFields=%2A&outSR=4326&f=geojson&resultRecordCount=2000&orderByFields=OBJECTID",
+      "sha256": "a5758e76a42364ac59e038d68f722b30210be412c2208a5717ba1a4a5eacb3a0",
+      "bytes": 22555643,
+      "observado_utc": "2026-10-16T18:41:29.597147+00:00",
+      "http_status": 200,
+      "verificacion": "bytes obtenidos y conservados"
+    },
+    {
+      "id": "S3",
+      "product": "Copernicus GLO-30, celda S34 W072",
+      "file": "datos/originales/dem_completo.tif",
+      "url": "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_S34_00_W072_00_DEM/Copernicus_DSM_COG_10_S34_00_W072_00_DEM.tif",
+      "sha256": "41d64133c16b5704183212363bf0d2e735f36d1003491e5c28c3a52bd00dbc89",
+      "bytes": 33279328,
+      "observado_utc": "2026-10-16T18:46:07.406713+00:00",
+      "http_status": 200,
+      "verificacion": "bytes obtenidos y conservados",
+      "recorte": {
+        "file": "datos/procesados/relieve_aoi.tif",
+        "sha256": "9bb34c389bb9610d4feb2a044496b7439e1b92a8023d971b63cbadf1b7d66fb4",
+        "bytes": 386769
+      }
+    },
+    {
+      "id": "S4",
+      "product": "Open-Meteo / ECMWF IFS 0.25 grados",
+      "file": "datos/originales/meteorologia.json",
+      "url": "https://api.open-meteo.com/v1/forecast?latitude=-33.055&longitude=-71.54&hourly=temperature_2m%2Crelative_humidity_2m%2Cwind_speed_10m%2Cwind_direction_10m%2Cwind_gusts_10m%2Cprecipitation&forecast_days=2&timezone=UTC&wind_speed_unit=ms&models=ecmwf_ifs025",
+      "sha256": "accfebad8c783ceb81fecc07c6f3f059913fa491aa5083edde5f00592c9ecdbd",
+      "bytes": 2694,
+      "observado_utc": "2026-10-16T18:40:10.819137+00:00",
+      "http_status": 200,
+      "verificacion": "bytes obtenidos y conservados"
+    },
+    {
+      "id": "S5",
+      "product": "NASA FIRMS VIIRS NOAA-20 C2 South America 7d",
+      "file": "datos/originales/firms_noaa20_7d.csv",
+      "url": "https://firms.modaps.eosdis.nasa.gov/data/active_fire/noaa-20-viirs-c2/csv/J1_VIIRS_C2_South_America_7d.csv",
+      "sha256": "c9f18e50c1f7aa1b436a375870510b4d683e02d10dc6352fd72ef1836f929d7f",
+      "bytes": 6730469,
+      "observado_utc": "2026-10-16T18:39:45.543089+00:00",
+      "http_status": 200,
+      "verificacion": "bytes obtenidos y conservados"
+    },
+    {
+      "id": "S6",
+      "product": "DGAC AIP ENR 5.1",
+      "file": "datos/originales/aip_enr51.pdf",
+      "url": "https://aipchile.dgac.gob.cl/dasa/aip_chile_con_contenido/ais/2%20ENR%20Parte%202/ENR%205%20Zonas%20Prohibidas%2C%20Restringidas%20y%20Peligrosas/ENR%205.1-1%20Zonas%20P%2C%20R%2C%20D.pdf",
+      "sha256": "fd2d8e065ebd209832d2820abe3592b17f15fb84265f210a092d9df6fc77598d",
+      "bytes": 445770,
+      "observado_utc": "2026-10-16T18:36:49.186180+00:00",
+      "http_status": 200,
+      "verificacion": "bytes obtenidos y conservados"
+    },
+    {
+      "id": "S7",
+      "product": "SENAPRED densidad de incendios 2020-2024",
+      "file": "datos/originales/recurrencia.geojson",
+      "url": "https://services5.arcgis.com/i7S5PSnIJAUcWvSE/arcgis/rest/services/Amenaza_por_Incendio_Forestal_2024/FeatureServer/0/query?where=1%3D1&geometry=-71.59%2C-33.1%2C-71.49%2C-33.01&geometryType=esriGeometryEnvelope&inSR=4326&spatialRel=esriSpatialRelIntersects&outFields=%2A&outSR=4326&f=geojson&resultRecordCount=2000&orderByFields=objectid",
+      "sha256": "7c8c332d72242794595293f9d42f4490dfba65688b9130e1a3c3cd5f5fe94329",
+      "bytes": 311606,
+      "observado_utc": "2026-10-16T18:40:11.905211+00:00",
+      "http_status": 200,
+      "verificacion": "bytes obtenidos y conservados"
+    }
+  ]
+}
