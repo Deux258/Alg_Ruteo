@@ -1,5 +1,9 @@
 # Contrato I: infraestructura.json, versiones 1.0 (legada) y 2.0 (vial)
 
+La versión activa **3.0 aérea**, sus campos, metadata, amenazas y cargas están
+documentados en [DATOS_AEREOS.md](../docs/DATOS_AEREOS.md). Se mantienen debajo
+los contratos anteriores para regresiones, sin alterar su significado.
+
 ## Versión vial activa
 
 El formato 2.0 usa `source_id=DERIVED_ROADS`. `observed_at` es el timestamp de la

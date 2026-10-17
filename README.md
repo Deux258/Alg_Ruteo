@@ -1,97 +1,96 @@
-# Ruteo vial reproducible en Valparaíso
+# Simulador aéreo de drones en Valparaíso
 
-Aplicación Docker con PostgreSQL, PostGIS, pgRouting y Leaflet. Reconstruye calles
-reales de OpenStreetMap dentro del polígono suministrado y calcula rutas desde una
-instalación real del catálogo SENAPRED. Conserva el SQL y los snapshots anteriores;
-las extensiones se aplican mediante una migración explícita.
+Aplicación Docker con PostGIS, pgRouting y Leaflet. Permite elegir inicio y destino
+en el polígono del usuario, comparar rutas aéreas, dibujar bloqueos simulados y
+comprobar ida, observación, retorno y presupuesto restante.
 
-**Origen geográfico:** 8.ª Comisaría Florida, Valparaíso, registro SENAPRED
-CARABINEROS `2872`, coordenadas **[-71.621817, -33.053137]**. La municipalidad
-corrobora la instalación y su domicilio Mariana Sarraeta 136, Cerro Florida.
-El cálculo empieza en el nodo OSM `13049981860`, a **5,75 m** del punto del catálogo.
-No se inventa un acceso entre ambos. La selección como origen de referencia no
-implica operación ni autorización institucional para usar el recinto.
-
-La instantánea genera **15.499 nodos y 28.974 arcos dirigidos**. El límite es
-exactamente el GeoJSON adjunto de **54,92 km²**, no el límite administrativo completo
-de la comuna. Desde la base se alcanzan **13.249 nodos**; otros 2.250 no son
-alcanzables con este perfil y límite, y no se conectan artificialmente.
+**Es el simulador académico del informe: despeje vertical no verificado.**
+Las calles no condicionan el vuelo. OSM solo es un fondo opcional. Los puntos de
+navegación y corredores son derivados; no representan vuelos observados.
 
 ## Ejecutar
 
-Requiere Docker Desktop/Engine activo y Docker Compose. En Windows usar Bash de
-Git o WSL con Docker disponible. El host no necesita Python ni PostgreSQL.
+Desde Bash de Git o WSL, con Docker activo:
 
 ```bash
-chmod +x main
 ./main probar
 ./main
 ```
 
-Abrir http://127.0.0.1:8080 . `main` crea `.env` con contraseñas aleatorias si no
-existe. No versionar ese archivo. `WEB_PORT=18081 ./main` permite otro puerto.
+Abrir http://127.0.0.1:8080 . El host no necesita Python ni PostgreSQL.
+El arranque predeterminado ejecuta los nueve ETL y sus cargas; .env se genera con
+contraseñas aleatorias y nunca se versiona.
 
 ```bash
-./main iniciar --mode online  # descarga OSM y dos capas SENAPRED; reconstruye
-./main                       # reconstruye desde originales, sin consultas externas
+./main iniciar --mode online  # actualiza S1-S7 y crea otra instantánea
 ./main estado
-./main detener               # conserva datos; nunca borra volúmenes
+./main detener               # conserva volúmenes
 ```
 
-El arranque aplica SQL y migraciones, ejecuta ET/carga, valida geometrías,
-conectividad y rutas desde la base, publica atómicamente y habilita la web. Un
-error no sustituye el run publicado. Repetir el mismo snapshot conserva su run y
-no duplica datos. Una actualización online conserva las respuestas originales,
-consultas y hashes. Los fallos de proveedor se informan explícitamente.
+En la validación del 17 de octubre, la actualización online completa quedó
+bloqueada por un fallo DNS de `aipchile.dgac.gob.cl`. El arranque snapshot sí
+funcionó desde una BD vacía con el PDF oficial conservado y sus hashes verificados.
+El proceso online aborta ante una fuente incompleta y conserva la publicación anterior.
 
-`main probar` usa otra BD, efímera en `tmpfs`, y guarda los resultados en
-`evidencia/local`. El [informe vial](evidencia/red_vial_2026-10-17/INFORME.md)
-recoge las pruebas y el arranque desde una BD vacía.
+La instancia validada en este equipo usa http://127.0.0.1:18081 :
 
-## Representación y alcance
+```bash
+COMPOSE_PROJECT_NAME=udp-ruteo-valpo-aereo WEB_PORT=18081 ./main estado
+COMPOSE_PROJECT_NAME=udp-ruteo-valpo-aereo WEB_PORT=18081 ./main
+```
 
-Cada arco corresponde a vértices consecutivos de una vía OSM. Se conservan todos
-los vértices de forma y su procedencia. Las calles se conectan únicamente por
-nodos OSM compartidos; un cruce visual a distinta cota no crea una intersección.
+## Usar el mapa
 
-El perfil de **vehículo liviano** respeta sentidos, rotondas, accesos y barreras
-conocidas. Excluye escaleras, sendas peatonales, accesos restringidos y condiciones
-o dimensiones que no puede resolver. Se excluyen segmentos no completamente
-cubiertos por el polígono, sin fabricar extremos para ampliar la red.
+1. Elegir una base candidata o pulsar Seleccionar inicio y hacer clic en el mapa.
+2. Elegir destino por clic, coordenadas o un objetivo de vigilancia de ejemplo.
+3. Revisar la hora UTC y el selector de horas del pronóstico. La hora de descarga
+   puede quedar fuera del perfil: no se relajan los umbrales para dibujar rutas.
+4. Calcular hasta tres alternativas de misión o un trayecto de solo ida.
+5. Dibujar un bloqueo circular/poligonal y recalcular. En Estado de misión pueden
+   seleccionarse posición en un nodo, fase y tiempo ya consumido.
+6. Descargar el resultado con el escenario para reproducirlo.
 
-Las restricciones de giro OSM se convierten en secuencias de arcos prohibidas.
-Un autómata conserva esa memoria, incluida la restricción con vía intermedia,
-y `pgr_dijkstra` encuentra el mínimo sobre las transiciones permitidas. El costo
-de cada paso es únicamente `ST_Length(geom_32719)/1000`. La consulta clásica de
-Dijkstra sin giros se conserva como referencia interna.
+Una hora histórica admisible sirve para reproducir la simulación, no demuestra
+que las condiciones actuales permitan volar. La referencia Dijkstra por distancia
+ignora amenazas y autonomía y aparece identificada como referencia matemática.
 
-El límite se verifica en **WGS84**; las longitudes se calculan en **EPSG:32719**.
-Reproyectar un anillo de segmentos rectos cambia su interpolación entre vértices:
-no se utiliza ese efecto ni un buffer para modificar el límite suministrado.
+## Red, fuentes y límites
 
-La aplicación no incluye tráfico, cierres actuales ni comprobación en terreno de
-la señalización. Hay componentes no alcanzables por límites, sentidos y datos;
-la aplicación lo informa y rechaza esas rutas.
+La instantánea genera **87 nodos y 556 arcos**, con el GeoJSON original de
+54,92 km². Se usa una malla UTM de 800 m, ocho vecinos y radio local de 1.500 m,
+además de conexiones temporales verificadas de los extremos elegidos. No se
+modifican snapshots publicados al consultar.
 
-## Fuentes y documentación
+La base candidata inicial vuelve a ser **Décima Sexta de Valparaíso, Bomberos
+SENAPRED 104**, en [-71.657239211, -33.10190169]. Su aislamiento vial no implica
+un aislamiento aéreo. No se desplaza el punto ni se presupone autorización de uso.
+El inicio puede cambiarse libremente dentro del polígono para la simulación.
 
-- [Originales, licencias y regeneración](datos/entrada/vial/README.md).
-- [Polígono y diccionario espacial](datos/entrada/aoi/README.md).
-- [Contrato de infraestructura y cargador](Infraestructura/DICCIONARIO.md).
-- [SQL inicial](BD/crear_bd.sql) y [migración vial](BD/migraciones/002_red_vial.sql).
-- [Modelo ampliado](BD/diagrama_vial.svg).
-- [Interfaz y APIs](Sitio%20Web/README.md).
-- [Informe, mapas, rutas y pruebas](evidencia/red_vial_2026-10-17/INFORME.md).
+S1-S7 del informe están adquiridas: instalaciones, vegetación CONAF 2019, DSM
+Copernicus, pronóstico Open-Meteo, FIRMS, AIP y recurrencia histórica. Los nueve
+ETL tienen diccionarios y cargas tipadas. FIRMS devuelve cero detecciones aceptadas
+en este AOI; se registra como colección vacía, no como ausencia de incendio.
+AIP usa el catálogo acotado de tres zonas del informe. No es autorización de vuelo.
 
-Bomberos 104, Laguna Verde, se investigó y descartó: el polígono interrumpe su
-calle y solo deja unos 98 m de recorrido desde ella. No se relajó el límite para
-aparentar conectividad.
+El perfil académico conserva 10 m/s, 25 min, reserva 20 % y observación 60 s:
+presupuesto utilizable 1.200 s. La selección propuesta compara tiempo y exposición,
+respeta bloqueos y comprueba regreso. No modela energía vertical, sensores,
+obstáculos individuales, navegación reactiva ni telemetría real.
 
-`config/proyecto.json` selecciona la red vial. `config/proyecto_legacy.json`
-conserva la malla anterior para regresiones. Los originales de fase 1 y sus
-informes permanecen intactos. El DDL inicial no se reescribe: ahora hay **25 tablas**,
-con tres nuevas para la base, los estados y las transiciones.
+## Documentación y evidencia
 
-La entrega grupal completa continúa separada de esta aplicación vial: los ocho
-ETL de metadata/amenazas y la evaluación resiliente de fase 3 siguen pendientes.
-`phase2_complete=false` conserva esa distinción.
+- [Datos, API, parámetros y diccionario](docs/DATOS_AEREOS.md).
+- [Originales S1-S7](datos/entrada/aereo/README.md).
+- [Informe y verificaciones](evidencia/aereo_2026-10-17/INFORME.md).
+- [SQL inicial](BD/crear_bd.sql) y [migración aérea](BD/migraciones/003_red_aerea.sql).
+- [Diagrama de la ampliación](BD/diagrama_aereo.svg).
+
+Se conservan la malla antigua y la implementación vial para regresiones, con
+config/proyecto_legacy.json y config/proyecto_vial.json. La migración nueva no
+reescribe el DDL ni las migraciones existentes. El esquema tiene 26 tablas.
+`etl_complete` acredita las nueve cargas; `phase2_complete=false` no declara
+terminada toda la evaluación de rúbrica o resiliencia del trabajo grupal.
+
+Las habilidades geomaster y webapp-testing se aplicaron; su uso y la referencia
+bibliográfica verificada de Scientific Agent Skills están documentados en
+[Datos aéreos](docs/DATOS_AEREOS.md#software-y-habilidades-aplicadas).

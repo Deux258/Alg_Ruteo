@@ -1,5 +1,6 @@
 name: udp-ruteo-fase2
 x-app: &app
+  platform: linux/amd64
   image: udp-ruteo-fase2-app:local
   build:
     context: .
@@ -39,6 +40,7 @@ services:
     volumes:
       - ./datos/runs:/app/datos/runs
       - ./datos/entrada/vial:/app/datos/entrada/vial
+      - ./datos/entrada/aereo:/app/datos/entrada/aereo
     depends_on:
       db: {condition: service_healthy}
     restart: 'no'

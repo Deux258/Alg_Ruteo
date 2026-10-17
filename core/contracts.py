@@ -55,7 +55,9 @@ def validate_infrastructure(doc, config=None):
         raise ValueError("dataset_id no corresponde al run y a I")
     validate_timestamp(doc["observed_at"])
     validate_timestamp(doc["extracted_at"])
-    config = config or json.loads((ROOT / "config/proyecto.json").read_text(encoding="utf-8"))
+    if config is None:
+        file='config/proyecto_vial.json' if doc['schema_version']=='2.0' else 'config/proyecto.json'
+        config=json.loads((ROOT/file).read_text(encoding='utf-8'))
     area_path = ROOT / config["aoi_geojson"]
     area = load_area(area_path)
     aoi_lineage = doc["lineage"].get("aoi", {})
@@ -97,7 +99,11 @@ def validate_infrastructure(doc, config=None):
         edge_ids.add(edge["id"])
         pairs.add((s, t))
     builder = "fase1-polygon-adapter-v2"
-    if doc['schema_version'] == '2.0':
+    if doc['schema_version'] == '3.0':
+        from core.aerial_data import validate
+        validate(doc,config)
+        builder='aerial-grid-v1'
+    elif doc['schema_version'] == '2.0':
         from core.roads import validate_road_provenance
         validate_road_provenance(doc, config)
         builder = 'osm-road-adapter-v1'
@@ -112,6 +118,9 @@ def validate_infrastructure(doc, config=None):
 
 
 def prepare_snapshot(config: dict, run_id: str | None = None, extraction_mode='snapshot'):
+    if config.get('network_type') == 'aerial_candidate':
+        from core.aerial_data import build
+        return validate_infrastructure(build(config,run_id,extraction_mode)[0],config)
     if config.get('network_type') == 'osm_motorcar':
         from core.roads import build_road_snapshot
         return build_road_snapshot(config,run_id,extraction_mode)

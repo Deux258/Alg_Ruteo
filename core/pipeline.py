@@ -99,6 +99,10 @@ def verify_counts(conn,rid,scope):
 
 
 def run(scope="base",mode="snapshot",run_id=None):
+    config=json.loads((ROOT/'config/proyecto.json').read_text())
+    if config.get('network_type')=='aerial_candidate':
+        from core.aerial_pipeline import run as aerial_run
+        return aerial_run(scope,mode,run_id)
     steps=preflight(scope,mode)
     config=json.loads((ROOT/"config/proyecto.json").read_text())
     if config["analysis_srid"]!=32719:
@@ -189,7 +193,9 @@ def main():
     args=parser.parse_args()
     try:
         if args.action=="preflight":
-            print(json.dumps({"steps":[s["key"] for s in preflight(args.scope,args.mode)]}))
+            cfg=json.loads((ROOT/'config/proyecto.json').read_text())
+            manifest=json.loads((ROOT/'config/pipeline_aereo.json').read_text()) if cfg.get('network_type')=='aerial_candidate' else None
+            print(json.dumps({"steps":[s["key"] for s in preflight(args.scope,args.mode,manifest)]}))
         else:
             run(args.scope,args.mode,args.run_id)
     except Exception as exc:

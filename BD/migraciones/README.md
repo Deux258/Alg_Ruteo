@@ -15,3 +15,7 @@ aplicadas. `002_red_vial.sql` es una migración real: añade procedencia vial,
 auditoría derivada y las tablas `base_locations`, `road_states` y
 `road_transitions`. Amplía los tipos de nodo sin cambiar ni borrar snapshots
 anteriores. `crear_bd.sql` permanece inmutable.
+
+`003_red_aerea.sql` añade `navegacion` y `aerial_models`, cuyo perfil/contexto son
+inmutables por run. El modelo completo tiene 26 tablas. Las consultas aéreas no
+insertan sus extremos temporales en los nodos publicados.

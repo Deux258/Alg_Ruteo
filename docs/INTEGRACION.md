@@ -1,5 +1,8 @@
 # Contratos para integrar el trabajo del equipo
 
+> Antecedente de la implementación vial. La integración activa aérea y los ETL
+> implementados están en [INTEGRACION_AEREA.md](INTEGRACION_AEREA.md).
+
 ## Alcance disponible
 
 SQL, topología, Docker, main, extracción vial online y Leaflet están implementados

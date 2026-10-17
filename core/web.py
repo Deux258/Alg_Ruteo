@@ -40,19 +40,48 @@ def status(conn):
         row['warnings']=['Acceso entre el cuartel y el nodo vial no modelado; sin tráfico ni cierres actuales']
         row['network']={k:dataset['validation'].get(k) for k in ['nodes','directed_edges','strong_count','weak_count']}
         row['base']=dataset['validation'].get('road_routing',{}).get('base')
+    if dataset and dataset['source_id']=='DERIVED_AERIAL':
+        row.update(application='aerial_simulator',routing_ready=True,mission_ready=True,clearance_verified=False,
+                   etl_complete=row['scope']=='completo',warnings=['Simulador académico; despeje vertical no verificado'])
+        row['network']={k:dataset['validation'].get(k) for k in ['nodes','directed_edges','strong_count','weak_count']}
     return row
 
 
 class Handler(BaseHTTPRequestHandler):
+    def do_POST(self):
+        if urlsplit(self.path).path not in ['/api/aereo/rutas','/api/aereo/replanificar']:
+            return self.reply(404,b'{"error":"not_found"}')
+        try:
+            length=int(self.headers.get('Content-Length','0'))
+            if not 0<length<=262144:raise ValueError('Solicitud vacía o mayor de 256 KiB')
+            request=json.loads(self.rfile.read(length))
+            with connect() as conn:
+                current=status(conn)
+                if not current:return self.reply(503,b'{"status":"not_ready"}')
+                from core.aerial_routing import calculate
+                result=calculate(conn,current['run_id'],request)
+            return self.reply(200,json.dumps(safe_numbers(result),ensure_ascii=False,allow_nan=False).encode())
+        except (ValueError,KeyError,TypeError) as exc:
+            return self.reply(422,json.dumps({'error':str(exc)},ensure_ascii=False).encode())
+        except Exception:
+            logging.exception('Consulta aérea falló')
+            return self.reply(503,b'{"error":"No se pudo calcular la ruta; revisar servicio y tiempo de consulta"}')
+
     def do_GET(self):
         parsed=urlsplit(self.path); path=parsed.path
-        static={'/':'index.html','/app.js':'app.js','/style.css':'style.css',
+        static={'/':'index.html','/app.js':'app.js','/aerial.js':'aerial.js','/vial.js':'vial.js','/style.css':'style.css',
                 '/vendor/leaflet.js':'vendor/leaflet.js','/vendor/leaflet.css':'vendor/leaflet.css'}
+        static.update({f'/vendor/images/{name}':f'vendor/images/{name}' for name in ['layers.png','layers-2x.png','marker-icon.png','marker-icon-2x.png','marker-shadow.png']})
         if path in static:
+            if path=='/':
+                with connect() as conn:
+                    current=status(conn)
+                    if current and current['application']=='road_routing':static['/']='index_vial.html'
+                    if current and current['application']=='aerial_simulator':static['/']='aerial.html'
             file=ROOT/'Sitio Web'/static[path]
             if file.is_file():
                 return self.reply(200,file.read_bytes(),mimetypes.guess_type(str(file))[0] or 'application/octet-stream')
-        if path not in ("/health","/api/topologia","/api/mapa","/api/ruta","/api/nodo"):
+        if path not in ("/health","/api/topologia","/api/mapa","/api/ruta","/api/nodo","/api/aereo/mapa"):
             return self.reply(404,b'{"error":"not_found"}')
         try:
             with connect() as conn:
@@ -62,8 +91,11 @@ class Handler(BaseHTTPRequestHandler):
                 if path=="/api/topologia":
                     current["topology"]=conn.execute("SELECT routing.topology_report(%s) AS report",(current["run_id"],)).fetchone()["report"]
                     current['validation']=conn.execute("SELECT validation FROM routing.datasets WHERE run_id=%s AND dataset_key='I'",(current['run_id'],)).fetchone()['validation']
-                elif path=='/api/mapa':
-                    from core.routing import map_data
+                elif path in ['/api/mapa','/api/aereo/mapa']:
+                    if current['application']=='aerial_simulator':
+                        from core.aerial_routing import map_data
+                    else:
+                        from core.routing import map_data
                     current=map_data(conn,current['run_id'])
                 elif path=='/api/ruta':
                     from core.routing import route

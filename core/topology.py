@@ -54,6 +54,12 @@ def load_infrastructure(conn, path):
             # legada. Las consultas de validación necesitan estadísticas actuales.
             for table in ['nodes','edges','road_states','road_transitions']:
                 conn.execute('ANALYZE routing.'+table)
+        if doc['schema_version']=='3.0':
+            from core.aerial_data import build
+            config=conn.execute('SELECT configuration FROM routing.runs WHERE run_id=%s',(rid,)).fetchone()['configuration']
+            context=build(config,str(rid),doc['extraction_mode'])[1]
+            conn.execute('INSERT INTO routing.aerial_models(run_id,profile,context) VALUES(%s,%s,%s)',(rid,Jsonb(context['profile']),Jsonb(context)))
+            conn.execute('ANALYZE routing.nodes');conn.execute('ANALYZE routing.edges')
     return {"idempotent": False, "nodes":len(doc["nodes"]), "edges":len(doc["edges"])}
 
 

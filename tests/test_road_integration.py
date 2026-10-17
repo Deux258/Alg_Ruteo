@@ -29,7 +29,7 @@ class RealRoadIntegration(unittest.TestCase):
             if os.getenv('REQUIRE_DB_TESTS')=='1':raise RuntimeError('Se requiere una BD Docker real')
             raise unittest.SkipTest('Ejecutar main probar para la red vial real')
         cls.conn=connect();apply_schema(cls.conn);create_reader(cls.conn)
-        cls.config=json.loads((ROOT/'config/proyecto.json').read_text())
+        cls.config=json.loads((ROOT/'config/proyecto_vial.json').read_text())
         cls.rid=uuid4();cls.doc=prepare_snapshot(cls.config,str(cls.rid))
         for source in ['DERIVED_ROADS','SENAPRED_BOMBEROS','SENAPRED_CARABINEROS']:
             cls.conn.execute('INSERT INTO routing.sources(source_id,product) VALUES(%s,%s) ON CONFLICT DO NOTHING',(source,source))
@@ -136,6 +136,6 @@ class RealRoadIntegration(unittest.TestCase):
             for endpoint in ['/api/ruta?destino=abc','/api/nodo?lon=-71.5&lat=-33.05']:
                 with self.assertRaises(urllib.error.HTTPError) as ctx:urllib.request.urlopen(url+endpoint)
                 self.assertEqual(ctx.exception.code,422)
-            with urllib.request.urlopen(url+'/') as r:self.assertIn('Ruteo por calles reales',r.read().decode())
+            with urllib.request.urlopen(url+'/') as r:self.assertIn('Ruteo por calles',r.read().decode())
             with urllib.request.urlopen(url+'/vendor/leaflet.js') as r:self.assertEqual(r.status,200)
         finally:server.shutdown();server.server_close();thread.join(timeout=5)

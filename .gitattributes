@@ -5,5 +5,7 @@ BD/migraciones/*.sql text eol=lf
 # Conservar exactamente el GeoJSON suministrado y su SHA-256.
 datos/entrada/aoi/*.geojson -text
 datos/entrada/vial/* -text
+datos/entrada/aereo/* -text
 evidencia/red_vial_2026-10-17/manifest_online.json -text
 "Sitio Web/vendor/*" -text
+"Sitio Web/vendor/images/*" -text

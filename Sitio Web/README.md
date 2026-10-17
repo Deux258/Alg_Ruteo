@@ -1,4 +1,11 @@
-# Interfaz de ruteo vial
+# Interfaces de ruteo
+
+La interfaz activa es el **simulador aéreo de drones**, servido desde
+`aerial.html` y `aerial.js`. Su uso, API y limitaciones están documentados en
+[README general](../README.md) y [Datos aéreos](../docs/DATOS_AEREOS.md).
+Permite elegir ambos extremos, comparar misiones y simular bloqueos.
+
+## Interfaz vial conservada para regresiones
 
 `core.web` sirve la interfaz Leaflet y las APIs de lectura: `/health`,
 `/api/topologia`, `/api/mapa`, `/api/nodo?lon=...&lat=...` y

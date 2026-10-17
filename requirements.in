@@ -3,3 +3,4 @@ jsonschema==4.25.1
 PyYAML==6.0.3
 pglast==7.10
 shapely==2.1.2
+# GIS/PDF dependencies are pinned with hashes in requirements.aerial.lock.

@@ -8,7 +8,7 @@ def main():
     args=p.parse_args()
     try:
         data=json.load(urllib.request.urlopen(args.url,timeout=5))
-        if data.get("status")!="ready" or (args.scope=="completo" and not data.get("phase2_complete")):
+        if data.get("status")!="ready" or (args.scope=="completo" and not (data.get("etl_complete") or data.get("phase2_complete"))):
             raise ValueError("Aplicación no acredita el alcance solicitado")
         print(json.dumps(data));return 0
     except Exception as exc:

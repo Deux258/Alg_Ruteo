@@ -1,0 +1,23 @@
+{
+  "project": "udp-ruteo-fase2", "analysis_srid": 32719,
+  "bbox_wgs84": [-71.66723294922228,-33.1122636505422,-71.54727801235427,-33.03885253538363],
+  "legacy_bbox_wgs84": [-71.59,-33.10,-71.49,-33.01],
+  "aoi_geojson": "datos/entrada/aoi/Zona_Delimitada_Valpo.geojson",
+  "network_type": "osm_motorcar",
+  "road_raw_directory": "datos/entrada/vial",
+  "selected_base": {
+    "provider_id": "2872",
+    "raw_source": "senapred_carabineros",
+    "source_id": "SENAPRED_CARABINEROS",
+    "provider_id_field": "objectid",
+    "name_field": "nombre_uni",
+    "confirmed_address": "Mariana Sarraeta 136, Cerro Florida",
+    "max_road_offset_m": 30,
+    "min_reachable_nodes": 1000,
+    "corroboration_url": "https://municipalidaddevalparaiso.cl/valposeguro/"
+  },
+  "snapshot_directory": "datos/entrada/fase1",
+  "snapshot_observed_at": "2026-10-16T18:46:07.406713+00:00",
+  "schema_version": 1,
+  "notes": "Red vial OSM para vehículo liviano. Origen real: 8va Comisaría Florida, SENAPRED CARABINEROS 2872, corroborada por el municipio. Se usa como referencia geográfica de origen; no implica operación ni autorización institucional. La base Bomberos 104 se descartó por quedar aislada por el polígono."
+}
