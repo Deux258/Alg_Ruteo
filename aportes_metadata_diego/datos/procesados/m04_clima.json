@@ -1,0 +1,458 @@
+{
+ "schema_version": "1.0",
+ "dataset_id": "m04_clima",
+ "fuente": "Open-Meteo (API)",
+ "fuente_url": "https://api.open-meteo.com/v1/forecast",
+ "obtenido_utc": "2026-10-18T06:14:24Z",
+ "crs": "EPSG:4326",
+ "cantidad": 48,
+ "celda_devuelta": {
+  "lat": -33.075573,
+  "lon": -71.64618,
+  "elevacion_modelo_m": 439.0
+ },
+ "unidades_originales": {
+  "time": "iso8601",
+  "temperature_2m": "°C",
+  "relative_humidity_2m": "%",
+  "wind_speed_10m": "m/s",
+  "wind_direction_10m": "°",
+  "wind_gusts_10m": "m/s",
+  "precipitation": "mm"
+ },
+ "nota": "Una celda gruesa cubre todo el AOI; no representa microclima local.",
+ "registros": [
+  {
+   "hora_utc": "2026-10-18T00:00:00Z",
+   "temperatura_c": 12.4,
+   "humedad_pct": 86,
+   "viento_ms": 5.3,
+   "viento_dir_grados": 181,
+   "rafaga_ms": 11.9,
+   "precipitacion_mm": 0.0
+  },
+  {
+   "hora_utc": "2026-10-18T01:00:00Z",
+   "temperatura_c": 12.2,
+   "humedad_pct": 86,
+   "viento_ms": 4.9,
+   "viento_dir_grados": 180,
+   "rafaga_ms": 11.1,
+   "precipitacion_mm": 0.0
+  },
+  {
+   "hora_utc": "2026-10-18T02:00:00Z",
+   "temperatura_c": 12.0,
+   "humedad_pct": 88,
+   "viento_ms": 4.98,
+   "viento_dir_grados": 186,
+   "rafaga_ms": 10.2,
+   "precipitacion_mm": 0.0
+  },
+  {
+   "hora_utc": "2026-10-18T03:00:00Z",
+   "temperatura_c": 11.6,
+   "humedad_pct": 91,
+   "viento_ms": 5.0,
+   "viento_dir_grados": 188,
+   "rafaga_ms": 10.3,
+   "precipitacion_mm": 0.0
+  },
+  {
+   "hora_utc": "2026-10-18T04:00:00Z",
+   "temperatura_c": 11.3,
+   "humedad_pct": 92,
+   "viento_ms": 4.93,
+   "viento_dir_grados": 186,
+   "rafaga_ms": 10.3,
+   "precipitacion_mm": 0.0
+  },
+  {
+   "hora_utc": "2026-10-18T05:00:00Z",
+   "temperatura_c": 11.2,
+   "humedad_pct": 90,
+   "viento_ms": 4.7,
+   "viento_dir_grados": 178,
+   "rafaga_ms": 10.3,
+   "precipitacion_mm": 0.0
+  },
+  {
+   "hora_utc": "2026-10-18T06:00:00Z",
+   "temperatura_c": 11.2,
+   "humedad_pct": 87,
+   "viento_ms": 3.85,
+   "viento_dir_grados": 171,
+   "rafaga_ms": 9.9,
+   "precipitacion_mm": 0.0
+  },
+  {
+   "hora_utc": "2026-10-18T07:00:00Z",
+   "temperatura_c": 11.0,
+   "humedad_pct": 85,
+   "viento_ms": 2.9,
+   "viento_dir_grados": 177,
+   "rafaga_ms": 8.1,
+   "precipitacion_mm": 0.0
+  },
+  {
+   "hora_utc": "2026-10-18T08:00:00Z",
+   "temperatura_c": 11.1,
+   "humedad_pct": 85,
+   "viento_ms": 3.1,
+   "viento_dir_grados": 182,
+   "rafaga_ms": 6.8,
+   "precipitacion_mm": 0.0
+  },
+  {
+   "hora_utc": "2026-10-18T09:00:00Z",
+   "temperatura_c": 10.4,
+   "humedad_pct": 87,
+   "viento_ms": 3.01,
+   "viento_dir_grados": 176,
+   "rafaga_ms": 6.7,
+   "precipitacion_mm": 0.0
+  },
+  {
+   "hora_utc": "2026-10-18T10:00:00Z",
+   "temperatura_c": 10.0,
+   "humedad_pct": 87,
+   "viento_ms": 3.12,
+   "viento_dir_grados": 168,
+   "rafaga_ms": 6.6,
+   "precipitacion_mm": 0.0
+  },
+  {
+   "hora_utc": "2026-10-18T11:00:00Z",
+   "temperatura_c": 11.3,
+   "humedad_pct": 82,
+   "viento_ms": 2.85,
+   "viento_dir_grados": 169,
+   "rafaga_ms": 6.5,
+   "precipitacion_mm": 0.0
+  },
+  {
+   "hora_utc": "2026-10-18T12:00:00Z",
+   "temperatura_c": 13.7,
+   "humedad_pct": 76,
+   "viento_ms": 2.45,
+   "viento_dir_grados": 180,
+   "rafaga_ms": 6.1,
+   "precipitacion_mm": 0.0
+  },
+  {
+   "hora_utc": "2026-10-18T13:00:00Z",
+   "temperatura_c": 15.7,
+   "humedad_pct": 71,
+   "viento_ms": 2.32,
+   "viento_dir_grados": 194,
+   "rafaga_ms": 6.3,
+   "precipitacion_mm": 0.0
+  },
+  {
+   "hora_utc": "2026-10-18T14:00:00Z",
+   "temperatura_c": 16.6,
+   "humedad_pct": 72,
+   "viento_ms": 2.98,
+   "viento_dir_grados": 220,
+   "rafaga_ms": 7.4,
+   "precipitacion_mm": 0.0
+  },
+  {
+   "hora_utc": "2026-10-18T15:00:00Z",
+   "temperatura_c": 17.4,
+   "humedad_pct": 71,
+   "viento_ms": 4.09,
+   "viento_dir_grados": 213,
+   "rafaga_ms": 9.7,
+   "precipitacion_mm": 0.0
+  },
+  {
+   "hora_utc": "2026-10-18T16:00:00Z",
+   "temperatura_c": 17.6,
+   "humedad_pct": 70,
+   "viento_ms": 4.5,
+   "viento_dir_grados": 217,
+   "rafaga_ms": 10.6,
+   "precipitacion_mm": 0.0
+  },
+  {
+   "hora_utc": "2026-10-18T17:00:00Z",
+   "temperatura_c": 16.7,
+   "humedad_pct": 72,
+   "viento_ms": 4.87,
+   "viento_dir_grados": 216,
+   "rafaga_ms": 11.1,
+   "precipitacion_mm": 0.0
+  },
+  {
+   "hora_utc": "2026-10-18T18:00:00Z",
+   "temperatura_c": 16.4,
+   "humedad_pct": 71,
+   "viento_ms": 5.21,
+   "viento_dir_grados": 214,
+   "rafaga_ms": 11.8,
+   "precipitacion_mm": 0.0
+  },
+  {
+   "hora_utc": "2026-10-18T19:00:00Z",
+   "temperatura_c": 15.8,
+   "humedad_pct": 70,
+   "viento_ms": 4.95,
+   "viento_dir_grados": 203,
+   "rafaga_ms": 11.9,
+   "precipitacion_mm": 0.0
+  },
+  {
+   "hora_utc": "2026-10-18T20:00:00Z",
+   "temperatura_c": 15.8,
+   "humedad_pct": 69,
+   "viento_ms": 5.0,
+   "viento_dir_grados": 196,
+   "rafaga_ms": 11.3,
+   "precipitacion_mm": 0.0
+  },
+  {
+   "hora_utc": "2026-10-18T21:00:00Z",
+   "temperatura_c": 14.7,
+   "humedad_pct": 75,
+   "viento_ms": 4.24,
+   "viento_dir_grados": 201,
+   "rafaga_ms": 11.4,
+   "precipitacion_mm": 0.0
+  },
+  {
+   "hora_utc": "2026-10-18T22:00:00Z",
+   "temperatura_c": 14.2,
+   "humedad_pct": 80,
+   "viento_ms": 4.03,
+   "viento_dir_grados": 187,
+   "rafaga_ms": 9.3,
+   "precipitacion_mm": 0.0
+  },
+  {
+   "hora_utc": "2026-10-18T23:00:00Z",
+   "temperatura_c": 13.6,
+   "humedad_pct": 82,
+   "viento_ms": 4.43,
+   "viento_dir_grados": 194,
+   "rafaga_ms": 9.1,
+   "precipitacion_mm": 0.0
+  },
+  {
+   "hora_utc": "2026-10-19T00:00:00Z",
+   "temperatura_c": 13.1,
+   "humedad_pct": 84,
+   "viento_ms": 3.42,
+   "viento_dir_grados": 186,
+   "rafaga_ms": 9.2,
+   "precipitacion_mm": 0.0
+  },
+  {
+   "hora_utc": "2026-10-19T01:00:00Z",
+   "temperatura_c": 12.7,
+   "humedad_pct": 88,
+   "viento_ms": 2.71,
+   "viento_dir_grados": 192,
+   "rafaga_ms": 7.3,
+   "precipitacion_mm": 0.0
+  },
+  {
+   "hora_utc": "2026-10-19T02:00:00Z",
+   "temperatura_c": 12.1,
+   "humedad_pct": 92,
+   "viento_ms": 0.86,
+   "viento_dir_grados": 170,
+   "rafaga_ms": 5.5,
+   "precipitacion_mm": 0.0
+  },
+  {
+   "hora_utc": "2026-10-19T03:00:00Z",
+   "temperatura_c": 12.3,
+   "humedad_pct": 89,
+   "viento_ms": 3.36,
+   "viento_dir_grados": 175,
+   "rafaga_ms": 6.4,
+   "precipitacion_mm": 0.0
+  },
+  {
+   "hora_utc": "2026-10-19T04:00:00Z",
+   "temperatura_c": 12.2,
+   "humedad_pct": 88,
+   "viento_ms": 0.56,
+   "viento_dir_grados": 80,
+   "rafaga_ms": 6.8,
+   "precipitacion_mm": 0.0
+  },
+  {
+   "hora_utc": "2026-10-19T05:00:00Z",
+   "temperatura_c": 12.3,
+   "humedad_pct": 88,
+   "viento_ms": 2.5,
+   "viento_dir_grados": 110,
+   "rafaga_ms": 4.8,
+   "precipitacion_mm": 0.0
+  },
+  {
+   "hora_utc": "2026-10-19T06:00:00Z",
+   "temperatura_c": 12.1,
+   "humedad_pct": 90,
+   "viento_ms": 0.28,
+   "viento_dir_grados": 45,
+   "rafaga_ms": 5.0,
+   "precipitacion_mm": 0.0
+  },
+  {
+   "hora_utc": "2026-10-19T07:00:00Z",
+   "temperatura_c": 12.1,
+   "humedad_pct": 89,
+   "viento_ms": 1.44,
+   "viento_dir_grados": 214,
+   "rafaga_ms": 2.4,
+   "precipitacion_mm": 0.0
+  },
+  {
+   "hora_utc": "2026-10-19T08:00:00Z",
+   "temperatura_c": 12.3,
+   "humedad_pct": 88,
+   "viento_ms": 2.1,
+   "viento_dir_grados": 180,
+   "rafaga_ms": 4.1,
+   "precipitacion_mm": 0.0
+  },
+  {
+   "hora_utc": "2026-10-19T09:00:00Z",
+   "temperatura_c": 12.5,
+   "humedad_pct": 83,
+   "viento_ms": 2.42,
+   "viento_dir_grados": 156,
+   "rafaga_ms": 5.0,
+   "precipitacion_mm": 0.0
+  },
+  {
+   "hora_utc": "2026-10-19T10:00:00Z",
+   "temperatura_c": 12.1,
+   "humedad_pct": 83,
+   "viento_ms": 1.25,
+   "viento_dir_grados": 127,
+   "rafaga_ms": 4.9,
+   "precipitacion_mm": 0.0
+  },
+  {
+   "hora_utc": "2026-10-19T11:00:00Z",
+   "temperatura_c": 12.9,
+   "humedad_pct": 81,
+   "viento_ms": 1.17,
+   "viento_dir_grados": 140,
+   "rafaga_ms": 2.8,
+   "precipitacion_mm": 0.0
+  },
+  {
+   "hora_utc": "2026-10-19T12:00:00Z",
+   "temperatura_c": 15.6,
+   "humedad_pct": 71,
+   "viento_ms": 1.5,
+   "viento_dir_grados": 180,
+   "rafaga_ms": 3.9,
+   "precipitacion_mm": 0.0
+  },
+  {
+   "hora_utc": "2026-10-19T13:00:00Z",
+   "temperatura_c": 17.4,
+   "humedad_pct": 60,
+   "viento_ms": 1.46,
+   "viento_dir_grados": 211,
+   "rafaga_ms": 4.3,
+   "precipitacion_mm": 0.0
+  },
+  {
+   "hora_utc": "2026-10-19T14:00:00Z",
+   "temperatura_c": 18.6,
+   "humedad_pct": 58,
+   "viento_ms": 2.05,
+   "viento_dir_grados": 214,
+   "rafaga_ms": 5.7,
+   "precipitacion_mm": 0.0
+  },
+  {
+   "hora_utc": "2026-10-19T15:00:00Z",
+   "temperatura_c": 19.6,
+   "humedad_pct": 61,
+   "viento_ms": 2.8,
+   "viento_dir_grados": 215,
+   "rafaga_ms": 7.2,
+   "precipitacion_mm": 0.0
+  },
+  {
+   "hora_utc": "2026-10-19T16:00:00Z",
+   "temperatura_c": 19.8,
+   "humedad_pct": 70,
+   "viento_ms": 3.54,
+   "viento_dir_grados": 226,
+   "rafaga_ms": 8.6,
+   "precipitacion_mm": 0.0
+  },
+  {
+   "hora_utc": "2026-10-19T17:00:00Z",
+   "temperatura_c": 19.1,
+   "humedad_pct": 73,
+   "viento_ms": 4.7,
+   "viento_dir_grados": 224,
+   "rafaga_ms": 11.1,
+   "precipitacion_mm": 0.0
+  },
+  {
+   "hora_utc": "2026-10-19T18:00:00Z",
+   "temperatura_c": 18.3,
+   "humedad_pct": 69,
+   "viento_ms": 4.85,
+   "viento_dir_grados": 221,
+   "rafaga_ms": 11.6,
+   "precipitacion_mm": 0.0
+  },
+  {
+   "hora_utc": "2026-10-19T19:00:00Z",
+   "temperatura_c": 17.5,
+   "humedad_pct": 63,
+   "viento_ms": 4.63,
+   "viento_dir_grados": 218,
+   "rafaga_ms": 12.0,
+   "precipitacion_mm": 0.0
+  },
+  {
+   "hora_utc": "2026-10-19T20:00:00Z",
+   "temperatura_c": 18.0,
+   "humedad_pct": 56,
+   "viento_ms": 4.0,
+   "viento_dir_grados": 189,
+   "rafaga_ms": 11.1,
+   "precipitacion_mm": 0.0
+  },
+  {
+   "hora_utc": "2026-10-19T21:00:00Z",
+   "temperatura_c": 19.3,
+   "humedad_pct": 54,
+   "viento_ms": 2.86,
+   "viento_dir_grados": 164,
+   "rafaga_ms": 9.2,
+   "precipitacion_mm": 0.0
+  },
+  {
+   "hora_utc": "2026-10-19T22:00:00Z",
+   "temperatura_c": 18.4,
+   "humedad_pct": 65,
+   "viento_ms": 1.76,
+   "viento_dir_grados": 185,
+   "rafaga_ms": 6.8,
+   "precipitacion_mm": 0.0
+  },
+  {
+   "hora_utc": "2026-10-19T23:00:00Z",
+   "temperatura_c": 16.7,
+   "humedad_pct": 78,
+   "viento_ms": 2.66,
+   "viento_dir_grados": 175,
+   "rafaga_ms": 6.1,
+   "precipitacion_mm": 0.1
+  }
+ ]
+}

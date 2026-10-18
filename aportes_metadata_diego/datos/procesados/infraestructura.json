@@ -1,0 +1,4 @@
+{"_nota": "ARCHIVO DE PRUEBA con nodos inventados; reemplazar por el real", "nodos": [
+ {"id": 1, "lon": -71.60, "lat": -33.08},
+ {"id": 2, "lon": -71.62, "lat": -33.07},
+ {"id": 3, "lon": -71.58, "lat": -33.09}]}
