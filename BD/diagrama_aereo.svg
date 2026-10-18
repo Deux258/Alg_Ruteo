@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1240" height="850" viewBox="0 0 1240 850">
+<rect width="1240" height="850" fill="#f7faf8"/>
+<style>text{font-family:Arial,sans-serif;fill:#233e43}.h{font-size:27px}.t{font-size:20px}.s{font-size:17px}.box{fill:white;stroke:#6b9586;stroke-width:1.5}.new{fill:#e4f2e7;stroke:#6b9586;stroke-width:1.5}.arrow{stroke:#6b858d;stroke-width:2;fill:none;marker-end:url(#a)}</style>
+<defs><marker id="a" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8" fill="none" stroke="#6b858d"/></marker></defs>
+<text x="40" y="48" class="h">Valparaíso · ampliación aérea del esquema (26 tablas)</text>
+<text x="40" y="82" class="s">SQL inicial + migraciones 002 y 003. Las claves y geometrías originales se conservan por run.</text>
+<rect x="40" y="125" width="300" height="140" rx="6" class="box"/><text x="60" y="158" class="t">runs</text><text x="60" y="192" class="s">PK run_id · hash · modo · alcance</text><text x="60" y="223" class="s">staging → ready / failed</text>
+<rect x="450" y="125" width="330" height="140" rx="6" class="box"/><text x="470" y="158" class="t">datasets</text><text x="470" y="192" class="s">FK run_id / source_id · SHA-256</text><text x="470" y="223" class="s">I, M1-M4, A1-A4 · linaje · conteos</text>
+<path d="M340,190 H450" class="arrow"/><text x="373" y="180" class="s">1:N</text>
+<rect x="870" y="125" width="330" height="170" rx="6" class="new"/><text x="890" y="158" class="t">aerial_models · nueva</text><text x="890" y="192" class="s">PK/FK run_id → runs</text><text x="890" y="223" class="s">profile JSONB · context JSONB</text><text x="890" y="254" class="s">clearance_verified = false</text>
+<path d="M190,125 V105 H1035 V125" class="arrow"/>
+<rect x="40" y="350" width="330" height="170" rx="6" class="box"/><text x="60" y="383" class="t">nodes</text><text x="60" y="417" class="s">PK (run_id, id) · clave natural</text><text x="60" y="448" class="s">Point EPSG:32719</text><text x="60" y="479" class="s">navegación / vigilancia / base</text>
+<rect x="450" y="350" width="330" height="170" rx="6" class="box"/><text x="470" y="383" class="t">edges</text><text x="470" y="417" class="s">FK source / target → nodes</text><text x="470" y="448" class="s">LineString · costo físico en km</text><text x="470" y="479" class="s">UQ run + source + target</text>
+<path d="M370,430 H450" class="arrow"/><path d="M615,265 V350" class="arrow"/><path d="M500,265 V310 H205 V350" class="arrow"/>
+<rect x="870" y="350" width="330" height="170" rx="6" class="box"/><text x="890" y="383" class="t">Metadata y amenazas</text><text x="890" y="417" class="s">Tablas tipadas existentes</text><text x="890" y="448" class="s">M1-M4 + hazards / subtipos A1-A4</text><text x="890" y="479" class="s">FK dataset y run · índices GIS</text>
+<path d="M780,230 H830 V430 H870" class="arrow"/>
+<rect x="40" y="580" width="1160" height="125" rx="6" class="new"/><text x="60" y="613" class="t">Consulta aérea de solo lectura</text><text x="60" y="646" class="s">Nodos/arcos publicados + extremos temporales → restricciones y costos → pgr_dijkstra / pgr_KSP → GeoJSON</text><text x="60" y="679" class="s">Los puntos elegidos y bloqueos simulados no alteran snapshots. Perfil y presupuesto se verifican por consulta.</text>
+<path d="M615,520 V580" class="arrow"/><path d="M1035,520 V580" class="arrow"/><path d="M1180,295 H1220 V640 H1200" class="arrow"/>
+<text x="40" y="756" class="s">Se mantienen las 22 tablas iniciales y las 3 de la extensión vial. aerial_models es la tabla 26.</text>
+<text x="40" y="791" class="s">Modelo anterior completo: diagrama.dot / diagrama_vial.svg. DDL autoritativo: crear_bd.sql + migraciones.</text>
+<text x="40" y="826" class="s">Despeje vertical no verificado; el esquema y sus pruebas no constituyen autorización ni validación operacional.</text>
+</svg>

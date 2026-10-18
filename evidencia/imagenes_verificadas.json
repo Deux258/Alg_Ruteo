@@ -1,0 +1,12 @@
+[
+  {
+    "image": "pgrouting/pgrouting:16-3.5-3.8.0",
+    "digest": "sha256:4c480c7f9e25a3490573cd6ef86b286fd21162e288cc355e8da2b52518ef6ab8",
+    "manifest_sha256": "4c480c7f9e25a3490573cd6ef86b286fd21162e288cc355e8da2b52518ef6ab8"
+  },
+  {
+    "image": "library/python:3.12.12-slim-bookworm",
+    "digest": "sha256:593bd06efe90efa80dc4eee3948be7c0fde4134606dd40d8dd8dbcade98e669c",
+    "manifest_sha256": "593bd06efe90efa80dc4eee3948be7c0fde4134606dd40d8dd8dbcade98e669c"
+  }
+]

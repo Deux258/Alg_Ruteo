@@ -1,0 +1,21 @@
+{
+  "builder": "aerial-grid-v1",
+  "grid_m": 800,
+  "neighbours": 8,
+  "max_link_m": 1500,
+  "air_speed_ms": 10,
+  "flight_minutes": 25,
+  "reserve_fraction": 0.2,
+  "observation_s": 60,
+  "wind_limit_ms": 8,
+  "temperature_min_c": -5,
+  "temperature_max_c": 40,
+  "weather_max_age_minutes": 90,
+  "thermal_buffer_m": 250,
+  "thermal_window_hours": 24,
+  "aip_margin_m": 300,
+  "alternatives": 3,
+  "detour_factor": 1.2,
+  "clearance_verified": false,
+  "operationally_certified": false
+}

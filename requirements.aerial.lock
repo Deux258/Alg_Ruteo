@@ -1,0 +1,10 @@
+# GIS/PDF: CPython 3.12 Linux amd64; base deps remain in requirements.lock
+affine==3.0.1 --hash=sha256:cda3b303325e7bf2bf34817e68753a0d1c4cacbdd451fe67c4878dc2ecbaa540
+certifi==2026.7.22 --hash=sha256:62f22742b58a1a33014a2b6b706588a8d7e2a88ae7bd1a6ebe8c992928483775
+click==8.5.0 --hash=sha256:255bc9599cf7748b4b1a446ccc735421bd08a2ae529a8b88597d3de5664ee360
+click-plugins==1.1.1.2 --hash=sha256:008d65743833ffc1f5417bf0e78e8d2c23aab04d9745ba817bd3e71b0feb6aa6
+cligj==0.7.2 --hash=sha256:c1ca117dbce1fe20a5809dc96f01e1c2840f6dcc939b3ddbb1111bf330ba82df
+pyparsing==3.3.3 --hash=sha256:ece8c00a69cf01b45d0b1dedabb469c90d8caf996d4fda40f147627a122849a4
+pypdf==6.1.1 --hash=sha256:7781f99493208a37a7d4275601d883e19af24e62a525c25844d22157c2e4cde7
+pyproj==3.7.2 --hash=sha256:1edc34266c0c23ced85f95a1ee8b47c9035eae6aca5b6b340327250e8e281630
+rasterio==1.4.3 --hash=sha256:8e90c2c300294265c16becc9822337ded0f01fb8664500b4d77890d633d8cd0e

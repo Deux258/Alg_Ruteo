@@ -1,0 +1,71 @@
+#!/usr/bin/env bash
+# El host requiere Bash y Docker Compose v2. No requiere Python ni PostgreSQL.
+set -Eeuo pipefail
+cd -- "$(dirname -- "${BASH_SOURCE[0]}")"
+
+help() {
+  cat <<'TXT'
+Uso: ./main [iniciar|probar|estado|detener|logs] [opciones]
+  iniciar (predeterminado)   Construye, aplica SQL, carga, valida y habilita web.
+  probar                    Ejecuta pruebas unitarias y BD desechable separada.
+  estado                    Muestra contenedores y salud del servicio.
+  detener                   Detiene servicios; conserva volúmenes.
+  logs                      Muestra logs recientes sin imprimir credenciales.
+Opciones de iniciar: --scope base|completo --mode snapshot|online --run-id UUID
+El modo snapshot reconstruye la red desde originales conservados, sin consultas externas.
+--mode online actualiza S1-S7 para la red aérea configurada. El alcance completo
+ejecuta infraestructura y los ocho ETL de metadata/amenazas del simulador.
+TXT
+}
+if [[ "${1:-}" == '-h' || "${1:-}" == '--help' ]]; then help; exit 0; fi
+action="${1:-iniciar}"
+if (($#)); then shift; fi
+case "$action" in iniciar|probar|estado|detener|logs) ;; *) help >&2; exit 2;; esac
+scope=completo;mode=snapshot;run_id=''
+while (($#)); do
+  case "$1" in
+    --scope) [[ $# -ge 2 ]] || exit 2;scope="$2";shift 2;;
+    --mode) [[ $# -ge 2 ]] || exit 2;mode="$2";shift 2;;
+    --run-id) [[ $# -ge 2 ]] || exit 2;run_id="$2";shift 2;;
+    *) echo "Opción desconocida: $1" >&2;exit 2;;
+  esac
+done
+[[ "$scope" == base || "$scope" == completo ]] || { echo 'scope inválido' >&2;exit 2; }
+[[ "$mode" == snapshot || "$mode" == online ]] || { echo 'mode inválido' >&2;exit 2; }
+command -v docker >/dev/null || { echo 'Falta Docker. Instalar Docker Desktop (con WSL2 en Windows) o Docker Engine + Compose v2.' >&2;exit 1; }
+docker compose version >/dev/null || { echo 'Falta Docker Compose v2.' >&2;exit 1; }
+docker info >/dev/null 2>&1 || { echo 'Docker no está disponible: iniciar Docker Desktop o el servicio Docker.' >&2;exit 1; }
+if [[ ! -e .env ]]; then
+  umask 077
+  db_pass="$(od -An -N32 -tx1 /dev/urandom | tr -d ' \n')"
+  web_pass="$(od -An -N32 -tx1 /dev/urandom | tr -d ' \n')"
+  { echo 'POSTGRES_DB=ruteo';echo 'POSTGRES_USER=postgres';
+    printf 'POSTGRES_PASSWORD=%s\nWEB_DB_PASSWORD=%s\nWEB_PORT=8080\n' "$db_pass" "$web_pass"; } > .env
+  unset db_pass web_pass
+fi
+compose=(docker compose --env-file .env)
+"${compose[@]}" config --quiet
+case "$action" in
+  iniciar)
+    mkdir -p datos/runs
+    "${compose[@]}" build etl web
+    "${compose[@]}" run --rm --no-deps etl python -m core.pipeline preflight --scope "$scope" --mode "$mode"
+    "${compose[@]}" up -d --wait db
+    args=(python -m core.pipeline run --scope "$scope" --mode "$mode")
+    [[ -z "$run_id" ]] || args+=(--run-id "$run_id")
+    # Una ejecución one-shot real; un fallo detiene main antes de habilitar web.
+    "${compose[@]}" run --rm --no-deps etl "${args[@]}"
+    "${compose[@]}" up -d --no-deps --wait web
+    "${compose[@]}" exec -T web python -m core.health --scope "$scope"
+    printf 'Aplicación de ruteo: http://%s\n' "$("${compose[@]}" port web 8000)"
+    ;;
+  probar)
+    docker compose --env-file .env -f compose.test.yaml up --build --abort-on-container-exit --exit-code-from tests
+    ;;
+  estado)
+    "${compose[@]}" ps
+    "${compose[@]}" exec -T web python -m core.health
+    ;;
+  detener) "${compose[@]}" down;;
+  logs) "${compose[@]}" logs --tail 100;;
+esac

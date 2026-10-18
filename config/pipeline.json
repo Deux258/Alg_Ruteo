@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "steps": [
+    {"key":"I","enabled":true,"depends_on":[],"modes":["snapshot","online"],
+     "extract":["python","-m","Infraestructura.preparar_snapshot","--run-id","{run_id}","--output","{output}","--mode","{mode}"],
+     "load":["python","-m","Infraestructura.cargar","{output}"],
+     "output":"infraestructura.json","dictionary":"Infraestructura/DICCIONARIO.md"},
+    {"key":"M1","enabled":false,"depends_on":["I"],"modes":["snapshot","online"],"extract":[],"load":[],"output":"metadata/bases.json","dictionary":"Metadata/m01_bases.md"},
+    {"key":"M2","enabled":false,"depends_on":["I"],"modes":["snapshot","online"],"extract":[],"load":[],"output":"metadata/cobertura.geojson","dictionary":"Metadata/m02_cobertura.md"},
+    {"key":"M3","enabled":false,"depends_on":["I"],"modes":["snapshot","online"],"extract":[],"load":[],"output":"metadata/elevacion.json","dictionary":"Metadata/m03_elevacion.md"},
+    {"key":"M4","enabled":false,"depends_on":["I"],"modes":["snapshot","online"],"extract":[],"load":[],"output":"metadata/clima.json","dictionary":"Metadata/m04_clima.md"},
+    {"key":"A1","enabled":false,"depends_on":["M4"],"modes":["snapshot","online"],"extract":[],"load":[],"output":"amenazas/clima.geojson","dictionary":"Amenazas/a01_clima.md"},
+    {"key":"A2","enabled":false,"depends_on":["I"],"modes":["snapshot","online"],"extract":[],"load":[],"output":"amenazas/firms.geojson","dictionary":"Amenazas/a02_firms.md"},
+    {"key":"A3","enabled":false,"depends_on":["I"],"modes":["snapshot","online"],"extract":[],"load":[],"output":"amenazas/aip.geojson","dictionary":"Amenazas/a03_aip.md"},
+    {"key":"A4","enabled":false,"depends_on":["I"],"modes":["snapshot","online"],"extract":[],"load":[],"output":"amenazas/historial.geojson","dictionary":"Amenazas/a04_historial.md"}
+  ]
+}

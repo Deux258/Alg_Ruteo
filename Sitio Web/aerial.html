@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="es">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Ruteo aéreo · Valparaíso</title><link rel="stylesheet" href="/vendor/leaflet.css"><link rel="stylesheet" href="/style.css"></head>
+<body>
+<header><div><p class="eyebrow">VALPARAÍSO, CHILE · VIGILANCIA FORESTAL</p><h1>Rutas aéreas para drones</h1></div><a href="/api/topologia" target="_blank" rel="noopener">Datos y diagnóstico ↗</a></header>
+<main><aside>
+<section><span class="label">PLANIFICAR RECORRIDO</span><p class="note">Simulador académico del informe. Despeje vertical no verificado. Los corredores pueden sobrevolar calles; no representan vuelos autorizados.</p>
+<label for="bases">Base candidata real</label><select id="bases"><option value="">Cargando…</option></select>
+<div class="pair"><button id="pick-origin" type="button">Seleccionar inicio</button><button id="pick-destination" type="button">Seleccionar destino</button></div>
+<label for="origin">Inicio · longitud, latitud</label><input id="origin" placeholder="−71.65, −33.10" aria-describedby="selection-help">
+<label for="destination">Destino · longitud, latitud</label><input id="destination" placeholder="Elige cualquier punto dentro del límite">
+<div class="pair"><button id="swap" class="secondary">Intercambiar</button><button id="reset" class="secondary">Restablecer</button></div>
+<p id="selection-help" class="small">Elige inicio y destino en el mapa o escribe sus coordenadas. No necesitan estar cerca de una calle.</p>
+<label for="examples">Objetivos de vigilancia de ejemplo</label><select id="examples"><option value="">Seleccionar objetivo</option></select>
+<label for="mode">Tipo de recorrido</label><select id="mode"><option value="mission">Misión: ida, observación y regreso</option><option value="trip">Trayecto: solo ida</option></select>
+<label for="method">Método</label><select id="method"><option value="proposed">Propuesto: restricciones, tiempo y exposición</option><option value="reference">Referencia Dijkstra: solo distancia</option></select>
+<label for="scenario-time">Hora del escenario (UTC)</label><input id="scenario-time" type="datetime-local" step="60">
+<label for="weather-hour">Horas disponibles del pronóstico</label><select id="weather-hour"><option value="">Elegir hora y ver condición</option></select><p class="small">Snapshot académico: puedes reproducir una hora pasada. No se presenta como pronóstico vigente.</p>
+<button id="calculate" disabled>Calcular rutas aéreas</button><p id="counts" class="small"></p></section>
+<section><span class="label">PROBLEMAS SIMULADOS</span><p class="small">Los eventos dibujados son sintéticos y se distinguen de FIRMS y AIP.</p>
+<label for="radius">Radio del bloqueo (m)</label><input id="radius" type="number" min="1" max="10000" value="250">
+<div class="pair"><button id="block-point" class="secondary">Bloqueo circular</button><button id="block-polygon" class="secondary">Dibujar polígono</button></div>
+<button id="finish-polygon" class="secondary" hidden>Cerrar polígono</button><button id="clear-events" class="secondary">Resolver bloqueos simulados</button><p id="events-status" class="small">Sin eventos simulados.</p></section>
+<section><details><summary>Estado de misión y replanificación</summary><p class="small">La replanificación discreta ocurre en nodos. No se inventan maniobras durante un segmento.</p>
+<label for="position">Posición simulada</label><select id="position"><option value="">Inicio de la misión</option></select>
+<label for="phase">Fase</label><select id="phase"><option value="outbound">Antes de observar</option><option value="return">Observación realizada: regreso</option><option value="emergency_return">Regreso sin completar vigilancia</option></select>
+<label for="elapsed">Tiempo ya consumido (s)</label><input id="elapsed" type="number" min="0" value="0">
+<label class="toggle"><input id="on-edge" type="checkbox"> Interrupción durante un segmento</label>
+<button id="replan">Replanificar misión</button></details></section>
+<section><div id="result" role="status" aria-live="polite">Cargando fuentes y red aérea…</div><div id="alternatives"></div><button id="export" class="secondary" disabled>Descargar resultado y escenario</button></section>
+<footer><p>Perfil académico: 10 m/s · 25 min · reserva 20 % · observación 60 s. Presupuesto utilizable: 1.200 s.</p><p>Las alternativas pueden compartir zonas de falla. La elevación superficial no equivale a altura de vuelo.</p><label class="toggle"><input id="tiles" type="checkbox"> Fondo OpenStreetMap (requiere internet)</label><p>S1–S7: SENAPRED, CONAF/CIREN, Copernicus, Open-Meteo, NASA FIRMS y DGAC/AIP. OSM se usa solo como fondo opcional.</p></footer>
+</aside><div id="map" aria-label="Mapa de corredores aéreos de Valparaíso"></div></main>
+<script src="/vendor/leaflet.js"></script><script src="/aerial.js"></script></body></html>

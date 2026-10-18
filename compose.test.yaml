@@ -1,0 +1,30 @@
+name: udp-ruteo-fase2-tests
+services:
+  dbtest:
+    image: pgrouting/pgrouting:16-3.5-3.8.0@sha256:4c480c7f9e25a3490573cd6ef86b286fd21162e288cc355e8da2b52518ef6ab8
+    platform: linux/amd64
+    environment:
+      POSTGRES_DB: ruteo_test
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Ejecutar ./main probar}
+    tmpfs: [/var/lib/postgresql/data]
+    healthcheck:
+      test: [CMD-SHELL, 'pg_isready -U postgres -d ruteo_test']
+      interval: 2s
+      timeout: 5s
+      retries: 40
+  tests:
+    platform: linux/amd64
+    build: {context: ., dockerfile: docker/Dockerfile.app}
+    command: [python, -m, core.test_runner]
+    environment:
+      DB_HOST: dbtest
+      DB_NAME: ruteo_test
+      DB_USER: postgres
+      DB_PASSWORD: ${POSTGRES_PASSWORD:?Ejecutar ./main probar}
+      WEB_DB_PASSWORD: ${WEB_DB_PASSWORD:?Ejecutar ./main probar}
+      REQUIRE_DB_TESTS: '1'
+    volumes:
+      - ./evidencia/local:/app/evidencia/local
+    depends_on:
+      dbtest: {condition: service_healthy}

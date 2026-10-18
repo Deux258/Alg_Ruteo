@@ -1,0 +1,282 @@
+{
+  "version": 2,
+  "steps": [
+    {
+      "key": "I",
+      "enabled": true,
+      "depends_on": [],
+      "modes": [
+        "snapshot",
+        "online"
+      ],
+      "extract": [
+        "python",
+        "-m",
+        "Infraestructura.preparar_snapshot",
+        "--run-id",
+        "{run_id}",
+        "--output",
+        "{output}",
+        "--mode",
+        "{mode}"
+      ],
+      "load": [
+        "python",
+        "-m",
+        "Infraestructura.cargar",
+        "{output}"
+      ],
+      "output": "infraestructura.json",
+      "dictionary": "Infraestructura/DICCIONARIO.md"
+    },
+    {
+      "key": "M1",
+      "enabled": true,
+      "depends_on": [
+        "I"
+      ],
+      "modes": [
+        "snapshot",
+        "online"
+      ],
+      "extract": [
+        "python",
+        "-m",
+        "Metadata.m1_bases",
+        "--run-id",
+        "{run_id}",
+        "--output",
+        "{output}",
+        "--mode",
+        "{mode}"
+      ],
+      "load": [
+        "python",
+        "-m",
+        "Metadata.m1_bases",
+        "--load",
+        "{output}"
+      ],
+      "output": "metadata/bases.json",
+      "dictionary": "Metadata/m1_bases.md"
+    },
+    {
+      "key": "M2",
+      "enabled": true,
+      "depends_on": [
+        "I"
+      ],
+      "modes": [
+        "snapshot",
+        "online"
+      ],
+      "extract": [
+        "python",
+        "-m",
+        "Metadata.m2_cobertura",
+        "--run-id",
+        "{run_id}",
+        "--output",
+        "{output}",
+        "--mode",
+        "{mode}"
+      ],
+      "load": [
+        "python",
+        "-m",
+        "Metadata.m2_cobertura",
+        "--load",
+        "{output}"
+      ],
+      "output": "metadata/cobertura.json",
+      "dictionary": "Metadata/m2_cobertura.md"
+    },
+    {
+      "key": "M3",
+      "enabled": true,
+      "depends_on": [
+        "I"
+      ],
+      "modes": [
+        "snapshot",
+        "online"
+      ],
+      "extract": [
+        "python",
+        "-m",
+        "Metadata.m3_elevacion",
+        "--run-id",
+        "{run_id}",
+        "--output",
+        "{output}",
+        "--mode",
+        "{mode}"
+      ],
+      "load": [
+        "python",
+        "-m",
+        "Metadata.m3_elevacion",
+        "--load",
+        "{output}"
+      ],
+      "output": "metadata/elevacion.json",
+      "dictionary": "Metadata/m3_elevacion.md"
+    },
+    {
+      "key": "M4",
+      "enabled": true,
+      "depends_on": [
+        "I"
+      ],
+      "modes": [
+        "snapshot",
+        "online"
+      ],
+      "extract": [
+        "python",
+        "-m",
+        "Metadata.m4_clima",
+        "--run-id",
+        "{run_id}",
+        "--output",
+        "{output}",
+        "--mode",
+        "{mode}"
+      ],
+      "load": [
+        "python",
+        "-m",
+        "Metadata.m4_clima",
+        "--load",
+        "{output}"
+      ],
+      "output": "metadata/clima.json",
+      "dictionary": "Metadata/m4_clima.md"
+    },
+    {
+      "key": "A1",
+      "enabled": true,
+      "depends_on": [
+        "I",
+        "M4"
+      ],
+      "modes": [
+        "snapshot",
+        "online"
+      ],
+      "extract": [
+        "python",
+        "-m",
+        "Amenazas.a1_meteorologia",
+        "--run-id",
+        "{run_id}",
+        "--output",
+        "{output}",
+        "--mode",
+        "{mode}"
+      ],
+      "load": [
+        "python",
+        "-m",
+        "Amenazas.a1_meteorologia",
+        "--load",
+        "{output}"
+      ],
+      "output": "amenazas/meteorologia.json",
+      "dictionary": "Amenazas/a1_meteorologia.md"
+    },
+    {
+      "key": "A2",
+      "enabled": true,
+      "depends_on": [
+        "I"
+      ],
+      "modes": [
+        "snapshot",
+        "online"
+      ],
+      "extract": [
+        "python",
+        "-m",
+        "Amenazas.a2_firms",
+        "--run-id",
+        "{run_id}",
+        "--output",
+        "{output}",
+        "--mode",
+        "{mode}"
+      ],
+      "load": [
+        "python",
+        "-m",
+        "Amenazas.a2_firms",
+        "--load",
+        "{output}"
+      ],
+      "output": "amenazas/firms.json",
+      "dictionary": "Amenazas/a2_firms.md"
+    },
+    {
+      "key": "A3",
+      "enabled": true,
+      "depends_on": [
+        "I"
+      ],
+      "modes": [
+        "snapshot",
+        "online"
+      ],
+      "extract": [
+        "python",
+        "-m",
+        "Amenazas.a3_aip",
+        "--run-id",
+        "{run_id}",
+        "--output",
+        "{output}",
+        "--mode",
+        "{mode}"
+      ],
+      "load": [
+        "python",
+        "-m",
+        "Amenazas.a3_aip",
+        "--load",
+        "{output}"
+      ],
+      "output": "amenazas/aip.json",
+      "dictionary": "Amenazas/a3_aip.md"
+    },
+    {
+      "key": "A4",
+      "enabled": true,
+      "depends_on": [
+        "I"
+      ],
+      "modes": [
+        "snapshot",
+        "online"
+      ],
+      "extract": [
+        "python",
+        "-m",
+        "Amenazas.a4_historial",
+        "--run-id",
+        "{run_id}",
+        "--output",
+        "{output}",
+        "--mode",
+        "{mode}"
+      ],
+      "load": [
+        "python",
+        "-m",
+        "Amenazas.a4_historial",
+        "--load",
+        "{output}"
+      ],
+      "output": "amenazas/historial.json",
+      "dictionary": "Amenazas/a4_historial.md"
+    }
+  ]
+}

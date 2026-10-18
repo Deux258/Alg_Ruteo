@@ -1,0 +1,3033 @@
+{
+  "element_counts": {
+    "node": 49622,
+    "way": 7622,
+    "relation": 87
+  },
+  "highway_counts": {
+    "motorway_link": 31,
+    "pedestrian": 103,
+    "residential": 2090,
+    "tertiary": 329,
+    "primary": 158,
+    "motorway": 52,
+    "secondary": 227,
+    "primary_link": 21,
+    "steps": 880,
+    "trunk_link": 42,
+    "footway": 1387,
+    "trunk": 81,
+    "living_street": 680,
+    "service": 731,
+    "tertiary_link": 12,
+    "unclassified": 72,
+    "track": 201,
+    "null": 8,
+    "path": 497,
+    "secondary_link": 8,
+    "cycleway": 3,
+    "escape": 4,
+    "corridor": 4,
+    "elevator": 1
+  },
+  "bases_inside": [
+    {
+      "properties": {
+        "objectid_1": 104,
+        "fid_compil": 628,
+        "objectid": 630,
+        "nombre": "Décima Sexta de Valparaíso",
+        "nombre_del": "Valparaíso",
+        "tipo": "Compañia",
+        "cut_cia": 510116,
+        "compa__ia": "Décima Sexta de Valparaíso",
+        "cut_cuerpo": 5101,
+        "direccion": "Calle Las 7 Vueltas S/N, Laguna Verde",
+        "telefono": "(32) 2255871",
+        "point_x": -71.657239,
+        "point_y": -33.101902,
+        "cut": " ",
+        "tipo_de_vl": " ",
+        "numeraci__": " ",
+        "nombre_de": " ",
+        "comunas_at": " ",
+        "voluntario": 0,
+        "as_2018": 0,
+        "as_2019": 0,
+        "as_2020": 0,
+        "cantidad_m": 0,
+        "actualizad": "Si",
+        "esp6": " ",
+        "esp1": "Agua",
+        "esp5": " ",
+        "esp3": " ",
+        "esp2": "incendios forestales",
+        "esp4": " ",
+        "esp7": " ",
+        "esp8": " ",
+        "cine_prov": "051",
+        "cod_com": 5101,
+        "cine_com": "05101",
+        "nom_com": "VALPARAÍSO",
+        "nom_prov": "VALPARAÍSO",
+        "nom_reg": "VALPARAÍSO",
+        "cine_reg": "05",
+        "globalid": "47afc66e-1bfc-4c8c-93c5-35d4e65505b5",
+        "region": "Valparaíso",
+        "provincia": "VALPARAÍSO",
+        "comuna": "VALPARAÍSO"
+      },
+      "coordinates": [
+        -71.6572392109999,
+        -33.10190169
+      ],
+      "nearest_osm_node": 12609762157,
+      "approx_m": 14.301815805491623
+    }
+  ],
+  "osm_firestations": [
+    {
+      "type": "node",
+      "id": 4349764507,
+      "lat": -33.0442993,
+      "lon": -71.6142791,
+      "timestamp": "2022-08-08T00:34:53Z",
+      "version": 5,
+      "changeset": 124616442,
+      "user": "Camilo Nuñez Castro",
+      "uid": 5143819,
+      "tags": {
+        "addr:street": "Blanco",
+        "amenity": "fire_station",
+        "name": "Quinta Compañía del Cuerpo de Bomberos de Valparaiso"
+      }
+    },
+    {
+      "type": "node",
+      "id": 4349764809,
+      "lat": -33.0485862,
+      "lon": -71.6138787,
+      "timestamp": "2022-08-08T00:37:40Z",
+      "version": 5,
+      "changeset": 124616442,
+      "user": "Camilo Nuñez Castro",
+      "uid": 5143819,
+      "tags": {
+        "amenity": "fire_station",
+        "email": "contacto@decimacbv.cl",
+        "name": "Decima Compañía del Cuerpo de Bomberos de Valparaiso",
+        "website": "https://decimacbv.cl/"
+      }
+    },
+    {
+      "type": "node",
+      "id": 4349769569,
+      "lat": -33.0427358,
+      "lon": -71.6239416,
+      "timestamp": "2022-08-08T00:37:25Z",
+      "version": 4,
+      "changeset": 124616442,
+      "user": "Camilo Nuñez Castro",
+      "uid": 5143819,
+      "tags": {
+        "amenity": "fire_station",
+        "name": "Octava Compañía del Cuerpo de Bomberos de Valparaiso"
+      }
+    },
+    {
+      "type": "node",
+      "id": 4349771310,
+      "lat": -33.0445057,
+      "lon": -71.6143552,
+      "timestamp": "2022-08-08T00:35:25Z",
+      "version": 6,
+      "changeset": 124616442,
+      "user": "Camilo Nuñez Castro",
+      "uid": 5143819,
+      "tags": {
+        "addr:street": "Freire",
+        "amenity": "fire_station",
+        "name": "Cuarta Compañía del Cuerpo de Bomberos de Valparaiso"
+      }
+    },
+    {
+      "type": "node",
+      "id": 4395581889,
+      "lat": -33.0581477,
+      "lon": -71.5766479,
+      "timestamp": "2022-08-08T00:32:07Z",
+      "version": 6,
+      "changeset": 124616442,
+      "user": "Camilo Nuñez Castro",
+      "uid": 5143819,
+      "tags": {
+        "addr:street": "Avenida Rodelillo",
+        "amenity": "fire_station",
+        "name": "Decimoquinta Compañía del Cuerpo de Bomberos de Valparaiso",
+        "source": "Kaart Ground Survey 2017"
+      }
+    },
+    {
+      "type": "node",
+      "id": 8282202634,
+      "lat": -33.0446849,
+      "lon": -71.6142819,
+      "timestamp": "2022-08-08T00:33:29Z",
+      "version": 3,
+      "changeset": 124616442,
+      "user": "Camilo Nuñez Castro",
+      "uid": 5143819,
+      "tags": {
+        "amenity": "fire_station",
+        "name": "Novena Compañía del Cuerpo de Bomberos de Valparaiso"
+      }
+    },
+    {
+      "type": "node",
+      "id": 9938243220,
+      "lat": -33.0484418,
+      "lon": -71.5626642,
+      "timestamp": "2022-08-08T00:28:03Z",
+      "version": 2,
+      "changeset": 124616442,
+      "user": "Camilo Nuñez Castro",
+      "uid": 5143819,
+      "tags": {
+        "amenity": "fire_station",
+        "name": "Central de Alarma y Comunicaciones del Cuerpo de Bomberos de Viña del Mar"
+      }
+    },
+    {
+      "type": "way",
+      "id": 91655582,
+      "timestamp": "2026-09-09T19:29:44Z",
+      "version": 3,
+      "changeset": 188790264,
+      "user": "felipeeugenio",
+      "uid": 337684,
+      "nodes": [
+        1064939195,
+        1064939243,
+        1064939233,
+        1064939141,
+        1064939195
+      ],
+      "tags": {
+        "amenity": "fire_station",
+        "fire_station:type": "wildfire",
+        "name": "Palma 1",
+        "operator": "CONAF"
+      }
+    },
+    {
+      "type": "way",
+      "id": 332359472,
+      "timestamp": "2022-09-28T16:00:33Z",
+      "version": 5,
+      "changeset": 126746986,
+      "user": "cserpell",
+      "uid": 1714449,
+      "nodes": [
+        3394749380,
+        6858709468,
+        3394749381,
+        3420479500,
+        8615916763,
+        3394749382,
+        3394749383,
+        3420479566,
+        3394749380
+      ],
+      "tags": {
+        "addr:city": "Valparaíso",
+        "addr:housenumber": "147",
+        "addr:street": "Plaza Sotomayor",
+        "amenity": "fire_station",
+        "building": "yes",
+        "name": "Cuerpo de Bomberos de Valparaíso"
+      }
+    },
+    {
+      "type": "way",
+      "id": 333210769,
+      "timestamp": "2021-01-02T22:22:20Z",
+      "version": 4,
+      "changeset": 96828485,
+      "user": "cserpell",
+      "uid": 1714449,
+      "nodes": [
+        3403254410,
+        3403254178,
+        4415658955,
+        3403254185,
+        3403254411,
+        3403254410
+      ],
+      "tags": {
+        "amenity": "fire_station",
+        "building": "yes"
+      }
+    },
+    {
+      "type": "way",
+      "id": 333210770,
+      "timestamp": "2022-08-08T00:33:08Z",
+      "version": 5,
+      "changeset": 124616442,
+      "user": "Camilo Nuñez Castro",
+      "uid": 5143819,
+      "nodes": [
+        3403254412,
+        3403254413,
+        3403254414,
+        3403254415,
+        3403254412
+      ],
+      "tags": {
+        "amenity": "fire_station",
+        "building": "yes",
+        "name": "Séptima Compañía del Cuerpo de Bomberos de Valparaiso"
+      }
+    },
+    {
+      "type": "way",
+      "id": 333210771,
+      "timestamp": "2022-08-08T00:32:58Z",
+      "version": 7,
+      "changeset": 124616442,
+      "user": "Camilo Nuñez Castro",
+      "uid": 5143819,
+      "nodes": [
+        3403254416,
+        3403254417,
+        3403254418,
+        3403254419,
+        3403254420,
+        3403254421,
+        3403254422,
+        3403254416
+      ],
+      "tags": {
+        "addr:housenumber": "630",
+        "addr:street": "General Cruz",
+        "amenity": "fire_station",
+        "building": "yes",
+        "name": "Sexta Compañía del Cuerpo de Bomberos de Valparaiso",
+        "opening_hours": "24/7"
+      }
+    },
+    {
+      "type": "way",
+      "id": 333210773,
+      "timestamp": "2022-08-08T00:32:36Z",
+      "version": 5,
+      "changeset": 124616442,
+      "user": "Camilo Nuñez Castro",
+      "uid": 5143819,
+      "nodes": [
+        3403254429,
+        3403254430,
+        3403254431,
+        3403254432,
+        3403254433,
+        3403254429
+      ],
+      "tags": {
+        "addr:city": "Valparaíso",
+        "addr:housenumber": "147",
+        "addr:postcode": "2217315",
+        "addr:street": "Melgarejo",
+        "amenity": "fire_station",
+        "building": "yes",
+        "name": "Undécima Compañía del Cuerpo de Bomberos de Valparaiso"
+      }
+    },
+    {
+      "type": "way",
+      "id": 358228711,
+      "timestamp": "2022-08-08T00:32:58Z",
+      "version": 5,
+      "changeset": 124616442,
+      "user": "Camilo Nuñez Castro",
+      "uid": 5143819,
+      "nodes": [
+        3631858013,
+        3631858014,
+        4417049491,
+        3631858015,
+        3631858016,
+        4417049466,
+        4417049465,
+        3631858013
+      ],
+      "tags": {
+        "amenity": "fire_station",
+        "building": "yes",
+        "name": "Tercera Compañía del Cuerpo de Bomberos de Valparaiso"
+      }
+    },
+    {
+      "type": "way",
+      "id": 553332703,
+      "timestamp": "2025-09-17T20:27:36Z",
+      "version": 11,
+      "changeset": 172084415,
+      "user": "Daemon Targaryen",
+      "uid": 16598894,
+      "nodes": [
+        5341373346,
+        5002378145,
+        5341373344,
+        5341373345,
+        5341373346
+      ],
+      "tags": {
+        "addr:city": "Valparaíso",
+        "addr:housenumber": "2503",
+        "addr:street": "Avenida Manuel Antonio Matta",
+        "amenity": "fire_station",
+        "building": "yes",
+        "building:levels": "1",
+        "name": "Decimocuarta Compañía del Cuerpo de Bomberos de Valparaíso",
+        "operator:type": "ngo",
+        "source": "Kaart Ground Survey 2017"
+      }
+    }
+  ],
+  "restrictions": [
+    {
+      "type": "relation",
+      "id": 5830554,
+      "timestamp": "2022-04-25T15:27:01Z",
+      "version": 2,
+      "changeset": 120171693,
+      "user": "felipeeugenio",
+      "uid": 337684,
+      "members": [
+        {
+          "type": "node",
+          "ref": 2504303607,
+          "role": "via"
+        },
+        {
+          "type": "way",
+          "ref": 1054798394,
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": 1054798393,
+          "role": "to"
+        }
+      ],
+      "tags": {
+        "restriction": "no_u_turn",
+        "type": "restriction"
+      }
+    },
+    {
+      "type": "relation",
+      "id": 5830555,
+      "timestamp": "2026-02-04T00:19:51Z",
+      "version": 4,
+      "changeset": 178072497,
+      "user": "jptolosa",
+      "uid": 1975220,
+      "members": [
+        {
+          "type": "way",
+          "ref": 389792921,
+          "role": "from"
+        },
+        {
+          "type": "node",
+          "ref": 2504303635,
+          "role": "via"
+        },
+        {
+          "type": "way",
+          "ref": 23607692,
+          "role": "to"
+        }
+      ],
+      "tags": {
+        "implicit": "yes",
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      }
+    },
+    {
+      "type": "relation",
+      "id": 5830556,
+      "timestamp": "2026-02-04T00:19:51Z",
+      "version": 4,
+      "changeset": 178072497,
+      "user": "jptolosa",
+      "uid": 1975220,
+      "members": [
+        {
+          "type": "way",
+          "ref": 23616077,
+          "role": "from"
+        },
+        {
+          "type": "node",
+          "ref": 255782461,
+          "role": "via"
+        },
+        {
+          "type": "way",
+          "ref": 389792913,
+          "role": "to"
+        }
+      ],
+      "tags": {
+        "implicit": "yes",
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      }
+    },
+    {
+      "type": "relation",
+      "id": 5830557,
+      "timestamp": "2023-04-20T05:19:41Z",
+      "version": 2,
+      "changeset": 135130553,
+      "user": "jptolosa",
+      "uid": 1975220,
+      "members": [
+        {
+          "type": "way",
+          "ref": 242993160,
+          "role": "from"
+        },
+        {
+          "type": "node",
+          "ref": 2504305671,
+          "role": "via"
+        },
+        {
+          "type": "way",
+          "ref": 23567396,
+          "role": "to"
+        }
+      ],
+      "tags": {
+        "implicit": "yes",
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      }
+    },
+    {
+      "type": "relation",
+      "id": 5830558,
+      "timestamp": "2023-04-20T05:19:41Z",
+      "version": 2,
+      "changeset": 135130553,
+      "user": "jptolosa",
+      "uid": 1975220,
+      "members": [
+        {
+          "type": "way",
+          "ref": 23607677,
+          "role": "from"
+        },
+        {
+          "type": "node",
+          "ref": 255682261,
+          "role": "via"
+        },
+        {
+          "type": "way",
+          "ref": 389792922,
+          "role": "to"
+        }
+      ],
+      "tags": {
+        "implicit": "yes",
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      }
+    },
+    {
+      "type": "relation",
+      "id": 5873301,
+      "timestamp": "2016-01-17T12:33:34Z",
+      "version": 1,
+      "changeset": 36632517,
+      "user": "cserpell",
+      "uid": 1714449,
+      "members": [
+        {
+          "type": "way",
+          "ref": 391887349,
+          "role": "from"
+        },
+        {
+          "type": "node",
+          "ref": 259662247,
+          "role": "via"
+        },
+        {
+          "type": "way",
+          "ref": 254981730,
+          "role": "to"
+        }
+      ],
+      "tags": {
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      }
+    },
+    {
+      "type": "relation",
+      "id": 6221515,
+      "timestamp": "2018-01-18T20:44:21Z",
+      "version": 2,
+      "changeset": 55560743,
+      "user": "dmastin82",
+      "uid": 5033202,
+      "members": [
+        {
+          "type": "way",
+          "ref": 418383031,
+          "role": "from"
+        },
+        {
+          "type": "node",
+          "ref": 259662817,
+          "role": "via"
+        },
+        {
+          "type": "way",
+          "ref": 554104951,
+          "role": "to"
+        }
+      ],
+      "tags": {
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      }
+    },
+    {
+      "type": "relation",
+      "id": 7852278,
+      "timestamp": "2025-08-05T06:55:10Z",
+      "version": 4,
+      "changeset": 169988050,
+      "user": "BikalLake",
+      "uid": 19895016,
+      "members": [
+        {
+          "type": "node",
+          "ref": 259659197,
+          "role": "via"
+        },
+        {
+          "type": "way",
+          "ref": 1420120035,
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": 1420120034,
+          "role": "to"
+        }
+      ],
+      "tags": {
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      }
+    },
+    {
+      "type": "relation",
+      "id": 7852280,
+      "timestamp": "2022-01-23T23:51:33Z",
+      "version": 3,
+      "changeset": 116518748,
+      "user": "jptolosa",
+      "uid": 1975220,
+      "members": [
+        {
+          "type": "way",
+          "ref": 549856703,
+          "role": "from"
+        },
+        {
+          "type": "node",
+          "ref": 255790924,
+          "role": "via"
+        },
+        {
+          "type": "way",
+          "ref": 1024092203,
+          "role": "to"
+        }
+      ],
+      "tags": {
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      }
+    },
+    {
+      "type": "relation",
+      "id": 7854286,
+      "timestamp": "2023-11-17T22:52:02Z",
+      "version": 2,
+      "changeset": 144157604,
+      "user": "JAAS",
+      "uid": 3321532,
+      "members": [
+        {
+          "type": "way",
+          "ref": 549863786,
+          "role": "from"
+        },
+        {
+          "type": "node",
+          "ref": 262534626,
+          "role": "via"
+        },
+        {
+          "type": "way",
+          "ref": 1224899505,
+          "role": "to"
+        }
+      ],
+      "tags": {
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      }
+    },
+    {
+      "type": "relation",
+      "id": 7859522,
+      "timestamp": "2018-01-01T17:16:29Z",
+      "version": 1,
+      "changeset": 55081275,
+      "user": "Corban8",
+      "uid": 4240913,
+      "members": [
+        {
+          "type": "way",
+          "ref": 549998266,
+          "role": "from"
+        },
+        {
+          "type": "node",
+          "ref": 255790921,
+          "role": "via"
+        },
+        {
+          "type": "way",
+          "ref": 442132919,
+          "role": "to"
+        }
+      ],
+      "tags": {
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      }
+    },
+    {
+      "type": "relation",
+      "id": 7869482,
+      "timestamp": "2019-03-25T02:30:11Z",
+      "version": 2,
+      "changeset": 68490436,
+      "user": "jptolosa",
+      "uid": 1975220,
+      "members": [
+        {
+          "type": "way",
+          "ref": 242990853,
+          "role": "from"
+        },
+        {
+          "type": "node",
+          "ref": 2504275931,
+          "role": "via"
+        },
+        {
+          "type": "way",
+          "ref": 679154770,
+          "role": "to"
+        }
+      ],
+      "tags": {
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      }
+    },
+    {
+      "type": "relation",
+      "id": 7869793,
+      "timestamp": "2018-01-02T22:42:29Z",
+      "version": 1,
+      "changeset": 55114039,
+      "user": "JAAS",
+      "uid": 3321532,
+      "members": [
+        {
+          "type": "node",
+          "ref": 2789303782,
+          "role": "via"
+        },
+        {
+          "type": "way",
+          "ref": 550514208,
+          "role": "to"
+        },
+        {
+          "type": "way",
+          "ref": 550514206,
+          "role": "from"
+        }
+      ],
+      "tags": {
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      }
+    },
+    {
+      "type": "relation",
+      "id": 7869794,
+      "timestamp": "2019-07-14T02:14:38Z",
+      "version": 2,
+      "changeset": 72222207,
+      "user": "jptolosa",
+      "uid": 1975220,
+      "members": [
+        {
+          "type": "way",
+          "ref": 25374720,
+          "role": "from"
+        },
+        {
+          "type": "node",
+          "ref": 276566358,
+          "role": "via"
+        },
+        {
+          "type": "way",
+          "ref": 704228881,
+          "role": "to"
+        }
+      ],
+      "tags": {
+        "restriction": "no_right_turn",
+        "type": "restriction"
+      }
+    },
+    {
+      "type": "relation",
+      "id": 7887133,
+      "timestamp": "2018-01-08T21:50:08Z",
+      "version": 1,
+      "changeset": 55276718,
+      "user": "zwaygp",
+      "uid": 5027347,
+      "members": [
+        {
+          "type": "way",
+          "ref": 332359461,
+          "role": "from"
+        },
+        {
+          "type": "node",
+          "ref": 255790924,
+          "role": "via"
+        },
+        {
+          "type": "way",
+          "ref": 551732869,
+          "role": "to"
+        }
+      ],
+      "tags": {
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      }
+    },
+    {
+      "type": "relation",
+      "id": 7887264,
+      "timestamp": "2018-01-08T23:40:43Z",
+      "version": 1,
+      "changeset": 55278496,
+      "user": "burtlang",
+      "uid": 4471944,
+      "members": [
+        {
+          "type": "way",
+          "ref": 551743476,
+          "role": "from"
+        },
+        {
+          "type": "node",
+          "ref": 262535977,
+          "role": "via"
+        },
+        {
+          "type": "way",
+          "ref": 551743474,
+          "role": "to"
+        }
+      ],
+      "tags": {
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      }
+    },
+    {
+      "type": "relation",
+      "id": 7905176,
+      "timestamp": "2018-01-15T19:02:33Z",
+      "version": 1,
+      "changeset": 55472610,
+      "user": "JAAS",
+      "uid": 3321532,
+      "members": [
+        {
+          "type": "way",
+          "ref": 553186955,
+          "role": "from"
+        },
+        {
+          "type": "node",
+          "ref": 5340202570,
+          "role": "via"
+        },
+        {
+          "type": "way",
+          "ref": 553186957,
+          "role": "to"
+        }
+      ],
+      "tags": {
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      }
+    },
+    {
+      "type": "relation",
+      "id": 7905177,
+      "timestamp": "2021-04-05T06:12:36Z",
+      "version": 2,
+      "changeset": 102304069,
+      "user": "rajkumar ch",
+      "uid": 12762495,
+      "members": [
+        {
+          "type": "node",
+          "ref": 5340202570,
+          "role": "via"
+        },
+        {
+          "type": "way",
+          "ref": 553186955,
+          "role": "to"
+        },
+        {
+          "type": "way",
+          "ref": 926100025,
+          "role": "from"
+        }
+      ],
+      "tags": {
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      }
+    },
+    {
+      "type": "relation",
+      "id": 7905947,
+      "timestamp": "2018-01-16T04:58:04Z",
+      "version": 1,
+      "changeset": 55481640,
+      "user": "Corban8",
+      "uid": 4240913,
+      "members": [
+        {
+          "type": "way",
+          "ref": 553413236,
+          "role": "from"
+        },
+        {
+          "type": "node",
+          "ref": 259962768,
+          "role": "via"
+        },
+        {
+          "type": "way",
+          "ref": 553413235,
+          "role": "to"
+        }
+      ],
+      "tags": {
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      }
+    },
+    {
+      "type": "relation",
+      "id": 7914145,
+      "timestamp": "2018-01-18T20:44:19Z",
+      "version": 1,
+      "changeset": 55560743,
+      "user": "dmastin82",
+      "uid": 5033202,
+      "members": [
+        {
+          "type": "way",
+          "ref": 554104951,
+          "role": "from"
+        },
+        {
+          "type": "node",
+          "ref": 259662817,
+          "role": "via"
+        },
+        {
+          "type": "way",
+          "ref": 554104950,
+          "role": "to"
+        }
+      ],
+      "tags": {
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      }
+    },
+    {
+      "type": "relation",
+      "id": 7917090,
+      "timestamp": "2018-01-19T20:26:52Z",
+      "version": 1,
+      "changeset": 55587549,
+      "user": "dmastin82",
+      "uid": 5033202,
+      "members": [
+        {
+          "type": "way",
+          "ref": 554329974,
+          "role": "from"
+        },
+        {
+          "type": "node",
+          "ref": 259576324,
+          "role": "via"
+        },
+        {
+          "type": "way",
+          "ref": 541942888,
+          "role": "to"
+        }
+      ],
+      "tags": {
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      }
+    },
+    {
+      "type": "relation",
+      "id": 8296810,
+      "timestamp": "2022-04-20T11:56:54Z",
+      "version": 3,
+      "changeset": 119950248,
+      "user": "felipeeugenio",
+      "uid": 337684,
+      "members": [
+        {
+          "type": "way",
+          "ref": 24318411,
+          "role": "to"
+        },
+        {
+          "type": "node",
+          "ref": 255229966,
+          "role": "via"
+        },
+        {
+          "type": "way",
+          "ref": 1053315913,
+          "role": "from"
+        }
+      ],
+      "tags": {
+        "restriction": "no_u_turn",
+        "type": "restriction"
+      }
+    },
+    {
+      "type": "relation",
+      "id": 8296811,
+      "timestamp": "2023-04-20T05:19:41Z",
+      "version": 2,
+      "changeset": 135130553,
+      "user": "jptolosa",
+      "uid": 1975220,
+      "members": [
+        {
+          "type": "way",
+          "ref": 587988570,
+          "role": "from"
+        },
+        {
+          "type": "node",
+          "ref": 285877892,
+          "role": "via"
+        },
+        {
+          "type": "way",
+          "ref": 26113267,
+          "role": "to"
+        }
+      ],
+      "tags": {
+        "implicit": "yes",
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      }
+    },
+    {
+      "type": "relation",
+      "id": 8296812,
+      "timestamp": "2023-04-20T05:19:41Z",
+      "version": 2,
+      "changeset": 135130553,
+      "user": "jptolosa",
+      "uid": 1975220,
+      "members": [
+        {
+          "type": "way",
+          "ref": 587988570,
+          "role": "from"
+        },
+        {
+          "type": "node",
+          "ref": 3929544873,
+          "role": "via"
+        },
+        {
+          "type": "way",
+          "ref": 389792912,
+          "role": "to"
+        }
+      ],
+      "tags": {
+        "implicit": "yes",
+        "restriction": "no_right_turn",
+        "type": "restriction"
+      }
+    },
+    {
+      "type": "relation",
+      "id": 8516582,
+      "timestamp": "2021-04-05T06:06:13Z",
+      "version": 2,
+      "changeset": 102303626,
+      "user": "Priti25",
+      "uid": 11891846,
+      "members": [
+        {
+          "type": "node",
+          "ref": 255790921,
+          "role": "via"
+        },
+        {
+          "type": "way",
+          "ref": 926098471,
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": 926098470,
+          "role": "to"
+        }
+      ],
+      "tags": {
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      }
+    },
+    {
+      "type": "relation",
+      "id": 9382734,
+      "timestamp": "2022-01-23T06:21:37Z",
+      "version": 2,
+      "changeset": 116488200,
+      "user": "jptolosa",
+      "uid": 1975220,
+      "members": [
+        {
+          "type": "way",
+          "ref": 675582118,
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": 157686145,
+          "role": "to"
+        },
+        {
+          "type": "node",
+          "ref": 2484567562,
+          "role": "via"
+        }
+      ],
+      "tags": {
+        "implicit": "yes",
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      }
+    },
+    {
+      "type": "relation",
+      "id": 9382735,
+      "timestamp": "2023-04-24T07:10:15Z",
+      "version": 2,
+      "changeset": 135287679,
+      "user": "jptolosa",
+      "uid": 1975220,
+      "members": [
+        {
+          "type": "way",
+          "ref": 23780612,
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": 39389107,
+          "role": "to"
+        },
+        {
+          "type": "node",
+          "ref": 255681795,
+          "role": "via"
+        }
+      ],
+      "tags": {
+        "implicit": "yes",
+        "restriction": "no_u_turn",
+        "type": "restriction"
+      }
+    },
+    {
+      "type": "relation",
+      "id": 9382784,
+      "timestamp": "2019-03-09T07:41:34Z",
+      "version": 1,
+      "changeset": 67950761,
+      "user": "jptolosa",
+      "uid": 1975220,
+      "members": [
+        {
+          "type": "way",
+          "ref": 654330974,
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": 654332811,
+          "role": "to"
+        },
+        {
+          "type": "node",
+          "ref": 278375145,
+          "role": "via"
+        }
+      ],
+      "tags": {
+        "restriction": "no_u_turn",
+        "type": "restriction"
+      }
+    },
+    {
+      "type": "relation",
+      "id": 9382785,
+      "timestamp": "2019-03-09T07:41:34Z",
+      "version": 1,
+      "changeset": 67950761,
+      "user": "jptolosa",
+      "uid": 1975220,
+      "members": [
+        {
+          "type": "way",
+          "ref": 39501443,
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": 654332810,
+          "role": "to"
+        },
+        {
+          "type": "node",
+          "ref": 278375526,
+          "role": "via"
+        }
+      ],
+      "tags": {
+        "restriction": "no_u_turn",
+        "type": "restriction"
+      }
+    },
+    {
+      "type": "relation",
+      "id": 9382786,
+      "timestamp": "2019-03-09T07:41:34Z",
+      "version": 1,
+      "changeset": 67950761,
+      "user": "jptolosa",
+      "uid": 1975220,
+      "members": [
+        {
+          "type": "way",
+          "ref": 654332811,
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": 654330972,
+          "role": "to"
+        },
+        {
+          "type": "node",
+          "ref": 6131435227,
+          "role": "via"
+        }
+      ],
+      "tags": {
+        "restriction": "no_u_turn",
+        "type": "restriction"
+      }
+    },
+    {
+      "type": "relation",
+      "id": 9430823,
+      "timestamp": "2019-03-25T02:30:07Z",
+      "version": 1,
+      "changeset": 68490436,
+      "user": "jptolosa",
+      "uid": 1975220,
+      "members": [
+        {
+          "type": "way",
+          "ref": 25374720,
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": 550514211,
+          "role": "to"
+        },
+        {
+          "type": "node",
+          "ref": 5317232316,
+          "role": "via"
+        }
+      ],
+      "tags": {
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      }
+    },
+    {
+      "type": "relation",
+      "id": 9430824,
+      "timestamp": "2019-03-25T02:30:08Z",
+      "version": 1,
+      "changeset": 68490436,
+      "user": "jptolosa",
+      "uid": 1975220,
+      "members": [
+        {
+          "type": "way",
+          "ref": 27145909,
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": 243176238,
+          "role": "to"
+        },
+        {
+          "type": "node",
+          "ref": 6359549059,
+          "role": "via"
+        }
+      ],
+      "tags": {
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      }
+    },
+    {
+      "type": "relation",
+      "id": 9430825,
+      "timestamp": "2019-03-25T02:30:08Z",
+      "version": 1,
+      "changeset": 68490436,
+      "user": "jptolosa",
+      "uid": 1975220,
+      "members": [
+        {
+          "type": "way",
+          "ref": 243176238,
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": 550514209,
+          "role": "to"
+        },
+        {
+          "type": "node",
+          "ref": 2789303782,
+          "role": "via"
+        }
+      ],
+      "tags": {
+        "restriction": "no_right_turn",
+        "type": "restriction"
+      }
+    },
+    {
+      "type": "relation",
+      "id": 9791657,
+      "timestamp": "2019-07-14T02:14:38Z",
+      "version": 1,
+      "changeset": 72222207,
+      "user": "jptolosa",
+      "uid": 1975220,
+      "members": [
+        {
+          "type": "way",
+          "ref": 152818044,
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": 152818046,
+          "role": "to"
+        },
+        {
+          "type": "node",
+          "ref": 1655936689,
+          "role": "via"
+        }
+      ],
+      "tags": {
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      }
+    },
+    {
+      "type": "relation",
+      "id": 9791658,
+      "timestamp": "2019-07-14T02:14:38Z",
+      "version": 1,
+      "changeset": 72222207,
+      "user": "jptolosa",
+      "uid": 1975220,
+      "members": [
+        {
+          "type": "way",
+          "ref": 91832896,
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": 91832900,
+          "role": "to"
+        },
+        {
+          "type": "node",
+          "ref": 1067184508,
+          "role": "via"
+        }
+      ],
+      "tags": {
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      }
+    },
+    {
+      "type": "relation",
+      "id": 9791659,
+      "timestamp": "2019-07-14T02:14:38Z",
+      "version": 1,
+      "changeset": 72222207,
+      "user": "jptolosa",
+      "uid": 1975220,
+      "members": [
+        {
+          "type": "way",
+          "ref": 27495469,
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": 27495458,
+          "role": "to"
+        },
+        {
+          "type": "node",
+          "ref": 301852719,
+          "role": "via"
+        }
+      ],
+      "tags": {
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      }
+    },
+    {
+      "type": "relation",
+      "id": 9883224,
+      "timestamp": "2019-08-04T15:22:54Z",
+      "version": 1,
+      "changeset": 72992265,
+      "user": "felipeeugenio",
+      "uid": 337684,
+      "members": [
+        {
+          "type": "way",
+          "ref": 27148274,
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": 156166861,
+          "role": "to"
+        },
+        {
+          "type": "node",
+          "ref": 297866805,
+          "role": "via"
+        }
+      ],
+      "tags": {
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      }
+    },
+    {
+      "type": "relation",
+      "id": 11366852,
+      "timestamp": "2020-07-30T20:17:38Z",
+      "version": 1,
+      "changeset": 88750890,
+      "user": "cserpell",
+      "uid": 1714449,
+      "members": [
+        {
+          "type": "way",
+          "ref": 832358176,
+          "role": "from"
+        },
+        {
+          "type": "node",
+          "ref": 297866800,
+          "role": "via"
+        },
+        {
+          "type": "way",
+          "ref": 832358177,
+          "role": "to"
+        }
+      ],
+      "tags": {
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      }
+    },
+    {
+      "type": "relation",
+      "id": 11730803,
+      "timestamp": "2020-10-07T21:48:07Z",
+      "version": 1,
+      "changeset": 92133710,
+      "user": "felipeeugenio",
+      "uid": 337684,
+      "members": [
+        {
+          "type": "way",
+          "ref": 550264912,
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": 550264913,
+          "role": "to"
+        },
+        {
+          "type": "node",
+          "ref": 262529380,
+          "role": "via"
+        }
+      ],
+      "tags": {
+        "restriction": "no_u_turn",
+        "type": "restriction"
+      }
+    },
+    {
+      "type": "relation",
+      "id": 11730804,
+      "timestamp": "2020-10-07T21:48:07Z",
+      "version": 1,
+      "changeset": 92133710,
+      "user": "felipeeugenio",
+      "uid": 337684,
+      "members": [
+        {
+          "type": "way",
+          "ref": 550264913,
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": 856542708,
+          "role": "to"
+        },
+        {
+          "type": "node",
+          "ref": 259659195,
+          "role": "via"
+        }
+      ],
+      "tags": {
+        "restriction": "no_u_turn",
+        "type": "restriction"
+      }
+    },
+    {
+      "type": "relation",
+      "id": 12292801,
+      "timestamp": "2021-02-09T02:52:10Z",
+      "version": 1,
+      "changeset": 98939190,
+      "user": "jptolosa",
+      "uid": 1975220,
+      "members": [
+        {
+          "type": "way",
+          "ref": 554104950,
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": 28846568,
+          "role": "to"
+        },
+        {
+          "type": "node",
+          "ref": 259662817,
+          "role": "via"
+        }
+      ],
+      "tags": {
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      }
+    },
+    {
+      "type": "relation",
+      "id": 12494651,
+      "timestamp": "2021-03-26T11:49:18Z",
+      "version": 1,
+      "changeset": 101789147,
+      "user": "rocky2109",
+      "uid": 11663524,
+      "members": [
+        {
+          "type": "way",
+          "ref": 922475574,
+          "role": "from"
+        },
+        {
+          "type": "node",
+          "ref": 262530956,
+          "role": "via"
+        },
+        {
+          "type": "way",
+          "ref": 24260177,
+          "role": "to"
+        }
+      ],
+      "tags": {
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      }
+    },
+    {
+      "type": "relation",
+      "id": 12512655,
+      "timestamp": "2021-03-30T19:19:55Z",
+      "version": 1,
+      "changeset": 102005480,
+      "user": "KevinWalshe",
+      "uid": 11356400,
+      "members": [
+        {
+          "type": "way",
+          "ref": 923914154,
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": 923914155,
+          "role": "to"
+        },
+        {
+          "type": "node",
+          "ref": 262535977,
+          "role": "via"
+        }
+      ],
+      "tags": {
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      }
+    },
+    {
+      "type": "relation",
+      "id": 12522057,
+      "timestamp": "2021-04-01T09:07:22Z",
+      "version": 1,
+      "changeset": 102110423,
+      "user": "rocky2109",
+      "uid": 11663524,
+      "members": [
+        {
+          "type": "way",
+          "ref": 554135781,
+          "role": "from"
+        },
+        {
+          "type": "node",
+          "ref": 5348170964,
+          "role": "via"
+        },
+        {
+          "type": "way",
+          "ref": 554135801,
+          "role": "to"
+        }
+      ],
+      "tags": {
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      }
+    },
+    {
+      "type": "relation",
+      "id": 12522058,
+      "timestamp": "2024-06-09T20:32:16Z",
+      "version": 2,
+      "changeset": 152470710,
+      "user": "Awo",
+      "uid": 196556,
+      "members": [
+        {
+          "type": "node",
+          "ref": 5348164790,
+          "role": "via"
+        },
+        {
+          "type": "way",
+          "ref": 924730952,
+          "role": "to"
+        }
+      ],
+      "tags": {
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      }
+    },
+    {
+      "type": "relation",
+      "id": 12524257,
+      "timestamp": "2021-04-01T17:15:41Z",
+      "version": 1,
+      "changeset": 102141199,
+      "user": "cforin",
+      "uid": 8926088,
+      "members": [
+        {
+          "type": "way",
+          "ref": 317417555,
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": 444480528,
+          "role": "to"
+        },
+        {
+          "type": "node",
+          "ref": 259211943,
+          "role": "via"
+        }
+      ],
+      "tags": {
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      }
+    },
+    {
+      "type": "relation",
+      "id": 12529555,
+      "timestamp": "2021-04-02T21:01:18Z",
+      "version": 1,
+      "changeset": 102215823,
+      "user": "cforin",
+      "uid": 8926088,
+      "members": [
+        {
+          "type": "way",
+          "ref": 550280255,
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": 925348703,
+          "role": "to"
+        },
+        {
+          "type": "node",
+          "ref": 259658044,
+          "role": "via"
+        }
+      ],
+      "tags": {
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      }
+    },
+    {
+      "type": "relation",
+      "id": 12529734,
+      "timestamp": "2021-04-02T22:36:09Z",
+      "version": 1,
+      "changeset": 102218545,
+      "user": "Land-o Calrissian",
+      "uid": 10852848,
+      "members": [
+        {
+          "type": "way",
+          "ref": 550921135,
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": 925370468,
+          "role": "to"
+        },
+        {
+          "type": "node",
+          "ref": 1067184506,
+          "role": "via"
+        }
+      ],
+      "tags": {
+        "restriction": "only_left_turn",
+        "type": "restriction"
+      }
+    },
+    {
+      "type": "relation",
+      "id": 13708771,
+      "timestamp": "2022-01-23T06:36:47Z",
+      "version": 1,
+      "changeset": 116488349,
+      "user": "jptolosa",
+      "uid": 1975220,
+      "members": [
+        {
+          "type": "way",
+          "ref": 25543397,
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": 1023875960,
+          "role": "to"
+        },
+        {
+          "type": "node",
+          "ref": 278376805,
+          "role": "via"
+        }
+      ],
+      "tags": {
+        "restriction": "no_u_turn",
+        "type": "restriction"
+      }
+    },
+    {
+      "type": "relation",
+      "id": 13711607,
+      "timestamp": "2022-01-23T20:37:14Z",
+      "version": 1,
+      "changeset": 116514394,
+      "user": "jptolosa",
+      "uid": 1975220,
+      "members": [
+        {
+          "type": "way",
+          "ref": 550514205,
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": 25374716,
+          "role": "to"
+        },
+        {
+          "type": "node",
+          "ref": 276566358,
+          "role": "via"
+        }
+      ],
+      "tags": {
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      }
+    },
+    {
+      "type": "relation",
+      "id": 13711982,
+      "timestamp": "2022-01-23T23:51:33Z",
+      "version": 1,
+      "changeset": 116518748,
+      "user": "jptolosa",
+      "uid": 1975220,
+      "members": [
+        {
+          "type": "way",
+          "ref": 550016778,
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": 549632813,
+          "role": "to"
+        },
+        {
+          "type": "node",
+          "ref": 385633804,
+          "role": "via"
+        }
+      ],
+      "tags": {
+        "implicit": "yes",
+        "restriction": "only_straight_on",
+        "type": "restriction"
+      }
+    },
+    {
+      "type": "relation",
+      "id": 13711983,
+      "timestamp": "2022-01-23T23:51:33Z",
+      "version": 1,
+      "changeset": 116518748,
+      "user": "jptolosa",
+      "uid": 1975220,
+      "members": [
+        {
+          "type": "way",
+          "ref": 23810088,
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": 23616329,
+          "role": "to"
+        },
+        {
+          "type": "node",
+          "ref": 385633804,
+          "role": "via"
+        }
+      ],
+      "tags": {
+        "implicit": "yes",
+        "restriction": "only_straight_on",
+        "type": "restriction"
+      }
+    },
+    {
+      "type": "relation",
+      "id": 13711986,
+      "timestamp": "2025-08-05T04:28:27Z",
+      "version": 2,
+      "changeset": 169984270,
+      "user": "BikalLake",
+      "uid": 19895016,
+      "members": [
+        {
+          "type": "node",
+          "ref": 259659259,
+          "role": "via"
+        },
+        {
+          "type": "way",
+          "ref": 1420099776,
+          "role": "to"
+        },
+        {
+          "type": "way",
+          "ref": 1420099773,
+          "role": "from"
+        }
+      ],
+      "tags": {
+        "implicit": "yes",
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      }
+    },
+    {
+      "type": "relation",
+      "id": 13711987,
+      "timestamp": "2025-08-05T06:24:55Z",
+      "version": 2,
+      "changeset": 169986990,
+      "user": "BikalLake",
+      "uid": 19895016,
+      "members": [
+        {
+          "type": "way",
+          "ref": 553845816,
+          "role": "to"
+        },
+        {
+          "type": "node",
+          "ref": 262529625,
+          "role": "via"
+        },
+        {
+          "type": "way",
+          "ref": 1420116034,
+          "role": "from"
+        }
+      ],
+      "tags": {
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      }
+    },
+    {
+      "type": "relation",
+      "id": 13711988,
+      "timestamp": "2025-08-05T04:28:27Z",
+      "version": 2,
+      "changeset": 169984270,
+      "user": "BikalLake",
+      "uid": 19895016,
+      "members": [
+        {
+          "type": "node",
+          "ref": 262529847,
+          "role": "via"
+        },
+        {
+          "type": "way",
+          "ref": 1420099780,
+          "role": "to"
+        },
+        {
+          "type": "way",
+          "ref": 1420099778,
+          "role": "from"
+        }
+      ],
+      "tags": {
+        "implicit": "yes",
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      }
+    },
+    {
+      "type": "relation",
+      "id": 13711989,
+      "timestamp": "2022-01-23T23:51:33Z",
+      "version": 1,
+      "changeset": 116518748,
+      "user": "jptolosa",
+      "uid": 1975220,
+      "members": [
+        {
+          "type": "way",
+          "ref": 333210748,
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": 1024092198,
+          "role": "to"
+        },
+        {
+          "type": "node",
+          "ref": 3403254191,
+          "role": "via"
+        }
+      ],
+      "tags": {
+        "implicit": "yes",
+        "restriction": "only_straight_on",
+        "type": "restriction"
+      }
+    },
+    {
+      "type": "relation",
+      "id": 13711990,
+      "timestamp": "2022-01-23T23:51:33Z",
+      "version": 1,
+      "changeset": 116518748,
+      "user": "jptolosa",
+      "uid": 1975220,
+      "members": [
+        {
+          "type": "way",
+          "ref": 1024092199,
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": 333210748,
+          "role": "to"
+        },
+        {
+          "type": "node",
+          "ref": 5311521066,
+          "role": "via"
+        }
+      ],
+      "tags": {
+        "implicit": "yes",
+        "restriction": "only_straight_on",
+        "type": "restriction"
+      }
+    },
+    {
+      "type": "relation",
+      "id": 13711992,
+      "timestamp": "2025-08-18T03:09:09Z",
+      "version": 2,
+      "changeset": 170592842,
+      "user": "BikalLake",
+      "uid": 19895016,
+      "members": [
+        {
+          "type": "way",
+          "ref": 1024092201,
+          "role": "to"
+        },
+        {
+          "type": "node",
+          "ref": 262532746,
+          "role": "via"
+        },
+        {
+          "type": "way",
+          "ref": 1422950227,
+          "role": "from"
+        }
+      ],
+      "tags": {
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      }
+    },
+    {
+      "type": "relation",
+      "id": 13711993,
+      "timestamp": "2022-01-23T23:51:33Z",
+      "version": 1,
+      "changeset": 116518748,
+      "user": "jptolosa",
+      "uid": 1975220,
+      "members": [
+        {
+          "type": "way",
+          "ref": 550469821,
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": 550469813,
+          "role": "to"
+        },
+        {
+          "type": "node",
+          "ref": 262533176,
+          "role": "via"
+        }
+      ],
+      "tags": {
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      }
+    },
+    {
+      "type": "relation",
+      "id": 13711994,
+      "timestamp": "2022-01-23T23:51:33Z",
+      "version": 1,
+      "changeset": 116518748,
+      "user": "jptolosa",
+      "uid": 1975220,
+      "members": [
+        {
+          "type": "way",
+          "ref": 550469820,
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": 1024092206,
+          "role": "to"
+        },
+        {
+          "type": "node",
+          "ref": 262535394,
+          "role": "via"
+        }
+      ],
+      "tags": {
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      }
+    },
+    {
+      "type": "relation",
+      "id": 13711995,
+      "timestamp": "2022-01-23T23:51:33Z",
+      "version": 1,
+      "changeset": 116518748,
+      "user": "jptolosa",
+      "uid": 1975220,
+      "members": [
+        {
+          "type": "way",
+          "ref": 550280254,
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": 923914155,
+          "role": "to"
+        },
+        {
+          "type": "node",
+          "ref": 259658044,
+          "role": "via"
+        }
+      ],
+      "tags": {
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      }
+    },
+    {
+      "type": "relation",
+      "id": 13712029,
+      "timestamp": "2022-01-24T00:09:51Z",
+      "version": 1,
+      "changeset": 116518991,
+      "user": "jptolosa",
+      "uid": 1975220,
+      "members": [
+        {
+          "type": "way",
+          "ref": 550469809,
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": 550469815,
+          "role": "to"
+        },
+        {
+          "type": "node",
+          "ref": 5316795928,
+          "role": "via"
+        }
+      ],
+      "tags": {
+        "implicit": "yes",
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      }
+    },
+    {
+      "type": "relation",
+      "id": 13712030,
+      "timestamp": "2022-01-24T00:09:51Z",
+      "version": 1,
+      "changeset": 116518991,
+      "user": "jptolosa",
+      "uid": 1975220,
+      "members": [
+        {
+          "type": "way",
+          "ref": 550469815,
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": 442132920,
+          "role": "to"
+        },
+        {
+          "type": "node",
+          "ref": 5316795923,
+          "role": "via"
+        }
+      ],
+      "tags": {
+        "implicit": "yes",
+        "restriction": "only_right_turn",
+        "type": "restriction"
+      }
+    },
+    {
+      "type": "relation",
+      "id": 13712194,
+      "timestamp": "2022-01-24T02:10:25Z",
+      "version": 1,
+      "changeset": 116520473,
+      "user": "jptolosa",
+      "uid": 1975220,
+      "members": [
+        {
+          "type": "way",
+          "ref": 186985314,
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": 444480528,
+          "role": "to"
+        },
+        {
+          "type": "node",
+          "ref": 259211943,
+          "role": "via"
+        }
+      ],
+      "tags": {
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      }
+    },
+    {
+      "type": "relation",
+      "id": 14917735,
+      "timestamp": "2022-11-21T12:32:06Z",
+      "version": 1,
+      "changeset": 129195067,
+      "user": "felipeeugenio",
+      "uid": 337684,
+      "members": [
+        {
+          "type": "way",
+          "ref": 1115993428,
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": 485201825,
+          "role": "to"
+        },
+        {
+          "type": "node",
+          "ref": 276567405,
+          "role": "via"
+        }
+      ],
+      "tags": {
+        "implicit": "yes",
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      }
+    },
+    {
+      "type": "relation",
+      "id": 14917736,
+      "timestamp": "2022-11-21T12:32:06Z",
+      "version": 1,
+      "changeset": 129195067,
+      "user": "felipeeugenio",
+      "uid": 337684,
+      "members": [
+        {
+          "type": "way",
+          "ref": 1115993431,
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": 1115993429,
+          "role": "to"
+        },
+        {
+          "type": "node",
+          "ref": 4396933396,
+          "role": "via"
+        }
+      ],
+      "tags": {
+        "implicit": "yes",
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      }
+    },
+    {
+      "type": "relation",
+      "id": 14917737,
+      "timestamp": "2022-11-21T12:32:06Z",
+      "version": 1,
+      "changeset": 129195067,
+      "user": "felipeeugenio",
+      "uid": 337684,
+      "members": [
+        {
+          "type": "way",
+          "ref": 441998204,
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": 441998202,
+          "role": "to"
+        },
+        {
+          "type": "node",
+          "ref": 4396933393,
+          "role": "via"
+        }
+      ],
+      "tags": {
+        "implicit": "yes",
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      }
+    },
+    {
+      "type": "relation",
+      "id": 14917738,
+      "timestamp": "2022-11-21T12:32:06Z",
+      "version": 1,
+      "changeset": 129195067,
+      "user": "felipeeugenio",
+      "uid": 337684,
+      "members": [
+        {
+          "type": "way",
+          "ref": 441998202,
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": 1115993430,
+          "role": "to"
+        },
+        {
+          "type": "node",
+          "ref": 276567407,
+          "role": "via"
+        }
+      ],
+      "tags": {
+        "restriction": "only_straight_on",
+        "type": "restriction"
+      }
+    },
+    {
+      "type": "relation",
+      "id": 14917739,
+      "timestamp": "2022-11-21T12:32:06Z",
+      "version": 1,
+      "changeset": 129195067,
+      "user": "felipeeugenio",
+      "uid": 337684,
+      "members": [
+        {
+          "type": "way",
+          "ref": 25374427,
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": 1115993431,
+          "role": "to"
+        },
+        {
+          "type": "node",
+          "ref": 276567407,
+          "role": "via"
+        }
+      ],
+      "tags": {
+        "restriction": "only_straight_on",
+        "type": "restriction"
+      }
+    },
+    {
+      "type": "relation",
+      "id": 14917747,
+      "timestamp": "2022-11-21T12:35:18Z",
+      "version": 1,
+      "changeset": 129195205,
+      "user": "felipeeugenio",
+      "uid": 337684,
+      "members": [
+        {
+          "type": "way",
+          "ref": 485201825,
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": 776587914,
+          "role": "to"
+        },
+        {
+          "type": "node",
+          "ref": 276567406,
+          "role": "via"
+        }
+      ],
+      "tags": {
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      }
+    },
+    {
+      "type": "relation",
+      "id": 14917748,
+      "timestamp": "2022-11-21T12:35:18Z",
+      "version": 1,
+      "changeset": 129195205,
+      "user": "felipeeugenio",
+      "uid": 337684,
+      "members": [
+        {
+          "type": "way",
+          "ref": 441998201,
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": 776587914,
+          "role": "via"
+        },
+        {
+          "type": "way",
+          "ref": 550489148,
+          "role": "to"
+        }
+      ],
+      "tags": {
+        "implicit": "yes",
+        "restriction": "no_u_turn",
+        "type": "restriction"
+      }
+    },
+    {
+      "type": "relation",
+      "id": 14917877,
+      "timestamp": "2022-11-21T13:15:01Z",
+      "version": 1,
+      "changeset": 129196778,
+      "user": "felipeeugenio",
+      "uid": 337684,
+      "members": [
+        {
+          "type": "way",
+          "ref": 1116002229,
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": 749777346,
+          "role": "to"
+        },
+        {
+          "type": "node",
+          "ref": 7011227526,
+          "role": "via"
+        }
+      ],
+      "tags": {
+        "implicit": "yes",
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      }
+    },
+    {
+      "type": "relation",
+      "id": 14917878,
+      "timestamp": "2022-11-21T13:15:01Z",
+      "version": 1,
+      "changeset": 129196778,
+      "user": "felipeeugenio",
+      "uid": 337684,
+      "members": [
+        {
+          "type": "way",
+          "ref": 1116002229,
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": 552670367,
+          "role": "to"
+        },
+        {
+          "type": "node",
+          "ref": 5503958001,
+          "role": "via"
+        }
+      ],
+      "tags": {
+        "implicit": "yes",
+        "restriction": "no_right_turn",
+        "type": "restriction"
+      }
+    },
+    {
+      "type": "relation",
+      "id": 14917879,
+      "timestamp": "2023-08-13T16:21:09Z",
+      "version": 2,
+      "changeset": 139832477,
+      "user": "cserpell",
+      "uid": 1714449,
+      "members": [
+        {
+          "type": "way",
+          "ref": 749777346,
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": 552670367,
+          "role": "to"
+        },
+        {
+          "type": "node",
+          "ref": 10207329188,
+          "role": "via"
+        }
+      ],
+      "tags": {
+        "implicit": "yes",
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      }
+    },
+    {
+      "type": "relation",
+      "id": 15514083,
+      "timestamp": "2023-02-20T23:51:17Z",
+      "version": 1,
+      "changeset": 132812662,
+      "user": "IguanaPablo",
+      "uid": 17643128,
+      "members": [
+        {
+          "type": "way",
+          "ref": 24385257,
+          "role": "from"
+        },
+        {
+          "type": "node",
+          "ref": 264600393,
+          "role": "via"
+        },
+        {
+          "type": "way",
+          "ref": 26638840,
+          "role": "to"
+        }
+      ],
+      "tags": {
+        "note": "camiones de 2+ ejes",
+        "restriction": "no_right_turn",
+        "type": "restriction"
+      }
+    },
+    {
+      "type": "relation",
+      "id": 16194046,
+      "timestamp": "2023-08-13T00:42:27Z",
+      "version": 1,
+      "changeset": 139806322,
+      "user": "cserpell",
+      "uid": 1714449,
+      "members": [
+        {
+          "type": "way",
+          "ref": 128369726,
+          "role": "from"
+        },
+        {
+          "type": "node",
+          "ref": 275816980,
+          "role": "via"
+        },
+        {
+          "type": "way",
+          "ref": 1197554689,
+          "role": "to"
+        }
+      ],
+      "tags": {
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      }
+    },
+    {
+      "type": "relation",
+      "id": 16196983,
+      "timestamp": "2023-12-19T18:24:50Z",
+      "version": 2,
+      "changeset": 145302400,
+      "user": "jptolosa",
+      "uid": 1975220,
+      "members": [
+        {
+          "type": "node",
+          "ref": 10207329181,
+          "role": "via"
+        },
+        {
+          "type": "way",
+          "ref": 128369284,
+          "role": "to"
+        },
+        {
+          "type": "way",
+          "ref": 1232495614,
+          "role": "from"
+        }
+      ],
+      "tags": {
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      }
+    },
+    {
+      "type": "relation",
+      "id": 16196984,
+      "timestamp": "2023-08-13T16:21:09Z",
+      "version": 1,
+      "changeset": 139832477,
+      "user": "cserpell",
+      "uid": 1714449,
+      "members": [
+        {
+          "type": "way",
+          "ref": 541770921,
+          "role": "from"
+        },
+        {
+          "type": "node",
+          "ref": 1805164212,
+          "role": "via"
+        },
+        {
+          "type": "way",
+          "ref": 169345758,
+          "role": "to"
+        }
+      ],
+      "tags": {
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      }
+    },
+    {
+      "type": "relation",
+      "id": 16207405,
+      "timestamp": "2023-08-16T21:02:22Z",
+      "version": 1,
+      "changeset": 139984839,
+      "user": "felipeeugenio",
+      "uid": 337684,
+      "members": [
+        {
+          "type": "way",
+          "ref": 1198808020,
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": 128369726,
+          "role": "to"
+        },
+        {
+          "type": "node",
+          "ref": 282599756,
+          "role": "via"
+        }
+      ],
+      "tags": {
+        "implicit": "yes",
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      }
+    },
+    {
+      "type": "relation",
+      "id": 16207406,
+      "timestamp": "2023-08-16T21:02:22Z",
+      "version": 1,
+      "changeset": 139984839,
+      "user": "felipeeugenio",
+      "uid": 337684,
+      "members": [
+        {
+          "type": "way",
+          "ref": 1198808021,
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": 1198808019,
+          "role": "to"
+        },
+        {
+          "type": "node",
+          "ref": 11120040596,
+          "role": "via"
+        }
+      ],
+      "tags": {
+        "implicit": "yes",
+        "restriction": "only_straight_on",
+        "type": "restriction"
+      }
+    },
+    {
+      "type": "relation",
+      "id": 16207407,
+      "timestamp": "2023-08-16T21:02:22Z",
+      "version": 1,
+      "changeset": 139984839,
+      "user": "felipeeugenio",
+      "uid": 337684,
+      "members": [
+        {
+          "type": "way",
+          "ref": 1198808023,
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": 1198808020,
+          "role": "to"
+        },
+        {
+          "type": "node",
+          "ref": 11120040596,
+          "role": "via"
+        }
+      ],
+      "tags": {
+        "implicit": "yes",
+        "restriction": "only_straight_on",
+        "type": "restriction"
+      }
+    },
+    {
+      "type": "relation",
+      "id": 16207408,
+      "timestamp": "2023-08-16T21:02:22Z",
+      "version": 1,
+      "changeset": 139984839,
+      "user": "felipeeugenio",
+      "uid": 337684,
+      "members": [
+        {
+          "type": "way",
+          "ref": 552482018,
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": 1198808022,
+          "role": "to"
+        },
+        {
+          "type": "node",
+          "ref": 278376975,
+          "role": "via"
+        }
+      ],
+      "tags": {
+        "implicit": "yes",
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      }
+    },
+    {
+      "type": "relation",
+      "id": 16220002,
+      "timestamp": "2023-08-19T17:35:16Z",
+      "version": 1,
+      "changeset": 140104680,
+      "user": "felipeeugenio",
+      "uid": 337684,
+      "members": [
+        {
+          "type": "way",
+          "ref": 1199962938,
+          "role": "from"
+        },
+        {
+          "type": "way",
+          "ref": 1199962937,
+          "role": "to"
+        },
+        {
+          "type": "node",
+          "ref": 11128474661,
+          "role": "via"
+        }
+      ],
+      "tags": {
+        "implicit": "yes",
+        "restriction": "no_u_turn",
+        "type": "restriction"
+      }
+    },
+    {
+      "type": "relation",
+      "id": 17836415,
+      "timestamp": "2024-07-15T02:05:25Z",
+      "version": 1,
+      "changeset": 153951849,
+      "user": "cserpell",
+      "uid": 1714449,
+      "members": [
+        {
+          "type": "way",
+          "ref": 1301404558,
+          "role": "from"
+        },
+        {
+          "type": "node",
+          "ref": 262536659,
+          "role": "via"
+        },
+        {
+          "type": "way",
+          "ref": 333169054,
+          "role": "to"
+        }
+      ],
+      "tags": {
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      }
+    },
+    {
+      "type": "relation",
+      "id": 18772388,
+      "timestamp": "2025-03-02T05:34:37Z",
+      "version": 1,
+      "changeset": 163109694,
+      "user": "cephei1313",
+      "uid": 2927185,
+      "members": [
+        {
+          "type": "way",
+          "ref": 1174675748,
+          "role": "from"
+        },
+        {
+          "type": "node",
+          "ref": 277654405,
+          "role": "via"
+        },
+        {
+          "type": "way",
+          "ref": 23699437,
+          "role": "to"
+        }
+      ],
+      "tags": {
+        "restriction": "no_right_turn",
+        "type": "restriction"
+      }
+    },
+    {
+      "type": "relation",
+      "id": 20279442,
+      "timestamp": "2026-03-02T18:02:17Z",
+      "version": 1,
+      "changeset": 179267710,
+      "user": "HurricaneGator",
+      "uid": 10147122,
+      "members": [
+        {
+          "type": "way",
+          "ref": 553413236,
+          "role": "from"
+        },
+        {
+          "type": "node",
+          "ref": 259962767,
+          "role": "via"
+        },
+        {
+          "type": "way",
+          "ref": 553413238,
+          "role": "to"
+        }
+      ],
+      "tags": {
+        "restriction": "only_straight_on",
+        "type": "restriction"
+      }
+    },
+    {
+      "type": "relation",
+      "id": 20772393,
+      "timestamp": "2026-05-28T16:43:19Z",
+      "version": 1,
+      "changeset": 183314506,
+      "user": "dlegg73",
+      "uid": 23619409,
+      "members": [
+        {
+          "type": "way",
+          "ref": 654814770,
+          "role": "from"
+        },
+        {
+          "type": "node",
+          "ref": 2106142140,
+          "role": "via"
+        },
+        {
+          "type": "way",
+          "ref": 554086523,
+          "role": "to"
+        }
+      ],
+      "tags": {
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      }
+    }
+  ]
+}

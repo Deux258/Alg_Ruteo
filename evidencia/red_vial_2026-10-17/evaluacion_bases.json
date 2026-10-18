@@ -1,0 +1,101 @@
+{
+  "candidates": [
+    {
+      "geometry": {
+        "coordinates": [
+          -71.6572392109999,
+          -33.10190169
+        ],
+        "type": "Point"
+      },
+      "inside": true,
+      "maximum_distance_km": 0.09828821462077139,
+      "name": "Décima Sexta de Valparaíso",
+      "offset_m": 14.25427576138114,
+      "provider_id": "104",
+      "reachable_nodes": 15,
+      "road_node_id": "9196701708776377866",
+      "selected": false,
+      "source": "senapred",
+      "source_sha256": "b128bf965d269ea1c5c5513a40cebaf1498ab5bafcc6110e942a76d70bcb010c"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.621817,
+          -33.0531369999999
+        ],
+        "type": "Point"
+      },
+      "inside": true,
+      "maximum_distance_km": 11.933608317269794,
+      "name": "8VA. COM. FLORIDA VALPO.",
+      "offset_m": 5.752035686119725,
+      "provider_id": "2872",
+      "reachable_nodes": 13249,
+      "road_node_id": "8716049048730704023",
+      "selected": true,
+      "source": "senapred_carabineros",
+      "source_sha256": "deae518a3d64c6c2e43615544f216fdaba7cf818a782abd8ded101ab2a1bd406"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.6071209999999,
+          -33.0591439999999
+        ],
+        "type": "Point"
+      },
+      "inside": true,
+      "maximum_distance_km": 11.339734828855843,
+      "name": "SCOM. LAS CANAS",
+      "offset_m": 2.290744768238579,
+      "provider_id": "2887",
+      "reachable_nodes": 13249,
+      "road_node_id": "1963775701241994080",
+      "selected": false,
+      "source": "senapred_carabineros",
+      "source_sha256": "deae518a3d64c6c2e43615544f216fdaba7cf818a782abd8ded101ab2a1bd406"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.638021,
+          -33.0433439999999
+        ],
+        "type": "Point"
+      },
+      "inside": true,
+      "maximum_distance_km": 16.988138193686606,
+      "name": "TCIA. CORDILLERA VALPO.",
+      "offset_m": 16.3006836571766,
+      "provider_id": "2905",
+      "reachable_nodes": 13249,
+      "road_node_id": "273522721604359483",
+      "selected": false,
+      "source": "senapred_carabineros",
+      "source_sha256": "deae518a3d64c6c2e43615544f216fdaba7cf818a782abd8ded101ab2a1bd406"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.5866329999999,
+          -33.0614469999999
+        ],
+        "type": "Point"
+      },
+      "inside": true,
+      "maximum_distance_km": 15.523515860633902,
+      "name": "TCIA. OHIGGINS",
+      "offset_m": 28.8895217683939,
+      "provider_id": "2912",
+      "reachable_nodes": 13249,
+      "road_node_id": "3201522000982730216",
+      "selected": false,
+      "source": "senapred_carabineros",
+      "source_sha256": "deae518a3d64c6c2e43615544f216fdaba7cf818a782abd8ded101ab2a1bd406"
+    }
+  ],
+  "criterion": "inside AOI; existing road node <=30 m; >=1000 reachable nodes; identity corroborated separately",
+  "run_id": "4718c905-d0bf-52bf-a82b-33525cc936fd"
+}

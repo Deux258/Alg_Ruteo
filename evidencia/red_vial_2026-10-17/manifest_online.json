@@ -1,0 +1,42 @@
+{
+  "bbox_wgs84": [
+    -71.66723294922228,
+    -33.1122636505422,
+    -71.54727801235427,
+    -33.03885253538363
+  ],
+  "fallback_errors": [],
+  "fetched_at_utc": "2026-10-17T22:13:47.789335+00:00",
+  "sources": {
+    "osm": {
+      "bytes": 13826178,
+      "fetched_at_utc": "2026-10-17T22:13:47.789335+00:00",
+      "file": "osm_0cebf8a03042ae41.json",
+      "http_status": 200,
+      "license": "ODbL 1.0; © OpenStreetMap contributors; https://www.openstreetmap.org/copyright",
+      "query": "[out:json][timeout:180];\nway[\"highway\"](-33.1122636505422,-71.66723294922228,-33.03885253538363,-71.54727801235427)->.roads;\nrel(bw.roads)[\"type\"=\"restriction\"]->.restrictions;\n(.roads;.restrictions;nwr[\"amenity\"=\"fire_station\"](-33.1122636505422,-71.66723294922228,-33.03885253538363,-71.54727801235427););\nout meta;\n>;\nout meta;\n",
+      "sha256": "0cebf8a03042ae41ce4d42db9a006d041f47a226882100cf9dad5cf4213d2661",
+      "timestamp_osm_base": "2026-10-17T22:12:20Z",
+      "url": "https://overpass-api.de/api/interpreter"
+    },
+    "senapred": {
+      "bytes": 13596,
+      "fetched_at_utc": "2026-10-17T22:13:47.789335+00:00",
+      "file": "senapred_b128bf965d269ea1.json",
+      "http_status": 200,
+      "product": "SENAPRED Servicios_2024 / BOMBEROS",
+      "sha256": "b128bf965d269ea1c5c5513a40cebaf1498ab5bafcc6110e942a76d70bcb010c",
+      "url": "https://services5.arcgis.com/i7S5PSnIJAUcWvSE/arcgis/rest/services/Servicios_2024/FeatureServer/1/query?where=1%3D1&geometry=-71.66723294922228%2C-33.1122636505422%2C-71.54727801235427%2C-33.03885253538363&geometryType=esriGeometryEnvelope&inSR=4326&spatialRel=esriSpatialRelIntersects&outFields=%2A&outSR=4326&f=geojson&resultRecordCount=2000"
+    },
+    "senapred_carabineros": {
+      "bytes": 5842,
+      "fetched_at_utc": "2026-10-17T22:13:47.789335+00:00",
+      "file": "senapred_carabineros_deae518a3d64c6c2.json",
+      "http_status": 200,
+      "product": "SENAPRED Servicios_2024 / CARABINEROS",
+      "sha256": "deae518a3d64c6c2e43615544f216fdaba7cf818a782abd8ded101ab2a1bd406",
+      "url": "https://services5.arcgis.com/i7S5PSnIJAUcWvSE/arcgis/rest/services/Servicios_2024/FeatureServer/3/query?where=1%3D1&geometry=-71.66723294922228%2C-33.1122636505422%2C-71.54727801235427%2C-33.03885253538363&geometryType=esriGeometryEnvelope&inSR=4326&spatialRel=esriSpatialRelIntersects&outFields=%2A&outSR=4326&f=geojson&resultRecordCount=2000"
+    }
+  },
+  "version": 1
+}

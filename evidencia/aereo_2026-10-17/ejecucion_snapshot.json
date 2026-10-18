@@ -1,0 +1,114 @@
+{
+  "aerial": {
+    "base_inside": true,
+    "bases": 1,
+    "clearance_verified": false,
+    "directed_edges": 556,
+    "examples": [
+      {
+        "alternatives": 0,
+        "destination": [
+          -71.648869577398,
+          -33.10094699838241
+        ],
+        "length_km": null,
+        "reason": "weather_outside_profile",
+        "status": "not_feasible"
+      },
+      {
+        "alternatives": 0,
+        "destination": [
+          -71.65721693536275,
+          -33.09355617174517
+        ],
+        "length_km": null,
+        "reason": "weather_outside_profile",
+        "status": "not_feasible"
+      },
+      {
+        "alternatives": 0,
+        "destination": [
+          -71.64908600462512,
+          -33.10815544330371
+        ],
+        "length_km": null,
+        "reason": "weather_outside_profile",
+        "status": "not_feasible"
+      }
+    ],
+    "nodes": 87,
+    "routing_ready": true,
+    "source_counts": {
+      "A1": 9,
+      "A2": 0,
+      "A3": 3,
+      "A4": 17,
+      "M1": 1,
+      "M2": 454,
+      "M3": 87,
+      "M4": 48
+    }
+  },
+  "counts": {
+    "A1": 9,
+    "A2": 0,
+    "A3": 3,
+    "A4": 17,
+    "I": 643,
+    "M1": 1,
+    "M2": 454,
+    "M3": 87,
+    "M4": 48
+  },
+  "duration_s": 0.597,
+  "etl_complete": true,
+  "idempotent": true,
+  "mode": "snapshot",
+  "phase2_complete": false,
+  "recorded_at_utc": "2026-10-17T23:14:56.963455+00:00",
+  "run_id": "60daad9b-4db4-57a6-9c84-e877e4a8e1b8",
+  "scope": "completo",
+  "status": "ready",
+  "steps": [],
+  "topology": {
+    "dijkstra_smoke": {
+      "distance_km": 1.1313708498990933,
+      "source": 2122332705314860074,
+      "steps": 1,
+      "target": 8577355180716890958
+    },
+    "directed_edges": 556,
+    "invalid_edges": 0,
+    "isolated_nodes": 0,
+    "length_unit": "km",
+    "nodes": 87,
+    "reverse_cost": -1,
+    "spatial": {
+      "area_km2": 54.92070918534002,
+      "candidate_bases": 1,
+      "outside_edges": 0,
+      "outside_nodes": 0
+    },
+    "srid": 32719,
+    "strong_components": [
+      {
+        "component": 141194685591817839,
+        "size": 87
+      }
+    ],
+    "strong_count": 1,
+    "warnings": [],
+    "weak_components": [
+      {
+        "component": 141194685591817839,
+        "size": 87
+      }
+    ],
+    "weak_count": 1
+  },
+  "versions": {
+    "pgrouting": "3.8.0",
+    "postgis": "POSTGIS=\"3.5.2 dea6d0a\" [EXTENSION] PGSQL=\"160\" GEOS=\"3.9.0-CAPI-1.16.2\" PROJ=\"7.2.1 NETWORK_ENABLED=OFF URL_ENDPOINT=https://cdn.proj.org USER_WRITABLE_DIRECTORY=/var/lib/postgresql/.local/share/proj DATABASE_PATH=/usr/share/proj/proj.db\" (compiled against PROJ 7.2.1) LIBXML=\"2.9.10\" LIBJSON=\"0.15\" LIBPROTOBUF=\"1.3.3\" WAGYU=\"0.5.0 (Internal)\"",
+    "postgres": "PostgreSQL 16.9 (Debian 16.9-1.pgdg110+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit"
+  }
+}

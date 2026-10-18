@@ -1,0 +1,30 @@
+# Requiere un runner con executor Docker y soporte de services.
+# No es un registro de ejecución: el pipeline debe correr en GitLab del equipo.
+image: python:3.12.12-slim-bookworm@sha256:593bd06efe90efa80dc4eee3948be7c0fde4134606dd40d8dd8dbcade98e669c
+services:
+  - name: pgrouting/pgrouting:16-3.5-3.8.0@sha256:4c480c7f9e25a3490573cd6ef86b286fd21162e288cc355e8da2b52518ef6ab8
+    alias: dbtest
+variables:
+  POSTGRES_DB: ruteo_test
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: ci-disposable-database-only
+  DB_HOST: dbtest
+  DB_NAME: ruteo_test
+  DB_USER: postgres
+  DB_PASSWORD: ci-disposable-database-only
+  WEB_DB_PASSWORD: ci-disposable-reader-only
+  REQUIRE_DB_TESTS: '1'
+  PYTHONPATH: .
+stages: [test]
+integracion:
+  stage: test
+  script:
+    - apt-get update && apt-get install -y --no-install-recommends libexpat1
+    - python -m pip install --require-hashes -r requirements.lock
+    - python -m pip install --require-hashes -r requirements.aerial.lock
+    - python tests/esperar_bd.py
+    - python -m core.test_runner
+  artifacts:
+    when: always
+    paths: [evidencia/local/, datos/runs/]
+    expire_in: 2 weeks
