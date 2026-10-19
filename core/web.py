@@ -49,7 +49,7 @@ def status(conn):
 
 class Handler(BaseHTTPRequestHandler):
     def do_POST(self):
-        if urlsplit(self.path).path not in ['/api/aereo/rutas','/api/aereo/replanificar']:
+        if urlsplit(self.path).path not in ['/api/aereo/rutas','/api/aereo/replanificar','/api/aereo/comparar']:
             return self.reply(404,b'{"error":"not_found"}')
         try:
             length=int(self.headers.get('Content-Length','0'))
@@ -59,7 +59,10 @@ class Handler(BaseHTTPRequestHandler):
                 current=status(conn)
                 if not current:return self.reply(503,b'{"status":"not_ready"}')
                 from core.aerial_routing import calculate
-                result=calculate(conn,current['run_id'],request)
+                if urlsplit(self.path).path=='/api/aereo/comparar':
+                    from core.mission_evaluation import compare
+                    result=compare(conn,current['run_id'],request)
+                else:result=calculate(conn,current['run_id'],request)
             return self.reply(200,json.dumps(safe_numbers(result),ensure_ascii=False,allow_nan=False).encode())
         except (ValueError,KeyError,TypeError) as exc:
             return self.reply(422,json.dumps({'error':str(exc)},ensure_ascii=False).encode())

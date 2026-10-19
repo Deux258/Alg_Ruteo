@@ -1,3 +1,5 @@
+> Contrato activo: versión 4.0, dos áreas y fuentes S1–S7+S1H. Ver [diccionario ampliado](../docs/FASE2_METADATA_TRANSITO.md). Se conserva debajo la documentación histórica.
+
 # Contrato I: infraestructura.json, versiones 1.0 (legada) y 2.0 (vial)
 
 La versión activa **3.0 aérea**, sus campos, metadata, amenazas y cargas están

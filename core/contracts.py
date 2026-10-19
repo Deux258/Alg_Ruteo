@@ -63,6 +63,13 @@ def validate_infrastructure(doc, config=None):
     aoi_lineage = doc["lineage"].get("aoi", {})
     if aoi_lineage.get("sha256") != sha256(area_path) or aoi_lineage.get("geometry") != json.loads(json.dumps(area.__geo_interface__)):
         raise ValueError("El linaje no corresponde al polígono de estudio")
+    if doc['schema_version']=='4.0':
+        from shapely.ops import transform
+        from core.aerial_data import FWD, INV
+        expected=transform(INV,transform(FWD,area).buffer(config['transit_buffer_m'],quad_segs=16))
+        if doc['lineage'].get('flight_area',{}).get('geometry')!=json.loads(json.dumps(expected.__geo_interface__)):
+            raise ValueError('Área de tránsito incompatible')
+        area=expected
     ids, keys = {}, set()
     for node in doc["nodes"]:
         if node["id"] in ids or node["natural_key"] in keys:
@@ -99,10 +106,10 @@ def validate_infrastructure(doc, config=None):
         edge_ids.add(edge["id"])
         pairs.add((s, t))
     builder = "fase1-polygon-adapter-v2"
-    if doc['schema_version'] == '3.0':
+    if doc['schema_version'] in ['3.0','4.0']:
         from core.aerial_data import validate
         validate(doc,config)
-        builder='aerial-grid-v1'
+        builder=doc['lineage']['builder']
     elif doc['schema_version'] == '2.0':
         from core.roads import validate_road_provenance
         validate_road_provenance(doc, config)

@@ -23,7 +23,9 @@
   "snapshot_directory": "datos/entrada/fase1",
   "snapshot_observed_at": "2026-10-16T18:46:07.406713+00:00",
   "schema_version": 1,
-  "notes": "Simulador aéreo del informe. Corredores derivados, despeje vertical no verificado. Base candidata Bomberos 104; extremos elegibles sin dependencia vial.",
-  "aerial_raw_directory": "datos/entrada/aereo",
-  "aerial_profile": "config/aereo.json"
+  "notes": "Simulador académico: vigilancia original y tránsito buffer 1100 m; cinco bases candidatas.",
+  "aerial_raw_directory": "datos/entrada/aereo_v2",
+  "aerial_profile": "config/aereo.json",
+  "reuse_raw_directory": "datos/entrada/aereo",
+  "transit_buffer_m": 1100
 }

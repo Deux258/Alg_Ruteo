@@ -1,3 +1,5 @@
+> Versión anterior / antecedente: el contrato activo 4.0 y sus cambios están en [FASE2_METADATA_TRANSITO.md](FASE2_METADATA_TRANSITO.md).
+
 # Integración aérea vigente
 
 La configuración activa es `network_type=aerial_candidate`. `main` usa

@@ -54,18 +54,21 @@ def load_infrastructure(conn, path):
             # legada. Las consultas de validación necesitan estadísticas actuales.
             for table in ['nodes','edges','road_states','road_transitions']:
                 conn.execute('ANALYZE routing.'+table)
-        if doc['schema_version']=='3.0':
+        if doc['schema_version'] in ['3.0','4.0']:
             from core.aerial_data import build
             config=conn.execute('SELECT configuration FROM routing.runs WHERE run_id=%s',(rid,)).fetchone()['configuration']
             context=build(config,str(rid),doc['extraction_mode'])[1]
             conn.execute('INSERT INTO routing.aerial_models(run_id,profile,context) VALUES(%s,%s,%s)',(rid,Jsonb(context['profile']),Jsonb(context)))
+            if doc['schema_version']=='4.0':
+                for role,g,buffer in [('study',context['study_geometry'],0),('transit',context['flight_geometry'],config['transit_buffer_m'])]:
+                    conn.execute('INSERT INTO routing.run_areas(run_id,role,buffer_m,geom) VALUES(%s,%s,%s,ST_Multi(ST_Transform(ST_SetSRID(ST_GeomFromGeoJSON(%s),4326),32719)))',(rid,role,buffer,Jsonb(g)))
             conn.execute('ANALYZE routing.nodes');conn.execute('ANALYZE routing.edges')
     return {"idempotent": False, "nodes":len(doc["nodes"]), "edges":len(doc["edges"])}
 
 
 def audit(conn, rid):
     report = conn.execute("SELECT routing.topology_report(%s) AS report",(UUID(str(rid)),)).fetchone()["report"]
-    area = conn.execute("SELECT lineage#>'{aoi,geometry}' AS geometry FROM routing.datasets WHERE run_id=%s AND dataset_key='I'", (rid,)).fetchone()
+    area = conn.execute("SELECT COALESCE(lineage#>'{flight_area,geometry}',lineage#>'{aoi,geometry}') AS geometry FROM routing.datasets WHERE run_id=%s AND dataset_key='I'", (rid,)).fetchone()
     if not area or not area["geometry"]:
         raise ValueError("Falta el polígono de estudio en el linaje")
     report["spatial"] = conn.execute("""WITH a AS (

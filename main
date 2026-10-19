@@ -5,12 +5,14 @@ cd -- "$(dirname -- "${BASH_SOURCE[0]}")"
 
 help() {
   cat <<'TXT'
-Uso: ./main [iniciar|probar|estado|detener|logs] [opciones]
+Uso: ./main [iniciar|probar|estado|detener|logs|adquirir|evaluar] [opciones]
   iniciar (predeterminado)   Construye, aplica SQL, carga, valida y habilita web.
   probar                    Ejecuta pruebas unitarias y BD desechable separada.
   estado                    Muestra contenedores y salud del servicio.
   detener                   Detiene servicios; conserva volúmenes.
   logs                      Muestra logs recientes sin imprimir credenciales.
+  adquirir --sources IDS --reuse IDS  Actualiza fuentes seleccionadas y conserva originales explícitos.
+  evaluar --request RUTA    Compara una misión y conserva la evaluación en datos/runs/evaluaciones.
 Opciones de iniciar: --scope base|completo --mode snapshot|online --run-id UUID
 El modo snapshot reconstruye la red desde originales conservados, sin consultas externas.
 --mode online actualiza S1-S7 para la red aérea configurada. El alcance completo
@@ -20,13 +22,16 @@ TXT
 if [[ "${1:-}" == '-h' || "${1:-}" == '--help' ]]; then help; exit 0; fi
 action="${1:-iniciar}"
 if (($#)); then shift; fi
-case "$action" in iniciar|probar|estado|detener|logs) ;; *) help >&2; exit 2;; esac
-scope=completo;mode=snapshot;run_id=''
+case "$action" in iniciar|probar|estado|detener|logs|adquirir|evaluar) ;; *) help >&2; exit 2;; esac
+scope=completo;mode=snapshot;run_id='';sources='';reuse='';request=''
 while (($#)); do
   case "$1" in
     --scope) [[ $# -ge 2 ]] || exit 2;scope="$2";shift 2;;
     --mode) [[ $# -ge 2 ]] || exit 2;mode="$2";shift 2;;
     --run-id) [[ $# -ge 2 ]] || exit 2;run_id="$2";shift 2;;
+    --sources) [[ $# -ge 2 ]] || exit 2;sources="$2";shift 2;;
+    --reuse) [[ $# -ge 2 ]] || exit 2;reuse="$2";shift 2;;
+    --request) [[ $# -ge 2 ]] || exit 2;request="$2";shift 2;;
     *) echo "Opción desconocida: $1" >&2;exit 2;;
   esac
 done
@@ -44,8 +49,20 @@ if [[ ! -e .env ]]; then
   unset db_pass web_pass
 fi
 compose=(docker compose --env-file .env)
+export BUILD_COMMIT="$(git rev-parse HEAD 2>/dev/null || echo unknown)"
 "${compose[@]}" config --quiet
 case "$action" in
+  adquirir)
+    "${compose[@]}" build etl
+    args=(python -m Infraestructura.descargar_aereo)
+    [[ -z "$sources" ]] || args+=(--sources "$sources")
+    [[ -z "$reuse" ]] || args+=(--reuse "$reuse")
+    "${compose[@]}" run --rm --no-deps etl "${args[@]}"
+    ;;
+  evaluar)
+    [[ -n "$request" ]] || { echo 'Falta --request datos/runs/solicitud.json' >&2;exit 2; }
+    "${compose[@]}" run --rm --no-deps etl python -m core.mission_evaluation --request "$request" --output /app/datos/runs/evaluaciones
+    ;;
   iniciar)
     mkdir -p datos/runs
     "${compose[@]}" build etl web

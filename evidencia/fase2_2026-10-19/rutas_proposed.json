@@ -1,0 +1,347 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -71.6572392109999,
+            -33.10190168999999
+          ],
+          [
+            -71.65721693536275,
+            -33.09355617174517
+          ]
+        ]
+      },
+      "properties": {
+        "rank": 1,
+        "role": "outbound",
+        "length_km": 0.9259036870758327
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -71.65721693536275,
+            -33.09355617174517
+          ],
+          [
+            -71.6572392109999,
+            -33.10190168999999
+          ]
+        ]
+      },
+      "properties": {
+        "rank": 1,
+        "role": "return",
+        "length_km": 0.9259036870758327
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -71.6572392109999,
+            -33.10190168999999
+          ],
+          [
+            -71.65743398300695,
+            -33.10076457638967
+          ],
+          [
+            -71.65721693536275,
+            -33.09355617174517
+          ]
+        ]
+      },
+      "properties": {
+        "rank": 2,
+        "role": "outbound",
+        "length_km": 0.92746249617113
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -71.65721693536275,
+            -33.09355617174517
+          ],
+          [
+            -71.6572392109999,
+            -33.10190168999999
+          ]
+        ]
+      },
+      "properties": {
+        "rank": 2,
+        "role": "return",
+        "length_km": 0.9259036870758327
+      }
+    }
+  ],
+  "run_id": "b80f9b83-cad7-53b8-a8b8-34a2a17e614c",
+  "status": "ready",
+  "reason": null,
+  "alternatives": [
+    {
+      "outbound": {
+        "edge_ids": [
+          "4202824587145258950"
+        ],
+        "node_ids": [
+          "444204520825800637",
+          "481811177017561201"
+        ],
+        "coordinates": [
+          [
+            -71.6572392109999,
+            -33.10190168999999
+          ],
+          [
+            -71.65721693536275,
+            -33.09355617174517
+          ]
+        ],
+        "length_km": 0.9259036870758327,
+        "time_s": 103.12091020355828,
+        "exposure_m": 652.9502261842571,
+        "unknown_m": 652.9502261842571
+      },
+      "return_path": {
+        "edge_ids": [
+          "8356491922891146573"
+        ],
+        "node_ids": [
+          "481811177017561201",
+          "444204520825800637"
+        ],
+        "coordinates": [
+          [
+            -71.65721693536275,
+            -33.09355617174517
+          ],
+          [
+            -71.6572392109999,
+            -33.10190168999999
+          ]
+        ],
+        "length_km": 0.9259036870758327,
+        "time_s": 84.19128464687532,
+        "exposure_m": 652.9502261842571,
+        "unknown_m": 652.9502261842571
+      },
+      "length_km": 1.8518073741516654,
+      "time_s": 247.3121948504336,
+      "observation_s": 60,
+      "exposure_m": 1305.9004523685142,
+      "unknown_m": 1305.9004523685142,
+      "mission_completed": true,
+      "rank": 1,
+      "within_50m_of_first_fraction": 1
+    },
+    {
+      "outbound": {
+        "edge_ids": [
+          "3033628799933365303",
+          "2573021938500782508"
+        ],
+        "node_ids": [
+          "444204520825800637",
+          "8054462048724848383",
+          "481811177017561201"
+        ],
+        "coordinates": [
+          [
+            -71.6572392109999,
+            -33.10190168999999
+          ],
+          [
+            -71.65743398300695,
+            -33.10076457638967
+          ],
+          [
+            -71.65721693536275,
+            -33.09355617174517
+          ]
+        ],
+        "length_km": 0.92746249617113,
+        "time_s": 103.27725544512015,
+        "exposure_m": 654.5818041920579,
+        "unknown_m": 654.5818041920579
+      },
+      "return_path": {
+        "edge_ids": [
+          "8356491922891146573"
+        ],
+        "node_ids": [
+          "481811177017561201",
+          "444204520825800637"
+        ],
+        "coordinates": [
+          [
+            -71.65721693536275,
+            -33.09355617174517
+          ],
+          [
+            -71.6572392109999,
+            -33.10190168999999
+          ]
+        ],
+        "length_km": 0.9259036870758327,
+        "time_s": 84.19128464687532,
+        "exposure_m": 652.9502261842571,
+        "unknown_m": 652.9502261842571
+      },
+      "length_km": 1.8533661832469628,
+      "time_s": 247.46854009199546,
+      "observation_s": 60,
+      "exposure_m": 1307.532030376315,
+      "unknown_m": 1307.532030376315,
+      "mission_completed": true,
+      "rank": 2,
+      "within_50m_of_first_fraction": 1
+    }
+  ],
+  "origin": [
+    -71.6572392109999,
+    -33.10190169
+  ],
+  "destination": [
+    -71.65721693536275,
+    -33.09355617174517
+  ],
+  "position": [
+    -71.6572392109999,
+    -33.10190169
+  ],
+  "mode": "mission",
+  "method": "proposed",
+  "phase": "outbound",
+  "time": "2026-10-19T00:00:00+00:00",
+  "elapsed_s": 0,
+  "remaining_s": 1200,
+  "events": [],
+  "clearance_verified": false,
+  "operationally_certified": false,
+  "effective_profile": {
+    "aip_margin_m": 300,
+    "air_speed_ms": 10,
+    "alternatives": 3,
+    "builder": "aerial-grid-v2",
+    "clearance_verified": false,
+    "comparison_options": 2,
+    "detour_factor": 1.2,
+    "flight_minutes": 25,
+    "grid_m": 800,
+    "max_link_m": 1500,
+    "neighbours": 8,
+    "observation_s": 60,
+    "operationally_certified": false,
+    "reserve_fraction": 0.2,
+    "temperature_max_c": 40,
+    "temperature_min_c": -5,
+    "thermal_buffer_m": 250,
+    "thermal_window_hours": 24,
+    "weather_max_age_minutes": 90,
+    "wind_limit_ms": 8,
+    "budget_s": 1200
+  },
+  "temporal_model": "static_at_selected_hour",
+  "warnings": [
+    "Simulación académica; despeje vertical no verificado",
+    "AIP ENR 5.1: selección espacial; ver reporte de formas y excepciones",
+    "El viento a 10 m es una aproximación, no una medición a altura de vuelo"
+  ],
+  "reference": [
+    {
+      "length_km": 0.9259036870758327,
+      "edge_ids": [
+        "4202824587145258950"
+      ],
+      "coordinates": [
+        [
+          -71.6572392109999,
+          -33.10190168999999
+        ],
+        [
+          -71.65721693536275,
+          -33.09355617174517
+        ]
+      ]
+    },
+    {
+      "length_km": 0.92746249617113,
+      "edge_ids": [
+        "3033628799933365303",
+        "2573021938500782508"
+      ],
+      "coordinates": [
+        [
+          -71.6572392109999,
+          -33.10190168999999
+        ],
+        [
+          -71.65743398300695,
+          -33.10076457638967
+        ],
+        [
+          -71.65721693536275,
+          -33.09355617174517
+        ]
+      ]
+    }
+  ],
+  "thermal_unknown_ids": [],
+  "minimum_remaining_mission_s": 247.3121948504336,
+  "weather": {
+    "cell": [
+      -71.5,
+      -33.0
+    ],
+    "precipitation_mm": 0.0,
+    "relative_humidity_pct": 83,
+    "temperature_c": 13.8,
+    "valid_at": "2026-10-19T00:00:00+00:00",
+    "wind_direction_deg": 333,
+    "wind_gust_ms": 4.3,
+    "wind_speed_ms": 1.12
+  },
+  "candidate_pairs_examined": 9,
+  "search_limited": true,
+  "alternative_count_note": null,
+  "diversity_note": "Alternativas distintas; no se garantiza independencia geográfica ni óptimo global de exposición",
+  "waypoints": [
+    {
+      "id": "444204520825800637",
+      "coordinates": [
+        -71.6572392109999,
+        -33.10190168999999
+      ]
+    },
+    {
+      "id": "481811177017561201",
+      "coordinates": [
+        -71.65721693536275,
+        -33.09355617174517
+      ]
+    },
+    {
+      "id": "8054462048724848383",
+      "coordinates": [
+        -71.65743398300695,
+        -33.10076457638967
+      ]
+    }
+  ]
+}

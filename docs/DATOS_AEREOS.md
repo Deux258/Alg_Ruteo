@@ -1,3 +1,5 @@
+> Versión anterior / antecedente: el contrato activo 4.0 y sus cambios están en [FASE2_METADATA_TRANSITO.md](FASE2_METADATA_TRANSITO.md).
+
 # Datos del simulador aéreo y contratos
 
 ## Fuentes y adquisición

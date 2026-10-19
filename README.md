@@ -1,103 +1,92 @@
-# Simulador aéreo de drones en Valparaíso
+# Ruteo aéreo de drones en Valparaíso · fase 2
 
-Aplicación Docker con PostGIS, pgRouting y Leaflet. Permite elegir inicio y destino
-en el polígono del usuario, comparar rutas aéreas, dibujar bloqueos simulados y
-comprobar ida, observación, retorno y presupuesto restante.
-
-**Es el simulador académico del informe: despeje vertical no verificado.**
-Las calles no condicionan el vuelo. OSM solo es un fondo opcional. Los puntos de
-navegación y corredores son derivados; no representan vuelos observados.
+Simulador académico Docker con PostgreSQL 16.9, PostGIS 3.5.2, pgRouting 3.8.0 y Leaflet local.
+Despeje vertical no verificado. No representa vuelos autorizados ni una navegación 3D.
 
 ## Ejecutar
 
-Desde Bash de Git o WSL, con Docker activo:
+Con Docker activo, desde Git Bash o WSL:
 
 ```bash
 ./main probar
 ./main
 ```
 
-Abrir http://127.0.0.1:8080 . El host no necesita Python ni PostgreSQL.
-El arranque predeterminado ejecuta los nueve ETL y sus cargas; .env se genera con
-contraseñas aleatorias y nunca se versiona.
+Abrir http://127.0.0.1:8080. El host solo necesita Bash y Docker Compose v2.
+La instancia verificada de entrega está en http://127.0.0.1:18081:
 
 ```bash
-./main iniciar --mode online  # actualiza S1-S7 y crea otra instantánea
-./main estado
-./main detener               # conserva volúmenes
+COMPOSE_PROJECT_NAME=udp-ruteo-fase2-entrega WEB_PORT=18081 ./main estado
+COMPOSE_PROJECT_NAME=udp-ruteo-fase2-entrega WEB_PORT=18081 ./main
 ```
 
-En la validación del 17 de octubre, la actualización online completa quedó
-bloqueada por un fallo DNS de `aipchile.dgac.gob.cl`. El arranque snapshot sí
-funcionó desde una BD vacía con el PDF oficial conservado y sus hashes verificados.
-El proceso online aborta ante una fuente incompleta y conserva la publicación anterior.
+`main` genera `.env` si falta, construye la imagen, aplica SQL/migraciones, ejecuta nueve ETL y cargas,
+audita y publica atómicamente. No elimina volúmenes. `./main detener` conserva los datos.
+`./main iniciar --mode online` exige adquirir todas las fuentes; no oculta una caída de DGAC.
 
-La instancia validada en este equipo usa http://127.0.0.1:18081 :
+## Geografía y bases
+
+Se conserva el polígono original de **54,920709 km²**. El tránsito admite un buffer de **1.100 m**
+en EPSG:32719, con **97,716233 km²** totales. Este límite geométrico no implica permiso de vuelo.
+El contrato 4.0 contiene **154 nodos y 1.114 arcos dirigidos**, en una componente fuerte.
+Las calles no condicionan la red. Malla: 800 m, ocho vecinos, enlaces hasta 1.500 m incluidos
+los enlaces temporales de consultas. Cada segmento completo debe quedar dentro de tránsito.
+
+Los destinos y orígenes libres permanecen en vigilancia. Fuera solo se aceptan cuatro bases
+seleccionadas: Décima, Décima Segunda, Décima Tercera y Décima Quinta. La base inicial sigue siendo
+Décima Sexta, Laguna Verde, SENAPRED 104, **[lon −71.657239211, lat −33.101901690]**.
+S1H:19 y S1:104 se concilian sin duplicar ni desplazar la base histórica. Hay 16 instalaciones
+catalogadas, cinco candidatas y once de contexto. Una base candidata puede resultar bloqueada por AIP.
+
+## Uso
+
+1. Elegir base o inicio por clic/coordenadas, y destino dentro de vigilancia.
+2. Revisar hora UTC y condición del pronóstico. El snapshot permite una simulación histórica,
+   no una afirmación de disponibilidad actual.
+3. Calcular hasta dos opciones con idas distintas. Ida continua y retorno discontinuo.
+4. Ajustar presupuesto, límite de viento o desvío. Solo se permiten restricciones más exigentes.
+5. Comparar ambos métodos: cuatro misiones, 100 escenarios y diferencial en puntos porcentuales.
+6. Dibujar bloqueos y replanificar desde un nodo con fase y tiempo consumido. Un retorno de
+   emergencia no cuenta como vigilancia completada. No hay escape modelado durante un segmento.
+7. Descargar resultado y solicitud con perfil, geometrías y hashes.
+
+La referencia genera D1/D2 por longitud usando `pgr_dijkstra`, tanto para ida como regreso.
+No filtra amenazas ni autonomía al generar. La propuesta utiliza `pgr_KSP`/Yen sobre arcos admitidos,
+hasta tres idas por tres regresos, y ordena candidatos por exposición y tiempo. La generación es
+limitada; no garantiza óptimo global ni independencia espacial.
+
+## Adquisición y evaluación reproducible
 
 ```bash
-COMPOSE_PROJECT_NAME=udp-ruteo-valpo-aereo WEB_PORT=18081 ./main estado
-COMPOSE_PROJECT_NAME=udp-ruteo-valpo-aereo WEB_PORT=18081 ./main
+# Actualiza seis fuentes y registra la reutilización de DSM/AIP verificados:
+./main adquirir --sources S1,S1H,S2,S4,S5,S7 --reuse S3,S6
+./main iniciar --mode snapshot
+
+# Tras preparar datos/runs/solicitud_demo.json y ejecutar main:
+./main evaluar --request datos/runs/solicitud_demo.json
 ```
 
-## Usar el mapa
+`adquirir` no publica en la BD. Un fallo conserva el manifiesto activo y deja un diagnóstico aparte.
+Los originales activos están en `datos/entrada/aereo_v2`; los anteriores se conservan en `aereo`.
+La adquisición selectiva es explícita, no equivale a una actualización fresca de todas las fuentes.
 
-1. Elegir una base candidata o pulsar Seleccionar inicio y hacer clic en el mapa.
-2. Elegir destino por clic, coordenadas o un objetivo de vigilancia de ejemplo.
-3. Revisar la hora UTC y el selector de horas del pronóstico. La hora de descarga
-   puede quedar fuera del perfil: no se relajan los umbrales para dibujar rutas.
-4. Calcular hasta tres alternativas de misión o un trayecto de solo ida.
-5. Dibujar un bloqueo circular/poligonal y recalcular. En Estado de misión pueden
-   seleccionarse posición en un nodo, fase y tiempo ya consumido.
-6. Descargar el resultado con el escenario para reproducirlo.
+## Evidencia y documentación
 
-Una hora histórica admisible sirve para reproducir la simulación, no demuestra
-que las condiciones actuales permitan volar. La referencia Dijkstra por distancia
-ignora amenazas y autonomía y aparece identificada como referencia matemática.
+- [Informe de entrega](evidencia/fase2_2026-10-19/INFORME.md).
+- [Contrato, API y diccionario ampliado](docs/FASE2_METADATA_TRANSITO.md).
+- [Matriz de rúbrica y guion](presentacion/MATRIZ_RUBRICA.md).
+- [SQL inicial](BD/crear_bd.sql), migraciones 002–004 y [catálogo visual](BD/diagrama_fase2.svg).
+- `evidencia/fase2_2026-10-19`: pruebas, software, SQL, fuentes, mapas, comparación y capturas.
 
-## Red, fuentes y límites
+En el ejemplo documentado, ambos conjuntos sobreviven al **99 %** de los 100 escenarios: **ΔR = 0 pp**.
+No demuestra superioridad ni una probabilidad real. Los escenarios son sintéticos y las misiones
+se fijan antes de evaluarlos. El pronóstico se congela en la hora elegida durante toda la misión.
 
-La instantánea genera **87 nodos y 556 arcos**, con el GeoJSON original de
-54,92 km². Se usa una malla UTM de 800 m, ocho vecinos y radio local de 1.500 m,
-además de conexiones temporales verificadas de los extremos elegidos. No se
-modifican snapshots publicados al consultar.
+Se preservan S1–S7 del informe y se añade S1H como catálogo complementario de Bomberos de
+IDE Chile/Junta Nacional, republicado en ArcGIS. M1–M4 adaptan los aportes de Diego Hidalgo.
+La capa adicional de riesgo de clases sin procedencia/semántica verificadas queda excluida.
+Vegetación 2019, recurrencia 2020–2024, viento a 10 m y DSM ~30 m mantienen sus limitaciones.
+La actualización completa online depende de DGAC. GitLab UDP y Canvas requieren entrega del equipo.
+`etl_complete` acredita cargas; `phase2_complete=false` no certifica nota, publicación ni seguridad.
 
-La base candidata inicial vuelve a ser **Décima Sexta de Valparaíso, Bomberos
-SENAPRED 104**, en [-71.657239211, -33.10190169]. Su aislamiento vial no implica
-un aislamiento aéreo. No se desplaza el punto ni se presupone autorización de uso.
-El inicio puede cambiarse libremente dentro del polígono para la simulación.
-
-S1-S7 del informe están adquiridas: instalaciones, vegetación CONAF 2019, DSM
-Copernicus, pronóstico Open-Meteo, FIRMS, AIP y recurrencia histórica. Los nueve
-ETL tienen diccionarios y cargas tipadas. FIRMS devuelve cero detecciones aceptadas
-en este AOI; se registra como colección vacía, no como ausencia de incendio.
-AIP ENR 5.1 inventaría zonas SC-P, SC-R y SC-D; selecciona geometrías soportadas
-que alcanzan el AOI ampliado 300 m. El reporte A3 detalla formas no soportadas y
-excepciones. No es autorización de vuelo.
-
-El perfil académico conserva 10 m/s, 25 min, reserva 20 % y observación 60 s:
-presupuesto utilizable 1.200 s. La selección propuesta compara tiempo y exposición,
-respeta bloqueos y comprueba regreso. No modela energía vertical, sensores,
-obstáculos individuales, navegación reactiva ni telemetría real.
-El costo de cada arco es tiempo en segundos (`longitud / velocidad sobre el
-suelo`); la exposición histórica A4 es un criterio secundario, no se suma como
-peso al tiempo. Los parámetros y el ejemplo numérico están en
-[costo y defaults](docs/DATOS_AEREOS.md#costo-criterio-de-alternativas-y-defaults).
-
-## Documentación y evidencia
-
-- [Datos, API, parámetros y diccionario](docs/DATOS_AEREOS.md).
-- [Originales S1-S7](datos/entrada/aereo/README.md).
-- [Informe y verificaciones](evidencia/aereo_2026-10-17/INFORME.md).
-- [Evidencia de amenazas, cargas y pesos para láminas 11–15](evidencia/parte_c/README.md).
-- [SQL inicial](BD/crear_bd.sql) y [migración aérea](BD/migraciones/003_red_aerea.sql).
-- [Diagrama de la ampliación](BD/diagrama_aereo.svg).
-
-Se conservan la malla antigua y la implementación vial para regresiones, con
-config/proyecto_legacy.json y config/proyecto_vial.json. La migración nueva no
-reescribe el DDL ni las migraciones existentes. El esquema tiene 26 tablas.
-`etl_complete` acredita las nueve cargas; `phase2_complete=false` no declara
-terminada toda la evaluación de rúbrica o resiliencia del trabajo grupal.
-
-Las habilidades geomaster y webapp-testing se aplicaron; su uso y la referencia
-bibliográfica verificada de Scientific Agent Skills están documentados en
-[Datos aéreos](docs/DATOS_AEREOS.md#software-y-habilidades-aplicadas).
+Se aplicaron geomaster y webapp-testing. La referencia de software está en la documentación ampliada.

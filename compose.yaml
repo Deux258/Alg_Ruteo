@@ -5,6 +5,8 @@ x-app: &app
   build:
     context: .
     dockerfile: docker/Dockerfile.app
+    args:
+      BUILD_COMMIT: ${BUILD_COMMIT:-unknown}
   init: true
   networks: [backend]
   environment: &db-env
@@ -41,6 +43,7 @@ services:
       - ./datos/runs:/app/datos/runs
       - ./datos/entrada/vial:/app/datos/entrada/vial
       - ./datos/entrada/aereo:/app/datos/entrada/aereo
+      - ./datos/entrada/aereo_v2:/app/datos/entrada/aereo_v2
     depends_on:
       db: {condition: service_healthy}
     restart: 'no'

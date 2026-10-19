@@ -19,3 +19,5 @@ anteriores. `crear_bd.sql` permanece inmutable.
 `003_red_aerea.sql` añade `navegacion` y `aerial_models`, cuyo perfil/contexto son
 inmutables por run. El modelo completo tiene 26 tablas. Las consultas aéreas no
 insertan sus extremos temporales en los nodos publicados.
+
+004 agrega áreas de vigilancia/tránsito, catálogo de bases y evaluaciones congeladas. Amplía atributos M2. Total:29 tablas. Los DDL aplicados no se reescriben.

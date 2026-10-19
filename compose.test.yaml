@@ -15,7 +15,7 @@ services:
       retries: 40
   tests:
     platform: linux/amd64
-    build: {context: ., dockerfile: docker/Dockerfile.app}
+    build: {context: ., dockerfile: docker/Dockerfile.app, args: {BUILD_COMMIT: '${BUILD_COMMIT:-unknown}'}}
     command: [python, -m, core.test_runner]
     environment:
       DB_HOST: dbtest

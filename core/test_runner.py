@@ -19,6 +19,9 @@ def main():
             'failures':len(result.failures),'errors':len(result.errors),'skipped':len(result.skipped),
             'successful':result.wasSuccessful(),'duration_s':round(time.monotonic()-start,3),
             'python':platform.python_version(),'omitted':[reason for _,reason in result.skipped]}
+    from core.provenance import software_manifest
+    report['software']=software_manifest()
+    if report['software']['lock_mismatches']:report['successful']=False
     try:
         from core.db import connect
         with connect() as conn:
@@ -27,7 +30,7 @@ def main():
         report['database_versions']=None
     write_json(folder/'pruebas.json',report)
     print(json.dumps(report,ensure_ascii=False))
-    return 0 if result.wasSuccessful() else 1
+    return 0 if report['successful'] else 1
 
 
 if __name__=='__main__':raise SystemExit(main())

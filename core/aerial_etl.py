@@ -20,6 +20,8 @@ def extract(key,rid,output):
         lineage=dict(source=doc['lineage']['sources'][KEYS[key]],aoi=doc['lineage']['aoi'],context_sha256=doc['lineage']['context_sha256']))
     if key=='A3':
         packet['parser_report']=context['aip_parser_report']
+    if key=='M1' and 'S1H' in doc['lineage']['sources']:
+        packet['lineage']['supporting_sources']={'S1H':doc['lineage']['sources']['S1H']}
     write_json(output,packet)
 
 
@@ -30,8 +32,14 @@ def load(conn,path):
         conn.execute('SELECT pg_advisory_xact_lock(74260104)')
         model=conn.execute('SELECT context#>%s::text[] AS records FROM routing.aerial_models WHERE run_id=%s',(['records',key],rid)).fetchone()
         lineage=conn.execute("SELECT lineage FROM routing.datasets WHERE run_id=%s AND dataset_key='I'",(rid,)).fetchone()
-        if not model or rows!=model['records'] or doc['lineage']['source']!=lineage['lineage']['sources'][KEYS[key]]:
+        expected_lineage=dict(source=lineage['lineage']['sources'][KEYS[key]],aoi=lineage['lineage']['aoi'],context_sha256=lineage['lineage']['context_sha256']) if lineage else None
+        if key=='M1' and lineage and 'S1H' in lineage['lineage']['sources']:
+            expected_lineage['supporting_sources']={'S1H':lineage['lineage']['sources']['S1H']}
+        if not model or rows!=model['records'] or doc['lineage']!=expected_lineage or doc.get('schema_version')!='aerial-dataset-1':
             raise ValueError('Registros ET no corresponden a fuentes validadas')
+        if key=='A3':
+            report=conn.execute("SELECT context->'aip_parser_report' AS report FROM routing.aerial_models WHERE run_id=%s",(rid,)).fetchone()['report']
+            if doc.get('parser_report')!=report:raise ValueError('Reporte AIP alterado')
         old=conn.execute('SELECT file_sha256 FROM routing.datasets WHERE run_id=%s AND dataset_key=%s',(rid,key)).fetchone()
         if old:
             if old['file_sha256']!=sha256(path):raise ValueError('Dataset ya cargado con bytes distintos')
@@ -43,9 +51,13 @@ def load(conn,path):
         for r in rows:
             ident=stable_id(key+':'+str(r.get('provider_id',r.get('valid_at',r.get('node_id')))))
             if key=='M1':
-                conn.execute('INSERT INTO routing.base_metadata(run_id,node_id,provider_id,name,commune,address) VALUES(%s,%s,%s,%s,%s,%s)',(rid,r['node_id'],r['provider_id'],r['name'],r['commune'],r['address']))
+                if 'candidate' in r:
+                    conn.execute('''INSERT INTO routing.base_catalogue(run_id,provider_id,node_id,name,candidate,inside_study,distance_to_study_m,selection_reason,source_refs,original_record,geom)
+                        VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,'''+geom+')',(rid,r['provider_id'],r.get('node_id'),r['name'],r['candidate'],r['inside_study'],r['distance_to_study_m'],r['selection_reason'],Jsonb(r['source_refs']),Jsonb(r['original_record']),Jsonb(r['geometry'])))
+                if r.get('candidate',True):
+                    conn.execute('INSERT INTO routing.base_metadata(run_id,node_id,provider_id,name,commune,address) VALUES(%s,%s,%s,%s,%s,%s)',(rid,r['node_id'],r['provider_id'],r['name'],r['commune'],r['address']))
             elif key=='M2':
-                conn.execute('INSERT INTO routing.landcover(run_id,id,provider_id,category,source_year,repaired,geom) VALUES(%s,%s,%s,%s,%s,%s,'+geom+')',(rid,ident,r['provider_id'],r['category'],r['source_year'],r['repaired'],Jsonb(r['geometry'])))
+                conn.execute('INSERT INTO routing.landcover(run_id,id,provider_id,category,source_year,repaired,attributes,original_area_ha,clipped_area_ha,original_record,geom) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,'+geom+')',(rid,ident,r['provider_id'],r['category'],r['source_year'],r['repaired'],Jsonb(r.get('attributes',{})),r.get('original_area_ha'),r.get('clipped_area_ha'),Jsonb(r.get('original_record',{})),Jsonb(r['geometry'])))
             elif key=='M3':
                 conn.execute('INSERT INTO routing.node_elevation(run_id,node_id,elevation_m,quality) VALUES(%s,%s,%s,%s)',(rid,r['node_id'],r['elevation_m'],r['quality']))
             elif key=='M4':

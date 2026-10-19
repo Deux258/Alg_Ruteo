@@ -19,7 +19,8 @@ def transformar(csv_text, area, thermal_buffer_m):
     registros = []
     for row in csv.DictReader(io.StringIO(csv_text)):
         point = Point(float(row['longitude']), float(row['latitude']))
-        if area.covers(point):
+        buffer=transform(INV,transform(FWD,point).buffer(thermal_buffer_m))
+        if area.intersects(buffer):
             hh = row['acq_time'].zfill(4)
             date = row['acq_date'] + 'T' + hh[:2] + ':' + hh[2:] + ':00+00:00'
             if row['confidence'] not in ['l', 'n', 'h']:
@@ -29,8 +30,7 @@ def transformar(csv_text, area, thermal_buffer_m):
             registros.append(dict(
                 provider_id=f'{date}:{row["latitude"]}:{row["longitude"]}',
                 point=mapping(point),
-                geometry=mapping(transform(
-                    INV, transform(FWD, point).buffer(thermal_buffer_m))),
+                geometry=mapping(buffer),
                 acquired_at=date,
                 confidence=row['confidence'],
                 fire_radiative_power_mw=float(row['frp']),

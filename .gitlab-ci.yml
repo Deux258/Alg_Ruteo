@@ -22,6 +22,7 @@ integracion:
     - apt-get update && apt-get install -y --no-install-recommends libexpat1
     - python -m pip install --require-hashes -r requirements.lock
     - python -m pip install --require-hashes -r requirements.aerial.lock
+    - python -m pip check
     - python tests/esperar_bd.py
     - python -m core.test_runner
   artifacts:

@@ -24,7 +24,7 @@ def data(conn,rid):
     row=conn.execute('''SELECT m.context #- '{records,M2}' AS context,d.lineage FROM routing.aerial_models m JOIN routing.datasets d ON d.run_id=m.run_id AND d.dataset_key='I'
         WHERE m.run_id=%s''',(rid,)).fetchone()
     if not row:raise ValueError('La publicación no contiene una red aérea')
-    model=model_from_text(json.dumps(row['context'],sort_keys=True));area=shape(row['lineage']['aoi']['geometry'])
+    model=model_from_text(json.dumps(row['context'],sort_keys=True));area=shape(row['lineage'].get('flight_area',row['lineage']['aoi'])['geometry'])
     nodes={str(r['id']):r['coordinates'] for r in conn.execute('SELECT id,ST_AsGeoJSON(ST_Transform(geom,4326),15)::jsonb->\'coordinates\' AS coordinates FROM routing.nodes WHERE run_id=%s',(rid,))}
     edges=[dict(id=r['id'],source=str(r['source']),target=str(r['target']),length_km=r['length_km'],coordinates=[nodes[str(r['source'])],nodes[str(r['target'])]])
         for r in conn.execute('SELECT id,source,target,length_km FROM routing.edges WHERE run_id=%s ORDER BY id',(rid,))]
@@ -44,6 +44,7 @@ def overlay(conn,nodes,edges,points,area,profile):
         nonlocal next_edge
         if s==t or (s,t) in existing:return
         coords=[nodes[s],nodes[t]]
+        if profile.get('builder')=='aerial-grid-v2' and Point(FWD(*coords[0])).distance(Point(FWD(*coords[1])))>profile['max_link_m']+1e-6:return
         if not area.covers(LineString(coords)):return
         value=conn.execute('SELECT ST_Length(ST_Transform(ST_SetSRID(ST_GeomFromGeoJSON(%s),4326),32719))/1000 AS km',(json.dumps(dict(type='LineString',coordinates=coords)),)).fetchone()['km']
         if value<=0:return
@@ -111,6 +112,41 @@ def available(model,clock,online=False):
     return weather,None
 
 
+def effective_profile(base,preferences):
+    if preferences is None:preferences={}
+    if not isinstance(preferences,dict) or set(preferences)-{'budget_s','wind_limit_ms','detour_factor'}:raise ValueError('Preferencias desconocidas')
+    profile=dict(base);profile['budget_s']=base['flight_minutes']*60*(1-base['reserve_fraction'])
+    for key,limit,minimum in [('budget_s',profile['budget_s'],0),('wind_limit_ms',base['wind_limit_ms'],0),('detour_factor',base['detour_factor'],1)]:
+        if key not in preferences:continue
+        value=preferences[key]
+        if type(value) not in [int,float] or not math.isfinite(value) or value>limit or value<minimum or (minimum==0 and value==0):raise ValueError('Preferencia fuera del rango permitido: '+key)
+        profile[key]=value
+    return profile
+
+
+def restrictions(model,clock,events):
+    closed,ledger=events_geometry(events,clock)
+    closed.extend(transform(FWD,shape(r['geometry'])) for r in model['records']['A3'])
+    unknown=[]
+    for r in model['records']['A2']:
+        age=clock-iso(r['acquired_at'])
+        if age<timedelta(0) or r.get('state')=='resolved':continue
+        if model['profile'].get('builder')=='aerial-grid-v2' or age<=timedelta(hours=model['profile']['thermal_window_hours']):
+            closed.append(transform(FWD,shape(r['geometry'])))
+            if age>timedelta(hours=model['profile']['thermal_window_hours']):unknown.append(r.get('provider_id'))
+    return unary_union(closed),ledger,unknown
+
+
+def edge_time(line,weather,profile):
+    a,b=line.coords[0],line.coords[-1];dx=b[0]-a[0];dy=b[1]-a[1];length=math.hypot(dx,dy)
+    if length==0:return 0
+    angle=math.radians(weather['wind_direction_deg']);wx=-weather['wind_speed_ms']*math.sin(angle);wy=-weather['wind_speed_ms']*math.cos(angle)
+    parallel=(wx*dx+wy*dy)/length;cross2=max(0,wx*wx+wy*wy-parallel*parallel)
+    if cross2>=profile['air_speed_ms']**2:return None
+    speed=math.sqrt(profile['air_speed_ms']**2-cross2)+parallel
+    return line.length/speed if speed>0 else None
+
+
 def graph_query(conn,edges,cost_key):
     payload=[dict(id=e['id'],source=int(e['source']),target=int(e['target']),cost=e[cost_key]) for e in edges]
     if any(not math.isfinite(e['cost']) or e['cost']<=0 for e in payload):raise ValueError('Costo de arco inválido')
@@ -159,8 +195,11 @@ def paths(conn,edges,source,target,k=3,reference=False):
 
 def calculate(conn,rid,request):
     if not isinstance(request,dict):raise ValueError('Solicitud JSON inválida')
-    model,area,nodes,edges=data(conn,rid);profile=model['profile']
-    origin=coordinate(request.get('origin'),area);target=coordinate(request.get('destination'),area)
+    model,area,nodes,edges=data(conn,rid);profile=effective_profile(model['profile'],request.get('preferences'))
+    model=dict(model,profile=profile)
+    study=shape(model.get('study_geometry',mapping(area)));v2=profile.get('builder')=='aerial-grid-v2'
+    origin=coordinate(request.get('origin'),area);target=coordinate(request.get('destination'),study)
+    if not study.covers(Point(origin)) and not any(b.get('candidate',True) and Point(FWD(*origin)).distance(transform(FWD,shape(b['geometry'])))<=.001 for b in model['records']['M1']):raise ValueError('Origen externo permitido solo en las cuatro bases aprobadas')
     mode=request.get('mode','mission');method=request.get('method','proposed');phase=request.get('phase','outbound')
     if mode not in ['mission','trip'] or method not in ['proposed','reference'] or phase not in ['outbound','return','emergency_return']:raise ValueError('Modo/método/fase inválido')
     if mode=='trip' and phase!='outbound':raise ValueError('Las fases de regreso requieren modo misión')
@@ -172,11 +211,12 @@ def calculate(conn,rid,request):
     position=coordinate(request.get('position',origin),area)
     known=list(nodes.values())+[origin,target]
     if 'position' in request and not any(Point(FWD(*position)).distance(Point(FWD(*p)))<=.001 for p in known):raise ValueError('La replanificación discreta requiere un nodo o extremo de la misión')
-    remaining=profile['flight_minutes']*60*(1-profile['reserve_fraction'])-elapsed
+    remaining=profile['budget_s']-elapsed
     response=dict(type='FeatureCollection',features=[],run_id=str(rid),status='no_route',reason=None,alternatives=[],
         origin=origin,destination=target,position=position,mode=mode,method=method,phase=phase,time=clock.isoformat(),elapsed_s=elapsed,
         remaining_s=remaining,events=ledger,clearance_verified=False,operationally_certified=False,
-        warnings=['Simulación académica; despeje vertical no verificado','Catálogo AIP acotado a las tres zonas del informe','El viento a 10 m es una aproximación, no una medición a altura de vuelo'])
+        effective_profile=profile,temporal_model='static_at_selected_hour',
+        warnings=['Simulación académica; despeje vertical no verificado','AIP ENR 5.1: selección espacial; ver reporte de formas y excepciones','El viento a 10 m es una aproximación, no una medición a altura de vuelo'])
     if request.get('on_edge'):
         response.update(status='interrupted',reason='closure_during_segment_no_escape_modelled');return response
     nodes,edges,ids=overlay(conn,nodes,edges,dict(home=origin,target=target,current=position),area,profile)
@@ -184,8 +224,15 @@ def calculate(conn,rid,request):
     refs=paths(conn,edges,s,t,reference=True)
     response['reference']=[dict(length_km=p['length_km'],edge_ids=p['edge_ids'],coordinates=p['coordinates']) for p in refs]
     if method=='reference':
-        response['warnings'].append('Referencia matemática por distancia: ignora amenazas, retorno y autonomía')
-        response['alternatives']=[dict(rank=i+1,outbound=p,return_path=None,length_km=p['length_km'],time_s=None,exposure_m=None,mission_completed=False) for i,p in enumerate(refs)]
+        response['warnings'].append('Referencia matemática por distancia: no filtra amenazas ni autonomía al generar; misión incluye regreso')
+        backs=paths(conn,edges,t,home,reference=True) if v2 and mode=='mission' and phase=='outbound' else [None]
+        pairs=sorted([(p,q) for p,q in product(refs,backs)],key=lambda pair:(pair[0]['length_km']+(pair[1]['length_km'] if pair[1] else 0),pair[0]['edge_ids'],pair[1]['edge_ids'] if pair[1] else []))
+        seen=set()
+        for p,q in pairs:
+            sig=tuple(p['edge_ids'])
+            if sig in seen:continue
+            seen.add(sig);response['alternatives'].append(dict(rank=len(seen),outbound=p,return_path=q,length_km=p['length_km']+(q['length_km'] if q else 0),time_s=None,exposure_m=None,observation_s=profile['observation_s'] if q else 0,mission_completed=False))
+            if len(seen)==2:break
         response['status']='ready' if refs else 'no_route';response['reason']=None if refs else 'disconnected'
         return finish(response,nodes)
     if remaining<0:response.update(status='not_feasible',reason='budget_exhausted');return response
@@ -197,22 +244,17 @@ def calculate(conn,rid,request):
         if abs((clock-now).total_seconds())>3600:response.update(status='unknown',reason='online_time_must_be_current');return response
     weather,problem=available(model,clock)
     if problem:response.update(status='unknown' if problem.startswith(('missing','unknown')) else 'not_feasible',reason=problem);return response
-    closed.extend(transform(FWD,shape(r['geometry'])) for r in model['records']['A3'])
-    closed.extend(transform(FWD,shape(r['geometry'])) for r in model['records']['A2'] if timedelta(0)<=clock-iso(r['acquired_at'])<=timedelta(hours=profile['thermal_window_hours']))
-    blocked=unary_union(closed);eligible=[]
+    blocked,ledger,stale_thermal=restrictions(model,clock,request.get('events',[]));eligible=[]
+    response['thermal_unknown_ids']=stale_thermal
     if any(blocked.intersects(Point(FWD(*nodes[i]))) for i in {s,t,home} if mode=='mission' or i in {s,t}):
         response.update(reason='endpoint_blocked');return response
-    angle=math.radians(weather['wind_direction_deg']);wx=-weather['wind_speed_ms']*math.sin(angle);wy=-weather['wind_speed_ms']*math.cos(angle)
     for e in edges:
         line=transform(FWD,LineString(e['coordinates']))
         if blocked.intersects(line):continue
-        a,b=line.coords[0],line.coords[-1];dx=b[0]-a[0];dy=b[1]-a[1];length=math.hypot(dx,dy)
-        parallel=(wx*dx+wy*dy)/length;cross2=max(0,wx*wx+wy*wy-parallel*parallel)
-        if cross2>=profile['air_speed_ms']**2:continue
-        speed=math.sqrt(profile['air_speed_ms']**2-cross2)+parallel
-        if speed<=0:continue
+        time_s=edge_time(line,weather,profile)
+        if time_s is None:continue
         risk,unknown=exposure(line,model['history'])
-        eligible.append(dict(**e,time_s=e['length_km']*1000/speed,exposure_m=risk,unknown_m=unknown))
+        eligible.append(dict(**e,time_s=time_s,exposure_m=risk,unknown_m=unknown))
     out=paths(conn,eligible,s,t,k=profile['alternatives'])
     back=paths(conn,eligible,t,home,k=profile['alternatives']) if mode=='mission' and phase=='outbound' else [None]
     if not out or not back:response.update(reason='no_outbound_or_return');return response
@@ -228,12 +270,14 @@ def calculate(conn,rid,request):
     allowed.sort(key=lambda p:(p['exposure_m'],p['time_s'],p['outbound']['edge_ids'],p['return_path']['edge_ids'] if p['return_path'] else []))
     chosen=[];seen=set()
     for p in allowed:
-        signature=(tuple(p['outbound']['edge_ids']),tuple(p['return_path']['edge_ids']) if p['return_path'] else ())
+        signature=tuple(p['outbound']['edge_ids']) if v2 else (tuple(p['outbound']['edge_ids']),tuple(p['return_path']['edge_ids']) if p['return_path'] else ())
         if signature not in seen:seen.add(signature);chosen.append(dict(p,rank=len(chosen)+1))
-        if len(chosen)==profile['alternatives']:break
+        if len(chosen)==(2 if v2 else profile['alternatives']):break
     response['alternatives']=chosen;response['status']='ready' if chosen else 'not_feasible'
     response['reason']=None if chosen else 'insufficient_return_budget'
     response['weather']=weather;response['candidate_pairs_examined']=len(candidates)
+    response['search_limited']=True
+    response['alternative_count_note']='Menos de dos idas distintas entre los candidatos examinados' if len(chosen)<2 else None
     response['diversity_note']='Alternativas distintas; no se garantiza independencia geográfica ni óptimo global de exposición'
     return finish(response,nodes)
 
@@ -258,19 +302,19 @@ def map_data(conn,rid):
     node_rows=conn.execute('SELECT id,kind FROM routing.nodes WHERE run_id=%s ORDER BY id',(rid,)).fetchall()
     features=[dict(type='Feature',geometry=dict(type='Point',coordinates=nodes[str(r['id'])]),properties=dict(id=str(r['id']),kind=r['kind'])) for r in node_rows]
     features.extend(dict(type='Feature',geometry=dict(type='LineString',coordinates=e['coordinates']),properties=dict(id=str(e['id']),kind='corridor')) for e in edges if int(e['source'])<int(e['target']))
-    bases=model['records']['M1'];chosen=next((b for b in bases if b['provider_id']=='104'),bases[0])
+    catalogue=model['records']['M1'];bases=[b for b in catalogue if b.get('candidate',True)];chosen=next((b for b in bases if b['provider_id']=='104'),bases[0])
     # Ejemplos cercanos a la base, ordenados por distancia; no prometen admisibilidad.
     goals=sorted([r for r in features if r['geometry']['type']=='Point' and r['properties']['kind']=='vigilancia'],key=lambda r:Point(FWD(*r['geometry']['coordinates'])).distance(Point(FWD(*chosen['geometry']['coordinates']))))
     layers={key:[dict(type='Feature',geometry=r['geometry'],properties={k:v for k,v in r.items() if k not in ['geometry','original_record','conditions']}) for r in model['records'][key]] for key in ['A2','A3','A4']}
-    layers['M2']=[dict(type='Feature',geometry=r['geometry'],properties=dict(provider_id=r['provider_id'],category=r['category'],display_simplification_m=3)) for r in conn.execute('''SELECT provider_id,category,
+    layers['M2']=[dict(type='Feature',geometry=r['geometry'],properties=dict(provider_id=r['provider_id'],category=r['category'],attributes=r['attributes'],clipped_area_ha=r['clipped_area_ha'],display_simplification_m=3)) for r in conn.execute('''SELECT provider_id,category,attributes,clipped_area_ha,
         ST_AsGeoJSON(ST_Transform(ST_SimplifyPreserveTopology(geom,3),4326))::jsonb AS geometry FROM routing.landcover WHERE run_id=%s''',(rid,))]
-    return dict(type='FeatureCollection',features=features,area=mapping(area),bases=bases,default_origin=chosen['geometry']['coordinates'],
+    return dict(type='FeatureCollection',features=features,area=model.get('study_geometry',mapping(area)),flight_area=mapping(area),base_catalogue=catalogue,bases=bases,default_origin=chosen['geometry']['coordinates'],
         examples=[dict(coordinates=f['geometry']['coordinates'],id=f['properties']['id']) for f in goals[:8]],reference_time=model['reference_time'],profile=model['profile'],layers=layers,
         elevation=model['records']['M3'],weather=model['records']['M4'],weather_hazards=model['records']['A1'],sources=['S1','S2','S3','S4','S5','S6','S7'],clearance_verified=False)
 
 
 def audit_aerial(conn,rid):
-    model,area,nodes,edges=data(conn,rid);bases=model['records']['M1']
+    model,area,nodes,edges=data(conn,rid);bases=[b for b in model['records']['M1'] if b.get('candidate',True)]
     if any(not area.covers(Point(c)) for c in nodes.values()) or any(not area.covers(LineString(e['coordinates'])) for e in edges):raise ValueError('Red aérea fuera del AOI')
     if any(not area.covers(shape(b['geometry'])) for b in bases):raise ValueError('Base aérea fuera del AOI')
     origin=next((b for b in bases if b['provider_id']=='104'),bases[0])['geometry']['coordinates'];examples=[]

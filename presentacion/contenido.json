@@ -1,0 +1,558 @@
+[
+  {
+    "title": "Ruteo aéreo para vigilancia forestal",
+    "body": [
+      "Valparaíso, Chile",
+      "Integración de metadata y comparación de misiones",
+      "Diego Muñoz, Ignacio Pastén, Eduardo Escalona y Diego Hidalgo",
+      "Fase 2 · 19 de octubre de 2026"
+    ],
+    "note": "Simulador académico. No representa vuelos autorizados."
+  },
+  {
+    "title": "Área de vigilancia y tránsito",
+    "body": [
+      "Vigilancia: 54,920709 km²",
+      "Tránsito: 97,716233 km²",
+      "Buffer: 1.100 m en UTM 19S",
+      "Cinco bases candidatas reales"
+    ],
+    "image": "evidencia/fase2_2026-10-19/mapa_comparativo.png",
+    "note": "Polígono original sin modificar. El buffer solo amplía navegación, no objetivos ni permisos."
+  },
+  {
+    "title": "Reproducción con Docker",
+    "table": [
+      [
+        "Componente",
+        "Versión verificada"
+      ],
+      [
+        "PostgreSQL / PostGIS",
+        "16.9 / 3.5.2"
+      ],
+      [
+        "pgRouting / Python",
+        "3.8.0 / 3.12.12"
+      ],
+      [
+        "pglast / plataforma",
+        "7.20 / Linux amd 64"
+      ],
+      [
+        "Pruebas",
+        "111 aprobadas, 0 omisiones"
+      ],
+      [
+        "Arranque con BD vacía",
+        "84.945 s"
+      ]
+    ],
+    "body": [
+      "./main probar   y   ./main",
+      "Hashes de dependencias y pip check en Docker y CI"
+    ],
+    "note": "Pruebas sobre BD desechable real. main_limpio.log conserva la ejecución, sin considerar como éxito una imagen antigua."
+  },
+  {
+    "title": "Capacidad del esquema: 29 tablas",
+    "table": [
+      [
+        "Grupo",
+        "Tablas"
+      ],
+      [
+        "Procedencia y publicación",
+        "5"
+      ],
+      [
+        "Infraestructura y modelo vial",
+        "5"
+      ],
+      [
+        "Metadata y bases",
+        "5"
+      ],
+      [
+        "Amenazas y asociaciones",
+        "6"
+      ],
+      [
+        "Perfiles y áreas",
+        "3"
+      ],
+      [
+        "Rutas y evaluaciones",
+        "5"
+      ]
+    ],
+    "note": "Catálogo completo en BD/diagrama_fase2.svg y diagnostico.json. DDL inicial conserva 22 tablas, extensión vial3, modelo aéreo1 y migración004 agrega3."
+  },
+  {
+    "title": "Claves, relaciones y creación desde cero",
+    "table": [
+      [
+        "Entidad",
+        "Relación / garantía"
+      ],
+      [
+        "runs",
+        "PK run_id, estado y configuración"
+      ],
+      [
+        "datasets",
+        "FK run_id; único run + dataset_key"
+      ],
+      [
+        "nodes / edges",
+        "PK run+id; FK source/target; costo generado"
+      ],
+      [
+        "run_areas",
+        "PK run+role; estudio y tránsito"
+      ],
+      [
+        "base_catalogue",
+        "FK node_id solo si candidata"
+      ],
+      [
+        "mission_evaluations",
+        "FK run; SHA único; inserción idempotente"
+      ]
+    ],
+    "body": [
+      "Fragmento DDL: CREATE TABLE routing.run_areas (",
+      "run_id uuid NOT NULL REFERENCES routing.runs ON DELETE CASCADE, …"
+    ],
+    "note": "SQL protege snapshots publicados, integridad de extremos, geometrías y claves. Ejecución desde volumen vacío comprobada."
+  },
+  {
+    "title": "ETL de infraestructura aérea",
+    "body": [
+      "Extract: S1, S1H, S2 y demás originales con hashes",
+      "Transform: malla de800 m, ocho vecinos y radio 1500 m",
+      "154 nodos y 1.114 arcos dirigidos",
+      "Una componente fuerte y cero segmentos fuera de tránsito",
+      "Load: nodos antes de arcos, transacción y publicación atómica"
+    ],
+    "note": "Infraestructura/preparar_snapshot.py y cargar.py. Raster se muestrea tras crear nodos. Calles no limitan el vuelo del modelo."
+  },
+  {
+    "title": "Contrato espacial y trazabilidad",
+    "body": [
+      "schema_version=4.0 y builder=aerial-grid-v2",
+      "lineage.aoi conserva el GeoJSON original y su SHA-256",
+      "flight_area registra buffer 1100 m, EPSG:32719 y quad_segs=16",
+      "GeoJSON en longitud/latitud; análisis en metros UTM",
+      "JSON de cada fuente con run_id, dataset_id y cargador"
+    ],
+    "note": "Infraestructura/infraestructura.schema.json y diccionario ampliado. Se verifica geometría completa, no solo extremos. IDs estables y consultas temporales sin publicar nodos."
+  },
+  {
+    "title": "Metadata M1 y M2",
+    "table": [
+      [
+        "Salida",
+        "Fuente y transformación"
+      ],
+      [
+        "M1 bases",
+        "SENAPRED + catálogo IDE Chile/Bomberos vía ArcGIS"
+      ],
+      [
+        "M1 resultado",
+        "16 instalaciones, 5 candidatas, 11 de contexto"
+      ],
+      [
+        "Conciliación",
+        "S1:104 = S1H:19, sin duplicar la Décima Sexta"
+      ],
+      [
+        "M2 cobertura",
+        "CONAF/CIREN 2019, 679 polígonos recortados"
+      ],
+      [
+        "M2 atributos",
+        "Uso, subuso, cobertura, altura como clase y tipo forestal"
+      ]
+    ],
+    "note": "Autoría: adaptación de aportes_metadata_diego por core.metadata_hidalgo. S1H es una republicación complementaria de Bomberos, no una fuente adicional de amenazas. Originales y metadatos en manifest.json.",
+    "body": [
+      "ET: Metadata/m1_bases.py y m2_cobertura.py",
+      "Carga: mismo módulo con --load JSON"
+    ]
+  },
+  {
+    "title": "Metadata M3 y M4",
+    "table": [
+      [
+        "Salida",
+        "Datos, transformación y límite"
+      ],
+      [
+        "M3 elevación",
+        "154 muestras de Copernicus GLO-30, una por nodo real"
+      ],
+      [
+        "Calidad M3",
+        "Máscara/NoData, escala y offset; metros EGM 2008"
+      ],
+      [
+        "M4 clima",
+        "48 horas UTC, seis variables y celda devuelta"
+      ],
+      [
+        "Modelo explícito",
+        "Open-Meteo, ECMWF IFS 0.25, viento en m/s"
+      ],
+      [
+        "Límite",
+        "DSM~30 m y viento 10 m no certifican despeje"
+      ]
+    ],
+    "note": "Los tres nodos inventados del aporte son una prueba y se excluyen. La serie best_match se conserva como antecedente, no sustituye ECMWF. Fuentes: https://open-meteo.com/en/docs y Copernicus GLO-30.",
+    "body": [
+      "ET: Metadata/m3_elevacion.py y m4_clima.py",
+      "Carga: mismo módulo con --load JSON"
+    ]
+  },
+  {
+    "title": "Cargas de metadata verificadas",
+    "table": [
+      [
+        "JSON",
+        "Filas",
+        "Destino PostgreSQL"
+      ],
+      [
+        "M1 bases",
+        "16",
+        "base_catalogue; 5 en base_metadata"
+      ],
+      [
+        "M2 cobertura",
+        "679",
+        "landcover"
+      ],
+      [
+        "M3 elevación",
+        "154",
+        "node_elevation, FK a nodes"
+      ],
+      [
+        "M4 clima",
+        "48",
+        "weather, hora UTC única"
+      ]
+    ],
+    "body": [
+      "ET: Metadata.m1_bases a m4_clima",
+      "Carga: mismo módulo con --load RUTA",
+      "Registros y linaje deben coincidir con contexto verificado"
+    ],
+    "note": "Cada módulo tiene diccionario .md. Cargadores no consultan servicios externos. Se rechaza falsificación del origen complementario S1H."
+  },
+  {
+    "title": "Amenazas A1 y A2",
+    "table": [
+      [
+        "Salida",
+        "Fuente y regla"
+      ],
+      [
+        "A1 meteorología",
+        "M4 fuera del perfil, cierre de la celda por hora"
+      ],
+      [
+        "Resultado A1",
+        "16 horas fuera del perfil predeterminado"
+      ],
+      [
+        "A2 FIRMS",
+        "VIIRS NOAA-20; confianza n/h y buffer 250 m"
+      ],
+      [
+        "Resultado A2",
+        "0 detecciones aceptadas en tránsito"
+      ],
+      [
+        "Ausencia",
+        "Colección vacía válida, no ausencia demostrada de fuego"
+      ]
+    ],
+    "note": "Amenazas/a1_meteorologia.py y a2_firms.py. Un foco externo se incorpora si su buffer intersecta tránsito. Los antiguos sin resolución mantienen exclusión como desconocidos.",
+    "body": [
+      "ET: Amenazas/a1_meteorologia.py y a2_firms.py",
+      "Diccionario y carga --load por salida"
+    ]
+  },
+  {
+    "title": "Amenazas A3 y A4",
+    "table": [
+      [
+        "Salida",
+        "Fuente y transformación"
+      ],
+      [
+        "A3 AIP ENR 5.1",
+        "PDF DGAC, inventario y geometría documentada"
+      ],
+      [
+        "Selección",
+        "SC-P29 y SC-P50 para esta extensión"
+      ],
+      [
+        "Décima Segunda",
+        "Origen dentro de SC-P50: método propuesto bloqueado"
+      ],
+      [
+        "A4 historial",
+        "SENAPRED, densidad de incendios 2020–2024"
+      ],
+      [
+        "Resultado A4",
+        "26 polígonos; clases ordinales 1–5"
+      ]
+    ],
+    "note": "AIP: página/texto original, límites verticales y excepciones del parser. Exclusión conservadora2D, no permiso de vuelo. A4 no representa incendios actuales.",
+    "body": [
+      "ET: Amenazas/a3_aip.py y a4_historial.py",
+      "Diccionario y carga --load por salida"
+    ]
+  },
+  {
+    "title": "Cargas y diccionarios de amenazas",
+    "table": [
+      [
+        "JSON",
+        "Filas",
+        "Tablas tipadas"
+      ],
+      [
+        "A1",
+        "16",
+        "hazards + weather_hazards"
+      ],
+      [
+        "A2",
+        "0, estado empty",
+        "hazards + thermal_events"
+      ],
+      [
+        "A3",
+        "2",
+        "hazards + airspace_zones"
+      ],
+      [
+        "A4",
+        "26",
+        "hazards + historical_risk"
+      ]
+    ],
+    "body": [
+      "SELECT dataset_key, record_count, status FROM routing.datasets",
+      "WHERE run_id = la publicación verificada",
+      "Un error de adquisición conserva la publicación anterior"
+    ],
+    "note": "Diccionarios A1–A4 y docs/FASE2_METADATA_TRANSITO.md. SQL y conteos reales en diagnostico.json. No se agrega un evento ficticio para llenar A2."
+  },
+  {
+    "title": "Cuatro modelos de falla",
+    "table": [
+      [
+        "Fenómeno",
+        "Efecto sobre la misión"
+      ],
+      [
+        "Meteorología",
+        "Viento/racha>=límite o temperatura fuera de perfil"
+      ],
+      [
+        "Foco térmico",
+        "Exclusión por intersección con buffer, incluye bordes"
+      ],
+      [
+        "Restricción AIP",
+        "Exclusión horizontal permanente del escenario"
+      ],
+      [
+        "Recurrencia histórica",
+        "Preferencia ordinal de exposición, sin cierre automático"
+      ]
+    ],
+    "body": [
+      "Resolver un evento no cancela otro superpuesto",
+      "Sin escape modelado durante un segmento"
+    ],
+    "note": "Estados sintéticos blocked/unknown/resolved con reloj UTC. No se anticipan actualizaciones futuras ni se infiere extinción por tiempo."
+  },
+  {
+    "title": "Costos, preferencias y defaults",
+    "table": [
+      [
+        "Parámetro",
+        "Default / regla"
+      ],
+      [
+        "Tiempo de arco",
+        "Longitud m / velocidad sobre suelo m/s"
+      ],
+      [
+        "Ejemplo 1000 m",
+        "100 s en calma;125 s con viento frontal 2 m/s"
+      ],
+      [
+        "Misión",
+        "25 min, reserva 20%, observación 60 s;1200 s utilizables"
+      ],
+      [
+        "Preferencias",
+        "Presupuesto<=1200 s; viento<=8 m/s; desvío 1–1.20"
+      ],
+      [
+        "Exposición",
+        "(clase−1)/4; sin cobertura penalización 1"
+      ]
+    ],
+    "note": "Velocidad aire10m/s, temperatura[-5,40]°C. Exposición no se suma a segundos. UI aplica restricciones más exigentes y exporta effective_profile."
+  },
+  {
+    "title": "Yen y adaptación del proyecto",
+    "body": [
+      "Yen (1971): generación de k caminos simples mínimos",
+      "Finding the K Shortest Loopless Paths in a Network",
+      "Implementación: pgr_KSP de pgRouting 3.8",
+      "Adaptación: exclusiones, retorno y exposición",
+      "Heurística limitada, sin óptimo global de exposición",
+      "Artículo: doi.org/10.1287/mnsc.17.11.712"
+    ],
+    "note": "Yen,J.Y.(1971). Finding the K Shortest Loopless Paths in a Network. Management Science17(11),712–716. https://doi.org/10.1287/mnsc.17.11.712. El artículo respalda caminos alternativos, no certifica resiliencia de este piloto."
+  },
+  {
+    "title": "Selección de misiones propuestas",
+    "body": [
+      "Validación de extremos y perfil efectivo",
+      "Exclusión de arcos completos por FIRMS, AIP y bloqueos",
+      "Hasta 3 idas y3 retornos por tiempo, hasta 9 pares",
+      "Filtro por presupuesto y1.20 del menor tiempo restante",
+      "Orden por exposición y tiempo, hasta 2 idas distintas",
+      "Menos candidatos o falta de ruta se informa sin inventar enlaces"
+    ],
+    "note": "core/aerial_routing.py. Se descuenta tiempo consumido. La observación se suma una vez; emergency_return no completa vigilancia. Se conserva search_limited."
+  },
+  {
+    "title": "Dos misiones Dijkstra por distancia",
+    "table": [
+      [
+        "Misión",
+        "Ida km",
+        "Regreso km",
+        "Total km"
+      ],
+      [
+        "D1",
+        "0.925904",
+        "0.925904",
+        "1.851807"
+      ],
+      [
+        "D2",
+        "0.927462",
+        "0.925904",
+        "1.853366"
+      ]
+    ],
+    "body": [
+      "D1 mínima y D2 por exclusiones",
+      "pgr_dijkstra con costo km",
+      "Sin filtrar amenazas ni autonomía"
+    ],
+    "note": "Consulta y pruebas independientes de Dijkstra en tests/test_aerial.py. Las misiones se evalúan después con las mismas condiciones y presupuesto que la propuesta.",
+    "image": "evidencia/fase2_2026-10-19/mapa_reference.png"
+  },
+  {
+    "title": "Dos misiones propuestas por tiempo y exposición",
+    "table": [
+      [
+        "Misión",
+        "Total km",
+        "Tiempo s",
+        "Exposición m pond."
+      ],
+      [
+        "P1",
+        "1.851807",
+        "247.312",
+        "1305.9"
+      ],
+      [
+        "P2",
+        "1.853366",
+        "247.469",
+        "1307.5"
+      ]
+    ],
+    "body": [
+      "Origen: Décima Sexta",
+      "Destino dentro de vigilancia",
+      "Observación y regreso incluidos",
+      "Hora UTC 00:00 del 19/10/2026"
+    ],
+    "note": "Es un ejemplo retrospectivo, anterior a la obtención de M4. No se presenta como ejecución de vuelo ni evidencia causal del pronóstico.",
+    "image": "evidencia/fase2_2026-10-19/mapa_proposed.png"
+  },
+  {
+    "title": "Supervivencia de misiones congeladas",
+    "body": [
+      "100 escenarios: control y99 cierres circulares",
+      "33 de100 m, 33 de250 m y33 de500 m, semilla 20261018",
+      "Centros independientes del resultado del algoritmo",
+      "R_conjunto = media de max(I(P1),I(P2))",
+      "I=1 si toda la misión sigue admitida y dentro del presupuesto",
+      "Datos críticos desconocidos: mismo denominador o resultado nulo"
+    ],
+    "note": "core/mission_evaluation.py fija ambas colecciones antes del bucle; no recalcula rutas ante escenarios. Se guarda escenario completo y SHA-256. Pruebas manuales cubren diferencias positivas, negativas, cero y casos desconocidos."
+  },
+  {
+    "title": "Comparación del caso documentado",
+    "table": [
+      [
+        "Método",
+        "Individual 1",
+        "Individual 2",
+        "Conjunto"
+      ],
+      [
+        "Dijkstra",
+        "99%",
+        "99%",
+        "99%"
+      ],
+      [
+        "Propuesto",
+        "99%",
+        "99%",
+        "99%"
+      ]
+    ],
+    "body": [
+      "100 escenarios válidos, 0 desconocidos",
+      "ΔR =0 puntos porcentuales",
+      "Ambos métodos obtienen las mismas opciones en este caso",
+      "No demuestra superioridad ni probabilidad real de éxito"
+    ],
+    "note": "Los resultados se mantienen aunque no favorezcan a la propuesta. Mapa y cuatro trazas en interfaz/comparacion.png y mapa_comparativo.svg. Reporte guarda filas por escenario."
+  },
+  {
+    "title": "Evidencia de cierre y limitaciones",
+    "body": [
+      "111 pruebas y11 comprobaciones reales de interfaz",
+      "Arranque limpio, repetición idempotente y cero duplicados",
+      "S1–S7 más S1H complementaria, con originales verificables",
+      "DSM y AIP reutilizados explícitamente; DNS de DGAC bloqueado",
+      "Despeje vertical y autonomía energética real sin verificar",
+      "Entrega en GitLab UDP y Canvas pendiente del equipo"
+    ],
+    "note": "Matriz de rúbrica y evidencias en presentacion/MATRIZ_RUBRICA.md. Geomaster y webapp-testing aplicados. Kassis,T.,Agarwal,V.,He,Y.,Patel,D.,Brueckner,A.M.(2026). Scientific Agent Skills. https://doi.org/10.48550/arXiv.2609.00065. La referencia describe la habilidad, no valida las rutas."
+  }
+]

@@ -147,7 +147,8 @@ class AerialIntegration(unittest.TestCase):
             acquired_at=(iso(self.clock)-timedelta(hours=24,seconds=1)).isoformat())]
         with patch('core.aerial_routing.data',return_value=(model,self.area,self.nodes,self.edges)):
             expired=calculate(self.conn,self.rid,self.request)
-        self.assertEqual(expired['status'],'ready')
+        self.assertEqual(expired['reason'],'endpoint_blocked')
+        self.assertEqual(len(expired['thermal_unknown_ids']),1)
 
         records['A2']=[]
         records['A3']=[dict(geometry=obstacle,lower_limit='SFC',upper_limit='FL 100')]

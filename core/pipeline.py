@@ -84,7 +84,9 @@ def verify_counts(conn,rid,scope):
             actual=conn.execute("SELECT (SELECT count(*) FROM routing.nodes WHERE run_id=%s)+(SELECT count(*) FROM routing.edges WHERE run_id=%s) AS n",(rid,rid)).fetchone()["n"]
         else:
             # TABLES es una lista interna cerrada, nunca un nombre recibido del usuario.
-            actual=conn.execute(f"SELECT count(*) AS n FROM routing.{TABLES[key]} WHERE run_id=%s",(rid,)).fetchone()["n"]
+            table=TABLES[key]
+            if key=='M1' and conn.execute('SELECT 1 FROM routing.base_catalogue WHERE run_id=%s LIMIT 1',(rid,)).fetchone():table='base_catalogue'
+            actual=conn.execute(f"SELECT count(*) AS n FROM routing.{table} WHERE run_id=%s",(rid,)).fetchone()["n"]
         if actual!=row["record_count"]:
             raise ValueError(f"Conteo de {key}: JSON={row['record_count']}, BD={actual}")
         counts[key]=actual

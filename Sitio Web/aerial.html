@@ -16,7 +16,13 @@
 <label for="method">Método</label><select id="method"><option value="proposed">Propuesto: restricciones, tiempo y exposición</option><option value="reference">Referencia Dijkstra: solo distancia</option></select>
 <label for="scenario-time">Hora del escenario (UTC)</label><input id="scenario-time" type="datetime-local" step="60">
 <label for="weather-hour">Horas disponibles del pronóstico</label><select id="weather-hour"><option value="">Elegir hora y ver condición</option></select><p class="small">Snapshot académico: puedes reproducir una hora pasada. No se presenta como pronóstico vigente.</p>
-<button id="calculate" disabled>Calcular rutas aéreas</button><p id="counts" class="small"></p></section>
+<details><summary>Preferencias de la misión</summary>
+<label for="budget">Presupuesto utilizable (s, máximo 1200)</label><input id="budget" type="number" min="1" max="1200" value="1200">
+<label for="wind-limit">Límite de viento y racha (m/s, máximo 8)</label><input id="wind-limit" type="number" min="0.01" max="8" step="0.01" value="8">
+<label for="detour">Factor máximo de desvío (1 a 1,20)</label><input id="detour" type="number" min="1" max="1.2" step="0.01" value="1.2">
+<p class="small">Defaults del informe; solo se permiten restricciones más exigentes. Condiciones congeladas en la hora elegida durante toda la misión.</p></details>
+<button id="calculate" disabled>Calcular rutas aéreas</button><button id="compare" class="secondary" disabled>Comparar misiones y resiliencia</button><p id="counts" class="small"></p></section>
+<section id="comparison-summary" hidden aria-live="polite"></section>
 <section><span class="label">PROBLEMAS SIMULADOS</span><p class="small">Los eventos dibujados son sintéticos y se distinguen de FIRMS y AIP.</p>
 <label for="radius">Radio del bloqueo (m)</label><input id="radius" type="number" min="1" max="10000" value="250">
 <div class="pair"><button id="block-point" class="secondary">Bloqueo circular</button><button id="block-polygon" class="secondary">Dibujar polígono</button></div>

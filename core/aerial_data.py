@@ -35,7 +35,8 @@ def polygonal(g):
 
 def load_sources(config):
     folder=ROOT/config['aerial_raw_directory'];manifest=json.loads((folder/'manifest.json').read_text(encoding='utf-8'))
-    if manifest['bbox_wgs84']!=config['bbox_wgs84'] or set(manifest['sources'])!={f'S{i}' for i in range(1,8)} or manifest.get('errors'):
+    required={f'S{i}' for i in range(1,8)} | ({'S1H'} if config.get('transit_buffer_m') else set())
+    if manifest['bbox_wgs84']!=config['bbox_wgs84'] or set(manifest['sources'])!=required or manifest.get('errors'):
         raise ValueError('Manifiesto aéreo incompleto o de otra área')
     def path(entry):
         p=(folder/entry['file']).resolve()
@@ -43,6 +44,7 @@ def load_sources(config):
         return p
     data={}
     for key,entry in manifest['sources'].items():
+        if 'catalogue' in entry:path(entry['catalogue'])
         if 'pages' in entry:
             features=[]
             ids=json.loads(path(entry['ids']).read_text(encoding='utf-8'))['objectIds'] or []
@@ -57,6 +59,11 @@ def load_sources(config):
 def assemble(config):
     manifest,raw=load_sources(config);area=load_area(ROOT/config['aoi_geojson'])
     profile=json.loads((ROOT/config['aerial_profile']).read_text(encoding='utf-8'))
+    study=area
+    extended=bool(config.get('transit_buffer_m'))
+    if extended:
+        area=transform(INV,transform(FWD,study).buffer(config['transit_buffer_m'],quad_segs=16))
+        if manifest.get('transit_buffer_m')!=config['transit_buffer_m']:raise ValueError('Adquisición de otra área de tránsito')
     records={key:[] for key in KEYS}
     repairs={}
     for key,source in [('M2','S2')]:
@@ -67,7 +74,11 @@ def assemble(config):
             geom=polygonal(geom.intersection(area))
             if geom.is_empty:continue
             p=f['properties'];item=dict(provider_id=str(p[manifest['sources'][source]['id_field']]),geometry=mapping(geom),repaired=bad)
-            if key=='M2':item.update(category=p['uso'],source_year=2019)
+            if key=='M2':
+                item.update(category=p['uso'],source_year=2019)
+                if extended:
+                    from core.metadata_hidalgo import landcover
+                    item.update(landcover(p,geom,FWD))
             else:
                 ordinal=int(p['gridcode'])
                 if not 1<=ordinal<=5:raise ValueError('Clase histórica desconocida')
@@ -76,9 +87,13 @@ def assemble(config):
         repairs[key]=repaired
     from Amenazas.a4_historial import transformar as transformar_a4
     records['A4'],repairs['A4']=transformar_a4(raw['S7'],area,manifest['sources']['S7']['id_field'],polygonal)
-    for f in raw['S1']:
-        if area.covers(shape(f['geometry'])):
-            p=f['properties'];records['M1'].append(dict(provider_id=str(p['objectid_1']),name=p['nombre'],commune=p.get('comuna'),address=p.get('direccion'),geometry=f['geometry']))
+    if extended:
+        from core.metadata_hidalgo import bases
+        records['M1']=bases(raw['S1H'],raw['S1'],study,area,FWD)
+    else:
+        for f in raw['S1']:
+            if area.covers(shape(f['geometry'])):
+                p=f['properties'];records['M1'].append(dict(provider_id=str(p['objectid_1']),name=p['nombre'],commune=p.get('comuna'),address=p.get('direccion'),geometry=f['geometry']))
     if not records['M1']:raise ValueError('No hay bases candidatas reales dentro del AOI')
     grid=profile['grid_m'];bounds=transform(FWD,area).bounds;nodes=[]
     forest=unary_union([shape(r['geometry']) for r in records['M2'] if r['category'] in ['Bosques','Praderas y Matorrales']])
@@ -87,8 +102,9 @@ def assemble(config):
             coord=list(INV(x,y));p=Point(coord)
             if area.covers(p):
                 key=f'aerial:grid:{grid}:{x}:{y}'
-                nodes.append(dict(id=stable_id(key),natural_key=key,kind='vigilancia' if forest.covers(p) else 'navegacion',source_record_id=None,geometry=dict(type='Point',coordinates=coord)))
+                nodes.append(dict(id=stable_id(key),natural_key=key,kind='vigilancia' if study.covers(p) and forest.covers(p) else 'navegacion',source_record_id=None,geometry=dict(type='Point',coordinates=coord)))
     for base in records['M1']:
+        if not base.get('candidate',True):continue
         key='aerial:base:S1:'+base['provider_id'];base['node_id']=stable_id(key)
         nodes.append(dict(id=base['node_id'],natural_key=key,kind='base_candidata',source_record_id=base['provider_id'],geometry=base['geometry']))
     metric={n['id']:transform(FWD,shape(n['geometry'])) for n in nodes};by_id={n['id']:n for n in nodes};pairs=set()
@@ -114,14 +130,12 @@ def assemble(config):
         raster_info=dict(crs=src.crs.to_string(),transform=list(src.transform),shape=[src.height,src.width],nodata=src.nodata,
             bands=src.count,scales=list(src.scales),offsets=list(src.offsets),band_units=list(src.units),
             horizontal_units='degrees',vertical_units='m',vertical_datum='EGM2008 (Copernicus GLO-30 product)',support='approximately 30 m; not obstacle clearance')
-    weather=json.loads(raw['S4'].read_text(encoding='utf-8'));hourly=weather['hourly'];units=weather['hourly_units']
-    if weather['utc_offset_seconds']!=0 or units['wind_speed_10m']!='m/s' or units['wind_gusts_10m']!='m/s':raise ValueError('Unidades/tiempo meteorológico inesperado')
-    fields={'temperature_c':'temperature_2m','relative_humidity_pct':'relative_humidity_2m','wind_speed_ms':'wind_speed_10m',
-            'wind_direction_deg':'wind_direction_10m','wind_gust_ms':'wind_gusts_10m','precipitation_mm':'precipitation'}
-    for i,date in enumerate(hourly['time']):
-        row={k:hourly[v][i] for k,v in fields.items()};row.update(valid_at=date+':00+00:00',cell=[weather['longitude'],weather['latitude']])
-        if row['wind_direction_deg'] is not None:row['wind_direction_deg']%=360
-        records['M4'].append(row)
+    weather=json.loads(raw['S4'].read_text(encoding='utf-8'))
+    from core.metadata_hidalgo import weather_rows
+    records['M4']=weather_rows(weather)
+    if extended:
+        from urllib.parse import urlsplit,parse_qs
+        if parse_qs(urlsplit(manifest['sources']['S4']['url']).query).get('models')!=['ecmwf_ifs025']:raise ValueError('Modelo meteorológico no explícito')
     acquisition=iso(manifest['fetched_at_utc']);clock=acquisition.replace(minute=0,second=0,microsecond=0)
     if not any(iso(r['valid_at'])==clock for r in records['M4']):clock=iso(records['M4'][0]['valid_at'])
     from Amenazas.a1_meteorologia import transformar as transformar_a1
@@ -136,10 +150,14 @@ def assemble(config):
                  aip_parser_report=aip_parser_report,
                  catalog_scope='S6 ENR 5.1: todas las SC-P/SC-R/SC-D inventariadas; geometrías soportadas seleccionadas con margen AOI configurable; ver aip_parser_report para excepciones. No es autorización de vuelo.',
                  clearance_verified=False)
+    if extended:
+        context.update(study_geometry=mapping(study),flight_geometry=mapping(area),weather_model='ecmwf_ifs025',
+            temporal_model='static_at_selected_hour',metadata_attribution='M1–M4 adaptados del aporte de Diego Hidalgo; adquisición y carga comunes')
     lineage=dict(builder=profile['builder'],configuration_sha256=hashlib.sha256(canonical(config)).hexdigest(),
-        aoi=dict(file=config['aoi_geojson'],sha256=sha256(ROOT/config['aoi_geojson']),geometry=json.loads(json.dumps(mapping(area))),predicate='covers'),
+        aoi=dict(file=config['aoi_geojson'],sha256=sha256(ROOT/config['aoi_geojson']),geometry=json.loads(json.dumps(mapping(study))),predicate='covers'),
         sources=manifest['sources'],manifest_sha256=sha256(ROOT/config['aerial_raw_directory']/'manifest.json'),
         profile=profile,context_sha256=hashlib.sha256(canonical(context)).hexdigest(),derived_corridors=True)
+    if extended:lineage['flight_area']=dict(geometry=json.loads(json.dumps(mapping(area))),buffer_m=config['transit_buffer_m'],analysis_srid=32719,quad_segs=16)
     return sorted(nodes,key=lambda n:n['id']),sorted(edges,key=lambda e:e['id']),lineage,context,manifest
 
 
@@ -151,9 +169,9 @@ def cached_assembly(config_text,manifest_hash,profile_hash):
 def build(config,run_id=None,mode='snapshot'):
     nodes,edges,lineage,context,manifest=cached_assembly(canonical(config).decode(),sha256(ROOT/config['aerial_raw_directory']/'manifest.json'),sha256(ROOT/config['aerial_profile']))
     semantic=dict(nodes=nodes,edges=edges,crs='EPSG:4326',analysis_srid=32719,lineage=lineage,
-        observed_at=manifest['fetched_at_utc'],extracted_at=manifest['fetched_at_utc'],builder='aerial-grid-v1')
+        observed_at=manifest['fetched_at_utc'],extracted_at=manifest['fetched_at_utc'],builder=context['profile']['builder'])
     digest=hashlib.sha256(canonical(semantic)).hexdigest();rid=str(UUID(run_id)) if run_id else str(uuid5(NAMESPACE_URL,'udp:aerial:v1:'+mode+':'+digest))
-    doc=dict(schema_version='3.0',run_id=rid,dataset_id=str(uuid5(UUID(rid),'I')),dataset_key='I',source_id='DERIVED_AERIAL',
+    doc=dict(schema_version='4.0' if config.get('transit_buffer_m') else '3.0',run_id=rid,dataset_id=str(uuid5(UUID(rid),'I')),dataset_key='I',source_id='DERIVED_AERIAL',
         input_hash=digest,extraction_mode=mode,**{k:v for k,v in semantic.items() if k!='builder'})
     return doc,context
 

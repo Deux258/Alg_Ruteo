@@ -1,0 +1,248 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="2180"><rect width="100%" height="100%" fill="#f7faf8"/><style>text{font-family:Arial,sans-serif;fill:#233e43}</style>
+<text x="25" y="40" font-size="28">Esquema inspeccionado en PostgreSQL · 31 tablas</text>
+<text x="25" y="68" font-size="17">PK/FK y campos completos: DDL inicial + migraciones 002–004. Catálogo visual de capacidad por tabla.</text>
+<rect x="25" y="100" width="350" height="240" fill="white" stroke="#6b9586"/><text x="37" y="126" font-size="20">aerial_models</text>
+<text x="37" y="150" font-size="14">run_id · uuid</text>
+<text x="37" y="169" font-size="14">profile · jsonb</text>
+<text x="37" y="188" font-size="14">context · jsonb</text>
+<text x="37" y="207" font-size="14">clearance_verified · boolean</text>
+<rect x="395" y="100" width="350" height="240" fill="white" stroke="#6b9586"/><text x="407" y="126" font-size="20">airspace_zones</text>
+<text x="407" y="150" font-size="14">run_id · uuid</text>
+<text x="407" y="169" font-size="14">hazard_id · bigint</text>
+<text x="407" y="188" font-size="14">kind · text</text>
+<text x="407" y="207" font-size="14">code · text</text>
+<text x="407" y="226" font-size="14">lower_limit · text</text>
+<text x="407" y="245" font-size="14">upper_limit · text</text>
+<text x="407" y="264" font-size="14">conditions · text</text>
+<text x="407" y="283" font-size="14">document_page · text</text>
+<text x="407" y="302" font-size="14">original_record · text</text>
+<rect x="765" y="100" width="350" height="240" fill="white" stroke="#6b9586"/><text x="777" y="126" font-size="20">base_catalogue</text>
+<text x="777" y="150" font-size="14">run_id · uuid</text>
+<text x="777" y="169" font-size="14">provider_id · text</text>
+<text x="777" y="188" font-size="14">node_id · bigint</text>
+<text x="777" y="207" font-size="14">name · text</text>
+<text x="777" y="226" font-size="14">candidate · boolean</text>
+<text x="777" y="245" font-size="14">inside_study · boolean</text>
+<text x="777" y="264" font-size="14">distance_to_study_m · double precision</text>
+<text x="777" y="283" font-size="14">selection_reason · text</text>
+<text x="777" y="302" font-size="14">source_refs · jsonb</text>
+<text x="777" y="325" font-size="14">… 11 columnas; ver diagnóstico y SQL</text>
+<rect x="1135" y="100" width="350" height="240" fill="white" stroke="#6b9586"/><text x="1147" y="126" font-size="20">base_locations</text>
+<text x="1147" y="150" font-size="14">run_id · uuid</text>
+<text x="1147" y="169" font-size="14">provider_id · text</text>
+<text x="1147" y="188" font-size="14">source_id · text</text>
+<text x="1147" y="207" font-size="14">node_id · bigint</text>
+<text x="1147" y="226" font-size="14">name · text</text>
+<text x="1147" y="245" font-size="14">address · text</text>
+<text x="1147" y="264" font-size="14">geom · geometry</text>
+<text x="1147" y="283" font-size="14">provenance · jsonb</text>
+<rect x="25" y="360" width="350" height="240" fill="white" stroke="#6b9586"/><text x="37" y="386" font-size="20">base_metadata</text>
+<text x="37" y="410" font-size="14">run_id · uuid</text>
+<text x="37" y="429" font-size="14">node_id · bigint</text>
+<text x="37" y="448" font-size="14">dataset_key · text</text>
+<text x="37" y="467" font-size="14">provider_id · text</text>
+<text x="37" y="486" font-size="14">name · text</text>
+<text x="37" y="505" font-size="14">commune · text</text>
+<text x="37" y="524" font-size="14">address · text</text>
+<text x="37" y="543" font-size="14">updated_on · date</text>
+<rect x="395" y="360" width="350" height="240" fill="white" stroke="#6b9586"/><text x="407" y="386" font-size="20">datasets</text>
+<text x="407" y="410" font-size="14">dataset_id · uuid</text>
+<text x="407" y="429" font-size="14">run_id · uuid</text>
+<text x="407" y="448" font-size="14">dataset_key · text</text>
+<text x="407" y="467" font-size="14">source_id · text</text>
+<text x="407" y="486" font-size="14">schema_version · text</text>
+<text x="407" y="505" font-size="14">observed_at · timestamp with time zone</text>
+<text x="407" y="524" font-size="14">extracted_at · timestamp with time zone</text>
+<text x="407" y="543" font-size="14">file_sha256 · text</text>
+<text x="407" y="562" font-size="14">record_count · integer</text>
+<text x="407" y="585" font-size="14">… 12 columnas; ver diagnóstico y SQL</text>
+<rect x="765" y="360" width="350" height="240" fill="white" stroke="#6b9586"/><text x="777" y="386" font-size="20">edge_hazard</text>
+<text x="777" y="410" font-size="14">run_id · uuid</text>
+<text x="777" y="429" font-size="14">edge_id · bigint</text>
+<text x="777" y="448" font-size="14">hazard_id · bigint</text>
+<text x="777" y="467" font-size="14">overlap_fraction · double precision</text>
+<text x="777" y="486" font-size="14">blocked · boolean</text>
+<text x="777" y="505" font-size="14">model_version · text</text>
+<rect x="1135" y="360" width="350" height="240" fill="white" stroke="#6b9586"/><text x="1147" y="386" font-size="20">edges</text>
+<text x="1147" y="410" font-size="14">run_id · uuid</text>
+<text x="1147" y="429" font-size="14">id · bigint</text>
+<text x="1147" y="448" font-size="14">natural_key · text</text>
+<text x="1147" y="467" font-size="14">dataset_key · text</text>
+<text x="1147" y="486" font-size="14">source · bigint</text>
+<text x="1147" y="505" font-size="14">target · bigint</text>
+<text x="1147" y="524" font-size="14">physical_key · text</text>
+<text x="1147" y="543" font-size="14">geom · geometry</text>
+<text x="1147" y="562" font-size="14">length_km · double precision</text>
+<text x="1147" y="585" font-size="14">… 10 columnas; ver diagnóstico y SQL</text>
+<rect x="25" y="620" width="350" height="240" fill="white" stroke="#6b9586"/><text x="37" y="646" font-size="20">evaluations</text>
+<text x="37" y="670" font-size="14">run_id · uuid</text>
+<text x="37" y="689" font-size="14">set_id · uuid</text>
+<text x="37" y="708" font-size="14">scenario_sha256 · text</text>
+<text x="37" y="727" font-size="14">scenario_count · integer</text>
+<text x="37" y="746" font-size="14">unknown_count · integer</text>
+<text x="37" y="765" font-size="14">resilience · double precision</text>
+<text x="37" y="784" font-size="14">results · jsonb</text>
+<rect x="395" y="620" width="350" height="240" fill="white" stroke="#6b9586"/><text x="407" y="646" font-size="20">graph_base_edges</text>
+<text x="407" y="670" font-size="14">id · bigint</text>
+<text x="407" y="689" font-size="14">source · bigint</text>
+<text x="407" y="708" font-size="14">target · bigint</text>
+<text x="407" y="727" font-size="14">cost · double precision</text>
+<text x="407" y="746" font-size="14">reverse_cost · double precision</text>
+<text x="407" y="765" font-size="14">geom · geometry</text>
+<text x="407" y="784" font-size="14">run_id · uuid</text>
+<text x="407" y="803" font-size="14">length_km · double precision</text>
+<rect x="765" y="620" width="350" height="240" fill="white" stroke="#6b9586"/><text x="777" y="646" font-size="20">graph_base_nodes</text>
+<text x="777" y="670" font-size="14">run_id · uuid</text>
+<text x="777" y="689" font-size="14">id · bigint</text>
+<text x="777" y="708" font-size="14">natural_key · text</text>
+<text x="777" y="727" font-size="14">dataset_key · text</text>
+<text x="777" y="746" font-size="14">kind · text</text>
+<text x="777" y="765" font-size="14">source_record_id · text</text>
+<text x="777" y="784" font-size="14">geom · geometry</text>
+<rect x="1135" y="620" width="350" height="240" fill="white" stroke="#6b9586"/><text x="1147" y="646" font-size="20">hazards</text>
+<text x="1147" y="670" font-size="14">run_id · uuid</text>
+<text x="1147" y="689" font-size="14">id · bigint</text>
+<text x="1147" y="708" font-size="14">dataset_key · text</text>
+<text x="1147" y="727" font-size="14">kind · text</text>
+<text x="1147" y="746" font-size="14">provider_id · text</text>
+<text x="1147" y="765" font-size="14">geom · geometry</text>
+<text x="1147" y="784" font-size="14">state · text</text>
+<text x="1147" y="803" font-size="14">valid_from · timestamp with time zone</text>
+<text x="1147" y="822" font-size="14">valid_until · timestamp with time zone</text>
+<text x="1147" y="845" font-size="14">… 11 columnas; ver diagnóstico y SQL</text>
+<rect x="25" y="880" width="350" height="240" fill="white" stroke="#6b9586"/><text x="37" y="906" font-size="20">historical_risk</text>
+<text x="37" y="930" font-size="14">run_id · uuid</text>
+<text x="37" y="949" font-size="14">hazard_id · bigint</text>
+<text x="37" y="968" font-size="14">kind · text</text>
+<text x="37" y="987" font-size="14">ordinal_class · smallint</text>
+<text x="37" y="1006" font-size="14">class_label · text</text>
+<text x="37" y="1025" font-size="14">period_start · smallint</text>
+<text x="37" y="1044" font-size="14">period_end · smallint</text>
+<rect x="395" y="880" width="350" height="240" fill="white" stroke="#6b9586"/><text x="407" y="906" font-size="20">landcover</text>
+<text x="407" y="930" font-size="14">run_id · uuid</text>
+<text x="407" y="949" font-size="14">id · bigint</text>
+<text x="407" y="968" font-size="14">dataset_key · text</text>
+<text x="407" y="987" font-size="14">provider_id · text</text>
+<text x="407" y="1006" font-size="14">category · text</text>
+<text x="407" y="1025" font-size="14">source_year · integer</text>
+<text x="407" y="1044" font-size="14">repaired · boolean</text>
+<text x="407" y="1063" font-size="14">geom · geometry</text>
+<text x="407" y="1082" font-size="14">attributes · jsonb</text>
+<text x="407" y="1105" font-size="14">… 12 columnas; ver diagnóstico y SQL</text>
+<rect x="765" y="880" width="350" height="240" fill="white" stroke="#6b9586"/><text x="777" y="906" font-size="20">mission_evaluations</text>
+<text x="777" y="930" font-size="14">run_id · uuid</text>
+<text x="777" y="949" font-size="14">evaluation_sha256 · text</text>
+<text x="777" y="968" font-size="14">scenario_sha256 · text</text>
+<text x="777" y="987" font-size="14">request · jsonb</text>
+<text x="777" y="1006" font-size="14">result · jsonb</text>
+<rect x="1135" y="880" width="350" height="240" fill="white" stroke="#6b9586"/><text x="1147" y="906" font-size="20">node_elevation</text>
+<text x="1147" y="930" font-size="14">run_id · uuid</text>
+<text x="1147" y="949" font-size="14">node_id · bigint</text>
+<text x="1147" y="968" font-size="14">dataset_key · text</text>
+<text x="1147" y="987" font-size="14">elevation_m · double precision</text>
+<text x="1147" y="1006" font-size="14">quality · text</text>
+<rect x="25" y="1140" width="350" height="240" fill="white" stroke="#6b9586"/><text x="37" y="1166" font-size="20">nodes</text>
+<text x="37" y="1190" font-size="14">run_id · uuid</text>
+<text x="37" y="1209" font-size="14">id · bigint</text>
+<text x="37" y="1228" font-size="14">natural_key · text</text>
+<text x="37" y="1247" font-size="14">dataset_key · text</text>
+<text x="37" y="1266" font-size="14">kind · text</text>
+<text x="37" y="1285" font-size="14">source_record_id · text</text>
+<text x="37" y="1304" font-size="14">geom · geometry</text>
+<rect x="395" y="1140" width="350" height="240" fill="white" stroke="#6b9586"/><text x="407" y="1166" font-size="20">profiles</text>
+<text x="407" y="1190" font-size="14">profile_key · text</text>
+<text x="407" y="1209" font-size="14">version · integer</text>
+<text x="407" y="1228" font-size="14">wind_max_ms · double precision</text>
+<text x="407" y="1247" font-size="14">temperature_min_c · double precision</text>
+<text x="407" y="1266" font-size="14">temperature_max_c · double precision</text>
+<text x="407" y="1285" font-size="14">surface_max_m · double precision</text>
+<text x="407" y="1304" font-size="14">exposure_lambda · double precision</text>
+<text x="407" y="1323" font-size="14">detour_factor · double precision</text>
+<text x="407" y="1342" font-size="14">settings · jsonb</text>
+<rect x="765" y="1140" width="350" height="240" fill="white" stroke="#6b9586"/><text x="777" y="1166" font-size="20">publication</text>
+<text x="777" y="1190" font-size="14">singleton · boolean</text>
+<text x="777" y="1209" font-size="14">run_id · uuid</text>
+<text x="777" y="1228" font-size="14">published_at · timestamp with time zone</text>
+<rect x="1135" y="1140" width="350" height="240" fill="white" stroke="#6b9586"/><text x="1147" y="1166" font-size="20">road_states</text>
+<text x="1147" y="1190" font-size="14">run_id · uuid</text>
+<text x="1147" y="1209" font-size="14">id · bigint</text>
+<text x="1147" y="1228" font-size="14">edge_id · bigint</text>
+<text x="1147" y="1247" font-size="14">context · ARRAY</text>
+<rect x="25" y="1400" width="350" height="240" fill="white" stroke="#6b9586"/><text x="37" y="1426" font-size="20">road_transitions</text>
+<text x="37" y="1450" font-size="14">run_id · uuid</text>
+<text x="37" y="1469" font-size="14">id · bigint</text>
+<text x="37" y="1488" font-size="14">source · bigint</text>
+<text x="37" y="1507" font-size="14">target · bigint</text>
+<text x="37" y="1526" font-size="14">edge_id · bigint</text>
+<rect x="395" y="1400" width="350" height="240" fill="white" stroke="#6b9586"/><text x="407" y="1426" font-size="20">route_edges</text>
+<text x="407" y="1450" font-size="14">run_id · uuid</text>
+<text x="407" y="1469" font-size="14">route_id · uuid</text>
+<text x="407" y="1488" font-size="14">seq · integer</text>
+<text x="407" y="1507" font-size="14">edge_id · bigint</text>
+<rect x="765" y="1400" width="350" height="240" fill="white" stroke="#6b9586"/><text x="777" y="1426" font-size="20">route_sets</text>
+<text x="777" y="1450" font-size="14">run_id · uuid</text>
+<text x="777" y="1469" font-size="14">id · uuid</text>
+<text x="777" y="1488" font-size="14">source · bigint</text>
+<text x="777" y="1507" font-size="14">target · bigint</text>
+<text x="777" y="1526" font-size="14">method · text</text>
+<text x="777" y="1545" font-size="14">profile_key · text</text>
+<text x="777" y="1564" font-size="14">profile_version · integer</text>
+<text x="777" y="1583" font-size="14">requested_at · timestamp with time zone</text>
+<rect x="1135" y="1400" width="350" height="240" fill="white" stroke="#6b9586"/><text x="1147" y="1426" font-size="20">routes</text>
+<text x="1147" y="1450" font-size="14">run_id · uuid</text>
+<text x="1147" y="1469" font-size="14">id · uuid</text>
+<text x="1147" y="1488" font-size="14">set_id · uuid</text>
+<text x="1147" y="1507" font-size="14">rank · smallint</text>
+<text x="1147" y="1526" font-size="14">length_km · double precision</text>
+<text x="1147" y="1545" font-size="14">score · double precision</text>
+<text x="1147" y="1564" font-size="14">geom · geometry</text>
+<rect x="25" y="1660" width="350" height="240" fill="white" stroke="#6b9586"/><text x="37" y="1686" font-size="20">run_areas</text>
+<text x="37" y="1710" font-size="14">run_id · uuid</text>
+<text x="37" y="1729" font-size="14">role · text</text>
+<text x="37" y="1748" font-size="14">geom · geometry</text>
+<text x="37" y="1767" font-size="14">buffer_m · double precision</text>
+<rect x="395" y="1660" width="350" height="240" fill="white" stroke="#6b9586"/><text x="407" y="1686" font-size="20">runs</text>
+<text x="407" y="1710" font-size="14">run_id · uuid</text>
+<text x="407" y="1729" font-size="14">input_hash · text</text>
+<text x="407" y="1748" font-size="14">scope · text</text>
+<text x="407" y="1767" font-size="14">mode · text</text>
+<text x="407" y="1786" font-size="14">status · text</text>
+<text x="407" y="1805" font-size="14">configuration · jsonb</text>
+<text x="407" y="1824" font-size="14">started_at · timestamp with time zone</text>
+<text x="407" y="1843" font-size="14">finished_at · timestamp with time zone</text>
+<text x="407" y="1862" font-size="14">error · text</text>
+<rect x="765" y="1660" width="350" height="240" fill="white" stroke="#6b9586"/><text x="777" y="1686" font-size="20">schema_migrations</text>
+<text x="777" y="1710" font-size="14">version · integer</text>
+<text x="777" y="1729" font-size="14">checksum · text</text>
+<text x="777" y="1748" font-size="14">applied_at · timestamp with time zone</text>
+<rect x="1135" y="1660" width="350" height="240" fill="white" stroke="#6b9586"/><text x="1147" y="1686" font-size="20">sources</text>
+<text x="1147" y="1710" font-size="14">source_id · text</text>
+<text x="1147" y="1729" font-size="14">product · text</text>
+<text x="1147" y="1748" font-size="14">url · text</text>
+<text x="1147" y="1767" font-size="14">description · text</text>
+<rect x="25" y="1920" width="350" height="240" fill="white" stroke="#6b9586"/><text x="37" y="1946" font-size="20">thermal_events</text>
+<text x="37" y="1970" font-size="14">run_id · uuid</text>
+<text x="37" y="1989" font-size="14">hazard_id · bigint</text>
+<text x="37" y="2008" font-size="14">kind · text</text>
+<text x="37" y="2027" font-size="14">acquired_at · timestamp with time zone</text>
+<text x="37" y="2046" font-size="14">confidence · text</text>
+<text x="37" y="2065" font-size="14">fire_radiative_power_mw · double precision</text>
+<text x="37" y="2084" font-size="14">buffer_m · double precision</text>
+<rect x="395" y="1920" width="350" height="240" fill="white" stroke="#6b9586"/><text x="407" y="1946" font-size="20">weather</text>
+<text x="407" y="1970" font-size="14">run_id · uuid</text>
+<text x="407" y="1989" font-size="14">id · bigint</text>
+<text x="407" y="2008" font-size="14">dataset_key · text</text>
+<text x="407" y="2027" font-size="14">cell · geometry</text>
+<text x="407" y="2046" font-size="14">valid_at · timestamp with time zone</text>
+<text x="407" y="2065" font-size="14">issued_at · timestamp with time zone</text>
+<text x="407" y="2084" font-size="14">temperature_c · double precision</text>
+<text x="407" y="2103" font-size="14">relative_humidity_pct · double precision</text>
+<text x="407" y="2122" font-size="14">wind_speed_ms · double precision</text>
+<text x="407" y="2145" font-size="14">… 12 columnas; ver diagnóstico y SQL</text>
+<rect x="765" y="1920" width="350" height="240" fill="white" stroke="#6b9586"/><text x="777" y="1946" font-size="20">weather_hazards</text>
+<text x="777" y="1970" font-size="14">run_id · uuid</text>
+<text x="777" y="1989" font-size="14">hazard_id · bigint</text>
+<text x="777" y="2008" font-size="14">kind · text</text>
+<text x="777" y="2027" font-size="14">weather_id · bigint</text>
+<text x="777" y="2046" font-size="14">reason · text</text>
+</svg>

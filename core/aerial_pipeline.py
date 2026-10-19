@@ -53,6 +53,8 @@ def run(scope,mode,run_id=None):
             report.update(status='failed',error=str(exc))
             conn.execute("UPDATE routing.runs SET status='failed',finished_at=now(),error=%s WHERE run_id=%s AND status='staging'",(str(exc)[:2000],rid));raise
         finally:
+            from core.provenance import software_manifest
+            report['software']=software_manifest()
             report.update(duration_s=round(time.monotonic()-start,3),recorded_at_utc=datetime.now(timezone.utc).isoformat())
             write_json(folder/'resumen.json',report);conn.execute('SELECT pg_advisory_unlock(74260103)')
     print(json.dumps({k:v for k,v in report.items() if k not in ['versions','topology']},ensure_ascii=False));return report

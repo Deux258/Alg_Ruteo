@@ -1,5 +1,5 @@
 {
-  "builder": "aerial-grid-v1",
+  "builder": "aerial-grid-v2",
   "grid_m": 800,
   "neighbours": 8,
   "max_link_m": 1500,
@@ -17,5 +17,6 @@
   "alternatives": 3,
   "detour_factor": 1.2,
   "clearance_verified": false,
-  "operationally_certified": false
+  "operationally_certified": false,
+  "comparison_options": 2
 }
