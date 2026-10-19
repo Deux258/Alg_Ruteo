@@ -1,0 +1,5464 @@
+{
+  "by_profile": {
+    "default": {
+      "improvements": 2,
+      "max_delta_pp": 4.0000000000000036,
+      "mean_delta_pp": 0.03333333333333336,
+      "methods": {
+        "proposed": {
+          "control_admissible": 9,
+          "mean_set_survival": 0.1455,
+          "mean_shared_50m_fraction": 0.3481465088759528,
+          "reasons": {
+            "endpoint_blocked": 16,
+            "insufficient_return_budget": 15,
+            "none": 9,
+            "weather_outside_profile": 20
+          },
+          "statuses": {
+            "no_route": 16,
+            "not_feasible": 35,
+            "ready": 9
+          },
+          "two_options": 9
+        },
+        "reference": {
+          "control_admissible": 9,
+          "mean_set_survival": 0.14516666666666667,
+          "mean_shared_50m_fraction": 0.42078980378737396,
+          "reasons": {
+            "none": 60
+          },
+          "statuses": {
+            "ready": 60
+          },
+          "two_options": 60
+        }
+      },
+      "min_delta_pp": -3.0000000000000027,
+      "ties": 56,
+      "total_cases": 60,
+      "unknown_cases": 0,
+      "valid_case_scenarios": 6000,
+      "valid_cases": 60,
+      "worsenings": 2
+    },
+    "history4": {
+      "improvements": 2,
+      "max_delta_pp": 98.0,
+      "mean_delta_pp": 3.2666666666666666,
+      "methods": {
+        "proposed": {
+          "control_admissible": 4,
+          "mean_set_survival": 0.06533333333333333,
+          "mean_shared_50m_fraction": 0.751260776666497,
+          "reasons": {
+            "endpoint_blocked": 16,
+            "historical_class_unknown": 12,
+            "insufficient_return_budget": 8,
+            "none": 4,
+            "weather_outside_profile": 20
+          },
+          "statuses": {
+            "no_route": 28,
+            "not_feasible": 28,
+            "ready": 4
+          },
+          "two_options": 3
+        },
+        "reference": {
+          "control_admissible": 2,
+          "mean_set_survival": 0.03266666666666666,
+          "mean_shared_50m_fraction": 0.42078980378737396,
+          "reasons": {
+            "none": 60
+          },
+          "statuses": {
+            "ready": 60
+          },
+          "two_options": 60
+        }
+      },
+      "min_delta_pp": 0.0,
+      "ties": 58,
+      "total_cases": 60,
+      "unknown_cases": 0,
+      "valid_case_scenarios": 6000,
+      "valid_cases": 60,
+      "worsenings": 0
+    }
+  },
+  "cases": [
+    {
+      "base": "104",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "8ecb81c01cd0e772838754ad980c9aef67e2a8e00b97259c18b56ca65b481fc7",
+      "id": "case-001",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 1
+      },
+      "profile": "default",
+      "reason": {
+        "proposed": "endpoint_blocked",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "no_route",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "104",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "3c50a65d04921259b3eb6ffdcd926e043e913ed2540ad43f5245d24e687bbcf3",
+      "id": "case-002",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 1
+      },
+      "profile": "history4",
+      "reason": {
+        "proposed": "endpoint_blocked",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "no_route",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "104",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "c1046ec81dfa6255c4789b7ff9344bb9c659cbfc78579088234900a723b0f8e0",
+      "id": "case-003",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 1
+      },
+      "profile": "default",
+      "reason": {
+        "proposed": "endpoint_blocked",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "no_route",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "104",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "ddb87e5ab410f44efed12413bd141f7f651d6acfab886c1d7e8060f010b75970",
+      "id": "case-004",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 1
+      },
+      "profile": "history4",
+      "reason": {
+        "proposed": "endpoint_blocked",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "no_route",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "104",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "cf318e2f8d5ac78faea62dcf8b2e285099e3fb435601938d04493a9b41c5a20d",
+      "id": "case-005",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 1
+      },
+      "profile": "default",
+      "reason": {
+        "proposed": "weather_outside_profile",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "not_feasible",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "104",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "c169957310a73fe41901c27736e181f053127a08f66495513d87a6d38bf42847",
+      "id": "case-006",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 1
+      },
+      "profile": "history4",
+      "reason": {
+        "proposed": "weather_outside_profile",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "not_feasible",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "104",
+      "control": {
+        "proposed": true,
+        "reference": true
+      },
+      "evaluation_sha256": "b1c52baa306d393f5a19e406c1e7dab933181fd9dbe8bb8bb8833c317c0385a1",
+      "id": "case-007",
+      "metrics": {
+        "delta_percentage_points": 4.0000000000000036,
+        "methods": {
+          "proposed": {
+            "individual": [
+              0.99,
+              0.95
+            ],
+            "mission_count": 2,
+            "set_survival": 0.99
+          },
+          "reference": {
+            "individual": [
+              0.95,
+              0.95
+            ],
+            "mission_count": 2,
+            "set_survival": 0.95
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": 0.2728598994807398,
+        "reference": 0.49315015754986735
+      },
+      "profile": "default",
+      "reason": {
+        "proposed": null,
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "ready",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "104",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "117391715b46f31b8c89ea46c1ed71ee1d1f8f055775d2dbc840c8ef94e4a189",
+      "id": "case-008",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.49315015754986735
+      },
+      "profile": "history4",
+      "reason": {
+        "proposed": "historical_class_unknown",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "no_route",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "104",
+      "control": {
+        "proposed": true,
+        "reference": true
+      },
+      "evaluation_sha256": "977eea4553962255e43a59f4811ff1123d25bdfaa500bf58a680d445e21dae46",
+      "id": "case-009",
+      "metrics": {
+        "delta_percentage_points": 4.0000000000000036,
+        "methods": {
+          "proposed": {
+            "individual": [
+              0.99,
+              0.95
+            ],
+            "mission_count": 2,
+            "set_survival": 0.99
+          },
+          "reference": {
+            "individual": [
+              0.95,
+              0.95
+            ],
+            "mission_count": 2,
+            "set_survival": 0.95
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": 0.2728598994807398,
+        "reference": 0.49315015754986735
+      },
+      "profile": "default",
+      "reason": {
+        "proposed": null,
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "ready",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "104",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "e486e6933e19ad8cecb28aa24027e0f49d601b3161358184dfc16f1102bdadaa",
+      "id": "case-010",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.49315015754986735
+      },
+      "profile": "history4",
+      "reason": {
+        "proposed": "historical_class_unknown",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "no_route",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "104",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "b440a85a369a081c4f5e53ab60695ac6285931ca8160ddab3d06ec010fedec8e",
+      "id": "case-011",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.49315015754986735
+      },
+      "profile": "default",
+      "reason": {
+        "proposed": "weather_outside_profile",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "not_feasible",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "104",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "485dbadd04c86f2a147ff59e32b7dba56c610808b3ba12e4adaf79f1d6b19649",
+      "id": "case-012",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.49315015754986735
+      },
+      "profile": "history4",
+      "reason": {
+        "proposed": "weather_outside_profile",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "not_feasible",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "104",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "8d604649d525d28b11563fdc22fdf63426d0bf7b15ff74d22a7a5d33d630fd67",
+      "id": "case-013",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.9420555551294021
+      },
+      "profile": "default",
+      "reason": {
+        "proposed": "insufficient_return_budget",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "not_feasible",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "104",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "9726f7f51bb35c4bb623a6f79d589add186a028c9be8e5ad1dbffcc941dc57f4",
+      "id": "case-014",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.9420555551294021
+      },
+      "profile": "history4",
+      "reason": {
+        "proposed": "historical_class_unknown",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "no_route",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "104",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "fe456cb7056ad4cb825fa9cef70cb3c604f3d4b72ff9b59bebec4203d2fc80b2",
+      "id": "case-015",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.9420555551294021
+      },
+      "profile": "default",
+      "reason": {
+        "proposed": "insufficient_return_budget",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "not_feasible",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "104",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "9b32f7769055c53228509cd35f9891b056aa07a7c4335fbfd773c72d709d643c",
+      "id": "case-016",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.9420555551294021
+      },
+      "profile": "history4",
+      "reason": {
+        "proposed": "historical_class_unknown",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "no_route",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "104",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "365af872eabbe6293c212cf8aa6dd5e142e0c6488a7d5850c762ac435eb42914",
+      "id": "case-017",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.9420555551294021
+      },
+      "profile": "default",
+      "reason": {
+        "proposed": "weather_outside_profile",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "not_feasible",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "104",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "ec3ff4b527f1d516b887330ff78143b5c40eb7202db9e9aee310e7f380f0fdfe",
+      "id": "case-018",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.9420555551294021
+      },
+      "profile": "history4",
+      "reason": {
+        "proposed": "weather_outside_profile",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "not_feasible",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "104",
+      "control": {
+        "proposed": true,
+        "reference": true
+      },
+      "evaluation_sha256": "dcadfc690f453b63d25d524e3d6175b2a056399ace7ed1fbdb0f72e7f19669e0",
+      "id": "case-019",
+      "metrics": {
+        "delta_percentage_points": -3.0000000000000027,
+        "methods": {
+          "proposed": {
+            "individual": [
+              0.95,
+              0.95
+            ],
+            "mission_count": 2,
+            "set_survival": 0.95
+          },
+          "reference": {
+            "individual": [
+              0.98,
+              0.97
+            ],
+            "mission_count": 2,
+            "set_survival": 0.98
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": 0.37354654916835384,
+        "reference": 0.33181183530301067
+      },
+      "profile": "default",
+      "reason": {
+        "proposed": null,
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "ready",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "104",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "f4a124324894e093899980d62c402a1d448367a75fa8f0c30ddf718db68b0e7e",
+      "id": "case-020",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.33181183530301067
+      },
+      "profile": "history4",
+      "reason": {
+        "proposed": "historical_class_unknown",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "no_route",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "104",
+      "control": {
+        "proposed": true,
+        "reference": true
+      },
+      "evaluation_sha256": "8d2acb6564f5c358a2e5f22f09c8065b6b3f6b87b51016fa17deb7fe1d4daf1e",
+      "id": "case-021",
+      "metrics": {
+        "delta_percentage_points": -3.0000000000000027,
+        "methods": {
+          "proposed": {
+            "individual": [
+              0.95,
+              0.95
+            ],
+            "mission_count": 2,
+            "set_survival": 0.95
+          },
+          "reference": {
+            "individual": [
+              0.98,
+              0.97
+            ],
+            "mission_count": 2,
+            "set_survival": 0.98
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": 0.37354654916835384,
+        "reference": 0.33181183530301067
+      },
+      "profile": "default",
+      "reason": {
+        "proposed": null,
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "ready",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "104",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "23bafdeb32f84c9ab28a29322caefe364d10e023f71b8c2ecd99745804e4c6ce",
+      "id": "case-022",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.33181183530301067
+      },
+      "profile": "history4",
+      "reason": {
+        "proposed": "historical_class_unknown",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "no_route",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "104",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "cb79070f6cb31505677057ea083f0c5698afffde17bf2bfe52c9669345e4dd87",
+      "id": "case-023",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.33181183530301067
+      },
+      "profile": "default",
+      "reason": {
+        "proposed": "weather_outside_profile",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "not_feasible",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "104",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "8763f5990e39d0b28d3b342b38d8a136c35adeb8c44b19956ef89462c18ba79a",
+      "id": "case-024",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.33181183530301067
+      },
+      "profile": "history4",
+      "reason": {
+        "proposed": "weather_outside_profile",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "not_feasible",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:18",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "36ef464b9b4e4db64e7136b96b5c7e3b44c6c706bc3bc996328e9fcca42b9486",
+      "id": "case-025",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.11539196077518486
+      },
+      "profile": "default",
+      "reason": {
+        "proposed": "endpoint_blocked",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "no_route",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:18",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "ebe6aa0df9e98476c81a9794e968cbb05d9394e1e18c72c55123a526d30d1b54",
+      "id": "case-026",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.11539196077518486
+      },
+      "profile": "history4",
+      "reason": {
+        "proposed": "endpoint_blocked",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "no_route",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:18",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "5cc92325e9b3b14631e6e4f0c04d64e251ac67a84714a08b11ecc8ad2258ddce",
+      "id": "case-027",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.11539196077518486
+      },
+      "profile": "default",
+      "reason": {
+        "proposed": "endpoint_blocked",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "no_route",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:18",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "07b87a92619bc816ee20f26db5f03663ad80a176cfc7a4e4732fab62a0b5714a",
+      "id": "case-028",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.11539196077518486
+      },
+      "profile": "history4",
+      "reason": {
+        "proposed": "endpoint_blocked",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "no_route",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:18",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "4dd4d3b74bb0ceb621e866019e86015617dcdc85d5c70ab3c6c66d243793a81b",
+      "id": "case-029",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.11539196077518486
+      },
+      "profile": "default",
+      "reason": {
+        "proposed": "weather_outside_profile",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "not_feasible",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:18",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "341196c8bcfce3e2762c11e4f652339ed2b197382a66986ca5f2385cdfeb201a",
+      "id": "case-030",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.11539196077518486
+      },
+      "profile": "history4",
+      "reason": {
+        "proposed": "weather_outside_profile",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "not_feasible",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:18",
+      "control": {
+        "proposed": true,
+        "reference": true
+      },
+      "evaluation_sha256": "9da26e758abca769f9b416148985aabd6997032d1436e1f95f17fad43b499eae",
+      "id": "case-031",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [
+              0.98,
+              0.98
+            ],
+            "mission_count": 2,
+            "set_survival": 0.98
+          },
+          "reference": {
+            "individual": [
+              0.98,
+              0.98
+            ],
+            "mission_count": 2,
+            "set_survival": 0.98
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": 0.6744346906456962,
+        "reference": 0.6744346906456803
+      },
+      "profile": "default",
+      "reason": {
+        "proposed": null,
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "ready",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:18",
+      "control": {
+        "proposed": true,
+        "reference": true
+      },
+      "evaluation_sha256": "33369a5bce342eca49923d5006d6451686ff115bdf24e22e918ac2fbaecfd39a",
+      "id": "case-032",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [
+              0.98,
+              0.98
+            ],
+            "mission_count": 2,
+            "set_survival": 0.98
+          },
+          "reference": {
+            "individual": [
+              0.98,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.98
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": 0.8434060283190818,
+        "reference": 0.6744346906456803
+      },
+      "profile": "history4",
+      "reason": {
+        "proposed": null,
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "ready",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:18",
+      "control": {
+        "proposed": true,
+        "reference": true
+      },
+      "evaluation_sha256": "e832a187dc12b07490588acd4f720c30738c8839cc859a9a0082a74af0d04bb6",
+      "id": "case-033",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [
+              0.98,
+              0.98
+            ],
+            "mission_count": 2,
+            "set_survival": 0.98
+          },
+          "reference": {
+            "individual": [
+              0.98,
+              0.98
+            ],
+            "mission_count": 2,
+            "set_survival": 0.98
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": 0.6744346906456962,
+        "reference": 0.6744346906456803
+      },
+      "profile": "default",
+      "reason": {
+        "proposed": null,
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "ready",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:18",
+      "control": {
+        "proposed": true,
+        "reference": true
+      },
+      "evaluation_sha256": "4676992f59221ad10bc8c55deae8e16ef5a284ca71aadfafe268fed835a58677",
+      "id": "case-034",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [
+              0.98
+            ],
+            "mission_count": 1,
+            "set_survival": 0.98
+          },
+          "reference": {
+            "individual": [
+              0.98,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.98
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.6744346906456803
+      },
+      "profile": "history4",
+      "reason": {
+        "proposed": null,
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "ready",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:18",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "16d474c500137e51f837e39a1137943bf736419214b7fe4d1044ccf544fbb9a6",
+      "id": "case-035",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.6744346906456803
+      },
+      "profile": "default",
+      "reason": {
+        "proposed": "weather_outside_profile",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "not_feasible",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:18",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "0f03a076212c7f2f734840f17fb779c0aa842d959fc83cbf61bdcee82d0239c6",
+      "id": "case-036",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.6744346906456803
+      },
+      "profile": "history4",
+      "reason": {
+        "proposed": "weather_outside_profile",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "not_feasible",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:18",
+      "control": {
+        "proposed": true,
+        "reference": true
+      },
+      "evaluation_sha256": "981870aa8c1732aad1e7bf612e8e617fafc9e58e7303a29bb94897efb7622bf9",
+      "id": "case-037",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [
+              0.96,
+              0.94
+            ],
+            "mission_count": 2,
+            "set_survival": 0.96
+          },
+          "reference": {
+            "individual": [
+              0.96,
+              0.94
+            ],
+            "mission_count": 2,
+            "set_survival": 0.96
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": 0.07453873354373358,
+        "reference": 0.07453873354373358
+      },
+      "profile": "default",
+      "reason": {
+        "proposed": null,
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "ready",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:18",
+      "control": {
+        "proposed": true,
+        "reference": false
+      },
+      "evaluation_sha256": "2ab07fd091aeb8adeb852239439a7ee51f6b32a7d10706c99379638480a77303",
+      "id": "case-038",
+      "metrics": {
+        "delta_percentage_points": 98.0,
+        "methods": {
+          "proposed": {
+            "individual": [
+              0.98,
+              0.98
+            ],
+            "mission_count": 2,
+            "set_survival": 0.98
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": 0.7051881508402046,
+        "reference": 0.07453873354373358
+      },
+      "profile": "history4",
+      "reason": {
+        "proposed": null,
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "ready",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:18",
+      "control": {
+        "proposed": true,
+        "reference": true
+      },
+      "evaluation_sha256": "5daa9467bde6da7a3eda6c382c33f1b2d186f8c465c86689670472aa41fb069d",
+      "id": "case-039",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [
+              0.96,
+              0.94
+            ],
+            "mission_count": 2,
+            "set_survival": 0.96
+          },
+          "reference": {
+            "individual": [
+              0.96,
+              0.94
+            ],
+            "mission_count": 2,
+            "set_survival": 0.96
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": 0.07453873354373358,
+        "reference": 0.07453873354373358
+      },
+      "profile": "default",
+      "reason": {
+        "proposed": null,
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "ready",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:18",
+      "control": {
+        "proposed": true,
+        "reference": false
+      },
+      "evaluation_sha256": "7d1c3685b065dc823253253ec6934cd1a2c27cc11d12f5d648a591354a4a2f1d",
+      "id": "case-040",
+      "metrics": {
+        "delta_percentage_points": 98.0,
+        "methods": {
+          "proposed": {
+            "individual": [
+              0.98,
+              0.98
+            ],
+            "mission_count": 2,
+            "set_survival": 0.98
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": 0.7051881508402046,
+        "reference": 0.07453873354373358
+      },
+      "profile": "history4",
+      "reason": {
+        "proposed": null,
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "ready",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:18",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "0a6011fac36088d7902dbc7d505a7273b0addd3ee68ab784b2f3f8924ed20f00",
+      "id": "case-041",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.07453873354373358
+      },
+      "profile": "default",
+      "reason": {
+        "proposed": "weather_outside_profile",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "not_feasible",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:18",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "ebda6e8190d19ee608128447c9d5a4d77373563c33c2298a3a09bf6f0503e0ff",
+      "id": "case-042",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.07453873354373358
+      },
+      "profile": "history4",
+      "reason": {
+        "proposed": "weather_outside_profile",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "not_feasible",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:18",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "42f5898238610b5fc8d3b16d519c5271c6657a6d1c3c4ca7147ac11774c134c5",
+      "id": "case-043",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.5088978167730386
+      },
+      "profile": "default",
+      "reason": {
+        "proposed": "insufficient_return_budget",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "not_feasible",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:18",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "b1b1cf0f69b75d48fc67839a21aa18fe331b40bd59ec364f80dc525f3177bc58",
+      "id": "case-044",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.5088978167730386
+      },
+      "profile": "history4",
+      "reason": {
+        "proposed": "historical_class_unknown",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "no_route",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:18",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "aa5e15995683b0b7c752f37eb3f8fa1cfcb5c3ba92e375a658332f9ddae160f6",
+      "id": "case-045",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.5088978167730386
+      },
+      "profile": "default",
+      "reason": {
+        "proposed": "insufficient_return_budget",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "not_feasible",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:18",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "cc29ff0ae2d36659909ac7281b90061057cf654da27f5c53b9d2f870c161629d",
+      "id": "case-046",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.5088978167730386
+      },
+      "profile": "history4",
+      "reason": {
+        "proposed": "historical_class_unknown",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "no_route",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:18",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "b4b6d7c0c4e4130dc2f26c8d4b2c3f081a97a7a25703085cff83281bcfd56af0",
+      "id": "case-047",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.5088978167730386
+      },
+      "profile": "default",
+      "reason": {
+        "proposed": "weather_outside_profile",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "not_feasible",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:18",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "f8ae80691a3dfc4593f3da365178bae146684648e305dcbe5314f0c1d66b4c90",
+      "id": "case-048",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.5088978167730386
+      },
+      "profile": "history4",
+      "reason": {
+        "proposed": "weather_outside_profile",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "not_feasible",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:20",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "dec7ca5d10d9226fcfddf96881e8b529d2f3fa5c99e9b7d6ee41a004dd832774",
+      "id": "case-049",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.7470397974891305
+      },
+      "profile": "default",
+      "reason": {
+        "proposed": "endpoint_blocked",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "no_route",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:20",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "0864f377714d9b036b68616dbf902a2eee1dd5417be73f94f22b6ab30e75481f",
+      "id": "case-050",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.7470397974891305
+      },
+      "profile": "history4",
+      "reason": {
+        "proposed": "endpoint_blocked",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "no_route",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:20",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "dde4a082e202cad075445e724198d0dcf4066c3ef8e0c8d45373da1ad180883e",
+      "id": "case-051",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.7470397974891305
+      },
+      "profile": "default",
+      "reason": {
+        "proposed": "endpoint_blocked",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "no_route",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:20",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "dda50ad009a4b8acb3a3a4d1b37fe4bb3df9e068ec9b2a28337d6a4c7ab95684",
+      "id": "case-052",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.7470397974891305
+      },
+      "profile": "history4",
+      "reason": {
+        "proposed": "endpoint_blocked",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "no_route",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:20",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "fe6406db5630a4554680629f627e64e7ac992da04527d7771f3735dabb54428a",
+      "id": "case-053",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.7470397974891305
+      },
+      "profile": "default",
+      "reason": {
+        "proposed": "weather_outside_profile",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "not_feasible",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:20",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "11a07f62824a10ec2d3be3d08d71eb39185a4ed075b5f2f55757782aeaf95051",
+      "id": "case-054",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.7470397974891305
+      },
+      "profile": "history4",
+      "reason": {
+        "proposed": "weather_outside_profile",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "not_feasible",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:20",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "95260a4879b49df85199cd11012837ab833e9a5f59d187e536893ad948aefb7e",
+      "id": "case-055",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.44654118206424165
+      },
+      "profile": "default",
+      "reason": {
+        "proposed": "insufficient_return_budget",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "not_feasible",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:20",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "ad807b6a058aa6a791f5dd4ba5260ffd94ad529a001e91c36c270b2c3ba44017",
+      "id": "case-056",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.44654118206424165
+      },
+      "profile": "history4",
+      "reason": {
+        "proposed": "insufficient_return_budget",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "not_feasible",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:20",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "2d9996c87217cc940349947033aa26b960eaeb217e4d722d13540e4f1656adcb",
+      "id": "case-057",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.44654118206424165
+      },
+      "profile": "default",
+      "reason": {
+        "proposed": "insufficient_return_budget",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "not_feasible",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:20",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "6a97778ddf9c2b408e20131cfc89bfbc3869a74da6352092592c19f57addda9f",
+      "id": "case-058",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.44654118206424165
+      },
+      "profile": "history4",
+      "reason": {
+        "proposed": "insufficient_return_budget",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "not_feasible",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:20",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "cbf5b02e7e08c6fa4b274b3b9f77e29e077ecf6a0378be864884b30c4bacba36",
+      "id": "case-059",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.44654118206424165
+      },
+      "profile": "default",
+      "reason": {
+        "proposed": "weather_outside_profile",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "not_feasible",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:20",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "be26e48b6bc88301dcfe9839a2cb843535fc89a5154765ff7df0a30c2d763670",
+      "id": "case-060",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.44654118206424165
+      },
+      "profile": "history4",
+      "reason": {
+        "proposed": "weather_outside_profile",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "not_feasible",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:20",
+      "control": {
+        "proposed": true,
+        "reference": true
+      },
+      "evaluation_sha256": "59cfe38f6778166bd0f900fd6d5ebf870d35b42f6d665234f9d18af7d5dd83c3",
+      "id": "case-061",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [
+              0.97,
+              0.97
+            ],
+            "mission_count": 2,
+            "set_survival": 0.97
+          },
+          "reference": {
+            "individual": [
+              0.97,
+              0.97
+            ],
+            "mission_count": 2,
+            "set_survival": 0.97
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": 0.3425588342065284,
+        "reference": 0.3425588342065284
+      },
+      "profile": "default",
+      "reason": {
+        "proposed": null,
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "ready",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:20",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "198c5a4e35c1d1a84f870473f8b86af7ff0a94a0bcaee2d7703ca64f80f673d1",
+      "id": "case-062",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.3425588342065284
+      },
+      "profile": "history4",
+      "reason": {
+        "proposed": "insufficient_return_budget",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "not_feasible",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:20",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "f7be3e6ed77f5721a142f325173a4361b668d2028256808bf099b060450cc638",
+      "id": "case-063",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.3425588342065284
+      },
+      "profile": "default",
+      "reason": {
+        "proposed": "insufficient_return_budget",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "not_feasible",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:20",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "42f9116aa1114fe28a07cc52ed3775a1dc0d1084f08d18999fe87fc691af6fd2",
+      "id": "case-064",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.3425588342065284
+      },
+      "profile": "history4",
+      "reason": {
+        "proposed": "insufficient_return_budget",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "not_feasible",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:20",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "ea17b2fbf529b4fbf4e7f297014cea00830c5dac6e0d015fdaa0b14a6784182f",
+      "id": "case-065",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.3425588342065284
+      },
+      "profile": "default",
+      "reason": {
+        "proposed": "weather_outside_profile",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "not_feasible",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:20",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "a8c81862b3ecdde313f5c9cc7e51cfa0ba49a9607beb7d6f58d0f36a9099136b",
+      "id": "case-066",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.3425588342065284
+      },
+      "profile": "history4",
+      "reason": {
+        "proposed": "weather_outside_profile",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "not_feasible",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:20",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "af6f789ada3ccb7e97e19791a952574f061a880c641b01ad54759709be426359",
+      "id": "case-067",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.3705351818734886
+      },
+      "profile": "default",
+      "reason": {
+        "proposed": "insufficient_return_budget",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "not_feasible",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:20",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "69067ae14f41ca72bdc441a1159dce477cf20ca87e28b06c85c7d3b2b8551d0b",
+      "id": "case-068",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.3705351818734886
+      },
+      "profile": "history4",
+      "reason": {
+        "proposed": "historical_class_unknown",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "no_route",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:20",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "772b864a68595919d9a0472f70f7a9ca298df2b285af5c817f3bcbe01249579c",
+      "id": "case-069",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.3705351818734886
+      },
+      "profile": "default",
+      "reason": {
+        "proposed": "insufficient_return_budget",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "not_feasible",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:20",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "b6eae3d4434ff2f04dca322cb273fcc16676b81a6f7d8749ebedfe4614021a58",
+      "id": "case-070",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.3705351818734886
+      },
+      "profile": "history4",
+      "reason": {
+        "proposed": "historical_class_unknown",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "no_route",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:20",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "8effaef4a1fd764d77d52ce5f71c23afc2f59b950d3981432cbf20719885a7d4",
+      "id": "case-071",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.3705351818734886
+      },
+      "profile": "default",
+      "reason": {
+        "proposed": "weather_outside_profile",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "not_feasible",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:20",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "de470609afccdf9c963c20f61dbb59634aceaa6ec64416a6503edebed2d480e5",
+      "id": "case-072",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.3705351818734886
+      },
+      "profile": "history4",
+      "reason": {
+        "proposed": "weather_outside_profile",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "not_feasible",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:23",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "c6e7dd0b6dd4bc4896a4fdbe554b9acd36378074b8f266b01a6a6d4d56bf4292",
+      "id": "case-073",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.030723477474037402
+      },
+      "profile": "default",
+      "reason": {
+        "proposed": "endpoint_blocked",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "no_route",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:23",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "ccc09d85a830dcb964ece1a7efbe6a6315099ed939a38606d41133a141bcebfc",
+      "id": "case-074",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.030723477474037402
+      },
+      "profile": "history4",
+      "reason": {
+        "proposed": "endpoint_blocked",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "no_route",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:23",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "89b7ea14220f9a852c2a357d07095bca7ebd6e060b0919f7866a1b1f0f07b583",
+      "id": "case-075",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.030723477474037402
+      },
+      "profile": "default",
+      "reason": {
+        "proposed": "endpoint_blocked",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "no_route",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:23",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "8ba423081377b0737b8c545041b2d76ee69dd28e60add38670ee9142edd1eb7d",
+      "id": "case-076",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.030723477474037402
+      },
+      "profile": "history4",
+      "reason": {
+        "proposed": "endpoint_blocked",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "no_route",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:23",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "c58da57cf2a647a0fb2fa4feb7e84866d9d3dc597629a831d980178907d2715d",
+      "id": "case-077",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.030723477474037402
+      },
+      "profile": "default",
+      "reason": {
+        "proposed": "weather_outside_profile",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "not_feasible",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:23",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "bde0c18daa786b5b70b8be53183d7bd6c1a26d4b7b552361988b3798903bd672",
+      "id": "case-078",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.030723477474037402
+      },
+      "profile": "history4",
+      "reason": {
+        "proposed": "weather_outside_profile",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "not_feasible",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:23",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "30896b8db3965c68648554e6fd8e7c015c6596f816a06ea3fb4678be4109518e",
+      "id": "case-079",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.25187022690306815
+      },
+      "profile": "default",
+      "reason": {
+        "proposed": "insufficient_return_budget",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "not_feasible",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:23",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "be5213e17688e904c0686056acc2363e30d00719af5a593a0f745365c97da3e4",
+      "id": "case-080",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.25187022690306815
+      },
+      "profile": "history4",
+      "reason": {
+        "proposed": "insufficient_return_budget",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "not_feasible",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:23",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "a7c5bbdc6262bc12001c6849341820d86d944193efce3133dec2278b7bb27146",
+      "id": "case-081",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.25187022690306815
+      },
+      "profile": "default",
+      "reason": {
+        "proposed": "insufficient_return_budget",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "not_feasible",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:23",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "83191ef99d397f515a6a12029f58c5e03283455b84d5bcc9adb0fbd4d2df7dc6",
+      "id": "case-082",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.25187022690306815
+      },
+      "profile": "history4",
+      "reason": {
+        "proposed": "insufficient_return_budget",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "not_feasible",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:23",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "05eb7abebf3cbb154f47a15f0169437dbbdc5f2d5fb0dabed93e9a142f7f32ef",
+      "id": "case-083",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.25187022690306815
+      },
+      "profile": "default",
+      "reason": {
+        "proposed": "weather_outside_profile",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "not_feasible",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:23",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "f66a1998f0addf671f8ba686c1872235d8ed7a2193c4189f0bb5c757c9f4ee25",
+      "id": "case-084",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.25187022690306815
+      },
+      "profile": "history4",
+      "reason": {
+        "proposed": "weather_outside_profile",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "not_feasible",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:23",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "1825d429d7cfc6d8528ad68a13907ca4e5f2029fc0b5672d54e45b88f9cceb80",
+      "id": "case-085",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.2821204241694795
+      },
+      "profile": "default",
+      "reason": {
+        "proposed": "insufficient_return_budget",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "not_feasible",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:23",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "e6c0aa903c2a97af005fa1c22528249ea1047f667669a58cfc485342d3144747",
+      "id": "case-086",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.2821204241694795
+      },
+      "profile": "history4",
+      "reason": {
+        "proposed": "insufficient_return_budget",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "not_feasible",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:23",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "4066ad6cf8b4317411909f913909f9ed85a2285031be4eea885eb939949d80d0",
+      "id": "case-087",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.2821204241694795
+      },
+      "profile": "default",
+      "reason": {
+        "proposed": "insufficient_return_budget",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "not_feasible",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:23",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "4ebf2f00d4125f8ce99fef1da38b2579b6c787e64233832a77bb8270211602cd",
+      "id": "case-088",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.2821204241694795
+      },
+      "profile": "history4",
+      "reason": {
+        "proposed": "insufficient_return_budget",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "not_feasible",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:23",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "7c65c98534ad77db0fe6e8595b761cc939706b9b2c9ca2fe785662039ee19a0d",
+      "id": "case-089",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.2821204241694795
+      },
+      "profile": "default",
+      "reason": {
+        "proposed": "weather_outside_profile",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "not_feasible",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:23",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "070c52e8b662e946339874e966515111094c3513f5384df3ed0dcf8e5a2e9bbf",
+      "id": "case-090",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.2821204241694795
+      },
+      "profile": "history4",
+      "reason": {
+        "proposed": "weather_outside_profile",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "not_feasible",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:23",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "d5829d2d60720e672fc77c4378ae08e9884c320c17ad512fe6d485d656691391",
+      "id": "case-091",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.3347875645721203
+      },
+      "profile": "default",
+      "reason": {
+        "proposed": "insufficient_return_budget",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "not_feasible",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:23",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "8c744f1449c630d3aed61aa016bbcd04f5c8ae3714a2fd6aecbbe2d35dd35485",
+      "id": "case-092",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.3347875645721203
+      },
+      "profile": "history4",
+      "reason": {
+        "proposed": "historical_class_unknown",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "no_route",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:23",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "e137d087ea49a0e8d7a8f6deaebe40d327539d7fbcb519ea22bc61b50c1a8731",
+      "id": "case-093",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.3347875645721203
+      },
+      "profile": "default",
+      "reason": {
+        "proposed": "insufficient_return_budget",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "not_feasible",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:23",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "5765871f71bf55dadb2124eb14092f22aa6d04ea20d4ad2262bfd1b51f52a355",
+      "id": "case-094",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.3347875645721203
+      },
+      "profile": "history4",
+      "reason": {
+        "proposed": "historical_class_unknown",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "no_route",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:23",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "a45671cb23c85aab9f3a3c357837b141c1cac60f2d833fe6dee7e6fa2bbc9f21",
+      "id": "case-095",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.3347875645721203
+      },
+      "profile": "default",
+      "reason": {
+        "proposed": "weather_outside_profile",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "not_feasible",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:23",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "82274c2f43a27acdd56aa3b627907d0c360bb1a0c8b8e63162494b41f3be6b63",
+      "id": "case-096",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.3347875645721203
+      },
+      "profile": "history4",
+      "reason": {
+        "proposed": "weather_outside_profile",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "not_feasible",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:31",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "56b1eee478529c02df03b8d629d6862c8c5c9527f543780be7fc2325b699ea42",
+      "id": "case-097",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.14282906767953046
+      },
+      "profile": "default",
+      "reason": {
+        "proposed": "endpoint_blocked",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "no_route",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:31",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "d07381ab854a143d145ce07fcf4acc7e51bbf735188e1afe38158147d71dd61e",
+      "id": "case-098",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.14282906767953046
+      },
+      "profile": "history4",
+      "reason": {
+        "proposed": "endpoint_blocked",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "no_route",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:31",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "f7399e680a4747f1e8da2cf294d06f4d0dc848b4ae3f706100652d44709de605",
+      "id": "case-099",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.14282906767953046
+      },
+      "profile": "default",
+      "reason": {
+        "proposed": "endpoint_blocked",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "no_route",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:31",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "93c8ac777b51e6ba6a0e749f8e6cfcd84a2add9703ad41357bed578489758692",
+      "id": "case-100",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.14282906767953046
+      },
+      "profile": "history4",
+      "reason": {
+        "proposed": "endpoint_blocked",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "no_route",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:31",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "5084bc808fd52b7875d7baa52075429bfbb3d8c53b2751373ef8d98f4c0bacc7",
+      "id": "case-101",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.14282906767953046
+      },
+      "profile": "default",
+      "reason": {
+        "proposed": "weather_outside_profile",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "not_feasible",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:31",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "f1cc37d9bbb726f325308240436591fa346f008dd6b8ca472fe037e4be087ff5",
+      "id": "case-102",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.14282906767953046
+      },
+      "profile": "history4",
+      "reason": {
+        "proposed": "weather_outside_profile",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "not_feasible",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:31",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "2c169b7a3143683a79c79b3408fd7641db07717b571f79394e46aa9b2aefd508",
+      "id": "case-103",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.506124290726426
+      },
+      "profile": "default",
+      "reason": {
+        "proposed": "endpoint_blocked",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "no_route",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:31",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "c91972ef3f71179df7d0d716b722f42f96d026f46d1ddcf64f3dbbc2c5df0a9a",
+      "id": "case-104",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.506124290726426
+      },
+      "profile": "history4",
+      "reason": {
+        "proposed": "endpoint_blocked",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "no_route",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:31",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "98116d0e0928dd2e847674138b14d32a85f0572bf1476c8084abf9d2888a2711",
+      "id": "case-105",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.506124290726426
+      },
+      "profile": "default",
+      "reason": {
+        "proposed": "endpoint_blocked",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "no_route",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:31",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "57bf05e60a5ffd5c974947484450f3f878305dedaa3c65f14cd0082a39157c8a",
+      "id": "case-106",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.506124290726426
+      },
+      "profile": "history4",
+      "reason": {
+        "proposed": "endpoint_blocked",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "no_route",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:31",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "1d692b4ac71d5ee2f5f4e981847a28235d1825c0b4b1754e1fdf7034d795f424",
+      "id": "case-107",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.506124290726426
+      },
+      "profile": "default",
+      "reason": {
+        "proposed": "weather_outside_profile",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "not_feasible",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:31",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "fcf4b3b686d77fa95a472d77ac3dc19e9d6e045074a6c335570d1404e12f903c",
+      "id": "case-108",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.506124290726426
+      },
+      "profile": "history4",
+      "reason": {
+        "proposed": "weather_outside_profile",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "not_feasible",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:31",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "5e98c489ea7129566017fd8e6d044a6c5df1b5a05dbfa5abc5ba1b560c2b1157",
+      "id": "case-109",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.5478773547845325
+      },
+      "profile": "default",
+      "reason": {
+        "proposed": "endpoint_blocked",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "no_route",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:31",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "8b5674e7752ab1a7778fe83fa6b984f58176abc214711d899efe7751f66b16bf",
+      "id": "case-110",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.5478773547845325
+      },
+      "profile": "history4",
+      "reason": {
+        "proposed": "endpoint_blocked",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "no_route",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:31",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "beb7c696b672d0fcca5a0827b03741069a71b0915108366993137f742ef89abc",
+      "id": "case-111",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.5478773547845325
+      },
+      "profile": "default",
+      "reason": {
+        "proposed": "endpoint_blocked",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "no_route",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:31",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "64e11475400babacbfb6ede317b751149ae5c84e8a4e5ee0b20a403b2778ae95",
+      "id": "case-112",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.5478773547845325
+      },
+      "profile": "history4",
+      "reason": {
+        "proposed": "endpoint_blocked",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "no_route",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:31",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "dd8819f9f350e1ba984a447afd054416d45b8d5a5b09734eca5e920ec18a4bf7",
+      "id": "case-113",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.5478773547845325
+      },
+      "profile": "default",
+      "reason": {
+        "proposed": "weather_outside_profile",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "not_feasible",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:31",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "dd459d76ebcc632265370657aff02f21d019b7a8bf217e001deb2dc33839cc72",
+      "id": "case-114",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.5478773547845325
+      },
+      "profile": "history4",
+      "reason": {
+        "proposed": "weather_outside_profile",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "not_feasible",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:31",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "f1bbb3b125e89fef5d93624bb7695e26e40e975c7144d6433fcae28bc725c54b",
+      "id": "case-115",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.2725079240849788
+      },
+      "profile": "default",
+      "reason": {
+        "proposed": "endpoint_blocked",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "no_route",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:31",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "06236320679bacbecb12c16d6fac6bb6bd46c529509ba7515e2915a0ab3ee5b8",
+      "id": "case-116",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.2725079240849788
+      },
+      "profile": "history4",
+      "reason": {
+        "proposed": "endpoint_blocked",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "no_route",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:31",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "e660a6150bafd76f9c0d371e2cecd7563959caf19c6da7876d96c16dcac5078d",
+      "id": "case-117",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.2725079240849788
+      },
+      "profile": "default",
+      "reason": {
+        "proposed": "endpoint_blocked",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "no_route",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:31",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "e3e19dfabc234d393b78c91abe437fdaedfdba3093fb6d6f2b99d5244d55f3c3",
+      "id": "case-118",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.2725079240849788
+      },
+      "profile": "history4",
+      "reason": {
+        "proposed": "endpoint_blocked",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "no_route",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:31",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "de4c0278ebcf18f02c61873ed1aff5b2810b945720192dc61a13b032b32279a0",
+      "id": "case-119",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.2725079240849788
+      },
+      "profile": "default",
+      "reason": {
+        "proposed": "weather_outside_profile",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "not_feasible",
+        "reference": "ready"
+      }
+    },
+    {
+      "base": "S1H:31",
+      "control": {
+        "proposed": false,
+        "reference": false
+      },
+      "evaluation_sha256": "8379842650c9a0c301bb5384f08da87ba604fb298ea7e189f9de7c62d7ecb915",
+      "id": "case-120",
+      "metrics": {
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 100,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 100
+      },
+      "overlap": {
+        "proposed": null,
+        "reference": 0.2725079240849788
+      },
+      "profile": "history4",
+      "reason": {
+        "proposed": "weather_outside_profile",
+        "reference": null
+      },
+      "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+      "status": {
+        "proposed": "not_feasible",
+        "reference": "ready"
+      }
+    }
+  ],
+  "experiment_sha256": "447e0e6a023159ae28d9873df927ab3ca0a550620c01962db57c9b613e55e34c",
+  "plan_sha256": "447e0e6a023159ae28d9873df927ab3ca0a550620c01962db57c9b613e55e34c",
+  "result_sha256": "863b78cb4e6f448c75d5202bdfeedd2d577ed730123d4c169d9cc31c811eb6d9",
+  "run_id": "b80f9b83-cad7-53b8-a8b8-34a2a17e614c",
+  "summary": {
+    "improvements": 4,
+    "max_delta_pp": 98.0,
+    "mean_delta_pp": 1.65,
+    "methods": {
+      "proposed": {
+        "control_admissible": 13,
+        "mean_set_survival": 0.10541666666666666,
+        "mean_shared_50m_fraction": 0.44892507582358887,
+        "reasons": {
+          "endpoint_blocked": 32,
+          "historical_class_unknown": 12,
+          "insufficient_return_budget": 23,
+          "none": 13,
+          "weather_outside_profile": 40
+        },
+        "statuses": {
+          "no_route": 44,
+          "not_feasible": 63,
+          "ready": 13
+        },
+        "two_options": 12
+      },
+      "reference": {
+        "control_admissible": 11,
+        "mean_set_survival": 0.08891666666666666,
+        "mean_shared_50m_fraction": 0.42078980378737396,
+        "reasons": {
+          "none": 120
+        },
+        "statuses": {
+          "ready": 120
+        },
+        "two_options": 120
+      }
+    },
+    "min_delta_pp": -3.0000000000000027,
+    "ties": 114,
+    "total_cases": 120,
+    "unknown_cases": 0,
+    "valid_case_scenarios": 12000,
+    "valid_cases": 120,
+    "worsenings": 2
+  },
+  "warnings": [
+    "Casos sin alternativas cuentan como supervivencia cero si las condiciones son conocidas",
+    "Media descriptiva por caso; no prueba de superioridad estadística",
+    "Ninguna hora se selecciona por viento favorable"
+  ]
+}

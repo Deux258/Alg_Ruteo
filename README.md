@@ -64,6 +64,9 @@ limitada; no garantiza óptimo global ni independencia espacial.
 
 # Tras preparar datos/runs/solicitud_demo.json y ejecutar main:
 ./main evaluar --request datos/runs/solicitud_demo.json
+
+# Lote fijado antes del cálculo: hasta 120 casos, dos perfiles y 100 escenarios por caso
+./main evaluar --experiment config/evaluacion_fase2.json
 ```
 
 `adquirir` no publica en la BD. Un fallo conserva el manifiesto activo y deja un diagnóstico aparte.
@@ -88,5 +91,22 @@ La capa adicional de riesgo de clases sin procedencia/semántica verificadas que
 Vegetación 2019, recurrencia 2020–2024, viento a 10 m y DSM ~30 m mantienen sus limitaciones.
 La actualización completa online depende de DGAC. GitLab UDP y Canvas requieren entrega del equipo.
 `etl_complete` acredita cargas; `phase2_complete=false` no certifica nota, publicación ni seguridad.
+
+## Cierre de rúbrica
+
+La preferencia opcional `max_historical_class` acepta enteros 1–5 o null. Desactivada
+conserva las rutas anteriores; activada excluye clases superiores y tramos sin cobertura
+histórica. Expresa una política preventiva simulada, no un incendio activo. La interfaz
+permite mostrar u ocultar D1/D2/P1/P2 individualmente y exportar el perfil efectivo.
+
+El lote completo conserva todos los casos: 4 mejoras, 114 empates y 2 empeoramientos;
+delta medio +1,65 pp. Separados por perfil: +0,03 pp predeterminado y +3,27 pp con clase
+máxima 4. Solo 13/120 casos propuestos son viables en el control. Son resultados
+descriptivos de escenarios sintéticos, sin superioridad estadística demostrada.
+
+Entrega actual: [informe de cierre](evidencia/cierre_fase2_2026-10-19/INFORME.md),
+[matriz](presentacion/MATRIZ_RUBRICA.md) y `presentacion/fase2_valparaiso_cierre.pptx`
+(22 láminas principales y 14 anexos). La presentación anterior se conserva como antecedente.
+Consultar `evidencia/cierre_fase2_2026-10-19/ENTREGA_MANUAL.md` para GitLab UDP y Canvas.
 
 Se aplicaron geomaster y webapp-testing. La referencia de software está en la documentación ampliada.

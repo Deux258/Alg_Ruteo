@@ -24,7 +24,7 @@
 <text text-anchor="start" x="2385" y="-1151.4" font-family="DejaVu Sans" font-size="12.00">PK (run_id)</text>
 </g>
 <!-- runs -->
-<g id="node26" class="node">
+<g id="node24" class="node">
 <title>runs</title>
 <polygon fill="#edf5f7" stroke="#3e8d64" points="2613,-1126 2613,-1251 2904,-1251 2904,-1126 2613,-1126"/>
 <text text-anchor="middle" x="2634.5" y="-1185.4" font-family="DejaVu Sans" font-size="12.00">runs</text>
@@ -67,7 +67,7 @@
 <text text-anchor="start" x="1306.5" y="-288.4" font-family="DejaVu Sans" font-size="12.00">PK (run_id, hazard_id)</text>
 </g>
 <!-- hazards -->
-<g id="node12" class="node">
+<g id="node10" class="node">
 <title>hazards</title>
 <polygon fill="#edf5f7" stroke="#3e8d64" points="1593,-229 1593,-380 1920,-380 1920,-229 1593,-229"/>
 <text text-anchor="middle" x="1624.5" y="-301.4" font-family="DejaVu Sans" font-size="12.00">hazards</text>
@@ -114,7 +114,7 @@
 <text text-anchor="start" x="1322.5" y="-1337.4" font-family="DejaVu Sans" font-size="12.00">PK (run_id, provider_id)</text>
 </g>
 <!-- nodes -->
-<g id="node17" class="node">
+<g id="node15" class="node">
 <title>nodes</title>
 <polygon fill="#edf5f7" stroke="#3e8d64" points="1604.5,-736 1604.5,-835 1908.5,-835 1908.5,-736 1604.5,-736"/>
 <text text-anchor="middle" x="1631" y="-782.4" font-family="DejaVu Sans" font-size="12.00">nodes</text>
@@ -175,7 +175,7 @@
 <text text-anchor="middle" x="1997" y="-1056.3" font-family="DejaVu Sans" font-size="9.00">FK</text>
 </g>
 <!-- sources -->
-<g id="node28" class="node">
+<g id="node26" class="node">
 <title>sources</title>
 <polygon fill="#edf5f7" stroke="#3e8d64" points="2618.5,-889.5 2618.5,-949.5 2898.5,-949.5 2898.5,-889.5 2618.5,-889.5"/>
 <text text-anchor="middle" x="2649.5" y="-916.4" font-family="DejaVu Sans" font-size="12.00">sources</text>
@@ -339,7 +339,7 @@
 <text text-anchor="start" x="709" y="-1033.4" font-family="DejaVu Sans" font-size="12.00">PK (run_id, set_id, scenario_sha256)</text>
 </g>
 <!-- route_sets -->
-<g id="node23" class="node">
+<g id="node21" class="node">
 <title>route_sets</title>
 <polygon fill="#edf5f7" stroke="#3e8d64" points="1064.5,-1105.5 1064.5,-1217.5 1422.5,-1217.5 1422.5,-1105.5 1064.5,-1105.5"/>
 <text text-anchor="middle" x="1103.5" y="-1158.4" font-family="DejaVu Sans" font-size="12.00">route_sets</text>
@@ -362,35 +362,6 @@
 <polygon fill="#81959c" stroke="#81959c" points="1053.8,-1121.69 1064.33,-1120.52 1055.37,-1114.87 1053.8,-1121.69"/>
 <text text-anchor="middle" x="971" y="-1102.3" font-family="DejaVu Sans" font-size="9.00">FK</text>
 </g>
-<!-- graph_base_edges -->
-<g id="node10" class="node">
-<title>graph_base_edges</title>
-<polygon fill="#edf5f7" stroke="#3e8d64" points="60,-962.5 60,-1074.5 326,-1074.5 326,-962.5 60,-962.5"/>
-<text text-anchor="middle" x="124" y="-1015.4" font-family="DejaVu Sans" font-size="12.00">graph_base_edges</text>
-<polyline fill="none" stroke="#3e8d64" points="188,-962.5 188,-1074.5 "/>
-<text text-anchor="start" x="196" y="-1060.9" font-family="DejaVu Sans" font-size="12.00">id : int8</text>
-<text text-anchor="start" x="196" y="-1047.9" font-family="DejaVu Sans" font-size="12.00">source : int8</text>
-<text text-anchor="start" x="196" y="-1034.9" font-family="DejaVu Sans" font-size="12.00">target : int8</text>
-<text text-anchor="start" x="196" y="-1021.9" font-family="DejaVu Sans" font-size="12.00">cost : float8</text>
-<text text-anchor="start" x="196" y="-1008.9" font-family="DejaVu Sans" font-size="12.00">reverse_cost : float8</text>
-<text text-anchor="start" x="196" y="-995.9" font-family="DejaVu Sans" font-size="12.00">geom : geometry</text>
-<text text-anchor="start" x="196" y="-982.9" font-family="DejaVu Sans" font-size="12.00">run_id : uuid</text>
-<text text-anchor="start" x="196" y="-969.9" font-family="DejaVu Sans" font-size="12.00">length_km : float8</text>
-</g>
-<!-- graph_base_nodes -->
-<g id="node11" class="node">
-<title>graph_base_nodes</title>
-<polygon fill="#edf5f7" stroke="#3e8d64" points="53,-1101 53,-1200 333,-1200 333,-1101 53,-1101"/>
-<text text-anchor="middle" x="117" y="-1147.4" font-family="DejaVu Sans" font-size="12.00">graph_base_nodes</text>
-<polyline fill="none" stroke="#3e8d64" points="181,-1101 181,-1200 "/>
-<text text-anchor="start" x="189" y="-1186.4" font-family="DejaVu Sans" font-size="12.00">run_id : uuid</text>
-<text text-anchor="start" x="189" y="-1173.4" font-family="DejaVu Sans" font-size="12.00">id : int8</text>
-<text text-anchor="start" x="189" y="-1160.4" font-family="DejaVu Sans" font-size="12.00">natural_key : text</text>
-<text text-anchor="start" x="189" y="-1147.4" font-family="DejaVu Sans" font-size="12.00">dataset_key : text</text>
-<text text-anchor="start" x="189" y="-1134.4" font-family="DejaVu Sans" font-size="12.00">kind : text</text>
-<text text-anchor="start" x="189" y="-1121.4" font-family="DejaVu Sans" font-size="12.00">source_record_id : text</text>
-<text text-anchor="start" x="189" y="-1108.4" font-family="DejaVu Sans" font-size="12.00">geom : geometry</text>
-</g>
 <!-- hazards&#45;&gt;datasets -->
 <g id="edge17" class="edge">
 <title>hazards&#45;&gt;datasets</title>
@@ -399,7 +370,7 @@
 <text text-anchor="middle" x="1997" y="-437.3" font-family="DejaVu Sans" font-size="9.00">FK</text>
 </g>
 <!-- historical_risk -->
-<g id="node13" class="node">
+<g id="node11" class="node">
 <title>historical_risk</title>
 <polygon fill="#edf5f7" stroke="#3e8d64" points="1058.5,-104 1058.5,-203 1428.5,-203 1428.5,-104 1058.5,-104"/>
 <text text-anchor="middle" x="1107.5" y="-150.4" font-family="DejaVu Sans" font-size="12.00">historical_risk</text>
@@ -422,7 +393,7 @@
 <text text-anchor="middle" x="1516" y="-230.3" font-family="DejaVu Sans" font-size="9.00">FK</text>
 </g>
 <!-- landcover -->
-<g id="node14" class="node">
+<g id="node12" class="node">
 <title>landcover</title>
 <polygon fill="#edf5f7" stroke="#3e8d64" points="1588.5,-419.5 1588.5,-583.5 1924.5,-583.5 1924.5,-419.5 1588.5,-419.5"/>
 <text text-anchor="middle" x="1626.5" y="-498.4" font-family="DejaVu Sans" font-size="12.00">landcover</text>
@@ -450,7 +421,7 @@
 <text text-anchor="middle" x="1997" y="-592.3" font-family="DejaVu Sans" font-size="9.00">FK</text>
 </g>
 <!-- mission_evaluations -->
-<g id="node15" class="node">
+<g id="node13" class="node">
 <title>mission_evaluations</title>
 <polygon fill="#e0efe3" stroke="#3e8d64" points="2036,-972 2036,-1045 2535,-1045 2535,-972 2036,-972"/>
 <text text-anchor="middle" x="2104" y="-1005.4" font-family="DejaVu Sans" font-size="12.00">mission_evaluations</text>
@@ -471,7 +442,7 @@
 <text text-anchor="middle" x="2574" y="-1057.3" font-family="DejaVu Sans" font-size="9.00">FK</text>
 </g>
 <!-- node_elevation -->
-<g id="node16" class="node">
+<g id="node14" class="node">
 <title>node_elevation</title>
 <polygon fill="#edf5f7" stroke="#3e8d64" points="1055,-730 1055,-803 1432,-803 1432,-730 1055,-730"/>
 <text text-anchor="middle" x="1108.5" y="-763.4" font-family="DejaVu Sans" font-size="12.00">node_elevation</text>
@@ -506,7 +477,7 @@
 <text text-anchor="middle" x="1997" y="-747.3" font-family="DejaVu Sans" font-size="9.00">FK</text>
 </g>
 <!-- profiles -->
-<g id="node18" class="node">
+<g id="node16" class="node">
 <title>profiles</title>
 <polygon fill="#edf5f7" stroke="#3e8d64" points="1555,-1062 1555,-1187 1958,-1187 1958,-1062 1555,-1062"/>
 <text text-anchor="middle" x="1585" y="-1121.4" font-family="DejaVu Sans" font-size="12.00">profiles</text>
@@ -524,7 +495,7 @@
 <text text-anchor="start" x="1806" y="-1121.4" font-family="DejaVu Sans" font-size="12.00">PK (profile_key, version)</text>
 </g>
 <!-- publication -->
-<g id="node19" class="node">
+<g id="node17" class="node">
 <title>publication</title>
 <polygon fill="#edf5f7" stroke="#3e8d64" points="2106.5,-1400 2106.5,-1447 2464.5,-1447 2464.5,-1400 2106.5,-1400"/>
 <text text-anchor="middle" x="2147.5" y="-1420.4" font-family="DejaVu Sans" font-size="12.00">publication</text>
@@ -543,7 +514,7 @@
 <text text-anchor="middle" x="2574" y="-1386.3" font-family="DejaVu Sans" font-size="9.00">FK</text>
 </g>
 <!-- road_states -->
-<g id="node20" class="node">
+<g id="node18" class="node">
 <title>road_states</title>
 <polygon fill="#edf5f7" stroke="#3e8d64" points="555,-600.5 555,-660.5 841,-660.5 841,-600.5 555,-600.5"/>
 <text text-anchor="middle" x="598" y="-627.4" font-family="DejaVu Sans" font-size="12.00">road_states</text>
@@ -563,7 +534,7 @@
 <text text-anchor="middle" x="971" y="-635.3" font-family="DejaVu Sans" font-size="9.00">FK</text>
 </g>
 <!-- road_transitions -->
-<g id="node21" class="node">
+<g id="node19" class="node">
 <title>road_transitions</title>
 <polygon fill="#edf5f7" stroke="#3e8d64" points="39,-556 39,-629 347,-629 347,-556 39,-556"/>
 <text text-anchor="middle" x="95" y="-589.4" font-family="DejaVu Sans" font-size="12.00">road_transitions</text>
@@ -591,7 +562,7 @@
 <text text-anchor="middle" x="425" y="-613.3" font-family="DejaVu Sans" font-size="9.00">FK</text>
 </g>
 <!-- route_edges -->
-<g id="node22" class="node">
+<g id="node20" class="node">
 <title>route_edges</title>
 <polygon fill="#edf5f7" stroke="#3e8d64" points="15,-876.5 15,-936.5 371,-936.5 371,-876.5 15,-876.5"/>
 <text text-anchor="middle" x="60" y="-903.4" font-family="DejaVu Sans" font-size="12.00">route_edges</text>
@@ -611,7 +582,7 @@
 <text text-anchor="middle" x="698" y="-901.3" font-family="DejaVu Sans" font-size="9.00">FK</text>
 </g>
 <!-- routes -->
-<g id="node24" class="node">
+<g id="node22" class="node">
 <title>routes</title>
 <polygon fill="#edf5f7" stroke="#3e8d64" points="559,-1112 559,-1211 837,-1211 837,-1112 559,-1112"/>
 <text text-anchor="middle" x="586" y="-1158.4" font-family="DejaVu Sans" font-size="12.00">routes</text>
@@ -662,7 +633,7 @@
 <text text-anchor="middle" x="971" y="-1164.3" font-family="DejaVu Sans" font-size="9.00">FK</text>
 </g>
 <!-- run_areas -->
-<g id="node25" class="node">
+<g id="node23" class="node">
 <title>run_areas</title>
 <polygon fill="#e0efe3" stroke="#3e8d64" points="2131.5,-1262.5 2131.5,-1322.5 2439.5,-1322.5 2439.5,-1262.5 2131.5,-1262.5"/>
 <text text-anchor="middle" x="2169.5" y="-1289.4" font-family="DejaVu Sans" font-size="12.00">run_areas</text>
@@ -682,19 +653,19 @@
 <text text-anchor="middle" x="2574" y="-1246.3" font-family="DejaVu Sans" font-size="9.00">FK</text>
 </g>
 <!-- schema_migrations -->
-<g id="node27" class="node">
+<g id="node25" class="node">
 <title>schema_migrations</title>
-<polygon fill="#edf5f7" stroke="#3e8d64" points="0,-1226 0,-1273 386,-1273 386,-1226 0,-1226"/>
-<text text-anchor="middle" x="67" y="-1246.4" font-family="DejaVu Sans" font-size="12.00">schema_migrations</text>
-<polyline fill="none" stroke="#3e8d64" points="134,-1226 134,-1273 "/>
-<text text-anchor="start" x="142" y="-1259.4" font-family="DejaVu Sans" font-size="12.00">version : int4</text>
-<text text-anchor="start" x="142" y="-1246.4" font-family="DejaVu Sans" font-size="12.00">checksum : text</text>
-<text text-anchor="start" x="142" y="-1233.4" font-family="DejaVu Sans" font-size="12.00">applied_at : timestamptz</text>
-<polyline fill="none" stroke="#3e8d64" points="298,-1226 298,-1273 "/>
-<text text-anchor="start" x="306" y="-1246.4" font-family="DejaVu Sans" font-size="12.00">PK (version)</text>
+<polygon fill="#edf5f7" stroke="#3e8d64" points="0,-963 0,-1010 386,-1010 386,-963 0,-963"/>
+<text text-anchor="middle" x="67" y="-983.4" font-family="DejaVu Sans" font-size="12.00">schema_migrations</text>
+<polyline fill="none" stroke="#3e8d64" points="134,-963 134,-1010 "/>
+<text text-anchor="start" x="142" y="-996.4" font-family="DejaVu Sans" font-size="12.00">version : int4</text>
+<text text-anchor="start" x="142" y="-983.4" font-family="DejaVu Sans" font-size="12.00">checksum : text</text>
+<text text-anchor="start" x="142" y="-970.4" font-family="DejaVu Sans" font-size="12.00">applied_at : timestamptz</text>
+<polyline fill="none" stroke="#3e8d64" points="298,-963 298,-1010 "/>
+<text text-anchor="start" x="306" y="-983.4" font-family="DejaVu Sans" font-size="12.00">PK (version)</text>
 </g>
 <!-- thermal_events -->
-<g id="node29" class="node">
+<g id="node27" class="node">
 <title>thermal_events</title>
 <polygon fill="#edf5f7" stroke="#3e8d64" points="1010,-380 1010,-479 1477,-479 1477,-380 1010,-380"/>
 <text text-anchor="middle" x="1064.5" y="-426.4" font-family="DejaVu Sans" font-size="12.00">thermal_events</text>
@@ -717,7 +688,7 @@
 <text text-anchor="middle" x="1516" y="-366.3" font-family="DejaVu Sans" font-size="9.00">FK</text>
 </g>
 <!-- weather -->
-<g id="node30" class="node">
+<g id="node28" class="node">
 <title>weather</title>
 <polygon fill="#edf5f7" stroke="#3e8d64" points="1579.5,-0.5 1579.5,-164.5 1933.5,-164.5 1933.5,-0.5 1579.5,-0.5"/>
 <text text-anchor="middle" x="1612.5" y="-79.4" font-family="DejaVu Sans" font-size="12.00">weather</text>
@@ -745,7 +716,7 @@
 <text text-anchor="middle" x="1997" y="-264.3" font-family="DejaVu Sans" font-size="9.00">FK</text>
 </g>
 <!-- weather_hazards -->
-<g id="node31" class="node">
+<g id="node29" class="node">
 <title>weather_hazards</title>
 <polygon fill="#edf5f7" stroke="#3e8d64" points="1053,-5 1053,-78 1434,-78 1434,-5 1053,-5"/>
 <text text-anchor="middle" x="1112.5" y="-38.4" font-family="DejaVu Sans" font-size="12.00">weather_hazards</text>

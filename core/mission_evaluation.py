@@ -14,7 +14,7 @@ from shapely.geometry import Point,LineString,shape,mapping
 from shapely.ops import transform,unary_union
 
 from core.aerial_data import FWD,INV,iso
-from core.aerial_routing import calculate,data,effective_profile,available,restrictions,edge_time,exposure
+from core.aerial_routing import calculate,data,effective_profile,available,restrictions,edge_time,exposure,historical_policy
 from core.contracts import canonical,write_json
 
 
@@ -60,8 +60,9 @@ def assess(option,model,clock,events,remaining,endpoints=()):
         value,missing=exposure(line,model['history']);weighted+=value;unknown+=missing
     geometry=unary_union(lines+[Point(FWD(*point)) for point in endpoints])
     intersects=blocked.intersects(geometry)
-    allowed=not intersects and time_s<=remaining+1e-8
-    return dict(known=True,admissible=allowed,reason='restricted' if intersects else 'insufficient_budget' if not allowed else None,
+    policy=historical_policy(geometry,model)
+    allowed=not intersects and policy is None and time_s<=remaining+1e-8
+    return dict(known=True,admissible=allowed,reason='restricted' if intersects else policy or ('insufficient_budget' if not allowed else None),
         time_s=time_s,exposure_m=weighted,unknown_m=unknown,thermal_unknown_ids=stale,geometry=geometry)
 
 
@@ -89,7 +90,7 @@ def compare(conn,rid,request):
     features=[]
     for method,result in frozen.items():
         features.extend(dict(f,properties=dict(f['properties'],method=method)) for f in result['features'])
-    response=dict(type='FeatureCollection',features=features,run_id=str(rid),status='ready',sets=frozen,
+    response=dict(type='FeatureCollection',features=features,run_id=str(rid),status='ready',sets=frozen,evaluation_version='mission-comparison-v2',
         effective_profile=profile,scenario_catalogue=catalogue,scenario_sha256=hashlib.sha256(canonical(catalogue)).hexdigest(),
         results=rows,metrics=metrics,request=request,temporal_model='static_at_selected_hour',
         warnings=['Misiones fijadas antes de aplicar escenarios; no se recalculan rutas en esta métrica',
@@ -114,12 +115,19 @@ def save(conn,result,output):
 
 def main():
     from core.db import connect
-    parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('--request',type=Path,required=True);parser.add_argument('--output',type=Path,required=True);parser.add_argument('--run-id')
+    parser=argparse.ArgumentParser(description=__doc__)
+    inputs=parser.add_mutually_exclusive_group(required=True);inputs.add_argument('--request',type=Path);inputs.add_argument('--experiment',type=Path)
+    parser.add_argument('--output',type=Path,required=True);parser.add_argument('--run-id')
     args=parser.parse_args()
     with connect() as conn:
         rid=args.run_id or conn.execute('SELECT run_id FROM routing.publication WHERE singleton').fetchone()['run_id']
-        result=compare(conn,rid,json.loads(args.request.read_text(encoding='utf-8')));save(conn,result,args.output)
-    print(json.dumps(dict(run_id=str(rid),sha256=result['evaluation_sha256'],metrics=result['metrics'])))
+        if args.experiment:
+            from core.experiments import run_experiment
+            result=run_experiment(conn,rid,json.loads(args.experiment.read_text(encoding='utf-8')),args.output)
+            print(json.dumps(dict(run_id=str(rid),experiment_sha256=result['experiment_sha256'],summary=result['summary'])))
+        else:
+            result=compare(conn,rid,json.loads(args.request.read_text(encoding='utf-8')));save(conn,result,args.output)
+            print(json.dumps(dict(run_id=str(rid),sha256=result['evaluation_sha256'],metrics=result['metrics'])))
 
 
 if __name__=='__main__':main()

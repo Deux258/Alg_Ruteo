@@ -1,0 +1,297 @@
+{
+  "source": "presentacion/fase2_valparaiso.pptx",
+  "source_sha256": "f96433ffc87f7cfa2ec8f9a33194c4b923c6c0dc5bb4c667c6066365efc78ddb",
+  "main_slides": 22,
+  "annexes": [
+    {
+      "title": "Esquema 1",
+      "tables": [
+        "aerial_models",
+        "airspace_zones",
+        "base_catalogue",
+        "base_locations",
+        "base_metadata",
+        "datasets",
+        "edge_hazard",
+        "edges",
+        "evaluations",
+        "hazards",
+        "historical_risk",
+        "landcover",
+        "mission_evaluations",
+        "node_elevation",
+        "nodes"
+      ]
+    },
+    {
+      "title": "Esquema 2",
+      "tables": [
+        "profiles",
+        "publication",
+        "road_states",
+        "road_transitions",
+        "route_edges",
+        "route_sets",
+        "routes",
+        "run_areas",
+        "runs",
+        "schema_migrations",
+        "sources",
+        "thermal_events",
+        "weather",
+        "weather_hazards"
+      ]
+    },
+    {
+      "title": "I",
+      "projection": {
+        "dataset_key": "I",
+        "run_id": "b80f9b83-cad7-53b8-a8b8-34a2a17e614c",
+        "nodes": [
+          {
+            "id": "117035864987528410",
+            "kind": "navegacion",
+            "geometry": {
+              "coordinates": [
+                -71.60434562180853,
+                -33.044180414592354
+              ],
+              "type": "Point"
+            }
+          }
+        ],
+        "edges": [
+          {
+            "id": 5865490480857765,
+            "source": "2122332705314860074",
+            "target": "8577355180716890958",
+            "geometry": {
+              "coordinates": [
+                [
+                  -71.64843695418442,
+                  -33.08653007972807
+                ],
+                [
+                  -71.63965836729953,
+                  -33.07950329128533
+                ]
+              ],
+              "type": "LineString"
+            }
+          }
+        ]
+      },
+      "output": "infraestructura.json",
+      "dictionary": "Infraestructura/DICCIONARIO.md"
+    },
+    {
+      "title": "M1",
+      "projection": {
+        "dataset_key": "M1",
+        "run_id": "b80f9b83-cad7-53b8-a8b8-34a2a17e614c",
+        "records": [
+          {
+            "provider_id": "104",
+            "name": "Decima Sexta de Valparaíso",
+            "candidate": true,
+            "inside_study": true,
+            "geometry": {
+              "coordinates": [
+                -71.6572392109999,
+                -33.10190169
+              ],
+              "type": "Point"
+            }
+          }
+        ]
+      },
+      "output": "metadata/bases.json",
+      "dictionary": "Metadata/m1_bases.md"
+    },
+    {
+      "title": "M2",
+      "projection": {
+        "dataset_key": "M2",
+        "run_id": "b80f9b83-cad7-53b8-a8b8-34a2a17e614c",
+        "records": [
+          {
+            "provider_id": "10002",
+            "category": "Áreas Urbanas e Industriales",
+            "clipped_area_ha": 14.087935171644082,
+            "attributes": {
+              "commune": "Valparaíso",
+              "cover_class": "No Aplica",
+              "forest_subtype": " "
+            }
+          }
+        ]
+      },
+      "output": "metadata/cobertura.json",
+      "dictionary": "Metadata/m2_cobertura.md"
+    },
+    {
+      "title": "M3",
+      "projection": {
+        "dataset_key": "M3",
+        "run_id": "b80f9b83-cad7-53b8-a8b8-34a2a17e614c",
+        "records": [
+          {
+            "elevation_m": 304.35589599609375,
+            "node_id": "1067728027539254333",
+            "quality": "valid"
+          }
+        ]
+      },
+      "output": "metadata/elevacion.json",
+      "dictionary": "Metadata/m3_elevacion.md"
+    },
+    {
+      "title": "M4",
+      "projection": {
+        "dataset_key": "M4",
+        "run_id": "b80f9b83-cad7-53b8-a8b8-34a2a17e614c",
+        "records": [
+          {
+            "precipitation_mm": 0,
+            "relative_humidity_pct": 83,
+            "temperature_c": 13.8,
+            "valid_at": "2026-10-19T00:00:00+00:00",
+            "wind_direction_deg": 333,
+            "wind_gust_ms": 4.3,
+            "wind_speed_ms": 1.12
+          }
+        ]
+      },
+      "output": "metadata/clima.json",
+      "dictionary": "Metadata/m4_clima.md"
+    },
+    {
+      "title": "A1",
+      "projection": {
+        "dataset_key": "A1",
+        "run_id": "b80f9b83-cad7-53b8-a8b8-34a2a17e614c",
+        "records": [
+          {
+            "provider_id": "2026-10-20T08:00:00+00:00",
+            "reason": "weather_outside_academic_profile",
+            "state": "active",
+            "valid_at": "2026-10-20T08:00:00+00:00"
+          }
+        ]
+      },
+      "output": "amenazas/meteorologia.json",
+      "dictionary": "Amenazas/a1_meteorologia.md"
+    },
+    {
+      "title": "A2",
+      "projection": {
+        "dataset_key": "A2",
+        "run_id": "b80f9b83-cad7-53b8-a8b8-34a2a17e614c",
+        "records": []
+      },
+      "output": "amenazas/firms.json",
+      "dictionary": "Amenazas/a2_firms.md"
+    },
+    {
+      "title": "A3",
+      "projection": {
+        "dataset_key": "A3",
+        "run_id": "b80f9b83-cad7-53b8-a8b8-34a2a17e614c",
+        "records": [
+          {
+            "code": "SC-P29",
+            "document_page": "6",
+            "geometry_type": "circle",
+            "lower_limit": "GND",
+            "provider_id": "SC-P29",
+            "radius_m": 277.8
+          }
+        ]
+      },
+      "output": "amenazas/aip.json",
+      "dictionary": "Amenazas/a3_aip.md"
+    },
+    {
+      "title": "A4",
+      "projection": {
+        "dataset_key": "A4",
+        "run_id": "b80f9b83-cad7-53b8-a8b8-34a2a17e614c",
+        "records": [
+          {
+            "class_label": "Alta",
+            "ordinal_class": 4,
+            "period_end": 2024,
+            "period_start": 2020,
+            "provider_id": "671",
+            "repaired": false
+          }
+        ]
+      },
+      "output": "amenazas/historial.json",
+      "dictionary": "Amenazas/a4_historial.md"
+    },
+    {
+      "title": "SQL Dijkstra",
+      "code": "SELECT seq,path_seq,node,edge,cost,agg_cost FROM pgr_dijkstra('SELECT id,source,target,length_km AS cost,-1::float8 AS reverse_cost FROM routing.edges WHERE run_id=''b80f9b83-cad7-53b8-a8b8-34a2a17e614c''::uuid',444204520825800637::bigint,481811177017561201::bigint,true) ORDER BY path_seq;\n",
+      "steps": 2
+    },
+    {
+      "title": "Efecto de reglas",
+      "synthetic": true
+    },
+    {
+      "title": "Fallos y replanificación",
+      "reasons": {
+        "endpoint_blocked": 32,
+        "historical_class_unknown": 12,
+        "insufficient_return_budget": 23,
+        "none": 13,
+        "weather_outside_profile": 40
+      }
+    }
+  ],
+  "summary": {
+    "improvements": 4,
+    "max_delta_pp": 98,
+    "mean_delta_pp": 1.65,
+    "methods": {
+      "proposed": {
+        "control_admissible": 13,
+        "mean_set_survival": 0.10541666666666666,
+        "mean_shared_50m_fraction": 0.44892507582358887,
+        "reasons": {
+          "endpoint_blocked": 32,
+          "historical_class_unknown": 12,
+          "insufficient_return_budget": 23,
+          "none": 13,
+          "weather_outside_profile": 40
+        },
+        "statuses": {
+          "no_route": 44,
+          "not_feasible": 63,
+          "ready": 13
+        },
+        "two_options": 12
+      },
+      "reference": {
+        "control_admissible": 11,
+        "mean_set_survival": 0.08891666666666666,
+        "mean_shared_50m_fraction": 0.42078980378737396,
+        "reasons": {
+          "none": 120
+        },
+        "statuses": {
+          "ready": 120
+        },
+        "two_options": 120
+      }
+    },
+    "min_delta_pp": -3.0000000000000027,
+    "ties": 114,
+    "total_cases": 120,
+    "unknown_cases": 0,
+    "valid_case_scenarios": 12000,
+    "valid_cases": 120,
+    "worsenings": 2
+  }
+}

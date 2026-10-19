@@ -6,3 +6,4 @@ datos/runs/
 evidencia/local/
 *.log
 tmp/
+!evidencia/cierre_fase2_2026-10-19/*.log

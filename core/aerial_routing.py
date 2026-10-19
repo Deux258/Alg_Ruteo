@@ -73,6 +73,23 @@ def exposure(line,history):
     return value+unknown,unknown
 
 
+@lru_cache(maxsize=16)
+def historical_coverage(polygons):
+    return unary_union(polygons)
+
+
+def historical_policy(geometry,model):
+    """Política preventiva en metros; nunca interpreta recurrencia como fuego actual."""
+    limit=model['profile'].get('max_historical_class')
+    if limit is None:return None
+    history=model['history']
+    if any(risk>(limit-1)/4 and polygon.intersects(geometry) for polygon,risk in history):
+        return 'historical_class_exceeded'
+    coverage=historical_coverage(tuple(polygon for polygon,_ in history))
+    if not coverage.covers(geometry):return 'historical_class_unknown'
+    return None
+
+
 def events_geometry(events,clock=None):
     if not isinstance(events,list) or len(events)>20:raise ValueError('Máximo 20 eventos por escenario')
     ledger={}
@@ -114,8 +131,11 @@ def available(model,clock,online=False):
 
 def effective_profile(base,preferences):
     if preferences is None:preferences={}
-    if not isinstance(preferences,dict) or set(preferences)-{'budget_s','wind_limit_ms','detour_factor'}:raise ValueError('Preferencias desconocidas')
+    if not isinstance(preferences,dict) or set(preferences)-{'budget_s','wind_limit_ms','detour_factor','max_historical_class'}:raise ValueError('Preferencias desconocidas')
     profile=dict(base);profile['budget_s']=base['flight_minutes']*60*(1-base['reserve_fraction'])
+    limit=preferences.get('max_historical_class')
+    if limit is not None and (type(limit) is not int or not 1<=limit<=5):raise ValueError('Clase histórica máxima requiere un entero entre 1 y 5 o null')
+    profile['max_historical_class']=limit
     for key,limit,minimum in [('budget_s',profile['budget_s'],0),('wind_limit_ms',base['wind_limit_ms'],0),('detour_factor',base['detour_factor'],1)]:
         if key not in preferences:continue
         value=preferences[key]
@@ -248,9 +268,17 @@ def calculate(conn,rid,request):
     response['thermal_unknown_ids']=stale_thermal
     if any(blocked.intersects(Point(FWD(*nodes[i]))) for i in {s,t,home} if mode=='mission' or i in {s,t}):
         response.update(reason='endpoint_blocked');return response
+    for ident in {s,t,home} if mode=='mission' else {s,t}:
+        problem=historical_policy(Point(FWD(*nodes[ident])),model)
+        if problem:response.update(reason=problem);return response
+    response['excluded_edges_by_reason']={}
     for e in edges:
         line=transform(FWD,LineString(e['coordinates']))
         if blocked.intersects(line):continue
+        problem=historical_policy(line,model)
+        if problem:
+            counts=response['excluded_edges_by_reason'];counts[problem]=counts.get(problem,0)+1
+            continue
         time_s=edge_time(line,weather,profile)
         if time_s is None:continue
         risk,unknown=exposure(line,model['history'])

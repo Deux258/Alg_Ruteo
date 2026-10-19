@@ -3,21 +3,64 @@ import csv
 import io
 import json
 import tempfile
+import subprocess
+import sys
 import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from shapely.geometry import Point,LineString,shape,mapping
+from shapely.geometry import Point,LineString,shape,mapping,box
 from shapely.ops import transform
 
 from core.aerial_data import FWD,INV,iso
-from core.aerial_routing import calculate,effective_profile,restrictions,overlay
+from core.aerial_routing import calculate,effective_profile,restrictions,overlay,historical_policy
 from core.mission_evaluation import compare,summarise,scenario_catalogue,save
 from core.contracts import ROOT,canonical
 from tests import test_aerial as aerial_tests
 
 
 class EvaluationRules(unittest.TestCase):
+    def test_historical_policy_is_optional_and_uses_maximum_overlapping_class(self):
+        model=dict(profile={},history=[(box(0,0,10,10),0),(box(4,4,6,6),1)])
+        line=LineString([(1,5),(9,5)])
+        self.assertIsNone(historical_policy(line,model))
+        model['profile']['max_historical_class']=4
+        self.assertEqual(historical_policy(line,model),'historical_class_exceeded')
+        self.assertEqual(historical_policy(Point(4,5),model),'historical_class_exceeded')
+        self.assertIsNone(historical_policy(LineString([(1,1),(3,1)]),model))
+        self.assertEqual(historical_policy(LineString([(1,1),(11,1)]),model),'historical_class_unknown')
+        model['profile']['max_historical_class']=5
+        self.assertIsNone(historical_policy(line,model))
+        model['history']=[]
+        self.assertEqual(historical_policy(Point(1,1),model),'historical_class_unknown')
+
+    def test_historical_preference_rejects_booleans_floats_and_invalid_classes(self):
+        base=json.loads((ROOT/'config/aereo.json').read_text())
+        self.assertIsNone(effective_profile(base,{})['max_historical_class'])
+        for value in [1,2,3,4,5,None]:self.assertEqual(effective_profile(base,dict(max_historical_class=value))['max_historical_class'],value)
+        for value in [True,False,0,6,4.0,'4',float('nan')]:
+            with self.assertRaises(ValueError):effective_profile(base,dict(max_historical_class=value))
+
+    def test_batch_selection_is_geographic_unique_and_not_weather_filtered(self):
+        from core.experiments import select_targets,select_hours
+        goals=[dict(id=str(i),coordinates=c) for i,c in enumerate([[-71.6,-33.04],[-71.6,-33.11],[-71.55,-33.08],[-71.66,-33.08]])]
+        selected=select_targets(goals,['north','south','east','west'])
+        self.assertEqual(len({g['id'] for g in selected}),4)
+        self.assertEqual(selected,select_targets(list(reversed(goals)),['north','south','east','west']))
+        weather=[dict(valid_at=f'2026-10-19T{h:02d}:00:00+00:00',wind_speed_ms=99) for h in range(8)]
+        self.assertEqual(select_hours(weather,'2026-10-19T00:30:00+00:00'),[weather[i]['valid_at'] for i in [1,4,7]])
+        self.assertEqual(select_hours(weather,'2030-01-01T00:00:00Z'),[])
+
+    def test_batch_keeps_blocked_cases_and_common_denominator(self):
+        from core.experiments import aggregate
+        def case(known,proposed):
+            metrics=summarise([dict(known=known,survives={'reference':[False,False],'proposed':[proposed]})],{'reference':2,'proposed':1})
+            return dict(metrics=metrics,control=dict(reference=False,proposed=proposed),status=dict(reference='ready',proposed='ready' if proposed else 'no_route'),reason=dict(reference=None,proposed=None if proposed else 'endpoint_blocked'),overlap=dict(reference=1,proposed=None))
+        result=aggregate([case(True,True),case(True,False),case(False,False)])
+        self.assertEqual(result['total_cases'],3);self.assertEqual(result['unknown_cases'],1)
+        self.assertEqual(result['mean_delta_pp'],50);self.assertEqual(result['ties'],1);self.assertEqual(result['improvements'],1)
+        self.assertEqual(result['methods']['proposed']['reasons']['endpoint_blocked'],2)
+
     def test_partial_acquisition_preserves_previous_manifest(self):
         import hashlib
         from Infraestructura import descargar_aereo as acquisition
@@ -135,6 +178,37 @@ class Phase2Integration(unittest.TestCase):
         self.assertEqual(too_short['status'],'not_feasible');self.assertEqual(too_short['remaining_s'],1)
         strict=calculate(self.conn,self.rid,dict(self.request,preferences=dict(wind_limit_ms=.01)))
         self.assertEqual(strict['reason'],'weather_outside_profile')
+
+    def test_default_historical_policy_preserves_routes_and_costs(self):
+        old=calculate(self.conn,self.rid,self.request)
+        disabled=calculate(self.conn,self.rid,dict(self.request,preferences=dict(max_historical_class=None)))
+        self.assertEqual(old['alternatives'],disabled['alternatives'])
+        self.assertEqual(old['features'],disabled['features'])
+
+    def test_cli_persists_relative_output_directory_with_spaces(self):
+        with tempfile.TemporaryDirectory(prefix='cli output ',dir=ROOT/'datos/runs') as tmp:
+            folder=Path(tmp);request=folder/'request.json';request.write_text(json.dumps(self.request))
+            output=folder/'evaluaciones';relative=output.relative_to(ROOT)
+            command=[sys.executable,'-m','core.mission_evaluation','--run-id',self.rid,'--request',str(request),'--output',str(relative)]
+            completed=subprocess.run(command,cwd=ROOT,capture_output=True,text=True,timeout=60)
+            self.assertEqual(completed.returncode,0,completed.stderr)
+            self.assertEqual(len(list(output.glob('comparison_*.json'))),1)
+            self.assertEqual(len(list(output.glob('scenarios_*.json'))),1)
+            invalid=subprocess.run(command+['--experiment','config/evaluacion_fase2.json'],cwd=ROOT,capture_output=True,text=True,timeout=10)
+            self.assertEqual(invalid.returncode,2)
+
+    def test_reference_generation_ignores_historical_limit_but_evaluation_applies_it(self):
+        before=calculate(self.conn,self.rid,dict(self.request,method='reference'))
+        after=calculate(self.conn,self.rid,dict(self.request,method='reference',preferences=dict(max_historical_class=1)))
+        self.assertEqual(before['alternatives'],after['alternatives'])
+        evaluated=compare(self.conn,self.rid,dict(self.request,preferences=dict(max_historical_class=1)))
+        self.assertEqual(evaluated['evaluation_version'],'mission-comparison-v2')
+        model=dict(self.model,profile=effective_profile(self.model['profile'],dict(max_historical_class=1)))
+        for result in evaluated['sets'].values():
+            for option in result['alternatives']:
+                if option['evaluation']['admissible']:
+                    for path in [option['outbound'],option['return_path']]:
+                        if len(path['coordinates'])>=2:self.assertIsNone(historical_policy(transform(FWD,LineString(path['coordinates'])),model))
 
     def test_loader_rejects_forged_supplemental_source_lineage(self):
         from core.aerial_etl import load

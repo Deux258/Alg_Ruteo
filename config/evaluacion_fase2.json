@@ -1,0 +1,9 @@
+{
+  "version": "fase2-batch-v1",
+  "directions": ["north", "south", "east", "west"],
+  "hours": "first-middle-last-after-acquisition",
+  "profiles": [
+    {"id": "default", "preferences": {}},
+    {"id": "history4", "preferences": {"max_historical_class": 4}}
+  ]
+}

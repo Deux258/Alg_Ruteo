@@ -1,0 +1,1201 @@
+{
+  "scenarios": [
+    {
+      "geometry": null,
+      "id": "control",
+      "radius_m": 0,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.55635888915575,
+          -33.1053945251493
+        ],
+        "type": "Point"
+      },
+      "id": "closure-001",
+      "radius_m": 100,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.60641981306536,
+          -33.07233312459406
+        ],
+        "type": "Point"
+      },
+      "id": "closure-002",
+      "radius_m": 250,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.662959655637,
+          -33.101307986210934
+        ],
+        "type": "Point"
+      },
+      "id": "closure-003",
+      "radius_m": 500,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.67138442036143,
+          -33.09630372303184
+        ],
+        "type": "Point"
+      },
+      "id": "closure-004",
+      "radius_m": 100,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.5950209234139,
+          -33.04411283715976
+        ],
+        "type": "Point"
+      },
+      "id": "closure-005",
+      "radius_m": 250,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.65198012313131,
+          -33.07186880824773
+        ],
+        "type": "Point"
+      },
+      "id": "closure-006",
+      "radius_m": 500,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.54677563657891,
+          -33.10199059271566
+        ],
+        "type": "Point"
+      },
+      "id": "closure-007",
+      "radius_m": 100,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.66259816040555,
+          -33.067086016685955
+        ],
+        "type": "Point"
+      },
+      "id": "closure-008",
+      "radius_m": 250,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.66379364127859,
+          -33.03756873090529
+        ],
+        "type": "Point"
+      },
+      "id": "closure-009",
+      "radius_m": 500,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.60812764874781,
+          -33.04658864618959
+        ],
+        "type": "Point"
+      },
+      "id": "closure-010",
+      "radius_m": 100,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.5982526052491,
+          -33.05910714020622
+        ],
+        "type": "Point"
+      },
+      "id": "closure-011",
+      "radius_m": 250,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.56545781972285,
+          -33.06569077662327
+        ],
+        "type": "Point"
+      },
+      "id": "closure-012",
+      "radius_m": 500,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.57700126974404,
+          -33.08088600142045
+        ],
+        "type": "Point"
+      },
+      "id": "closure-013",
+      "radius_m": 100,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.61064850136525,
+          -33.07527066894294
+        ],
+        "type": "Point"
+      },
+      "id": "closure-014",
+      "radius_m": 250,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.55402960238669,
+          -33.084059341243545
+        ],
+        "type": "Point"
+      },
+      "id": "closure-015",
+      "radius_m": 500,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.6496841741619,
+          -33.05245862094116
+        ],
+        "type": "Point"
+      },
+      "id": "closure-016",
+      "radius_m": 100,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.56079431849649,
+          -33.105616939076484
+        ],
+        "type": "Point"
+      },
+      "id": "closure-017",
+      "radius_m": 250,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.66209131739474,
+          -33.08422824953095
+        ],
+        "type": "Point"
+      },
+      "id": "closure-018",
+      "radius_m": 500,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.64880732442975,
+          -33.0389190875248
+        ],
+        "type": "Point"
+      },
+      "id": "closure-019",
+      "radius_m": 100,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.6244039131976,
+          -33.05720554529308
+        ],
+        "type": "Point"
+      },
+      "id": "closure-020",
+      "radius_m": 250,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.65052710527442,
+          -33.111347847906764
+        ],
+        "type": "Point"
+      },
+      "id": "closure-021",
+      "radius_m": 500,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.59374059761832,
+          -33.06543682986513
+        ],
+        "type": "Point"
+      },
+      "id": "closure-022",
+      "radius_m": 100,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.64644262119329,
+          -33.10819557552049
+        ],
+        "type": "Point"
+      },
+      "id": "closure-023",
+      "radius_m": 250,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.5404314592383,
+          -33.09100448948434
+        ],
+        "type": "Point"
+      },
+      "id": "closure-024",
+      "radius_m": 500,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.5801784401882,
+          -33.08543244199168
+        ],
+        "type": "Point"
+      },
+      "id": "closure-025",
+      "radius_m": 100,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.59311067084796,
+          -33.08184493474335
+        ],
+        "type": "Point"
+      },
+      "id": "closure-026",
+      "radius_m": 250,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.56305957500192,
+          -33.10006621342815
+        ],
+        "type": "Point"
+      },
+      "id": "closure-027",
+      "radius_m": 500,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.62319251935642,
+          -33.044709175529974
+        ],
+        "type": "Point"
+      },
+      "id": "closure-028",
+      "radius_m": 100,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.56818128946153,
+          -33.08698389901356
+        ],
+        "type": "Point"
+      },
+      "id": "closure-029",
+      "radius_m": 250,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.57104907978541,
+          -33.08861818974923
+        ],
+        "type": "Point"
+      },
+      "id": "closure-030",
+      "radius_m": 500,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.66358413202161,
+          -33.0803101879747
+        ],
+        "type": "Point"
+      },
+      "id": "closure-031",
+      "radius_m": 100,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.65763609206212,
+          -33.1124017067655
+        ],
+        "type": "Point"
+      },
+      "id": "closure-032",
+      "radius_m": 250,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.65058380317596,
+          -33.1065139527735
+        ],
+        "type": "Point"
+      },
+      "id": "closure-033",
+      "radius_m": 500,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.67120652045416,
+          -33.05500765688016
+        ],
+        "type": "Point"
+      },
+      "id": "closure-034",
+      "radius_m": 100,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.65470456617885,
+          -33.06465988182852
+        ],
+        "type": "Point"
+      },
+      "id": "closure-035",
+      "radius_m": 250,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.59072158924093,
+          -33.06578722176918
+        ],
+        "type": "Point"
+      },
+      "id": "closure-036",
+      "radius_m": 500,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.63902276012543,
+          -33.090589489149295
+        ],
+        "type": "Point"
+      },
+      "id": "closure-037",
+      "radius_m": 100,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.59857670230511,
+          -33.06950461814059
+        ],
+        "type": "Point"
+      },
+      "id": "closure-038",
+      "radius_m": 250,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.65295196150757,
+          -33.058551701619095
+        ],
+        "type": "Point"
+      },
+      "id": "closure-039",
+      "radius_m": 500,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.63248990614743,
+          -33.04988246280107
+        ],
+        "type": "Point"
+      },
+      "id": "closure-040",
+      "radius_m": 100,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.63183284211115,
+          -33.049972666691524
+        ],
+        "type": "Point"
+      },
+      "id": "closure-041",
+      "radius_m": 250,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.56026467418506,
+          -33.10451532799423
+        ],
+        "type": "Point"
+      },
+      "id": "closure-042",
+      "radius_m": 500,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.66005672697361,
+          -33.055334474157185
+        ],
+        "type": "Point"
+      },
+      "id": "closure-043",
+      "radius_m": 100,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.58488318973941,
+          -33.06882426068039
+        ],
+        "type": "Point"
+      },
+      "id": "closure-044",
+      "radius_m": 250,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.62778526275673,
+          -33.08583754871801
+        ],
+        "type": "Point"
+      },
+      "id": "closure-045",
+      "radius_m": 500,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.65791733550734,
+          -33.097991311622835
+        ],
+        "type": "Point"
+      },
+      "id": "closure-046",
+      "radius_m": 100,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.63373241647488,
+          -33.080717462317054
+        ],
+        "type": "Point"
+      },
+      "id": "closure-047",
+      "radius_m": 250,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.64169615893863,
+          -33.07190897186133
+        ],
+        "type": "Point"
+      },
+      "id": "closure-048",
+      "radius_m": 500,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.56242157051794,
+          -33.10326032748628
+        ],
+        "type": "Point"
+      },
+      "id": "closure-049",
+      "radius_m": 100,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.57420557080361,
+          -33.075957342739486
+        ],
+        "type": "Point"
+      },
+      "id": "closure-050",
+      "radius_m": 250,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.66582424773098,
+          -33.06029984265312
+        ],
+        "type": "Point"
+      },
+      "id": "closure-051",
+      "radius_m": 500,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.59133016400126,
+          -33.05465793992737
+        ],
+        "type": "Point"
+      },
+      "id": "closure-052",
+      "radius_m": 100,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.66026658182696,
+          -33.08657904612145
+        ],
+        "type": "Point"
+      },
+      "id": "closure-053",
+      "radius_m": 250,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.592940159522,
+          -33.08605659405214
+        ],
+        "type": "Point"
+      },
+      "id": "closure-054",
+      "radius_m": 500,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.65337876276496,
+          -33.053203950618546
+        ],
+        "type": "Point"
+      },
+      "id": "closure-055",
+      "radius_m": 100,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.65540922482734,
+          -33.03289962648351
+        ],
+        "type": "Point"
+      },
+      "id": "closure-056",
+      "radius_m": 250,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.62174872962642,
+          -33.04402500548388
+        ],
+        "type": "Point"
+      },
+      "id": "closure-057",
+      "radius_m": 500,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.65198143202625,
+          -33.070721081132135
+        ],
+        "type": "Point"
+      },
+      "id": "closure-058",
+      "radius_m": 100,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.5876925552175,
+          -33.04069257343961
+        ],
+        "type": "Point"
+      },
+      "id": "closure-059",
+      "radius_m": 250,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.54245093122786,
+          -33.11185690512172
+        ],
+        "type": "Point"
+      },
+      "id": "closure-060",
+      "radius_m": 500,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.59561472244016,
+          -33.064244451637364
+        ],
+        "type": "Point"
+      },
+      "id": "closure-061",
+      "radius_m": 100,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.61434374971725,
+          -33.06444252108487
+        ],
+        "type": "Point"
+      },
+      "id": "closure-062",
+      "radius_m": 250,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.67333961519554,
+          -33.0878864423663
+        ],
+        "type": "Point"
+      },
+      "id": "closure-063",
+      "radius_m": 500,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.66163066858228,
+          -33.03216962525506
+        ],
+        "type": "Point"
+      },
+      "id": "closure-064",
+      "radius_m": 100,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.55337403773004,
+          -33.07689117053904
+        ],
+        "type": "Point"
+      },
+      "id": "closure-065",
+      "radius_m": 250,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.5843759543296,
+          -33.105490685021024
+        ],
+        "type": "Point"
+      },
+      "id": "closure-066",
+      "radius_m": 500,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.66548870677778,
+          -33.108543905621964
+        ],
+        "type": "Point"
+      },
+      "id": "closure-067",
+      "radius_m": 100,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.63134440688377,
+          -33.04305601551209
+        ],
+        "type": "Point"
+      },
+      "id": "closure-068",
+      "radius_m": 250,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.5591499013984,
+          -33.109082248151985
+        ],
+        "type": "Point"
+      },
+      "id": "closure-069",
+      "radius_m": 500,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.65620377009893,
+          -33.10782789758559
+        ],
+        "type": "Point"
+      },
+      "id": "closure-070",
+      "radius_m": 100,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.66392306111273,
+          -33.03252338542932
+        ],
+        "type": "Point"
+      },
+      "id": "closure-071",
+      "radius_m": 250,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.64551092357118,
+          -33.084933572801546
+        ],
+        "type": "Point"
+      },
+      "id": "closure-072",
+      "radius_m": 500,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.56706006110862,
+          -33.103903034222085
+        ],
+        "type": "Point"
+      },
+      "id": "closure-073",
+      "radius_m": 100,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.5723625086258,
+          -33.09604872861946
+        ],
+        "type": "Point"
+      },
+      "id": "closure-074",
+      "radius_m": 250,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.61496364747502,
+          -33.062722100563576
+        ],
+        "type": "Point"
+      },
+      "id": "closure-075",
+      "radius_m": 500,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.65800485788348,
+          -33.07184897123527
+        ],
+        "type": "Point"
+      },
+      "id": "closure-076",
+      "radius_m": 100,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.6300878722364,
+          -33.10778037746427
+        ],
+        "type": "Point"
+      },
+      "id": "closure-077",
+      "radius_m": 250,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.54989896061052,
+          -33.088521038105036
+        ],
+        "type": "Point"
+      },
+      "id": "closure-078",
+      "radius_m": 500,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.63599796868688,
+          -33.11373511132367
+        ],
+        "type": "Point"
+      },
+      "id": "closure-079",
+      "radius_m": 100,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.54114933536202,
+          -33.099372607126625
+        ],
+        "type": "Point"
+      },
+      "id": "closure-080",
+      "radius_m": 250,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.65837090085368,
+          -33.083910486949094
+        ],
+        "type": "Point"
+      },
+      "id": "closure-081",
+      "radius_m": 500,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.56732954535904,
+          -33.07430955880161
+        ],
+        "type": "Point"
+      },
+      "id": "closure-082",
+      "radius_m": 100,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.64546440374639,
+          -33.03385974468648
+        ],
+        "type": "Point"
+      },
+      "id": "closure-083",
+      "radius_m": 250,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.61700821535327,
+          -33.116191079291625
+        ],
+        "type": "Point"
+      },
+      "id": "closure-084",
+      "radius_m": 500,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.59781329699204,
+          -33.06642626007499
+        ],
+        "type": "Point"
+      },
+      "id": "closure-085",
+      "radius_m": 100,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.61122188120586,
+          -33.09639482835691
+        ],
+        "type": "Point"
+      },
+      "id": "closure-086",
+      "radius_m": 250,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.61674857133028,
+          -33.10545509450338
+        ],
+        "type": "Point"
+      },
+      "id": "closure-087",
+      "radius_m": 500,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.64530104209878,
+          -33.08069097193958
+        ],
+        "type": "Point"
+      },
+      "id": "closure-088",
+      "radius_m": 100,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.5644491151122,
+          -33.09625688655959
+        ],
+        "type": "Point"
+      },
+      "id": "closure-089",
+      "radius_m": 250,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.67315523510847,
+          -33.083212414328514
+        ],
+        "type": "Point"
+      },
+      "id": "closure-090",
+      "radius_m": 500,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.64002956155792,
+          -33.07492211699371
+        ],
+        "type": "Point"
+      },
+      "id": "closure-091",
+      "radius_m": 100,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.60285536726278,
+          -33.07672501252486
+        ],
+        "type": "Point"
+      },
+      "id": "closure-092",
+      "radius_m": 250,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.64981007609069,
+          -33.10861214228881
+        ],
+        "type": "Point"
+      },
+      "id": "closure-093",
+      "radius_m": 500,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.6413138965071,
+          -33.04381045610241
+        ],
+        "type": "Point"
+      },
+      "id": "closure-094",
+      "radius_m": 100,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.5856539895224,
+          -33.06328282592688
+        ],
+        "type": "Point"
+      },
+      "id": "closure-095",
+      "radius_m": 250,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.63389795641507,
+          -33.091760062529254
+        ],
+        "type": "Point"
+      },
+      "id": "closure-096",
+      "radius_m": 500,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.63282022322188,
+          -33.0859706110808
+        ],
+        "type": "Point"
+      },
+      "id": "closure-097",
+      "radius_m": 100,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.65841729217418,
+          -33.0394690897768
+        ],
+        "type": "Point"
+      },
+      "id": "closure-098",
+      "radius_m": 250,
+      "synthetic": true
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          -71.6197360312117,
+          -33.04420893026063
+        ],
+        "type": "Point"
+      },
+      "id": "closure-099",
+      "radius_m": 500,
+      "synthetic": true
+    }
+  ],
+  "seed": 20261018,
+  "selection": "Uniforme por rechazo en el área de tránsito; independiente del método",
+  "version": "mission-survival-v1"
+}

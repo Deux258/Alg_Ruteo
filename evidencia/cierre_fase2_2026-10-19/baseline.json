@@ -1,0 +1,8 @@
+{
+  "source_commit": "d5a7370e8e855872e02728591e94c742816dcff5",
+  "previous_evidence": "evidencia\\fase2_2026-10-19",
+  "previous_code_sha256": "1a776e492ed2f40a074f4911e48f6923c4ec7561233f05960a45aa00f978dbc5",
+  "previous_tests": 111,
+  "previous_successful": true,
+  "previous_data_run_id": "b80f9b83-cad7-53b8-a8b8-34a2a17e614c"
+}

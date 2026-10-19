@@ -13,6 +13,7 @@ Uso: ./main [iniciar|probar|estado|detener|logs|adquirir|evaluar] [opciones]
   logs                      Muestra logs recientes sin imprimir credenciales.
   adquirir --sources IDS --reuse IDS  Actualiza fuentes seleccionadas y conserva originales explícitos.
   evaluar --request RUTA    Compara una misión y conserva la evaluación en datos/runs/evaluaciones.
+  evaluar --experiment RUTA Ejecuta el lote predefinido sin seleccionar resultados favorables.
 Opciones de iniciar: --scope base|completo --mode snapshot|online --run-id UUID
 El modo snapshot reconstruye la red desde originales conservados, sin consultas externas.
 --mode online actualiza S1-S7 para la red aérea configurada. El alcance completo
@@ -23,7 +24,7 @@ if [[ "${1:-}" == '-h' || "${1:-}" == '--help' ]]; then help; exit 0; fi
 action="${1:-iniciar}"
 if (($#)); then shift; fi
 case "$action" in iniciar|probar|estado|detener|logs|adquirir|evaluar) ;; *) help >&2; exit 2;; esac
-scope=completo;mode=snapshot;run_id='';sources='';reuse='';request=''
+scope=completo;mode=snapshot;run_id='';sources='';reuse='';request='';experiment=''
 while (($#)); do
   case "$1" in
     --scope) [[ $# -ge 2 ]] || exit 2;scope="$2";shift 2;;
@@ -32,6 +33,7 @@ while (($#)); do
     --sources) [[ $# -ge 2 ]] || exit 2;sources="$2";shift 2;;
     --reuse) [[ $# -ge 2 ]] || exit 2;reuse="$2";shift 2;;
     --request) [[ $# -ge 2 ]] || exit 2;request="$2";shift 2;;
+    --experiment) [[ $# -ge 2 ]] || exit 2;experiment="$2";shift 2;;
     *) echo "Opción desconocida: $1" >&2;exit 2;;
   esac
 done
@@ -60,8 +62,12 @@ case "$action" in
     "${compose[@]}" run --rm --no-deps etl "${args[@]}"
     ;;
   evaluar)
-    [[ -n "$request" ]] || { echo 'Falta --request datos/runs/solicitud.json' >&2;exit 2; }
-    "${compose[@]}" run --rm --no-deps etl python -m core.mission_evaluation --request "$request" --output /app/datos/runs/evaluaciones
+    [[ -n "$request" && -z "$experiment" || -z "$request" && -n "$experiment" ]] || { echo 'Indicar exactamente una opción: --request o --experiment' >&2;exit 2; }
+    # Relativo al WORKDIR /app: evita conversión MSYS de rutas Linux en Git Bash.
+    args=(python -m core.mission_evaluation --output datos/runs/evaluaciones)
+    [[ -z "$request" ]] || args+=(--request "$request")
+    [[ -z "$experiment" ]] || args+=(--experiment "$experiment")
+    "${compose[@]}" run --rm --no-deps etl "${args[@]}"
     ;;
   iniciar)
     mkdir -p datos/runs

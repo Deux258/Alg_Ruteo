@@ -1,0 +1,8 @@
+{
+  "recorded_at_utc": "2026-10-19T13:26:26.432583+00:00",
+  "url": "https://aipchile.dgac.gob.cl/dasa/aip_chile_con_contenido/ais/2%20ENR%20Parte%202/ENR%205%20Zonas%20Prohibidas%2C%20Restringidas%20y%20Peligrosas/ENR%205.1-1%20Zonas%20P%2C%20R%2C%20D.pdf",
+  "original_sha256": "fd2d8e065ebd209832d2820abe3592b17f15fb84265f210a092d9df6fc77598d",
+  "active_manifest_modified": false,
+  "status": "unavailable",
+  "error": "<urlopen error [Errno -2] Name or service not known>"
+}

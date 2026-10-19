@@ -1,0 +1,1711 @@
+{
+  "constraints": [
+    {
+      "definition": "PRIMARY KEY (run_id)",
+      "kind": "p",
+      "source": "aerial_models",
+      "target": null
+    },
+    {
+      "definition": "FOREIGN KEY (run_id) REFERENCES routing.runs(run_id) ON DELETE CASCADE",
+      "kind": "f",
+      "source": "aerial_models",
+      "target": "runs"
+    },
+    {
+      "definition": "PRIMARY KEY (run_id, hazard_id)",
+      "kind": "p",
+      "source": "airspace_zones",
+      "target": null
+    },
+    {
+      "definition": "FOREIGN KEY (run_id, hazard_id, kind) REFERENCES routing.hazards(run_id, id, kind) ON DELETE CASCADE",
+      "kind": "f",
+      "source": "airspace_zones",
+      "target": "hazards"
+    },
+    {
+      "definition": "PRIMARY KEY (run_id, provider_id)",
+      "kind": "p",
+      "source": "base_catalogue",
+      "target": null
+    },
+    {
+      "definition": "FOREIGN KEY (run_id) REFERENCES routing.runs(run_id) ON DELETE CASCADE",
+      "kind": "f",
+      "source": "base_catalogue",
+      "target": "runs"
+    },
+    {
+      "definition": "FOREIGN KEY (run_id, node_id) REFERENCES routing.nodes(run_id, id)",
+      "kind": "f",
+      "source": "base_catalogue",
+      "target": "nodes"
+    },
+    {
+      "definition": "PRIMARY KEY (run_id)",
+      "kind": "p",
+      "source": "base_locations",
+      "target": null
+    },
+    {
+      "definition": "FOREIGN KEY (run_id) REFERENCES routing.runs(run_id) ON DELETE CASCADE",
+      "kind": "f",
+      "source": "base_locations",
+      "target": "runs"
+    },
+    {
+      "definition": "FOREIGN KEY (run_id, node_id) REFERENCES routing.nodes(run_id, id)",
+      "kind": "f",
+      "source": "base_locations",
+      "target": "nodes"
+    },
+    {
+      "definition": "FOREIGN KEY (source_id) REFERENCES routing.sources(source_id)",
+      "kind": "f",
+      "source": "base_locations",
+      "target": "sources"
+    },
+    {
+      "definition": "PRIMARY KEY (run_id, node_id)",
+      "kind": "p",
+      "source": "base_metadata",
+      "target": null
+    },
+    {
+      "definition": "FOREIGN KEY (run_id, dataset_key) REFERENCES routing.datasets(run_id, dataset_key) ON DELETE CASCADE",
+      "kind": "f",
+      "source": "base_metadata",
+      "target": "datasets"
+    },
+    {
+      "definition": "FOREIGN KEY (run_id, node_id) REFERENCES routing.nodes(run_id, id) ON DELETE CASCADE",
+      "kind": "f",
+      "source": "base_metadata",
+      "target": "nodes"
+    },
+    {
+      "definition": "PRIMARY KEY (dataset_id)",
+      "kind": "p",
+      "source": "datasets",
+      "target": null
+    },
+    {
+      "definition": "FOREIGN KEY (run_id) REFERENCES routing.runs(run_id) ON DELETE CASCADE",
+      "kind": "f",
+      "source": "datasets",
+      "target": "runs"
+    },
+    {
+      "definition": "FOREIGN KEY (source_id) REFERENCES routing.sources(source_id)",
+      "kind": "f",
+      "source": "datasets",
+      "target": "sources"
+    },
+    {
+      "definition": "PRIMARY KEY (run_id, edge_id, hazard_id)",
+      "kind": "p",
+      "source": "edge_hazard",
+      "target": null
+    },
+    {
+      "definition": "FOREIGN KEY (run_id, edge_id) REFERENCES routing.edges(run_id, id) ON DELETE CASCADE",
+      "kind": "f",
+      "source": "edge_hazard",
+      "target": "edges"
+    },
+    {
+      "definition": "FOREIGN KEY (run_id, hazard_id) REFERENCES routing.hazards(run_id, id) ON DELETE CASCADE",
+      "kind": "f",
+      "source": "edge_hazard",
+      "target": "hazards"
+    },
+    {
+      "definition": "PRIMARY KEY (run_id, id)",
+      "kind": "p",
+      "source": "edges",
+      "target": null
+    },
+    {
+      "definition": "FOREIGN KEY (run_id, dataset_key) REFERENCES routing.datasets(run_id, dataset_key) ON DELETE CASCADE",
+      "kind": "f",
+      "source": "edges",
+      "target": "datasets"
+    },
+    {
+      "definition": "FOREIGN KEY (run_id, source) REFERENCES routing.nodes(run_id, id) DEFERRABLE INITIALLY DEFERRED",
+      "kind": "f",
+      "source": "edges",
+      "target": "nodes"
+    },
+    {
+      "definition": "FOREIGN KEY (run_id, target) REFERENCES routing.nodes(run_id, id) DEFERRABLE INITIALLY DEFERRED",
+      "kind": "f",
+      "source": "edges",
+      "target": "nodes"
+    },
+    {
+      "definition": "PRIMARY KEY (run_id, set_id, scenario_sha256)",
+      "kind": "p",
+      "source": "evaluations",
+      "target": null
+    },
+    {
+      "definition": "FOREIGN KEY (run_id, set_id) REFERENCES routing.route_sets(run_id, id) ON DELETE CASCADE",
+      "kind": "f",
+      "source": "evaluations",
+      "target": "route_sets"
+    },
+    {
+      "definition": "PRIMARY KEY (run_id, id)",
+      "kind": "p",
+      "source": "hazards",
+      "target": null
+    },
+    {
+      "definition": "FOREIGN KEY (run_id, dataset_key) REFERENCES routing.datasets(run_id, dataset_key) ON DELETE CASCADE",
+      "kind": "f",
+      "source": "hazards",
+      "target": "datasets"
+    },
+    {
+      "definition": "PRIMARY KEY (run_id, hazard_id)",
+      "kind": "p",
+      "source": "historical_risk",
+      "target": null
+    },
+    {
+      "definition": "FOREIGN KEY (run_id, hazard_id, kind) REFERENCES routing.hazards(run_id, id, kind) ON DELETE CASCADE",
+      "kind": "f",
+      "source": "historical_risk",
+      "target": "hazards"
+    },
+    {
+      "definition": "PRIMARY KEY (run_id, id)",
+      "kind": "p",
+      "source": "landcover",
+      "target": null
+    },
+    {
+      "definition": "FOREIGN KEY (run_id, dataset_key) REFERENCES routing.datasets(run_id, dataset_key) ON DELETE CASCADE",
+      "kind": "f",
+      "source": "landcover",
+      "target": "datasets"
+    },
+    {
+      "definition": "PRIMARY KEY (run_id, evaluation_sha256)",
+      "kind": "p",
+      "source": "mission_evaluations",
+      "target": null
+    },
+    {
+      "definition": "FOREIGN KEY (run_id) REFERENCES routing.runs(run_id) ON DELETE CASCADE",
+      "kind": "f",
+      "source": "mission_evaluations",
+      "target": "runs"
+    },
+    {
+      "definition": "PRIMARY KEY (run_id, node_id)",
+      "kind": "p",
+      "source": "node_elevation",
+      "target": null
+    },
+    {
+      "definition": "FOREIGN KEY (run_id, dataset_key) REFERENCES routing.datasets(run_id, dataset_key) ON DELETE CASCADE",
+      "kind": "f",
+      "source": "node_elevation",
+      "target": "datasets"
+    },
+    {
+      "definition": "FOREIGN KEY (run_id, node_id) REFERENCES routing.nodes(run_id, id) ON DELETE CASCADE",
+      "kind": "f",
+      "source": "node_elevation",
+      "target": "nodes"
+    },
+    {
+      "definition": "PRIMARY KEY (run_id, id)",
+      "kind": "p",
+      "source": "nodes",
+      "target": null
+    },
+    {
+      "definition": "FOREIGN KEY (run_id, dataset_key) REFERENCES routing.datasets(run_id, dataset_key) ON DELETE CASCADE",
+      "kind": "f",
+      "source": "nodes",
+      "target": "datasets"
+    },
+    {
+      "definition": "PRIMARY KEY (profile_key, version)",
+      "kind": "p",
+      "source": "profiles",
+      "target": null
+    },
+    {
+      "definition": "PRIMARY KEY (singleton)",
+      "kind": "p",
+      "source": "publication",
+      "target": null
+    },
+    {
+      "definition": "FOREIGN KEY (run_id) REFERENCES routing.runs(run_id)",
+      "kind": "f",
+      "source": "publication",
+      "target": "runs"
+    },
+    {
+      "definition": "PRIMARY KEY (run_id, id)",
+      "kind": "p",
+      "source": "road_states",
+      "target": null
+    },
+    {
+      "definition": "FOREIGN KEY (run_id, edge_id) REFERENCES routing.edges(run_id, id) ON DELETE CASCADE",
+      "kind": "f",
+      "source": "road_states",
+      "target": "edges"
+    },
+    {
+      "definition": "PRIMARY KEY (run_id, id)",
+      "kind": "p",
+      "source": "road_transitions",
+      "target": null
+    },
+    {
+      "definition": "FOREIGN KEY (run_id, edge_id) REFERENCES routing.edges(run_id, id) ON DELETE CASCADE",
+      "kind": "f",
+      "source": "road_transitions",
+      "target": "edges"
+    },
+    {
+      "definition": "FOREIGN KEY (run_id, source) REFERENCES routing.road_states(run_id, id) ON DELETE CASCADE",
+      "kind": "f",
+      "source": "road_transitions",
+      "target": "road_states"
+    },
+    {
+      "definition": "FOREIGN KEY (run_id, target) REFERENCES routing.road_states(run_id, id) ON DELETE CASCADE",
+      "kind": "f",
+      "source": "road_transitions",
+      "target": "road_states"
+    },
+    {
+      "definition": "PRIMARY KEY (run_id, route_id, seq)",
+      "kind": "p",
+      "source": "route_edges",
+      "target": null
+    },
+    {
+      "definition": "FOREIGN KEY (run_id, edge_id) REFERENCES routing.edges(run_id, id)",
+      "kind": "f",
+      "source": "route_edges",
+      "target": "edges"
+    },
+    {
+      "definition": "FOREIGN KEY (run_id, route_id) REFERENCES routing.routes(run_id, id) ON DELETE CASCADE",
+      "kind": "f",
+      "source": "route_edges",
+      "target": "routes"
+    },
+    {
+      "definition": "PRIMARY KEY (run_id, id)",
+      "kind": "p",
+      "source": "route_sets",
+      "target": null
+    },
+    {
+      "definition": "FOREIGN KEY (profile_key, profile_version) REFERENCES routing.profiles(profile_key, version) MATCH FULL",
+      "kind": "f",
+      "source": "route_sets",
+      "target": "profiles"
+    },
+    {
+      "definition": "FOREIGN KEY (run_id) REFERENCES routing.runs(run_id) ON DELETE CASCADE",
+      "kind": "f",
+      "source": "route_sets",
+      "target": "runs"
+    },
+    {
+      "definition": "FOREIGN KEY (run_id, source) REFERENCES routing.nodes(run_id, id)",
+      "kind": "f",
+      "source": "route_sets",
+      "target": "nodes"
+    },
+    {
+      "definition": "FOREIGN KEY (run_id, target) REFERENCES routing.nodes(run_id, id)",
+      "kind": "f",
+      "source": "route_sets",
+      "target": "nodes"
+    },
+    {
+      "definition": "PRIMARY KEY (run_id, id)",
+      "kind": "p",
+      "source": "routes",
+      "target": null
+    },
+    {
+      "definition": "FOREIGN KEY (run_id, set_id) REFERENCES routing.route_sets(run_id, id) ON DELETE CASCADE",
+      "kind": "f",
+      "source": "routes",
+      "target": "route_sets"
+    },
+    {
+      "definition": "PRIMARY KEY (run_id, role)",
+      "kind": "p",
+      "source": "run_areas",
+      "target": null
+    },
+    {
+      "definition": "FOREIGN KEY (run_id) REFERENCES routing.runs(run_id) ON DELETE CASCADE",
+      "kind": "f",
+      "source": "run_areas",
+      "target": "runs"
+    },
+    {
+      "definition": "PRIMARY KEY (run_id)",
+      "kind": "p",
+      "source": "runs",
+      "target": null
+    },
+    {
+      "definition": "PRIMARY KEY (version)",
+      "kind": "p",
+      "source": "schema_migrations",
+      "target": null
+    },
+    {
+      "definition": "PRIMARY KEY (source_id)",
+      "kind": "p",
+      "source": "sources",
+      "target": null
+    },
+    {
+      "definition": "PRIMARY KEY (run_id, hazard_id)",
+      "kind": "p",
+      "source": "thermal_events",
+      "target": null
+    },
+    {
+      "definition": "FOREIGN KEY (run_id, hazard_id, kind) REFERENCES routing.hazards(run_id, id, kind) ON DELETE CASCADE",
+      "kind": "f",
+      "source": "thermal_events",
+      "target": "hazards"
+    },
+    {
+      "definition": "PRIMARY KEY (run_id, id)",
+      "kind": "p",
+      "source": "weather",
+      "target": null
+    },
+    {
+      "definition": "FOREIGN KEY (run_id, dataset_key) REFERENCES routing.datasets(run_id, dataset_key) ON DELETE CASCADE",
+      "kind": "f",
+      "source": "weather",
+      "target": "datasets"
+    },
+    {
+      "definition": "PRIMARY KEY (run_id, hazard_id)",
+      "kind": "p",
+      "source": "weather_hazards",
+      "target": null
+    },
+    {
+      "definition": "FOREIGN KEY (run_id, hazard_id, kind) REFERENCES routing.hazards(run_id, id, kind) ON DELETE CASCADE",
+      "kind": "f",
+      "source": "weather_hazards",
+      "target": "hazards"
+    },
+    {
+      "definition": "FOREIGN KEY (run_id, weather_id) REFERENCES routing.weather(run_id, id)",
+      "kind": "f",
+      "source": "weather_hazards",
+      "target": "weather"
+    }
+  ],
+  "schema": [
+    {
+      "column_name": "run_id",
+      "data_type": "uuid",
+      "table_name": "aerial_models",
+      "udt_name": "uuid"
+    },
+    {
+      "column_name": "profile",
+      "data_type": "jsonb",
+      "table_name": "aerial_models",
+      "udt_name": "jsonb"
+    },
+    {
+      "column_name": "context",
+      "data_type": "jsonb",
+      "table_name": "aerial_models",
+      "udt_name": "jsonb"
+    },
+    {
+      "column_name": "clearance_verified",
+      "data_type": "boolean",
+      "table_name": "aerial_models",
+      "udt_name": "bool"
+    },
+    {
+      "column_name": "run_id",
+      "data_type": "uuid",
+      "table_name": "airspace_zones",
+      "udt_name": "uuid"
+    },
+    {
+      "column_name": "hazard_id",
+      "data_type": "bigint",
+      "table_name": "airspace_zones",
+      "udt_name": "int8"
+    },
+    {
+      "column_name": "kind",
+      "data_type": "text",
+      "table_name": "airspace_zones",
+      "udt_name": "text"
+    },
+    {
+      "column_name": "code",
+      "data_type": "text",
+      "table_name": "airspace_zones",
+      "udt_name": "text"
+    },
+    {
+      "column_name": "lower_limit",
+      "data_type": "text",
+      "table_name": "airspace_zones",
+      "udt_name": "text"
+    },
+    {
+      "column_name": "upper_limit",
+      "data_type": "text",
+      "table_name": "airspace_zones",
+      "udt_name": "text"
+    },
+    {
+      "column_name": "conditions",
+      "data_type": "text",
+      "table_name": "airspace_zones",
+      "udt_name": "text"
+    },
+    {
+      "column_name": "document_page",
+      "data_type": "text",
+      "table_name": "airspace_zones",
+      "udt_name": "text"
+    },
+    {
+      "column_name": "original_record",
+      "data_type": "text",
+      "table_name": "airspace_zones",
+      "udt_name": "text"
+    },
+    {
+      "column_name": "run_id",
+      "data_type": "uuid",
+      "table_name": "base_catalogue",
+      "udt_name": "uuid"
+    },
+    {
+      "column_name": "provider_id",
+      "data_type": "text",
+      "table_name": "base_catalogue",
+      "udt_name": "text"
+    },
+    {
+      "column_name": "node_id",
+      "data_type": "bigint",
+      "table_name": "base_catalogue",
+      "udt_name": "int8"
+    },
+    {
+      "column_name": "name",
+      "data_type": "text",
+      "table_name": "base_catalogue",
+      "udt_name": "text"
+    },
+    {
+      "column_name": "candidate",
+      "data_type": "boolean",
+      "table_name": "base_catalogue",
+      "udt_name": "bool"
+    },
+    {
+      "column_name": "inside_study",
+      "data_type": "boolean",
+      "table_name": "base_catalogue",
+      "udt_name": "bool"
+    },
+    {
+      "column_name": "distance_to_study_m",
+      "data_type": "double precision",
+      "table_name": "base_catalogue",
+      "udt_name": "float8"
+    },
+    {
+      "column_name": "selection_reason",
+      "data_type": "text",
+      "table_name": "base_catalogue",
+      "udt_name": "text"
+    },
+    {
+      "column_name": "source_refs",
+      "data_type": "jsonb",
+      "table_name": "base_catalogue",
+      "udt_name": "jsonb"
+    },
+    {
+      "column_name": "original_record",
+      "data_type": "jsonb",
+      "table_name": "base_catalogue",
+      "udt_name": "jsonb"
+    },
+    {
+      "column_name": "geom",
+      "data_type": "USER-DEFINED",
+      "table_name": "base_catalogue",
+      "udt_name": "geometry"
+    },
+    {
+      "column_name": "run_id",
+      "data_type": "uuid",
+      "table_name": "base_locations",
+      "udt_name": "uuid"
+    },
+    {
+      "column_name": "provider_id",
+      "data_type": "text",
+      "table_name": "base_locations",
+      "udt_name": "text"
+    },
+    {
+      "column_name": "source_id",
+      "data_type": "text",
+      "table_name": "base_locations",
+      "udt_name": "text"
+    },
+    {
+      "column_name": "node_id",
+      "data_type": "bigint",
+      "table_name": "base_locations",
+      "udt_name": "int8"
+    },
+    {
+      "column_name": "name",
+      "data_type": "text",
+      "table_name": "base_locations",
+      "udt_name": "text"
+    },
+    {
+      "column_name": "address",
+      "data_type": "text",
+      "table_name": "base_locations",
+      "udt_name": "text"
+    },
+    {
+      "column_name": "geom",
+      "data_type": "USER-DEFINED",
+      "table_name": "base_locations",
+      "udt_name": "geometry"
+    },
+    {
+      "column_name": "provenance",
+      "data_type": "jsonb",
+      "table_name": "base_locations",
+      "udt_name": "jsonb"
+    },
+    {
+      "column_name": "run_id",
+      "data_type": "uuid",
+      "table_name": "base_metadata",
+      "udt_name": "uuid"
+    },
+    {
+      "column_name": "node_id",
+      "data_type": "bigint",
+      "table_name": "base_metadata",
+      "udt_name": "int8"
+    },
+    {
+      "column_name": "dataset_key",
+      "data_type": "text",
+      "table_name": "base_metadata",
+      "udt_name": "text"
+    },
+    {
+      "column_name": "provider_id",
+      "data_type": "text",
+      "table_name": "base_metadata",
+      "udt_name": "text"
+    },
+    {
+      "column_name": "name",
+      "data_type": "text",
+      "table_name": "base_metadata",
+      "udt_name": "text"
+    },
+    {
+      "column_name": "commune",
+      "data_type": "text",
+      "table_name": "base_metadata",
+      "udt_name": "text"
+    },
+    {
+      "column_name": "address",
+      "data_type": "text",
+      "table_name": "base_metadata",
+      "udt_name": "text"
+    },
+    {
+      "column_name": "updated_on",
+      "data_type": "date",
+      "table_name": "base_metadata",
+      "udt_name": "date"
+    },
+    {
+      "column_name": "dataset_id",
+      "data_type": "uuid",
+      "table_name": "datasets",
+      "udt_name": "uuid"
+    },
+    {
+      "column_name": "run_id",
+      "data_type": "uuid",
+      "table_name": "datasets",
+      "udt_name": "uuid"
+    },
+    {
+      "column_name": "dataset_key",
+      "data_type": "text",
+      "table_name": "datasets",
+      "udt_name": "text"
+    },
+    {
+      "column_name": "source_id",
+      "data_type": "text",
+      "table_name": "datasets",
+      "udt_name": "text"
+    },
+    {
+      "column_name": "schema_version",
+      "data_type": "text",
+      "table_name": "datasets",
+      "udt_name": "text"
+    },
+    {
+      "column_name": "observed_at",
+      "data_type": "timestamp with time zone",
+      "table_name": "datasets",
+      "udt_name": "timestamptz"
+    },
+    {
+      "column_name": "extracted_at",
+      "data_type": "timestamp with time zone",
+      "table_name": "datasets",
+      "udt_name": "timestamptz"
+    },
+    {
+      "column_name": "file_sha256",
+      "data_type": "text",
+      "table_name": "datasets",
+      "udt_name": "text"
+    },
+    {
+      "column_name": "record_count",
+      "data_type": "integer",
+      "table_name": "datasets",
+      "udt_name": "int4"
+    },
+    {
+      "column_name": "status",
+      "data_type": "text",
+      "table_name": "datasets",
+      "udt_name": "text"
+    },
+    {
+      "column_name": "lineage",
+      "data_type": "jsonb",
+      "table_name": "datasets",
+      "udt_name": "jsonb"
+    },
+    {
+      "column_name": "validation",
+      "data_type": "jsonb",
+      "table_name": "datasets",
+      "udt_name": "jsonb"
+    },
+    {
+      "column_name": "run_id",
+      "data_type": "uuid",
+      "table_name": "edge_hazard",
+      "udt_name": "uuid"
+    },
+    {
+      "column_name": "edge_id",
+      "data_type": "bigint",
+      "table_name": "edge_hazard",
+      "udt_name": "int8"
+    },
+    {
+      "column_name": "hazard_id",
+      "data_type": "bigint",
+      "table_name": "edge_hazard",
+      "udt_name": "int8"
+    },
+    {
+      "column_name": "overlap_fraction",
+      "data_type": "double precision",
+      "table_name": "edge_hazard",
+      "udt_name": "float8"
+    },
+    {
+      "column_name": "blocked",
+      "data_type": "boolean",
+      "table_name": "edge_hazard",
+      "udt_name": "bool"
+    },
+    {
+      "column_name": "model_version",
+      "data_type": "text",
+      "table_name": "edge_hazard",
+      "udt_name": "text"
+    },
+    {
+      "column_name": "run_id",
+      "data_type": "uuid",
+      "table_name": "edges",
+      "udt_name": "uuid"
+    },
+    {
+      "column_name": "id",
+      "data_type": "bigint",
+      "table_name": "edges",
+      "udt_name": "int8"
+    },
+    {
+      "column_name": "natural_key",
+      "data_type": "text",
+      "table_name": "edges",
+      "udt_name": "text"
+    },
+    {
+      "column_name": "dataset_key",
+      "data_type": "text",
+      "table_name": "edges",
+      "udt_name": "text"
+    },
+    {
+      "column_name": "source",
+      "data_type": "bigint",
+      "table_name": "edges",
+      "udt_name": "int8"
+    },
+    {
+      "column_name": "target",
+      "data_type": "bigint",
+      "table_name": "edges",
+      "udt_name": "int8"
+    },
+    {
+      "column_name": "physical_key",
+      "data_type": "text",
+      "table_name": "edges",
+      "udt_name": "text"
+    },
+    {
+      "column_name": "geom",
+      "data_type": "USER-DEFINED",
+      "table_name": "edges",
+      "udt_name": "geometry"
+    },
+    {
+      "column_name": "length_km",
+      "data_type": "double precision",
+      "table_name": "edges",
+      "udt_name": "float8"
+    },
+    {
+      "column_name": "road_origin",
+      "data_type": "jsonb",
+      "table_name": "edges",
+      "udt_name": "jsonb"
+    },
+    {
+      "column_name": "run_id",
+      "data_type": "uuid",
+      "table_name": "evaluations",
+      "udt_name": "uuid"
+    },
+    {
+      "column_name": "set_id",
+      "data_type": "uuid",
+      "table_name": "evaluations",
+      "udt_name": "uuid"
+    },
+    {
+      "column_name": "scenario_sha256",
+      "data_type": "text",
+      "table_name": "evaluations",
+      "udt_name": "text"
+    },
+    {
+      "column_name": "scenario_count",
+      "data_type": "integer",
+      "table_name": "evaluations",
+      "udt_name": "int4"
+    },
+    {
+      "column_name": "unknown_count",
+      "data_type": "integer",
+      "table_name": "evaluations",
+      "udt_name": "int4"
+    },
+    {
+      "column_name": "resilience",
+      "data_type": "double precision",
+      "table_name": "evaluations",
+      "udt_name": "float8"
+    },
+    {
+      "column_name": "results",
+      "data_type": "jsonb",
+      "table_name": "evaluations",
+      "udt_name": "jsonb"
+    },
+    {
+      "column_name": "run_id",
+      "data_type": "uuid",
+      "table_name": "hazards",
+      "udt_name": "uuid"
+    },
+    {
+      "column_name": "id",
+      "data_type": "bigint",
+      "table_name": "hazards",
+      "udt_name": "int8"
+    },
+    {
+      "column_name": "dataset_key",
+      "data_type": "text",
+      "table_name": "hazards",
+      "udt_name": "text"
+    },
+    {
+      "column_name": "kind",
+      "data_type": "text",
+      "table_name": "hazards",
+      "udt_name": "text"
+    },
+    {
+      "column_name": "provider_id",
+      "data_type": "text",
+      "table_name": "hazards",
+      "udt_name": "text"
+    },
+    {
+      "column_name": "geom",
+      "data_type": "USER-DEFINED",
+      "table_name": "hazards",
+      "udt_name": "geometry"
+    },
+    {
+      "column_name": "state",
+      "data_type": "text",
+      "table_name": "hazards",
+      "udt_name": "text"
+    },
+    {
+      "column_name": "valid_from",
+      "data_type": "timestamp with time zone",
+      "table_name": "hazards",
+      "udt_name": "timestamptz"
+    },
+    {
+      "column_name": "valid_until",
+      "data_type": "timestamp with time zone",
+      "table_name": "hazards",
+      "udt_name": "timestamptz"
+    },
+    {
+      "column_name": "synthetic",
+      "data_type": "boolean",
+      "table_name": "hazards",
+      "udt_name": "bool"
+    },
+    {
+      "column_name": "model_version",
+      "data_type": "text",
+      "table_name": "hazards",
+      "udt_name": "text"
+    },
+    {
+      "column_name": "run_id",
+      "data_type": "uuid",
+      "table_name": "historical_risk",
+      "udt_name": "uuid"
+    },
+    {
+      "column_name": "hazard_id",
+      "data_type": "bigint",
+      "table_name": "historical_risk",
+      "udt_name": "int8"
+    },
+    {
+      "column_name": "kind",
+      "data_type": "text",
+      "table_name": "historical_risk",
+      "udt_name": "text"
+    },
+    {
+      "column_name": "ordinal_class",
+      "data_type": "smallint",
+      "table_name": "historical_risk",
+      "udt_name": "int2"
+    },
+    {
+      "column_name": "class_label",
+      "data_type": "text",
+      "table_name": "historical_risk",
+      "udt_name": "text"
+    },
+    {
+      "column_name": "period_start",
+      "data_type": "smallint",
+      "table_name": "historical_risk",
+      "udt_name": "int2"
+    },
+    {
+      "column_name": "period_end",
+      "data_type": "smallint",
+      "table_name": "historical_risk",
+      "udt_name": "int2"
+    },
+    {
+      "column_name": "run_id",
+      "data_type": "uuid",
+      "table_name": "landcover",
+      "udt_name": "uuid"
+    },
+    {
+      "column_name": "id",
+      "data_type": "bigint",
+      "table_name": "landcover",
+      "udt_name": "int8"
+    },
+    {
+      "column_name": "dataset_key",
+      "data_type": "text",
+      "table_name": "landcover",
+      "udt_name": "text"
+    },
+    {
+      "column_name": "provider_id",
+      "data_type": "text",
+      "table_name": "landcover",
+      "udt_name": "text"
+    },
+    {
+      "column_name": "category",
+      "data_type": "text",
+      "table_name": "landcover",
+      "udt_name": "text"
+    },
+    {
+      "column_name": "source_year",
+      "data_type": "integer",
+      "table_name": "landcover",
+      "udt_name": "int4"
+    },
+    {
+      "column_name": "repaired",
+      "data_type": "boolean",
+      "table_name": "landcover",
+      "udt_name": "bool"
+    },
+    {
+      "column_name": "geom",
+      "data_type": "USER-DEFINED",
+      "table_name": "landcover",
+      "udt_name": "geometry"
+    },
+    {
+      "column_name": "attributes",
+      "data_type": "jsonb",
+      "table_name": "landcover",
+      "udt_name": "jsonb"
+    },
+    {
+      "column_name": "original_area_ha",
+      "data_type": "double precision",
+      "table_name": "landcover",
+      "udt_name": "float8"
+    },
+    {
+      "column_name": "clipped_area_ha",
+      "data_type": "double precision",
+      "table_name": "landcover",
+      "udt_name": "float8"
+    },
+    {
+      "column_name": "original_record",
+      "data_type": "jsonb",
+      "table_name": "landcover",
+      "udt_name": "jsonb"
+    },
+    {
+      "column_name": "run_id",
+      "data_type": "uuid",
+      "table_name": "mission_evaluations",
+      "udt_name": "uuid"
+    },
+    {
+      "column_name": "evaluation_sha256",
+      "data_type": "text",
+      "table_name": "mission_evaluations",
+      "udt_name": "text"
+    },
+    {
+      "column_name": "scenario_sha256",
+      "data_type": "text",
+      "table_name": "mission_evaluations",
+      "udt_name": "text"
+    },
+    {
+      "column_name": "request",
+      "data_type": "jsonb",
+      "table_name": "mission_evaluations",
+      "udt_name": "jsonb"
+    },
+    {
+      "column_name": "result",
+      "data_type": "jsonb",
+      "table_name": "mission_evaluations",
+      "udt_name": "jsonb"
+    },
+    {
+      "column_name": "run_id",
+      "data_type": "uuid",
+      "table_name": "node_elevation",
+      "udt_name": "uuid"
+    },
+    {
+      "column_name": "node_id",
+      "data_type": "bigint",
+      "table_name": "node_elevation",
+      "udt_name": "int8"
+    },
+    {
+      "column_name": "dataset_key",
+      "data_type": "text",
+      "table_name": "node_elevation",
+      "udt_name": "text"
+    },
+    {
+      "column_name": "elevation_m",
+      "data_type": "double precision",
+      "table_name": "node_elevation",
+      "udt_name": "float8"
+    },
+    {
+      "column_name": "quality",
+      "data_type": "text",
+      "table_name": "node_elevation",
+      "udt_name": "text"
+    },
+    {
+      "column_name": "run_id",
+      "data_type": "uuid",
+      "table_name": "nodes",
+      "udt_name": "uuid"
+    },
+    {
+      "column_name": "id",
+      "data_type": "bigint",
+      "table_name": "nodes",
+      "udt_name": "int8"
+    },
+    {
+      "column_name": "natural_key",
+      "data_type": "text",
+      "table_name": "nodes",
+      "udt_name": "text"
+    },
+    {
+      "column_name": "dataset_key",
+      "data_type": "text",
+      "table_name": "nodes",
+      "udt_name": "text"
+    },
+    {
+      "column_name": "kind",
+      "data_type": "text",
+      "table_name": "nodes",
+      "udt_name": "text"
+    },
+    {
+      "column_name": "source_record_id",
+      "data_type": "text",
+      "table_name": "nodes",
+      "udt_name": "text"
+    },
+    {
+      "column_name": "geom",
+      "data_type": "USER-DEFINED",
+      "table_name": "nodes",
+      "udt_name": "geometry"
+    },
+    {
+      "column_name": "profile_key",
+      "data_type": "text",
+      "table_name": "profiles",
+      "udt_name": "text"
+    },
+    {
+      "column_name": "version",
+      "data_type": "integer",
+      "table_name": "profiles",
+      "udt_name": "int4"
+    },
+    {
+      "column_name": "wind_max_ms",
+      "data_type": "double precision",
+      "table_name": "profiles",
+      "udt_name": "float8"
+    },
+    {
+      "column_name": "temperature_min_c",
+      "data_type": "double precision",
+      "table_name": "profiles",
+      "udt_name": "float8"
+    },
+    {
+      "column_name": "temperature_max_c",
+      "data_type": "double precision",
+      "table_name": "profiles",
+      "udt_name": "float8"
+    },
+    {
+      "column_name": "surface_max_m",
+      "data_type": "double precision",
+      "table_name": "profiles",
+      "udt_name": "float8"
+    },
+    {
+      "column_name": "exposure_lambda",
+      "data_type": "double precision",
+      "table_name": "profiles",
+      "udt_name": "float8"
+    },
+    {
+      "column_name": "detour_factor",
+      "data_type": "double precision",
+      "table_name": "profiles",
+      "udt_name": "float8"
+    },
+    {
+      "column_name": "settings",
+      "data_type": "jsonb",
+      "table_name": "profiles",
+      "udt_name": "jsonb"
+    },
+    {
+      "column_name": "singleton",
+      "data_type": "boolean",
+      "table_name": "publication",
+      "udt_name": "bool"
+    },
+    {
+      "column_name": "run_id",
+      "data_type": "uuid",
+      "table_name": "publication",
+      "udt_name": "uuid"
+    },
+    {
+      "column_name": "published_at",
+      "data_type": "timestamp with time zone",
+      "table_name": "publication",
+      "udt_name": "timestamptz"
+    },
+    {
+      "column_name": "run_id",
+      "data_type": "uuid",
+      "table_name": "road_states",
+      "udt_name": "uuid"
+    },
+    {
+      "column_name": "id",
+      "data_type": "bigint",
+      "table_name": "road_states",
+      "udt_name": "int8"
+    },
+    {
+      "column_name": "edge_id",
+      "data_type": "bigint",
+      "table_name": "road_states",
+      "udt_name": "int8"
+    },
+    {
+      "column_name": "context",
+      "data_type": "ARRAY",
+      "table_name": "road_states",
+      "udt_name": "_int8"
+    },
+    {
+      "column_name": "run_id",
+      "data_type": "uuid",
+      "table_name": "road_transitions",
+      "udt_name": "uuid"
+    },
+    {
+      "column_name": "id",
+      "data_type": "bigint",
+      "table_name": "road_transitions",
+      "udt_name": "int8"
+    },
+    {
+      "column_name": "source",
+      "data_type": "bigint",
+      "table_name": "road_transitions",
+      "udt_name": "int8"
+    },
+    {
+      "column_name": "target",
+      "data_type": "bigint",
+      "table_name": "road_transitions",
+      "udt_name": "int8"
+    },
+    {
+      "column_name": "edge_id",
+      "data_type": "bigint",
+      "table_name": "road_transitions",
+      "udt_name": "int8"
+    },
+    {
+      "column_name": "run_id",
+      "data_type": "uuid",
+      "table_name": "route_edges",
+      "udt_name": "uuid"
+    },
+    {
+      "column_name": "route_id",
+      "data_type": "uuid",
+      "table_name": "route_edges",
+      "udt_name": "uuid"
+    },
+    {
+      "column_name": "seq",
+      "data_type": "integer",
+      "table_name": "route_edges",
+      "udt_name": "int4"
+    },
+    {
+      "column_name": "edge_id",
+      "data_type": "bigint",
+      "table_name": "route_edges",
+      "udt_name": "int8"
+    },
+    {
+      "column_name": "run_id",
+      "data_type": "uuid",
+      "table_name": "route_sets",
+      "udt_name": "uuid"
+    },
+    {
+      "column_name": "id",
+      "data_type": "uuid",
+      "table_name": "route_sets",
+      "udt_name": "uuid"
+    },
+    {
+      "column_name": "source",
+      "data_type": "bigint",
+      "table_name": "route_sets",
+      "udt_name": "int8"
+    },
+    {
+      "column_name": "target",
+      "data_type": "bigint",
+      "table_name": "route_sets",
+      "udt_name": "int8"
+    },
+    {
+      "column_name": "method",
+      "data_type": "text",
+      "table_name": "route_sets",
+      "udt_name": "text"
+    },
+    {
+      "column_name": "profile_key",
+      "data_type": "text",
+      "table_name": "route_sets",
+      "udt_name": "text"
+    },
+    {
+      "column_name": "profile_version",
+      "data_type": "integer",
+      "table_name": "route_sets",
+      "udt_name": "int4"
+    },
+    {
+      "column_name": "requested_at",
+      "data_type": "timestamp with time zone",
+      "table_name": "route_sets",
+      "udt_name": "timestamptz"
+    },
+    {
+      "column_name": "run_id",
+      "data_type": "uuid",
+      "table_name": "routes",
+      "udt_name": "uuid"
+    },
+    {
+      "column_name": "id",
+      "data_type": "uuid",
+      "table_name": "routes",
+      "udt_name": "uuid"
+    },
+    {
+      "column_name": "set_id",
+      "data_type": "uuid",
+      "table_name": "routes",
+      "udt_name": "uuid"
+    },
+    {
+      "column_name": "rank",
+      "data_type": "smallint",
+      "table_name": "routes",
+      "udt_name": "int2"
+    },
+    {
+      "column_name": "length_km",
+      "data_type": "double precision",
+      "table_name": "routes",
+      "udt_name": "float8"
+    },
+    {
+      "column_name": "score",
+      "data_type": "double precision",
+      "table_name": "routes",
+      "udt_name": "float8"
+    },
+    {
+      "column_name": "geom",
+      "data_type": "USER-DEFINED",
+      "table_name": "routes",
+      "udt_name": "geometry"
+    },
+    {
+      "column_name": "run_id",
+      "data_type": "uuid",
+      "table_name": "run_areas",
+      "udt_name": "uuid"
+    },
+    {
+      "column_name": "role",
+      "data_type": "text",
+      "table_name": "run_areas",
+      "udt_name": "text"
+    },
+    {
+      "column_name": "geom",
+      "data_type": "USER-DEFINED",
+      "table_name": "run_areas",
+      "udt_name": "geometry"
+    },
+    {
+      "column_name": "buffer_m",
+      "data_type": "double precision",
+      "table_name": "run_areas",
+      "udt_name": "float8"
+    },
+    {
+      "column_name": "run_id",
+      "data_type": "uuid",
+      "table_name": "runs",
+      "udt_name": "uuid"
+    },
+    {
+      "column_name": "input_hash",
+      "data_type": "text",
+      "table_name": "runs",
+      "udt_name": "text"
+    },
+    {
+      "column_name": "scope",
+      "data_type": "text",
+      "table_name": "runs",
+      "udt_name": "text"
+    },
+    {
+      "column_name": "mode",
+      "data_type": "text",
+      "table_name": "runs",
+      "udt_name": "text"
+    },
+    {
+      "column_name": "status",
+      "data_type": "text",
+      "table_name": "runs",
+      "udt_name": "text"
+    },
+    {
+      "column_name": "configuration",
+      "data_type": "jsonb",
+      "table_name": "runs",
+      "udt_name": "jsonb"
+    },
+    {
+      "column_name": "started_at",
+      "data_type": "timestamp with time zone",
+      "table_name": "runs",
+      "udt_name": "timestamptz"
+    },
+    {
+      "column_name": "finished_at",
+      "data_type": "timestamp with time zone",
+      "table_name": "runs",
+      "udt_name": "timestamptz"
+    },
+    {
+      "column_name": "error",
+      "data_type": "text",
+      "table_name": "runs",
+      "udt_name": "text"
+    },
+    {
+      "column_name": "version",
+      "data_type": "integer",
+      "table_name": "schema_migrations",
+      "udt_name": "int4"
+    },
+    {
+      "column_name": "checksum",
+      "data_type": "text",
+      "table_name": "schema_migrations",
+      "udt_name": "text"
+    },
+    {
+      "column_name": "applied_at",
+      "data_type": "timestamp with time zone",
+      "table_name": "schema_migrations",
+      "udt_name": "timestamptz"
+    },
+    {
+      "column_name": "source_id",
+      "data_type": "text",
+      "table_name": "sources",
+      "udt_name": "text"
+    },
+    {
+      "column_name": "product",
+      "data_type": "text",
+      "table_name": "sources",
+      "udt_name": "text"
+    },
+    {
+      "column_name": "url",
+      "data_type": "text",
+      "table_name": "sources",
+      "udt_name": "text"
+    },
+    {
+      "column_name": "description",
+      "data_type": "text",
+      "table_name": "sources",
+      "udt_name": "text"
+    },
+    {
+      "column_name": "run_id",
+      "data_type": "uuid",
+      "table_name": "thermal_events",
+      "udt_name": "uuid"
+    },
+    {
+      "column_name": "hazard_id",
+      "data_type": "bigint",
+      "table_name": "thermal_events",
+      "udt_name": "int8"
+    },
+    {
+      "column_name": "kind",
+      "data_type": "text",
+      "table_name": "thermal_events",
+      "udt_name": "text"
+    },
+    {
+      "column_name": "acquired_at",
+      "data_type": "timestamp with time zone",
+      "table_name": "thermal_events",
+      "udt_name": "timestamptz"
+    },
+    {
+      "column_name": "confidence",
+      "data_type": "text",
+      "table_name": "thermal_events",
+      "udt_name": "text"
+    },
+    {
+      "column_name": "fire_radiative_power_mw",
+      "data_type": "double precision",
+      "table_name": "thermal_events",
+      "udt_name": "float8"
+    },
+    {
+      "column_name": "buffer_m",
+      "data_type": "double precision",
+      "table_name": "thermal_events",
+      "udt_name": "float8"
+    },
+    {
+      "column_name": "run_id",
+      "data_type": "uuid",
+      "table_name": "weather",
+      "udt_name": "uuid"
+    },
+    {
+      "column_name": "id",
+      "data_type": "bigint",
+      "table_name": "weather",
+      "udt_name": "int8"
+    },
+    {
+      "column_name": "dataset_key",
+      "data_type": "text",
+      "table_name": "weather",
+      "udt_name": "text"
+    },
+    {
+      "column_name": "cell",
+      "data_type": "USER-DEFINED",
+      "table_name": "weather",
+      "udt_name": "geometry"
+    },
+    {
+      "column_name": "valid_at",
+      "data_type": "timestamp with time zone",
+      "table_name": "weather",
+      "udt_name": "timestamptz"
+    },
+    {
+      "column_name": "issued_at",
+      "data_type": "timestamp with time zone",
+      "table_name": "weather",
+      "udt_name": "timestamptz"
+    },
+    {
+      "column_name": "temperature_c",
+      "data_type": "double precision",
+      "table_name": "weather",
+      "udt_name": "float8"
+    },
+    {
+      "column_name": "relative_humidity_pct",
+      "data_type": "double precision",
+      "table_name": "weather",
+      "udt_name": "float8"
+    },
+    {
+      "column_name": "wind_speed_ms",
+      "data_type": "double precision",
+      "table_name": "weather",
+      "udt_name": "float8"
+    },
+    {
+      "column_name": "wind_gust_ms",
+      "data_type": "double precision",
+      "table_name": "weather",
+      "udt_name": "float8"
+    },
+    {
+      "column_name": "wind_direction_deg",
+      "data_type": "double precision",
+      "table_name": "weather",
+      "udt_name": "float8"
+    },
+    {
+      "column_name": "precipitation_mm",
+      "data_type": "double precision",
+      "table_name": "weather",
+      "udt_name": "float8"
+    },
+    {
+      "column_name": "run_id",
+      "data_type": "uuid",
+      "table_name": "weather_hazards",
+      "udt_name": "uuid"
+    },
+    {
+      "column_name": "hazard_id",
+      "data_type": "bigint",
+      "table_name": "weather_hazards",
+      "udt_name": "int8"
+    },
+    {
+      "column_name": "kind",
+      "data_type": "text",
+      "table_name": "weather_hazards",
+      "udt_name": "text"
+    },
+    {
+      "column_name": "weather_id",
+      "data_type": "bigint",
+      "table_name": "weather_hazards",
+      "udt_name": "int8"
+    },
+    {
+      "column_name": "reason",
+      "data_type": "text",
+      "table_name": "weather_hazards",
+      "udt_name": "text"
+    }
+  ],
+  "run_id": "b80f9b83-cad7-53b8-a8b8-34a2a17e614c",
+  "topology": {
+    "dijkstra_smoke": {
+      "distance_km": 1.1313708498990933,
+      "source": 2122332705314860074,
+      "steps": 1,
+      "target": 8577355180716890958
+    },
+    "directed_edges": 1114,
+    "invalid_edges": 0,
+    "isolated_nodes": 0,
+    "length_unit": "km",
+    "nodes": 154,
+    "reverse_cost": -1,
+    "spatial": {
+      "area_km2": 97.7162332977299,
+      "candidate_bases": 5,
+      "outside_edges": 0,
+      "outside_nodes": 0
+    },
+    "srid": 32719,
+    "strong_components": [
+      {
+        "component": 117035864987528410,
+        "size": 154
+      }
+    ],
+    "strong_count": 1,
+    "warnings": [],
+    "weak_components": [
+      {
+        "component": 117035864987528410,
+        "size": 154
+      }
+    ],
+    "weak_count": 1
+  },
+  "counts": {
+    "A1": 16,
+    "A2": 0,
+    "A3": 2,
+    "A4": 26,
+    "I": 1268,
+    "M1": 16,
+    "M2": 679,
+    "M3": 154,
+    "M4": 48
+  },
+  "software_sha256": "486003263a4f1979e27904e03f1409257cd124d14a3c46db2e5e8558199262c3"
+}

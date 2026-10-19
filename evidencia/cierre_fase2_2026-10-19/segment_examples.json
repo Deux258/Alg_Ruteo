@@ -1,0 +1,39 @@
+{
+  "aip": {
+    "after_intersects": true,
+    "before_intersects": false,
+    "synthetic": true
+  },
+  "crs": "EPSG:32719",
+  "firms": {
+    "after_intersects": true,
+    "before_intersects": false,
+    "buffer_m": 250
+  },
+  "history": {
+    "max_historical_class": 4,
+    "ordinal_class": 5,
+    "reason": "historical_class_exceeded"
+  },
+  "length_m": 1000.0,
+  "line": {
+    "coordinates": [
+      [
+        300000.0,
+        6330000.0
+      ],
+      [
+        301000.0,
+        6330000.0
+      ]
+    ],
+    "type": "LineString"
+  },
+  "synthetic": true,
+  "warning": "Fixture sintético de reglas, separado de las cero detecciones FIRMS reales; no es un cierre observado",
+  "weather": {
+    "after_s": 125.0,
+    "before_s": 100.0,
+    "excluded_when_gust_ms": 8
+  }
+}

@@ -1,40 +1,37 @@
-# Matriz de cobertura de fase2
+# Matriz de cierre de fase 2
 
-Presentación: fase2_valparaiso.pptx, 22 diapositivas editables con notas de fuentes.
-Es una matriz de evidencias, no una autoasignación de60 puntos. Se usa el mismo run
-b80f9b83-cad7-53b8-a8b8-34a2a17e614c y los hashes en evidencia/fase2_2026-10-19.
+Entrega actual: fase2_valparaiso_cierre.pptx, 22 principales y 14 anexos.
+Referencia de criterios: matriz de 60 puntos del plan_accion_fase2.pdf aportado por
+el usuario. Las imágenes originales no están archivadas en este repositorio; esta
+matriz no se presenta como una nueva verificación literal de ellas ni como nota otorgada.
 
-| ID | Pts | Criterio | Diapositiva | Evidencia / implementación |
+| ID | Pts | Criterio | Láminas | Evidencia y juicio crítico |
 |---|---:|---|---|---|
-|1|2|Docker y extensiones|3|main_limpio.log; pruebas.json; Compose e imágenes fijadas|
-|2|2|Diagrama y SQL|4–5|Diagrama editable resumido; BD/diagrama_fase2_relaciones.png; DDL y migraciones002–004|
-|3.1|6|Cuatro ET metadata|8–9|Metadata/m1_bases a m4_clima; fuente y transformación|
-|3.2|2|Cuatro cargas metadata|10|Módulos --load; tablas y conteos reales|
-|4.1|6|Cuatro ET amenazas|11–12|Amenazas/a1_meteorologia a a4_historial|
-|4.2|2|Cuatro cargas amenazas|13|Cargadores, hazards y tablas tipadas; A2 vacío válido|
-|5.1|3|Cuatro modelos de falla|14|Meteorología, bufferFIRMS, AIP2D y exposición histórica|
-|5.2|2|Costos y exclusiones|15|Segundos con viento; filtros duros; exposición ordinal separada|
-|6.1|3|Preferencias|15|budget_s, wind_limit_ms y detour_factor efectivos; captura y pruebas|
-|6.2|2|Defaults|15|1200s utilizables,8m/s y1.20; perfil del informe|
-|7.1|4|Algoritmo y artículo|16|Yen1971, pgr_KSP; adaptación y límites explícitos|
-|7.2|6|Funcionamiento|17|Filtros,9 pares, retorno y ausencia de candidatos|
-|8|4|Dos rutas Dijkstra|18|D1/D2 de ida y retorno; longitudes; mapa y pruebas independientes|
-|9|4|Dos opciones propuestas|19|Dos idas distintas con misión completa y perfil|
-|10|6|Métrica implementada|20|Catálogo, fórmula, bucle sin replanificar y escenarios desconocidos|
-|11.1|4|Comparación en mapa|18–21|Mapas separados, mismo OD y condiciones; cuatro opciones|
-|11.2|2|Diferencial|21|99% frente a99%; delta0pp, sin ocultar ausencia de mejora|
+|1|2|Docker y extensiones|3,22|Pruebas y main con volumen nuevo. Runner GitLab pendiente.|
+|2|2|Diagrama y SQL|4–5,23–24|29 entidades, PK/FK reales; SQL y migraciones intactos. Diagrama completo en BD/.|
+|3.1|6|Cuatro ET metadata|8–9,26–29|Fuentes, ejecutables y proyecciones JSON reales; se indican campos omitidos.|
+|3.2|2|Cuatro cargas metadata|10,26–29|Cargador inequívoco y conteos reconciliados.|
+|4.1|6|Cuatro ET amenazas|11–12,30–33|Registros reales; FIRMS vacío se conserva sin inventar focos.|
+|4.2|2|Cuatro cargas amenazas|13,30–33|Cargas probadas, originales y hashes disponibles.|
+|5.1|3|Cuatro modelos de falla|14,33,35|A4 añade exclusión preventiva opcional. No es fuego activo; interpretación docente pendiente.|
+|5.2|2|Costos y exclusiones|15,35|Metros/segundos y ejemplos ejecutados. Los fixtures sintéticos están identificados.|
+|6.1|3|Preferencias|15,33|Presupuesto, viento, desvío y clase histórica efectivos, con pruebas de UI/exportación.|
+|6.2|2|Defaults|15,22|1200 s, 8 m/s, 1,20 y política histórica desactivada; compatibilidad probada.|
+|7.1|4|Algoritmo y artículo|16|Yen 1971, título y DOI. No atribuye al artículo una garantía de resiliencia.|
+|7.2|6|Funcionamiento|17,36|Hasta nueve pares, exclusiones, reserva, retorno y búsqueda limitada.|
+|8|4|Dos rutas Dijkstra|18,34|SQL ejecutado y resultado, costo km; D2 distinta por exclusión de arcos de D1.|
+|9|4|Dos opciones propuestas|19,36|Ejemplo real con dos; el lote informa cuando hay una o ninguna.|
+|10|6|Métrica implementada|20–21|120 casos fijados, 12000 escenarios, misiones congeladas y denominador común.|
+|11.1|4|Comparación en mapa|18–19,21|Cuatro opciones y controles individuales D1/D2/P1/P2. Se informa proximidad/solapamiento.|
+|11.2|2|Diferencial|21|+1,65 pp medio; default +0,03, clase 4 +3,27. Incluye dos empeoramientos.|
+|Total|60|Cobertura técnica documentada||Sin autoasignación de puntaje.|
 
-Consigna adicional: infraestructura y contrato en6–7, main/Docker en3/22, fuentes/
-diccionarios/cargadores en8–15, webLeaflet y evidencia de uso en las capturas vinculadas.
-Los archivos originales conservan SHA y se explican los JSON derivados de evaluación.
+Infraestructura, main, Leaflet, diccionarios y los nueve JSON quedan en 3,6–7,25–33.
+Los anexos son contenido visible de la presentación, no solo notas o enlaces al código.
+Los ejemplos de mapas 18–19 conservan el caso retrospectivo anterior; el lote nuevo usa
+horas posteriores a adquisición y no filtra por viento favorable. Las condiciones
+siguen siendo estáticas durante cada misión.
 
-## Antes de entregar
-
-Revisar la presentación como equipo, confirmar plazo y formato aceptado por el docente.
-Verificar el repositorio GitLab UDP y subir el archivo a Canvas. Esta implementación no
-publicó en esas plataformas. El PDF del informe y plan originales contiene una referencia
-al área previa: no mezclar sus85 nodos/93,28km² con los154 nodos/54,92km² de vigilancia
-actual y97,72km² de tránsito. El retorno se incluye en las métricas de esta versión.
-
-La comparación es estática, retrospectiva y con fallas sintéticas. No certifica vuelo,
-disjunción geográfica, superioridad estadística ni toda la hipótesis temporal de fase1.
+Pendientes externos: revisión del criterio 5.1 y de la rúbrica original, publicación
+en el proyecto correcto de GitLab UDP, ejecución CI allí y entrega en Canvas por el equipo.
+No se exige inventar un diferencial positivo ni se garantiza nota máxima.

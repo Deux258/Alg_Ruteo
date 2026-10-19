@@ -20,6 +20,8 @@
 <label for="budget">Presupuesto utilizable (s, máximo 1200)</label><input id="budget" type="number" min="1" max="1200" value="1200">
 <label for="wind-limit">Límite de viento y racha (m/s, máximo 8)</label><input id="wind-limit" type="number" min="0.01" max="8" step="0.01" value="8">
 <label for="detour">Factor máximo de desvío (1 a 1,20)</label><input id="detour" type="number" min="1" max="1.2" step="0.01" value="1.2">
+<label for="history-limit">Límite preventivo de recurrencia histórica</label><select id="history-limit"><option value="">Desactivado: ordenar por exposición</option><option value="1">Clase máxima 1</option><option value="2">Clase máxima 2</option><option value="3">Clase máxima 3</option><option value="4">Clase máxima 4</option><option value="5">Clase máxima 5</option></select>
+<p class="small">Política preventiva simulada sobre recurrencia 2020–2024. Al activarla se excluyen clases superiores y tramos sin información. No representa incendios activos.</p>
 <p class="small">Defaults del informe; solo se permiten restricciones más exigentes. Condiciones congeladas en la hora elegida durante toda la misión.</p></details>
 <button id="calculate" disabled>Calcular rutas aéreas</button><button id="compare" class="secondary" disabled>Comparar misiones y resiliencia</button><p id="counts" class="small"></p></section>
 <section id="comparison-summary" hidden aria-live="polite"></section>

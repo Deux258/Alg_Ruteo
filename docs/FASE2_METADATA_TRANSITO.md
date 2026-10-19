@@ -91,6 +91,12 @@ Longitud km no se suma a segundos ni exposición. A4 usa (clase-1)/4, solapes co
 1 para metros sin cobertura, sin convertirlo en probabilidad. El dato desconocido se informa aparte.
 
 `preferences` opcional acepta budget_s en (0,1200], wind_limit_ms en (0,8], detour_factor en [1,1.2].
+También acepta `max_historical_class`: entero 1–5 o null, predeterminado null. Al activarlo
+excluye clases históricas superiores y tramos sin cobertura, con causas diferenciadas.
+Es una política preventiva académica, no un cierre observado ni un incendio actual.
+Se aplica a segmentos completos y extremos UTM, tanto al generar la propuesta como al
+evaluar ambos métodos. Dijkstra conserva su generación por distancia. Las evaluaciones
+nuevas declaran `evaluation_version=mission-comparison-v2`; las anteriores se conservan.
 No acepta claves ajenas, booleanos ni números no finitos. Omitir usa defaults. La capa A1 precalculada
 muestra defaults; el ruteador recalcula la meteorología con el perfil efectivo solicitado.
 
@@ -137,6 +143,29 @@ solo inserción e idempotencia por SHA. No fuerza nodos temporales en route_sets
 comparison_<sha>.json y scenarios_<sha>.json con solicitud, geometrías, escenarios y perfil. Ambos
 archivos quedan documentados aquí; el CLI es su productor y cargador asociado. mapa.json/diagnostico.json
 son evidencias derivadas del mismo run, no nuevas fuentes ETL.
+
+## Evaluación por lote
+
+`./main evaluar --experiment config/evaluacion_fase2.json` es excluyente con `--request`.
+El protocolo fijo fase2-batch-v1 utiliza cinco bases, cuatro objetivos extremos UTM
+(norte, sur, este, oeste; sin repetir, empates por ID), tres horas disponibles posteriores
+a adquisición (primera, central y última, sin filtrar por viento), y dos perfiles:
+predeterminado y clase histórica máxima 4. Las reducciones por falta de datos quedan
+registradas. `plan.json` se escribe antes de ejecutar los algoritmos.
+
+Salida `experiment_<sha>/`: plan, summary y una carpeta por caso con comparison/scenarios.
+Productor/cargador: core.mission_evaluation, invocado por main con rol ETL; las comparaciones
+se insertan en mission_evaluations y el resumen se conserva en archivo. No se añaden
+tablas ni se reemplazan instantáneas. Los errores inesperados interrumpen el comando;
+el plan y las comparaciones ya producidas permanecen, sin resumen de éxito falso.
+
+`summary.json` incluye total/valid/unknown_cases, denominador caso-escenario común,
+media de supervivencia por caso, diferencial medio/mínimo/máximo y conteos de mejoras,
+empates y empeoramientos. También disponibilidad de dos opciones, factibilidad en control,
+estados, causas y fracción de la segunda ida a 50 m de la primera. Una misión sin opciones
+cuenta como cero con condiciones conocidas; los desconocidos se excluyen de ambos métodos.
+`by_profile` separa los dos perfiles. No se seleccionan casos por sus resultados y no se
+interpreta la media como estimación estadística de éxito real. Plan y resultado tienen SHA.
 
 ## Reproducibilidad y software
 

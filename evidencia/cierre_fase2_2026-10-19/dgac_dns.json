@@ -1,0 +1,7 @@
+{
+  "error": "[Errno -2] Name or service not known",
+  "host": "aipchile.dgac.gob.cl",
+  "recorded_at_utc": "2026-10-19T13:33:50.913516+00:00",
+  "source_url": "https://aipchile.dgac.gob.cl/dasa/aip_chile_con_contenido/ais/2%20ENR%20Parte%202/ENR%205%20Zonas%20Prohibidas%2C%20Restringidas%20y%20Peligrosas/ENR%205.1-1%20Zonas%20P%2C%20R%2C%20D.pdf",
+  "status": "dns_error"
+}
