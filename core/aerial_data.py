@@ -1,17 +1,13 @@
 """S1-S7 reales; corredores académicos derivados, nunca vuelos observados."""
-import csv
 import hashlib
-import io
 import json
 import math
-import re
 from datetime import datetime,timedelta,timezone
 from functools import lru_cache
 from uuid import UUID,NAMESPACE_URL,uuid5
 
 import rasterio
-from pyproj import Transformer,Geod
-from pypdf import PdfReader
+from pyproj import Transformer
 from shapely import make_valid
 from shapely.geometry import shape,Point,LineString,Polygon,MultiPolygon,mapping
 from shapely.ops import transform,unary_union
@@ -58,38 +54,12 @@ def load_sources(config):
     return manifest,data
 
 
-def airspace(path):
-    """Parser acotado al catálogo S6 del informe; falla si cambia su estructura."""
-    records=[];geod=Geod(ellps='WGS84')
-    reader=PdfReader(path)
-    for code in ['SC-P29','SC-P30','SC-P50']:
-        found=[]
-        for page_number,page in enumerate(reader.pages,1):
-            text=page.extract_text() or ''
-            if code not in text:continue
-            block=re.split(r'SC-[PRD]\d+',text.split(code,1)[1])[0]
-            coord=re.search(r'(\d{2})\s+(\d{2})\s+(\d{2}(?:[.,]\d+)?)\s*S\s*/?\s*(\d{2})\s+(\d{2})\s+(\d{2}(?:[.,]\d+)?)\s*W',block)
-            radius=re.search(r'(?:radio\s+|de\s+)(\d+(?:[.,]\d+)?)\s*(NM|m)\b',block,re.I)
-            if not coord or not radius:raise ValueError('AIP cambió; revisar parser '+code)
-            a,b,c,d,e,f=map(lambda s:float(s.replace(',','.')),coord.groups())
-            lat=-(a+b/60+c/3600);lon=-(d+e/60+f/3600)
-            metres=float(radius[1].replace(',','.'))*(1852 if radius[2].upper()=='NM' else 1)
-            coords=[geod.fwd(lon,lat,bearing,metres)[:2] for bearing in range(360)];coords.append(coords[0])
-            found.append(dict(provider_id=code,code=code,geometry=mapping(Polygon(coords)),
-                radius_m=metres,center=[lon,lat],lower_limit='GND/MSL (ver original)',
-                upper_limit='Conservado en original_record; exclusión 2D',conditions=block.strip(),
-                document_page=str(page_number),original_record=block.strip()))
-        if len(found)!=1:raise ValueError('AIP registro ausente/ambiguo '+code)
-        records.extend(found)
-    return records
-
-
 def assemble(config):
     manifest,raw=load_sources(config);area=load_area(ROOT/config['aoi_geojson'])
     profile=json.loads((ROOT/config['aerial_profile']).read_text(encoding='utf-8'))
     records={key:[] for key in KEYS}
     repairs={}
-    for key,source in [('M2','S2'),('A4','S7')]:
+    for key,source in [('M2','S2')]:
         repaired=0
         for f in raw[source]:
             geom=shape(f['geometry']);bad=not geom.is_valid
@@ -104,6 +74,8 @@ def assemble(config):
                 item.update(ordinal_class=ordinal,class_label=p['recurrencia'],period_start=2020,period_end=2024)
             records[key].append(item)
         repairs[key]=repaired
+    from Amenazas.a4_historial import transformar as transformar_a4
+    records['A4'],repairs['A4']=transformar_a4(raw['S7'],area,manifest['sources']['S7']['id_field'],polygonal)
     for f in raw['S1']:
         if area.covers(shape(f['geometry'])):
             p=f['properties'];records['M1'].append(dict(provider_id=str(p['objectid_1']),name=p['nombre'],commune=p.get('comuna'),address=p.get('direccion'),geometry=f['geometry']))
@@ -152,24 +124,18 @@ def assemble(config):
         records['M4'].append(row)
     acquisition=iso(manifest['fetched_at_utc']);clock=acquisition.replace(minute=0,second=0,microsecond=0)
     if not any(iso(r['valid_at'])==clock for r in records['M4']):clock=iso(records['M4'][0]['valid_at'])
-    for row in records['M4']:
-        missing=any(row[k] is None for k in ['wind_speed_ms','wind_gust_ms','temperature_c','wind_direction_deg'])
-        bad=not missing and (max(row['wind_speed_ms'],row['wind_gust_ms'])>=profile['wind_limit_ms'] or not profile['temperature_min_c']<=row['temperature_c']<=profile['temperature_max_c'])
-        if missing or bad:records['A1'].append(dict(provider_id=row['valid_at'],geometry=mapping(area),valid_at=row['valid_at'],state='unknown' if missing else 'active',reason='missing_weather' if missing else 'weather_outside_academic_profile'))
+    from Amenazas.a1_meteorologia import transformar as transformar_a1
+    records['A1']=transformar_a1(records['M4'],area,profile)
     # Conservar todos los focos del AOI en el original de siete días; aplicar ventana por consulta.
-    for i,row in enumerate(csv.DictReader(io.StringIO(raw['S5'].read_text(encoding='utf-8-sig')))):
-        point=Point(float(row['longitude']),float(row['latitude']))
-        if area.covers(point):
-            hh=row['acq_time'].zfill(4);date=row['acq_date']+'T'+hh[:2]+':'+hh[2:]+':00+00:00'
-            if row['confidence'] not in ['l','n','h']:raise ValueError('Confianza FIRMS desconocida')
-            if row['confidence']=='l':continue
-            records['A2'].append(dict(provider_id=f'{date}:{row["latitude"]}:{row["longitude"]}',point=mapping(point),
-                geometry=mapping(transform(INV,transform(FWD,point).buffer(profile['thermal_buffer_m']))),acquired_at=date,confidence=row['confidence'],
-                fire_radiative_power_mw=float(row['frp']),buffer_m=profile['thermal_buffer_m']))
-    records['A3']=airspace(raw['S6'])
+    from Amenazas.a2_firms import transformar as transformar_a2
+    records['A2']=transformar_a2(raw['S5'].read_text(encoding='utf-8-sig'),area,profile['thermal_buffer_m'])
+    from Amenazas.a3_aip import transformar as transformar_a3
+    records['A3'],aip_parser_report=transformar_a3(raw['S6'],area,profile['aip_margin_m'])
     for rows in records.values():rows.sort(key=lambda r:str(r.get('provider_id',r.get('node_id',r.get('valid_at','')))))
     context=dict(records=records,reference_time=clock.isoformat(),weather_fetched_at=manifest['sources']['S4']['fetched_at_utc'],profile=profile,repairs=repairs,raster=raster_info,
-                 catalog_scope='S6: SC-P29, SC-P30, SC-P50 from reference report; not complete flight clearance',clearance_verified=False)
+                 aip_parser_report=aip_parser_report,
+                 catalog_scope='S6 ENR 5.1: todas las SC-P/SC-R/SC-D inventariadas; geometrías soportadas seleccionadas con margen AOI configurable; ver aip_parser_report para excepciones. No es autorización de vuelo.',
+                 clearance_verified=False)
     lineage=dict(builder=profile['builder'],configuration_sha256=hashlib.sha256(canonical(config)).hexdigest(),
         aoi=dict(file=config['aoi_geojson'],sha256=sha256(ROOT/config['aoi_geojson']),geometry=json.loads(json.dumps(mapping(area))),predicate='covers'),
         sources=manifest['sources'],manifest_sha256=sha256(ROOT/config['aerial_raw_directory']/'manifest.json'),
