@@ -1,79 +1,855 @@
-'use strict';
-const $=id=>document.getElementById(id), map=L.map('map',{preferCanvas:false,zoomAnimation:false,fadeAnimation:false}).setView([-33.075,-71.61],13);
-const tile=L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap contributors'});
-$('tiles').addEventListener('change',e=>e.target.checked?tile.addTo(map):map.removeLayer(tile));
-const palette=['#1766b1','#b24778','#a46f12'];let data,originMarker,destinationMarker,routeLayer,action='destination',events=[],polygon=[],draft,requestNumber=0,lastResult,lastRequest;
-const eventLayer=L.layerGroup().addTo(map);const result=$('result');
-function message(text,error=false){result.className=error?'error':'';result.textContent=text;}
-async function api(url,body){const r=await fetch(url,body?{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}:{});const d=await r.json();if(!r.ok)throw Error(d.error||'El servicio no está disponible');return d;}
-function point(text){const c=text.split(',').map(v=>Number(v.trim()));if(c.length!==2||c.some(v=>!Number.isFinite(v)))throw Error('Escribe longitud, latitud en ambos extremos');return c;}
-function marker(id){try{const c=point($(id).value);const isOrigin=id==='origin';let m=isOrigin?originMarker:destinationMarker;if(m)map.removeLayer(m);m=L.circleMarker([c[1],c[0]],{radius:7,color:'#fff',weight:2,fillColor:isOrigin?'#cf6c24':'#1766b1',fillOpacity:1}).addTo(map).bindTooltip(isOrigin?'Inicio':'Destino');if(isOrigin)originMarker=m;else destinationMarker=m;}catch(_){}}
-function invalidate(){$('diagnostics').hidden=true;$('diagnostics').replaceChildren();$('comparison-summary').hidden=true;$('compare').disabled=!$('origin').value||!$('destination').value;++requestNumber;lastResult=null;$('export').disabled=true;if(routeLayer){map.removeLayer(routeLayer);routeLayer=null;}$('alternatives').replaceChildren();$('calculate').disabled=!$('origin').value||!$('destination').value;$('replan').disabled=false;message('Puntos o escenario modificados: vuelve a calcular.');}
-for(const id of ['origin','destination'])$(id).addEventListener('change',()=>{invalidate();marker(id);});
-$('pick-origin').onclick=()=>{action='origin';message('Haz clic dentro del límite para fijar el inicio.');};
-$('pick-destination').onclick=()=>{action='destination';message('Haz clic dentro del límite para fijar el destino.');};
-$('swap').onclick=()=>{const o=$('origin').value;$('origin').value=$('destination').value;$('destination').value=o;invalidate();marker('origin');marker('destination');};
-$('reset').onclick=()=>{events=[];eventLayer.clearLayers();map.fitBounds(L.geoJSON(data.area).getBounds(),{padding:[20,20],animate:false});polygon=[];if(draft){map.removeLayer(draft);draft=null;}$('finish-polygon').hidden=true;$('destination').value='';$('origin').value=data.default_origin.join(', ');$('elapsed').value=0;$('history-limit').value='';$('phase').value='outbound';$('on-edge').checked=false;$('examples').value='';$('position').replaceChildren(new Option('Inicio de la misión',''));action='destination';if(destinationMarker){map.removeLayer(destinationMarker);destinationMarker=null;}invalidate();marker('origin');$('events-status').textContent='Sin eventos simulados.';};
-$('bases').onchange=()=>{if($('bases').value==='')return;$('origin').value=data.bases[Number($('bases').value)].geometry.coordinates.join(', ');invalidate();marker('origin');};
-$('examples').onchange=()=>{if($('examples').value==='')return;$('destination').value=data.examples[Number($('examples').value)].coordinates.join(', ');invalidate();marker('destination');};
-for(const id of ['mode','method','scenario-time','phase','elapsed','position','on-edge','budget','wind-limit','detour','history-limit'])$(id).addEventListener('change',invalidate);
-$('weather-hour').onchange=()=>{if($('weather-hour').value){$('scenario-time').value=$('weather-hour').value.slice(0,16);invalidate();}};
-$('mode').addEventListener('change',()=>{$('phase').disabled=$('mode').value==='trip';if($('phase').disabled)$('phase').value='outbound';});
-$('block-point').onclick=()=>{action='block';message('Haz clic para introducir un bloqueo circular simulado.');};
-$('block-polygon').onclick=()=>{action='polygon';polygon=[];$('finish-polygon').hidden=false;message('Marca al menos tres vértices y pulsa Cerrar polígono.');};
-function addEvent(geometry,extra={}){events.push({id:'sim-'+Date.now()+'-'+events.length,state:'blocked',observed_at:$('scenario-time').value+':00Z',geometry,...extra});invalidate();drawEvents();action='destination';}
-function drawEvents(){eventLayer.clearLayers();for(const e of events){if(e.state==='resolved')continue;if(e.geometry.type==='Point'){const c=e.geometry.coordinates;L.circle([c[1],c[0]],{radius:e.radius_m,color:'#bd3f34',fillOpacity:.22}).addTo(eventLayer).bindTooltip('Bloqueo simulado');}else L.geoJSON(e.geometry,{style:{color:'#bd3f34',fillOpacity:.22}}).addTo(eventLayer).bindTooltip('Bloqueo simulado');}$('events-status').textContent=events.filter(e=>e.state!=='resolved').length+' bloqueos simulados activos.';}
-$('finish-polygon').onclick=()=>{if(polygon.length<3)return message('El polígono necesita al menos tres vértices.',true);const ring=[...polygon,polygon[0]];if(draft){map.removeLayer(draft);draft=null;}polygon=[];$('finish-polygon').hidden=true;addEvent({type:'Polygon',coordinates:[ring]});};
-$('clear-events').onclick=()=>{const stamp=$('scenario-time').value+':00Z';events=events.map(e=>({...e,state:'resolved',observed_at:stamp}));invalidate();drawEvents();};
-map.on('click',e=>{const c=[e.latlng.lng,e.latlng.lat];if(action==='block'){const radius=Number($('radius').value);if(!Number.isFinite(radius)||radius<=0||radius>10000)return message('Radio inválido.',true);addEvent({type:'Point',coordinates:c},{radius_m:radius});}else if(action==='polygon'){polygon.push(c);if(draft)map.removeLayer(draft);draft=L.polyline(polygon.map(p=>[p[1],p[0]]),{color:'#bd3f34'}).addTo(map);}else{$(action).value=c.map(v=>v.toFixed(8)).join(', ');const selected=action;invalidate();marker(selected);if(action==='origin')action='destination';}});
-const comparisonColors={reference:['#6d7985','#963d32'],proposed:['#1766b1','#a46f12']};
-const reasons={historical_class_exceeded:'La política preventiva excluye una clase histórica superior al límite.',historical_class_unknown:'La política preventiva excluye un tramo o extremo sin información histórica.',endpoint_blocked:'Un extremo está dentro de una restricción o bloqueo.',no_outbound_or_return:'No existe ida o retorno permitido en este escenario.',insufficient_return_budget:'El recorrido excede el presupuesto de tiempo con reserva.',budget_exhausted:'El presupuesto utilizable ya está agotado.',weather_outside_profile:'La meteorología queda fuera del perfil académico.',missing_weather_time:'No hay pronóstico para la hora elegida.',unknown_weather:'Faltan datos meteorológicos requeridos.',stale_weather_acquisition:'El pronóstico online necesita actualizarse.',online_time_must_be_current:'En modo online debes usar la hora UTC actual.',closure_during_segment_no_escape_modelled:'Misión interrumpida durante un segmento; no se modela una maniobra de escape.',disconnected:'Los puntos están desconectados en la red candidata.'};
-function render(d){lastResult=d;$('export').disabled=false;$('alternatives').replaceChildren();if(routeLayer)map.removeLayer(routeLayer);routeLayer=L.featureGroup().addTo(map);const groups=new Map();for(const f of d.features){const key=(f.properties.method||'single')+'-'+f.properties.rank;if(!groups.has(key))groups.set(key,L.geoJSON(null,{style:feature=>({color:feature.properties.method?comparisonColors[feature.properties.method][feature.properties.rank-1]:palette[(feature.properties.rank-1)%3],weight:feature.properties.rank===1?5:3,dashArray:feature.properties.role==='return'?'7 5':null,opacity:.85})}).addTo(routeLayer));groups.get(key).addData(f);}
- if(d.features.length)map.fitBounds(routeLayer.getBounds(),{padding:[30,30],maxZoom:16,animate:false});
- renderDiagnostics(d.diagnostics);
- if(d.status!=='ready')message(reasons[d.reason]||'No hay ruta admisible: '+(d.reason||d.status),true);
- else message(d.alternatives.length+' alternativas encontradas. '+(d.method==='reference'?'Referencia matemática: solo distancia, sin amenazas ni autonomía.':'Presupuesto restante: '+d.remaining_s.toFixed(0)+' s. Despeje vertical no verificado.'));
- for(const option of d.alternatives){const box=document.createElement('article');box.className='alternative';box.style.borderLeftColor=option.method?comparisonColors[option.method][option.rank-1]:palette[(option.rank-1)%3];const title=document.createElement('strong');title.textContent=(option.method?(option.method==='reference'?'Dijkstra · ':'Propuesto · '):'')+(d.mode==='mission'&&d.method==='proposed'?'Misión ':'Ruta ')+option.rank+' · '+option.length_km.toFixed(3)+' km';box.append(title);const p=document.createElement('p');p.textContent=option.time_s===null?'Referencia por longitud':option.time_s.toFixed(1)+' s · exposición '+option.exposure_m.toFixed(0)+' m ponderados · sin dato '+option.unknown_m.toFixed(0)+' m';box.append(p);const shared=document.createElement('p');shared.className='small';shared.textContent=option.rank===1?'Línea continua: ida · discontinua: retorno':(option.within_50m_of_first_fraction*100).toFixed(0)+' % de la ida a menos de 50 m de la primera. No implica independencia ante fallas.';box.append(shared);const button=document.createElement('button');button.className='secondary';button.textContent='Ver ruta '+option.rank;button.onclick=()=>{const selected=L.geoJSON({type:'FeatureCollection',features:d.features.filter(f=>f.properties.rank===option.rank&&(!option.method||f.properties.method===option.method))});if(selected.getLayers().length)map.fitBounds(selected.getBounds(),{padding:[30,30],maxZoom:16,animate:false});};box.append(button);const label=document.createElement('label');label.className='toggle';const toggle=document.createElement('input');toggle.type='checkbox';toggle.checked=true;const routeId=(option.method==='reference'?'D':option.method==='proposed'?'P':'R')+option.rank;toggle.dataset.routeId=routeId;const group=groups.get((option.method||'single')+'-'+option.rank);toggle.onchange=()=>{if(!group)return;if(toggle.checked)routeLayer.addLayer(group);else routeLayer.removeLayer(group);};label.append(toggle,document.createTextNode('Mostrar '+routeId+' · ida continua / regreso discontinuo'));box.append(label);$('alternatives').append(box);}
- const selected=$('position').value;$('position').replaceChildren(new Option('Inicio de la misión',''));for(const [i,w] of (d.waypoints||[]).entries())$('position').append(new Option('Nodo '+(i+1)+' · '+w.coordinates.map(c=>c.toFixed(5)).join(', '),w.coordinates.join(',')));if([...$('position').options].some(o=>o.value===selected))$('position').value=selected;
+"use strict";
+const $ = (id) => document.getElementById(id),
+  map = L.map("map", {
+    preferCanvas: false,
+    zoomAnimation: false,
+    fadeAnimation: false,
+  }).setView([-33.075, -71.61], 13);
+const tile = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+  maxZoom: 19,
+  attribution: "© OpenStreetMap contributors",
+});
+$("tiles").addEventListener("change", (e) =>
+  e.target.checked ? tile.addTo(map) : map.removeLayer(tile),
+);
+const palette = ["#1766b1", "#b24778", "#a46f12"];
+let data,
+  originMarker,
+  destinationMarker,
+  routeLayer,
+  action = "destination",
+  events = [],
+  polygon = [],
+  draft,
+  requestNumber = 0,
+  lastResult,
+  lastRequest;
+const eventLayer = L.layerGroup().addTo(map);
+const result = $("result");
+function message(text, error = false) {
+  result.className = error ? "error" : "";
+  result.textContent = text;
 }
-async function calculate(replan=false,comparison=false){const serial=++requestNumber;renderDiagnostics(null);lastResult=null;$('export').disabled=true;$('calculate').disabled=true;$('replan').disabled=true;$('compare').disabled=true;message('Calculando corredores aéreos y retorno…');try{const req={origin:point($('origin').value),destination:point($('destination').value),mode:$('mode').value,method:$('method').value,time:$('scenario-time').value+':00Z',events,phase:$('phase').value,elapsed_s:Number($('elapsed').value),on_edge:$('on-edge').checked,preferences:{budget_s:Number($('budget').value),wind_limit_ms:Number($('wind-limit').value),detour_factor:Number($('detour').value),max_historical_class:$('history-limit').value===''?null:Number($('history-limit').value)}};if(replan&&$('position').value)req.position=point($('position').value);lastRequest=req;const d=await api(comparison?'/api/aereo/comparar':replan?'/api/aereo/replanificar':'/api/aereo/rutas',req);if(serial===requestNumber){if(comparison)renderComparison(d);else render(d);}}catch(e){if(serial===requestNumber){if(routeLayer){map.removeLayer(routeLayer);routeLayer=null;}$('alternatives').replaceChildren();message(e.message,true);}}finally{if(serial===requestNumber){$('calculate').disabled=false;$('replan').disabled=false;$('compare').disabled=false;}}}
-$('compare').onclick=()=>calculate(false,true);
-$('calculate').onclick=()=>calculate();$('replan').onclick=()=>calculate(true);
-$('export').onclick=()=>{if(!lastResult)return;const blob=new Blob([JSON.stringify({request:lastRequest,result:lastResult},null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='mision_aerea_'+lastResult.run_id+'.json';a.click();URL.revokeObjectURL(url);};
-(async()=>{try{data=await api('/api/aereo/mapa');const transit=L.geoJSON(data.flight_area||data.area,{style:{color:'#8c7b58',dashArray:'6 5',weight:2,fillOpacity:.02}}).addTo(map);const area=L.geoJSON(data.area,{style:{color:'#3e8d64',weight:2,fillOpacity:.03}}).addTo(map);map.fitBounds(area.getBounds(),{padding:[20,20],animate:false});
- const elevations=new Map(data.elevation.map(r=>[String(r.node_id),r.elevation_m]));const infrastructure=L.geoJSON(data,{onEachFeature:(f,l)=>{if(f.geometry.type==='Point'){const span=document.createElement('span');const h=elevations.get(f.properties.id);span.textContent=f.properties.kind+' · cota superficial S3: '+(h===null||h===undefined?'sin dato':h.toFixed(1)+' m')+' · no es altura de vuelo';l.bindTooltip(span);}},style:{color:'#91a2a8',weight:1,opacity:.45},pointToLayer:(f,c)=>L.circleMarker(c,{radius:f.properties.kind==='base_candidata'?5:2,color:f.properties.kind==='base_candidata'?'#cf6c24':'#647c84',weight:1,fillOpacity:.8})}).addTo(map);
- const layers={'Límite de vigilancia':area,'Límite de tránsito (1100 m)':transit};layers['Cuarteles de contexto']=L.geoJSON({type:'FeatureCollection',features:(data.base_catalogue||[]).filter(b=>!b.candidate).map(b=>({type:'Feature',geometry:b.geometry,properties:{name:b.name}}))},{pointToLayer:(f,c)=>L.circleMarker(c,{radius:4,color:'#6d7985'}),onEachFeature:(f,l)=>{const span=document.createElement('span');span.textContent=f.properties.name+' · contexto, no origen aprobado';l.bindTooltip(span);}});for(const [key,label,color] of [['M2','Vegetación S2','#74985b'],['A2','FIRMS S5','#df602c'],['A3','AIP S6','#b83b4b'],['A4','Recurrencia S7','#bc8953']]){layers[label]=L.geoJSON({type:'FeatureCollection',features:data.layers[key]},{style:{color,weight:1,fillOpacity:.12},onEachFeature:(f,l)=>{const span=document.createElement('span');span.textContent=label+' · '+(f.properties.code||f.properties.category||f.properties.class_label||f.properties.provider_id)+(key==='M2'?' · subuso: '+(f.properties.attributes?.subuse??'sin dato')+' · altura de vegetación (clase): '+(f.properties.attributes?.height_class??'sin dato'):'');l.bindTooltip(span);}});if(key==='A3')layers[label].addTo(map);}L.control.layers({}, {'Corredores candidatos':infrastructure,...layers,'Bloqueos simulados':eventLayer},{collapsed:true}).addTo(map);
- $('bases').replaceChildren(new Option('Inicio libre / coordenadas',''));data.bases.forEach((b,i)=>$('bases').append(new Option(b.name+' · '+(b.inside_study===false?'externa aprobada':'interior')+' · '+b.provider_id,String(i))));const baseIndex=data.bases.findIndex(b=>b.provider_id==='104');if(baseIndex>=0)$('bases').value=String(baseIndex);
- refreshWeatherHours();
- $('origin').value=data.default_origin.join(', ');marker('origin');data.examples.forEach((e,i)=>$('examples').append(new Option('Objetivo '+(i+1)+' · '+e.coordinates.map(c=>c.toFixed(5)).join(', '),String(i))));$('scenario-time').value=data.reference_time.slice(0,16);$('compare').disabled=true;$('counts').textContent=data.features.filter(f=>f.geometry.type==='Point').length+' nodos · corredores aéreos · vigilancia verde / tránsito discontinuo · bases S1 y S1H';message('Selecciona el destino y revisa la hora del escenario. Puedes elegir cualquier punto dentro del área.');
- }catch(e){message(e.message,true);}})();
+async function api(url, body) {
+  const r = await fetch(
+    url,
+    body
+      ? {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        }
+      : {},
+  );
+  const d = await r.json();
+  if (!r.ok) throw Error(d.error || "El servicio no está disponible");
+  return d;
+}
+function point(text) {
+  const c = text.split(",").map((v) => Number(v.trim()));
+  if (c.length !== 2 || c.some((v) => !Number.isFinite(v)))
+    throw Error("Escribe longitud, latitud en ambos extremos");
+  return c;
+}
+function marker(id) {
+  try {
+    const c = point($(id).value);
+    const isOrigin = id === "origin";
+    let m = isOrigin ? originMarker : destinationMarker;
+    if (m) map.removeLayer(m);
+    m = L.circleMarker([c[1], c[0]], {
+      radius: 7,
+      color: "#fff",
+      weight: 2,
+      fillColor: isOrigin ? "#cf6c24" : "#1766b1",
+      fillOpacity: 1,
+    })
+      .addTo(map)
+      .bindTooltip(isOrigin ? "Inicio" : "Destino");
+    if (isOrigin) originMarker = m;
+    else destinationMarker = m;
+  } catch (_) {}
+}
+function invalidate() {
+  $("diagnostics").hidden = true;
+  $("diagnostics").replaceChildren();
+  $("comparison-summary").hidden = true;
+  $("compare").disabled = !$("origin").value || !$("destination").value;
+  ++requestNumber;
+  lastResult = null;
+  $("export").disabled = true;
+  if (routeLayer) {
+    map.removeLayer(routeLayer);
+    routeLayer = null;
+  }
+  $("alternatives").replaceChildren();
+  $("calculate").disabled = !$("origin").value || !$("destination").value;
+  $("replan").disabled = false;
+  message("Puntos o escenario modificados: vuelve a calcular.");
+}
+for (const id of ["origin", "destination"])
+  $(id).addEventListener("change", () => {
+    invalidate();
+    marker(id);
+  });
+$("pick-origin").onclick = () => {
+  action = "origin";
+  message("Haz clic dentro del límite para fijar el inicio.");
+};
+$("pick-destination").onclick = () => {
+  action = "destination";
+  message("Haz clic dentro del límite para fijar el destino.");
+};
+$("swap").onclick = () => {
+  const o = $("origin").value;
+  $("origin").value = $("destination").value;
+  $("destination").value = o;
+  invalidate();
+  marker("origin");
+  marker("destination");
+};
+$("reset").onclick = () => {
+  events = [];
+  eventLayer.clearLayers();
+  map.fitBounds(L.geoJSON(data.area).getBounds(), {
+    padding: [20, 20],
+    animate: false,
+  });
+  polygon = [];
+  if (draft) {
+    map.removeLayer(draft);
+    draft = null;
+  }
+  $("finish-polygon").hidden = true;
+  $("destination").value = "";
+  $("origin").value = data.default_origin.join(", ");
+  $("elapsed").value = 0;
+  $("history-limit").value = "";
+  $("phase").value = "outbound";
+  $("on-edge").checked = false;
+  $("examples").value = "";
+  $("position").replaceChildren(new Option("Inicio de la misión", ""));
+  action = "destination";
+  if (destinationMarker) {
+    map.removeLayer(destinationMarker);
+    destinationMarker = null;
+  }
+  invalidate();
+  marker("origin");
+  $("events-status").textContent = "Sin eventos simulados.";
+};
+$("bases").onchange = () => {
+  if ($("bases").value === "") return;
+  $("origin").value =
+    data.bases[Number($("bases").value)].geometry.coordinates.join(", ");
+  invalidate();
+  marker("origin");
+};
+$("examples").onchange = () => {
+  if ($("examples").value === "") return;
+  $("destination").value =
+    data.examples[Number($("examples").value)].coordinates.join(", ");
+  invalidate();
+  marker("destination");
+};
+for (const id of [
+  "mode",
+  "method",
+  "scenario-time",
+  "phase",
+  "elapsed",
+  "position",
+  "on-edge",
+  "budget",
+  "wind-limit",
+  "detour",
+  "history-limit",
+])
+  $(id).addEventListener("change", invalidate);
+$("weather-hour").onchange = () => {
+  if ($("weather-hour").value) {
+    $("scenario-time").value = $("weather-hour").value.slice(0, 16);
+    invalidate();
+  }
+};
+$("mode").addEventListener("change", () => {
+  $("phase").disabled = $("mode").value === "trip";
+  if ($("phase").disabled) $("phase").value = "outbound";
+});
+$("block-point").onclick = () => {
+  action = "block";
+  message("Haz clic para introducir un bloqueo circular simulado.");
+};
+$("block-polygon").onclick = () => {
+  action = "polygon";
+  polygon = [];
+  $("finish-polygon").hidden = false;
+  message("Marca al menos tres vértices y pulsa Cerrar polígono.");
+};
+function addEvent(geometry, extra = {}) {
+  events.push({
+    id: "sim-" + Date.now() + "-" + events.length,
+    state: "blocked",
+    observed_at: $("scenario-time").value + ":00Z",
+    geometry,
+    ...extra,
+  });
+  invalidate();
+  drawEvents();
+  action = "destination";
+}
+function drawEvents() {
+  eventLayer.clearLayers();
+  for (const e of events) {
+    if (e.state === "resolved") continue;
+    if (e.geometry.type === "Point") {
+      const c = e.geometry.coordinates;
+      L.circle([c[1], c[0]], {
+        radius: e.radius_m,
+        color: "#bd3f34",
+        fillOpacity: 0.22,
+      })
+        .addTo(eventLayer)
+        .bindTooltip("Bloqueo simulado");
+    } else
+      L.geoJSON(e.geometry, { style: { color: "#bd3f34", fillOpacity: 0.22 } })
+        .addTo(eventLayer)
+        .bindTooltip("Bloqueo simulado");
+  }
+  $("events-status").textContent =
+    events.filter((e) => e.state !== "resolved").length +
+    " bloqueos simulados activos.";
+}
+$("finish-polygon").onclick = () => {
+  if (polygon.length < 3)
+    return message("El polígono necesita al menos tres vértices.", true);
+  const ring = [...polygon, polygon[0]];
+  if (draft) {
+    map.removeLayer(draft);
+    draft = null;
+  }
+  polygon = [];
+  $("finish-polygon").hidden = true;
+  addEvent({ type: "Polygon", coordinates: [ring] });
+};
+$("clear-events").onclick = () => {
+  const stamp = $("scenario-time").value + ":00Z";
+  events = events.map((e) => ({ ...e, state: "resolved", observed_at: stamp }));
+  invalidate();
+  drawEvents();
+};
+map.on("click", (e) => {
+  const c = [e.latlng.lng, e.latlng.lat];
+  if (action === "block") {
+    const radius = Number($("radius").value);
+    if (!Number.isFinite(radius) || radius <= 0 || radius > 10000)
+      return message("Radio inválido.", true);
+    addEvent({ type: "Point", coordinates: c }, { radius_m: radius });
+  } else if (action === "polygon") {
+    polygon.push(c);
+    if (draft) map.removeLayer(draft);
+    draft = L.polyline(
+      polygon.map((p) => [p[1], p[0]]),
+      { color: "#bd3f34" },
+    ).addTo(map);
+  } else {
+    $(action).value = c.map((v) => v.toFixed(8)).join(", ");
+    const selected = action;
+    invalidate();
+    marker(selected);
+    if (action === "origin") action = "destination";
+  }
+});
+const comparisonColors = {
+  reference: ["#6d7985", "#963d32"],
+  proposed: ["#1766b1", "#a46f12"],
+};
+const reasons = {
+  historical_class_exceeded:
+    "La política preventiva excluye una clase histórica superior al límite.",
+  historical_class_unknown:
+    "La política preventiva excluye un tramo o extremo sin información histórica.",
+  endpoint_blocked: "Un extremo está dentro de una restricción o bloqueo.",
+  no_outbound_or_return: "No existe ida o retorno permitido en este escenario.",
+  insufficient_return_budget:
+    "El recorrido excede el presupuesto de tiempo con reserva.",
+  budget_exhausted: "El presupuesto utilizable ya está agotado.",
+  weather_outside_profile: "La meteorología queda fuera del perfil académico.",
+  missing_weather_time: "No hay pronóstico para la hora elegida.",
+  unknown_weather: "Faltan datos meteorológicos requeridos.",
+  stale_weather_acquisition: "El pronóstico online necesita actualizarse.",
+  online_time_must_be_current: "En modo online debes usar la hora UTC actual.",
+  closure_during_segment_no_escape_modelled:
+    "Misión interrumpida durante un segmento; no se modela una maniobra de escape.",
+  disconnected: "Los puntos están desconectados en la red candidata.",
+};
+function render(d) {
+  lastResult = d;
+  $("export").disabled = false;
+  $("alternatives").replaceChildren();
+  if (routeLayer) map.removeLayer(routeLayer);
+  routeLayer = L.featureGroup().addTo(map);
+  const groups = new Map();
+  for (const f of d.features) {
+    const key = (f.properties.method || "single") + "-" + f.properties.rank;
+    if (!groups.has(key))
+      groups.set(
+        key,
+        L.geoJSON(null, {
+          style: (feature) => ({
+            color: feature.properties.method
+              ? comparisonColors[feature.properties.method][
+                  feature.properties.rank - 1
+                ]
+              : palette[(feature.properties.rank - 1) % 3],
+            weight: feature.properties.rank === 1 ? 5 : 3,
+            dashArray: feature.properties.role === "return" ? "7 5" : null,
+            opacity: 0.85,
+          }),
+        }).addTo(routeLayer),
+      );
+    groups.get(key).addData(f);
+  }
+  if (d.features.length)
+    map.fitBounds(routeLayer.getBounds(), {
+      padding: [30, 30],
+      maxZoom: 16,
+      animate: false,
+    });
+  renderDiagnostics(d.diagnostics);
+  if (d.status !== "ready")
+    message(
+      reasons[d.reason] || "No hay ruta admisible: " + (d.reason || d.status),
+      true,
+    );
+  else
+    message(
+      d.alternatives.length +
+        " alternativas encontradas. " +
+        (d.method === "reference"
+          ? "Referencia matemática: solo distancia, sin amenazas ni autonomía."
+          : "Presupuesto restante: " +
+            d.remaining_s.toFixed(0) +
+            " s. Despeje vertical no verificado."),
+    );
+  for (const option of d.alternatives) {
+    const box = document.createElement("article");
+    box.className = "alternative";
+    box.style.borderLeftColor = option.method
+      ? comparisonColors[option.method][option.rank - 1]
+      : palette[(option.rank - 1) % 3];
+    const title = document.createElement("strong");
+    title.textContent =
+      (option.method
+        ? option.method === "reference"
+          ? "Dijkstra · "
+          : "Propuesto · "
+        : "") +
+      (d.mode === "mission" && d.method === "proposed" ? "Misión " : "Ruta ") +
+      option.rank +
+      " · " +
+      option.length_km.toFixed(3) +
+      " km";
+    box.append(title);
+    const p = document.createElement("p");
+    p.textContent =
+      option.time_s === null
+        ? "Referencia por longitud"
+        : option.time_s.toFixed(1) +
+          " s · exposición " +
+          option.exposure_m.toFixed(0) +
+          " m ponderados · sin dato " +
+          option.unknown_m.toFixed(0) +
+          " m";
+    box.append(p);
+    const shared = document.createElement("p");
+    shared.className = "small";
+    shared.textContent =
+      option.rank === 1
+        ? "Línea continua: ida · discontinua: retorno"
+        : (option.within_50m_of_first_fraction * 100).toFixed(0) +
+          " % de la ida a menos de 50 m de la primera. No implica independencia ante fallas.";
+    box.append(shared);
+    const button = document.createElement("button");
+    button.className = "secondary";
+    button.textContent = "Ver ruta " + option.rank;
+    button.onclick = () => {
+      const selected = L.geoJSON({
+        type: "FeatureCollection",
+        features: d.features.filter(
+          (f) =>
+            f.properties.rank === option.rank &&
+            (!option.method || f.properties.method === option.method),
+        ),
+      });
+      if (selected.getLayers().length)
+        map.fitBounds(selected.getBounds(), {
+          padding: [30, 30],
+          maxZoom: 16,
+          animate: false,
+        });
+    };
+    box.append(button);
+    const label = document.createElement("label");
+    label.className = "toggle";
+    const toggle = document.createElement("input");
+    toggle.type = "checkbox";
+    toggle.checked = true;
+    const routeId =
+      (option.method === "reference"
+        ? "D"
+        : option.method === "proposed"
+          ? "P"
+          : "R") + option.rank;
+    toggle.dataset.routeId = routeId;
+    const group = groups.get((option.method || "single") + "-" + option.rank);
+    toggle.onchange = () => {
+      if (!group) return;
+      if (toggle.checked) routeLayer.addLayer(group);
+      else routeLayer.removeLayer(group);
+    };
+    label.append(
+      toggle,
+      document.createTextNode(
+        "Mostrar " + routeId + " · ida continua / regreso discontinuo",
+      ),
+    );
+    box.append(label);
+    $("alternatives").append(box);
+  }
+  const selected = $("position").value;
+  $("position").replaceChildren(new Option("Inicio de la misión", ""));
+  for (const [i, w] of (d.waypoints || []).entries())
+    $("position").append(
+      new Option(
+        "Nodo " +
+          (i + 1) +
+          " · " +
+          w.coordinates.map((c) => c.toFixed(5)).join(", "),
+        w.coordinates.join(","),
+      ),
+    );
+  if ([...$("position").options].some((o) => o.value === selected))
+    $("position").value = selected;
+}
+async function calculate(replan = false, comparison = false) {
+  const serial = ++requestNumber;
+  renderDiagnostics(null);
+  lastResult = null;
+  $("export").disabled = true;
+  $("calculate").disabled = true;
+  $("replan").disabled = true;
+  $("compare").disabled = true;
+  message("Calculando corredores aéreos y retorno…");
+  try {
+    const req = {
+      origin: point($("origin").value),
+      destination: point($("destination").value),
+      mode: $("mode").value,
+      method: $("method").value,
+      time: $("scenario-time").value + ":00Z",
+      events,
+      phase: $("phase").value,
+      elapsed_s: Number($("elapsed").value),
+      on_edge: $("on-edge").checked,
+      preferences: {
+        budget_s: Number($("budget").value),
+        wind_limit_ms: Number($("wind-limit").value),
+        detour_factor: Number($("detour").value),
+        max_historical_class:
+          $("history-limit").value === ""
+            ? null
+            : Number($("history-limit").value),
+      },
+    };
+    if (replan && $("position").value)
+      req.position = point($("position").value);
+    lastRequest = req;
+    const d = await api(
+      comparison
+        ? "/api/aereo/comparar"
+        : replan
+          ? "/api/aereo/replanificar"
+          : "/api/aereo/rutas",
+      req,
+    );
+    if (serial === requestNumber) {
+      if (comparison) renderComparison(d);
+      else render(d);
+    }
+  } catch (e) {
+    if (serial === requestNumber) {
+      if (routeLayer) {
+        map.removeLayer(routeLayer);
+        routeLayer = null;
+      }
+      $("alternatives").replaceChildren();
+      message(e.message, true);
+    }
+  } finally {
+    if (serial === requestNumber) {
+      $("calculate").disabled = false;
+      $("replan").disabled = false;
+      $("compare").disabled = false;
+    }
+  }
+}
+$("compare").onclick = () => calculate(false, true);
+$("calculate").onclick = () => calculate();
+$("replan").onclick = () => calculate(true);
+$("export").onclick = () => {
+  if (!lastResult) return;
+  const blob = new Blob(
+    [JSON.stringify({ request: lastRequest, result: lastResult }, null, 2)],
+    { type: "application/json" },
+  );
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "mision_aerea_" + lastResult.run_id + ".json";
+  a.click();
+  URL.revokeObjectURL(url);
+};
+(async () => {
+  try {
+    data = await api("/api/aereo/mapa");
+    const transit = L.geoJSON(data.flight_area || data.area, {
+      style: {
+        color: "#8c7b58",
+        dashArray: "6 5",
+        weight: 2,
+        fillOpacity: 0.02,
+      },
+    }).addTo(map);
+    const area = L.geoJSON(data.area, {
+      style: { color: "#3e8d64", weight: 2, fillOpacity: 0.03 },
+    }).addTo(map);
+    map.fitBounds(area.getBounds(), { padding: [20, 20], animate: false });
+    const elevations = new Map(
+      data.elevation.map((r) => [String(r.node_id), r.elevation_m]),
+    );
+    const infrastructure = L.geoJSON(data, {
+      onEachFeature: (f, l) => {
+        if (f.geometry.type === "Point") {
+          const span = document.createElement("span");
+          const h = elevations.get(f.properties.id);
+          span.textContent =
+            f.properties.kind +
+            " · cota superficial S3: " +
+            (h === null || h === undefined ? "sin dato" : h.toFixed(1) + " m") +
+            " · no es altura de vuelo";
+          l.bindTooltip(span);
+        }
+      },
+      style: { color: "#91a2a8", weight: 1, opacity: 0.45 },
+      pointToLayer: (f, c) =>
+        L.circleMarker(c, {
+          radius: f.properties.kind === "base_candidata" ? 5 : 2,
+          color: f.properties.kind === "base_candidata" ? "#cf6c24" : "#647c84",
+          weight: 1,
+          fillOpacity: 0.8,
+        }),
+    }).addTo(map);
+    const layers = {
+      "Límite de vigilancia": area,
+      "Límite de tránsito (1100 m)": transit,
+    };
+    layers["Cuarteles de contexto"] = L.geoJSON(
+      {
+        type: "FeatureCollection",
+        features: (data.base_catalogue || [])
+          .filter((b) => !b.candidate)
+          .map((b) => ({
+            type: "Feature",
+            geometry: b.geometry,
+            properties: { name: b.name },
+          })),
+      },
+      {
+        pointToLayer: (f, c) =>
+          L.circleMarker(c, { radius: 4, color: "#6d7985" }),
+        onEachFeature: (f, l) => {
+          const span = document.createElement("span");
+          span.textContent =
+            f.properties.name + " · contexto, no origen aprobado";
+          l.bindTooltip(span);
+        },
+      },
+    );
+    for (const [key, label, color] of [
+      ["M2", "Vegetación S2", "#74985b"],
+      ["A2", "FIRMS S5", "#df602c"],
+      ["A3", "AIP S6", "#b83b4b"],
+      ["A4", "Recurrencia S7", "#bc8953"],
+    ]) {
+      layers[label] = L.geoJSON(
+        { type: "FeatureCollection", features: data.layers[key] },
+        {
+          style: { color, weight: 1, fillOpacity: 0.12 },
+          onEachFeature: (f, l) => {
+            const span = document.createElement("span");
+            span.textContent =
+              label +
+              " · " +
+              (f.properties.code ||
+                f.properties.category ||
+                f.properties.class_label ||
+                f.properties.provider_id) +
+              (key === "M2"
+                ? " · subuso: " +
+                  (f.properties.attributes?.subuse ?? "sin dato") +
+                  " · altura de vegetación (clase): " +
+                  (f.properties.attributes?.height_class ?? "sin dato")
+                : "");
+            l.bindTooltip(span);
+          },
+        },
+      );
+      if (key === "A3") layers[label].addTo(map);
+    }
+    L.control
+      .layers(
+        {},
+        {
+          "Corredores candidatos": infrastructure,
+          ...layers,
+          "Bloqueos simulados": eventLayer,
+        },
+        { collapsed: true },
+      )
+      .addTo(map);
+    $("bases").replaceChildren(new Option("Inicio libre / coordenadas", ""));
+    data.bases.forEach((b, i) =>
+      $("bases").append(
+        new Option(
+          b.name +
+            " · " +
+            (b.inside_study === false ? "externa aprobada" : "interior") +
+            " · " +
+            b.provider_id,
+          String(i),
+        ),
+      ),
+    );
+    const baseIndex = data.bases.findIndex((b) => b.provider_id === "104");
+    if (baseIndex >= 0) $("bases").value = String(baseIndex);
+    refreshWeatherHours();
+    $("origin").value = data.default_origin.join(", ");
+    marker("origin");
+    data.examples.forEach((e, i) =>
+      $("examples").append(
+        new Option(
+          "Objetivo " +
+            (i + 1) +
+            " · " +
+            e.coordinates.map((c) => c.toFixed(5)).join(", "),
+          String(i),
+        ),
+      ),
+    );
+    $("scenario-time").value = data.reference_time.slice(0, 16);
+    $("compare").disabled = true;
+    $("counts").textContent =
+      data.features.filter((f) => f.geometry.type === "Point").length +
+      " nodos · corredores aéreos · vigilancia verde / tránsito discontinuo · bases S1 y S1H";
+    message(
+      "Selecciona el destino y revisa la hora del escenario. Puedes elegir cualquier punto dentro del área.",
+    );
+  } catch (e) {
+    message(e.message, true);
+  }
+})();
 
-function renderComparison(d){
- const options=[];for(const method of ['reference','proposed'])for(const option of d.sets[method].alternatives){const e=option.evaluation||{};options.push({...option,method,time_s:e.time_s??option.time_s,exposure_m:e.exposure_m??option.exposure_m,unknown_m:e.unknown_m??option.unknown_m});}
- render({...d,alternatives:options,waypoints:d.sets.proposed.waypoints||[],mode:'mission',method:'comparison',remaining_s:d.effective_profile.budget_s});lastResult=d;
- const section=$('comparison-summary');section.replaceChildren();section.hidden=false;const title=document.createElement('strong');title.textContent='Supervivencia de misiones completas';section.append(title);
- for(const method of ['reference','proposed']){const m=d.metrics.methods[method];const p=document.createElement('p');p.textContent=(method==='reference'?'Dijkstra':'Propuesto')+': '+m.mission_count+' misiones · conjunto '+(m.set_survival===null?'sin escenarios válidos':(100*m.set_survival).toFixed(1)+' %')+' · individuales '+m.individual.map(v=>v===null?'sin dato':(100*v).toFixed(1)+' %').join(' / ');section.append(p);}
- const p=document.createElement('p');p.textContent='Diferencial: '+(d.metrics.delta_percentage_points===null?'no calculable':d.metrics.delta_percentage_points.toFixed(1)+' puntos porcentuales')+' · '+d.metrics.valid_scenarios+'/'+d.metrics.total_scenarios+' escenarios válidos · '+d.metrics.unknown_scenarios+' desconocidos. Semilla 20261018. No se recalculan rutas durante la evaluación.';section.append(p);
- for(const method of ['reference','proposed']){const result=d.sets[method];if(result.reason){const note=document.createElement('p');note.textContent=(method==='reference'?'Dijkstra: ':'Propuesto: ')+(reasons[result.reason]||result.reason);section.append(note);}}
- message('Comparación congelada: '+options.length+' opciones. Las rutas pueden compartir zonas de falla. No es probabilidad real de éxito.');
+function renderComparison(d) {
+  const options = [];
+  for (const method of ["reference", "proposed"])
+    for (const option of d.sets[method].alternatives) {
+      const e = option.evaluation || {};
+      options.push({
+        ...option,
+        method,
+        time_s: e.time_s ?? option.time_s,
+        exposure_m: e.exposure_m ?? option.exposure_m,
+        unknown_m: e.unknown_m ?? option.unknown_m,
+      });
+    }
+  render({
+    ...d,
+    alternatives: options,
+    waypoints: d.sets.proposed.waypoints || [],
+    mode: "mission",
+    method: "comparison",
+    remaining_s: d.effective_profile.budget_s,
+  });
+  lastResult = d;
+  const section = $("comparison-summary");
+  section.replaceChildren();
+  section.hidden = false;
+  const title = document.createElement("strong");
+  title.textContent = "Supervivencia de misiones completas";
+  section.append(title);
+  for (const method of ["reference", "proposed"]) {
+    const m = d.metrics.methods[method];
+    const p = document.createElement("p");
+    p.textContent =
+      (method === "reference" ? "Dijkstra" : "Propuesto") +
+      ": " +
+      m.mission_count +
+      " misiones · conjunto " +
+      (m.set_survival === null
+        ? "sin escenarios válidos"
+        : (100 * m.set_survival).toFixed(1) + " %") +
+      " · individuales " +
+      m.individual
+        .map((v) => (v === null ? "sin dato" : (100 * v).toFixed(1) + " %"))
+        .join(" / ");
+    section.append(p);
+  }
+  const p = document.createElement("p");
+  p.textContent =
+    "Diferencial: " +
+    (d.metrics.delta_percentage_points === null
+      ? "no calculable"
+      : d.metrics.delta_percentage_points.toFixed(1) + " puntos porcentuales") +
+    " · " +
+    d.metrics.valid_scenarios +
+    "/" +
+    d.metrics.total_scenarios +
+    " escenarios válidos · " +
+    d.metrics.unknown_scenarios +
+    " desconocidos. Semilla 20261018. No se recalculan rutas durante la evaluación.";
+  section.append(p);
+  for (const method of ["reference", "proposed"]) {
+    const result = d.sets[method];
+    if (result.reason) {
+      const note = document.createElement("p");
+      note.textContent =
+        (method === "reference" ? "Dijkstra: " : "Propuesto: ") +
+        (reasons[result.reason] || result.reason);
+      section.append(note);
+    }
+  }
+  message(
+    "Comparación congelada: " +
+      options.length +
+      " opciones. Las rutas pueden compartir zonas de falla. No es probabilidad real de éxito.",
+  );
 }
 
-function refreshWeatherHours(){if(!data)return;const selected=$('weather-hour').value;$('weather-hour').replaceChildren(new Option('Elegir hora y ver condición',''));const wind=Number($('wind-limit').value);for(const w of data.weather){const blocked=[w.wind_speed_ms,w.wind_gust_ms,w.temperature_c,w.wind_direction_deg].some(v=>v===null)||Math.max(w.wind_speed_ms,w.wind_gust_ms)>=wind||w.temperature_c<data.profile.temperature_min_c||w.temperature_c>data.profile.temperature_max_c;$('weather-hour').append(new Option(w.valid_at.slice(0,16).replace('T',' ')+' UTC · '+(blocked?'fuera de perfil / sin dato':'admisible')+' · viento '+w.wind_speed_ms+' / racha '+w.wind_gust_ms+' m/s · '+w.temperature_c+' °C',w.valid_at));}if([...$('weather-hour').options].some(o=>o.value===selected))$('weather-hour').value=selected;}
-$('wind-limit').addEventListener('change',refreshWeatherHours);
+function refreshWeatherHours() {
+  if (!data) return;
+  const selected = $("weather-hour").value;
+  $("weather-hour").replaceChildren(
+    new Option("Elegir hora y ver condición", ""),
+  );
+  const wind = Number($("wind-limit").value);
+  for (const w of data.weather) {
+    const blocked =
+      [
+        w.wind_speed_ms,
+        w.wind_gust_ms,
+        w.temperature_c,
+        w.wind_direction_deg,
+      ].some((v) => v === null) ||
+      Math.max(w.wind_speed_ms, w.wind_gust_ms) >= wind ||
+      w.temperature_c < data.profile.temperature_min_c ||
+      w.temperature_c > data.profile.temperature_max_c;
+    $("weather-hour").append(
+      new Option(
+        w.valid_at.slice(0, 16).replace("T", " ") +
+          " UTC · " +
+          (blocked ? "fuera de perfil / sin dato" : "admisible") +
+          " · viento " +
+          w.wind_speed_ms +
+          " / racha " +
+          w.wind_gust_ms +
+          " m/s · " +
+          w.temperature_c +
+          " °C",
+        w.valid_at,
+      ),
+    );
+  }
+  if ([...$("weather-hour").options].some((o) => o.value === selected))
+    $("weather-hour").value = selected;
+}
+$("wind-limit").addEventListener("change", refreshWeatherHours);
 
-function renderDiagnostics(d){
- const box=$('diagnostics');box.replaceChildren();box.hidden=!d;if(!d)return;
- const groups=d.version?{mission:d}:d;
- for(const [method,item] of Object.entries(groups)){
-  const title=document.createElement('strong');title.textContent='Diagnóstico '+(method==='reference'?'Dijkstra':method==='proposed'?'propuesto':'de misión');box.append(title);
-  const add=text=>{const p=document.createElement('p');p.className='small';p.textContent=text;box.append(p);};
-  add('Motivo principal: '+(reasons[item.primary_reason]||item.primary_reason||'sin rechazo en la generación. Revisar admisibilidad de la referencia.'));
-  for(const cause of item.causes){let text=reasons[cause.code]||cause.code;if(cause.zones)text+=' · '+cause.zones.map(z=>z.id+' ('+z.endpoints.join(', ')+')').join('; ');if(cause.endpoint)text+=' · '+cause.endpoint;add('Causa comprobada: '+text);}
-  for(const check of item.not_tested)add('Sin comprobar '+check.check+': '+(reasons[check.reason]||check.reason));
-  for(const [code,count] of Object.entries(item.excluded_edges_by_cause||{}))add('Arcos excluidos por '+(reasons[code]||code)+': '+count+'.');
-  for(const [zone,count] of Object.entries(item.aip_edge_intersections||{}))add('Zona AIP '+zone+': '+count+' arcos intersectados.');
-  const oracle=item.independent_oracle;
-  if(oracle.state==='computed')add('Dijkstra independiente: '+(oracle.minimum_remaining_s===null?'sin ida o regreso en el grafo admitido':oracle.minimum_remaining_s.toFixed(1)+' s mínimos, incluida observación '+oracle.observation_s+' s')+' · restante '+oracle.remaining_s.toFixed(1)+' s.'+(oracle.proposed_rejection_contradiction?' Discrepancia detectada: requiere revisión.':''));
-  add('Las causas pueden coincidir en una misión. La salud del servicio no garantiza factibilidad. El contraste se limita a esta malla y hora.');
- }
+function renderDiagnostics(d) {
+  const box = $("diagnostics");
+  box.replaceChildren();
+  box.hidden = !d;
+  if (!d) return;
+  const groups = d.version ? { mission: d } : d;
+  for (const [method, item] of Object.entries(groups)) {
+    const title = document.createElement("strong");
+    title.textContent =
+      "Diagnóstico " +
+      (method === "reference"
+        ? "Dijkstra"
+        : method === "proposed"
+          ? "propuesto"
+          : "de misión");
+    box.append(title);
+    const add = (text) => {
+      const p = document.createElement("p");
+      p.className = "small";
+      p.textContent = text;
+      box.append(p);
+    };
+    add(
+      "Motivo principal: " +
+        (reasons[item.primary_reason] ||
+          item.primary_reason ||
+          "sin rechazo en la generación. Revisar admisibilidad de la referencia."),
+    );
+    for (const cause of item.causes) {
+      let text = reasons[cause.code] || cause.code;
+      if (cause.zones)
+        text +=
+          " · " +
+          cause.zones
+            .map((z) => z.id + " (" + z.endpoints.join(", ") + ")")
+            .join("; ");
+      if (cause.endpoint) text += " · " + cause.endpoint;
+      add("Causa comprobada: " + text);
+    }
+    for (const check of item.not_tested)
+      add(
+        "Sin comprobar " +
+          check.check +
+          ": " +
+          (reasons[check.reason] || check.reason),
+      );
+    for (const [code, count] of Object.entries(
+      item.excluded_edges_by_cause || {},
+    ))
+      add(
+        "Arcos excluidos por " + (reasons[code] || code) + ": " + count + ".",
+      );
+    for (const [zone, count] of Object.entries(
+      item.aip_edge_intersections || {},
+    ))
+      add("Zona AIP " + zone + ": " + count + " arcos intersectados.");
+    const oracle = item.independent_oracle;
+    if (oracle.state === "computed")
+      add(
+        "Dijkstra independiente: " +
+          (oracle.minimum_remaining_s === null
+            ? "sin ida o regreso en el grafo admitido"
+            : oracle.minimum_remaining_s.toFixed(1) +
+              " s mínimos, incluida observación " +
+              oracle.observation_s +
+              " s") +
+          " · restante " +
+          oracle.remaining_s.toFixed(1) +
+          " s." +
+          (oracle.proposed_rejection_contradiction
+            ? " Discrepancia detectada: requiere revisión."
+            : ""),
+      );
+    add(
+      "Las causas pueden coincidir en una misión. La salud del servicio no garantiza factibilidad. El contraste se limita a esta malla y hora.",
+    );
+  }
 }

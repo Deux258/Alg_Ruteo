@@ -1,41 +1,186 @@
 <!doctype html>
 <html lang="es">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Ruteo aéreo · Valparaíso</title><link rel="stylesheet" href="/vendor/leaflet.css"><link rel="stylesheet" href="/style.css"></head>
-<body>
-<header><div><p class="eyebrow">VALPARAÍSO, CHILE · VIGILANCIA FORESTAL</p><h1>Rutas aéreas para drones</h1></div><a href="/api/topologia" target="_blank" rel="noopener">Datos y diagnóstico ↗</a></header>
-<main><aside>
-<section><span class="label">PLANIFICAR RECORRIDO</span><p class="note">Simulador académico del informe. Despeje vertical no verificado. Los corredores pueden sobrevolar calles; no representan vuelos autorizados.</p>
-<label for="bases">Base candidata real</label><select id="bases"><option value="">Cargando…</option></select>
-<div class="pair"><button id="pick-origin" type="button">Seleccionar inicio</button><button id="pick-destination" type="button">Seleccionar destino</button></div>
-<label for="origin">Inicio · longitud, latitud</label><input id="origin" placeholder="−71.65, −33.10" aria-describedby="selection-help">
-<label for="destination">Destino · longitud, latitud</label><input id="destination" placeholder="Elige cualquier punto dentro del límite">
-<div class="pair"><button id="swap" class="secondary">Intercambiar</button><button id="reset" class="secondary">Restablecer</button></div>
-<p id="selection-help" class="small">Elige inicio y destino en el mapa o escribe sus coordenadas. No necesitan estar cerca de una calle.</p>
-<label for="examples">Objetivos de vigilancia de ejemplo</label><select id="examples"><option value="">Seleccionar objetivo</option></select>
-<label for="mode">Tipo de recorrido</label><select id="mode"><option value="mission">Misión: ida, observación y regreso</option><option value="trip">Trayecto: solo ida</option></select>
-<label for="method">Método</label><select id="method"><option value="proposed">Propuesto: restricciones, tiempo y exposición</option><option value="reference">Referencia Dijkstra: solo distancia</option></select>
-<label for="scenario-time">Hora del escenario (UTC)</label><input id="scenario-time" type="datetime-local" step="60">
-<label for="weather-hour">Horas disponibles del pronóstico</label><select id="weather-hour"><option value="">Elegir hora y ver condición</option></select><p class="small">Snapshot académico: puedes reproducir una hora pasada. No se presenta como pronóstico vigente.</p>
-<details><summary>Preferencias de la misión</summary>
-<label for="budget">Presupuesto utilizable (s, máximo 1200)</label><input id="budget" type="number" min="1" max="1200" value="1200">
-<label for="wind-limit">Límite de viento y racha (m/s, máximo 8)</label><input id="wind-limit" type="number" min="0.01" max="8" step="0.01" value="8">
-<label for="detour">Factor máximo de desvío (1 a 1,20)</label><input id="detour" type="number" min="1" max="1.2" step="0.01" value="1.2">
-<label for="history-limit">Límite preventivo de recurrencia histórica</label><select id="history-limit"><option value="">Desactivado: ordenar por exposición</option><option value="1">Clase máxima 1</option><option value="2">Clase máxima 2</option><option value="3">Clase máxima 3</option><option value="4">Clase máxima 4</option><option value="5">Clase máxima 5</option></select>
-<p class="small">Política preventiva simulada sobre recurrencia 2020–2024. Al activarla se excluyen clases superiores y tramos sin información. No representa incendios activos.</p>
-<p class="small">Defaults del informe; solo se permiten restricciones más exigentes. Condiciones congeladas en la hora elegida durante toda la misión.</p></details>
-<button id="calculate" disabled>Calcular rutas aéreas</button><button id="compare" class="secondary" disabled>Comparar misiones y resiliencia</button><p id="counts" class="small"></p></section>
-<section id="comparison-summary" hidden aria-live="polite"></section>
-<section><span class="label">PROBLEMAS SIMULADOS</span><p class="small">Los eventos dibujados son sintéticos y se distinguen de FIRMS y AIP.</p>
-<label for="radius">Radio del bloqueo (m)</label><input id="radius" type="number" min="1" max="10000" value="250">
-<div class="pair"><button id="block-point" class="secondary">Bloqueo circular</button><button id="block-polygon" class="secondary">Dibujar polígono</button></div>
-<button id="finish-polygon" class="secondary" hidden>Cerrar polígono</button><button id="clear-events" class="secondary">Resolver bloqueos simulados</button><p id="events-status" class="small">Sin eventos simulados.</p></section>
-<section><details><summary>Estado de misión y replanificación</summary><p class="small">La replanificación discreta ocurre en nodos. No se inventan maniobras durante un segmento.</p>
-<label for="position">Posición simulada</label><select id="position"><option value="">Inicio de la misión</option></select>
-<label for="phase">Fase</label><select id="phase"><option value="outbound">Antes de observar</option><option value="return">Observación realizada: regreso</option><option value="emergency_return">Regreso sin completar vigilancia</option></select>
-<label for="elapsed">Tiempo ya consumido (s)</label><input id="elapsed" type="number" min="0" value="0">
-<label class="toggle"><input id="on-edge" type="checkbox"> Interrupción durante un segmento</label>
-<button id="replan">Replanificar misión</button></details></section>
-<section><div id="result" role="status" aria-live="polite">Cargando fuentes y red aérea…</div><div id="diagnostics" aria-live="polite" hidden></div><div id="alternatives"></div><button id="export" class="secondary" disabled>Descargar resultado y escenario</button></section>
-<footer><p>Perfil académico: 10 m/s · 25 min · reserva 20 % · observación 60 s. Presupuesto utilizable: 1.200 s.</p><p>Las alternativas pueden compartir zonas de falla. La elevación superficial no equivale a altura de vuelo.</p><label class="toggle"><input id="tiles" type="checkbox"> Fondo OpenStreetMap (requiere internet)</label><p>S1–S7: SENAPRED, CONAF/CIREN, Copernicus, Open-Meteo, NASA FIRMS y DGAC/AIP. OSM se usa solo como fondo opcional.</p></footer>
-</aside><div id="map" aria-label="Mapa de corredores aéreos de Valparaíso"></div></main>
-<script src="/vendor/leaflet.js"></script><script src="/aerial.js"></script></body></html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Rutas aéreas para drones · Valparaíso</title>
+    <link rel="stylesheet" href="/vendor/leaflet.css" />
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <header>
+      <div class="brand">
+        <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+          <circle cx="16" cy="16" r="3.5" /><path d="M13 13 7 7M19 13l6-6M13 19l-6 6M19 19l6 6" />
+          <circle cx="6" cy="6" r="3" /><circle cx="26" cy="6" r="3" /><circle cx="6" cy="26" r="3" /><circle cx="26" cy="26" r="3" />
+        </svg>
+        <div>
+          <h1>Rutas aéreas para drones <span class="chip">Simulador académico</span></h1>
+          <p class="eyebrow">Valparaíso, Chile · Vigilancia forestal</p>
+        </div>
+      </div>
+      <a href="/api/topologia" target="_blank" rel="noopener">Datos y diagnóstico ↗</a>
+    </header>
+    <main>
+      <aside>
+        <!-- 1. Recorrido -->
+        <section>
+          <h2 class="step-title">
+            <span class="n">1</span> Define el recorrido
+            <button id="reset" class="link" type="button">Restablecer</button>
+          </h2>
+          <p class="note">
+            Despeje vertical no verificado. Los corredores pueden sobrevolar
+            calles y no representan vuelos autorizados.
+          </p>
+          <label for="bases">Base de despegue</label>
+          <select id="bases"><option value="">Cargando…</option></select>
+
+          <label>Inicio y destino</label>
+          <div class="route">
+            <div class="stop">
+              <span class="pin o"></span>
+              <div class="field">
+                <label for="origin">Inicio · longitud, latitud</label>
+                <input id="origin" placeholder="−71.65, −33.10" aria-describedby="selection-help" />
+              </div>
+              <button id="pick-origin" class="icon" type="button" title="Elegir inicio en el mapa" aria-label="Elegir inicio en el mapa">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6.2 7-11.5A7 7 0 0 0 5 9.5C5 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>
+              </button>
+            </div>
+            <hr />
+            <div class="stop">
+              <span class="pin d"></span>
+              <div class="field">
+                <label for="destination">Destino · longitud, latitud</label>
+                <input id="destination" placeholder="Haz clic en el mapa o escribe" />
+              </div>
+              <button id="pick-destination" class="icon" type="button" title="Elegir destino en el mapa" aria-label="Elegir destino en el mapa">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6.2 7-11.5A7 7 0 0 0 5 9.5C5 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>
+              </button>
+            </div>
+            <button id="swap" class="swap" type="button" title="Intercambiar inicio y destino" aria-label="Intercambiar inicio y destino">
+              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4v16M8 20l-3-3M8 20l3-3M16 20V4M16 4l-3 3M16 4l3 3"/></svg>
+            </button>
+          </div>
+          <p id="selection-help" class="small">
+            Usa el pin para marcar el punto en el mapa. No necesita estar cerca de una calle.
+          </p>
+          <label for="examples">Objetivos de vigilancia de ejemplo</label>
+          <select id="examples"><option value="">Seleccionar objetivo</option></select>
+        </section>
+
+        <!-- 2. Escenario -->
+        <section>
+          <h2 class="step-title"><span class="n">2</span> Ajusta el escenario</h2>
+          <div class="grid2">
+            <div>
+              <label for="mode">Tipo de recorrido</label>
+              <select id="mode">
+                <option value="mission">Misión (ida y regreso)</option>
+                <option value="trip">Solo ida</option>
+              </select>
+            </div>
+            <div>
+              <label for="method">Método</label>
+              <select id="method">
+                <option value="proposed">Propuesto</option>
+                <option value="reference">Dijkstra (distancia)</option>
+              </select>
+            </div>
+          </div>
+          <label for="scenario-time">Hora del escenario (UTC)</label>
+          <input id="scenario-time" type="datetime-local" step="60" />
+          <label for="weather-hour">Pronóstico disponible</label>
+          <select id="weather-hour"><option value="">Elegir hora y ver condición</option></select>
+          <p class="small">
+            Snapshot académico: puedes reproducir una hora pasada. No es un pronóstico vigente.
+          </p>
+          <details>
+            <summary>Preferencias de la misión</summary>
+            <label for="budget">Presupuesto utilizable (s, máx. 1200)</label>
+            <input id="budget" type="number" min="1" max="1200" value="1200" />
+            <label for="wind-limit">Límite de viento y racha (m/s, máx. 8)</label>
+            <input id="wind-limit" type="number" min="0.01" max="8" step="0.01" value="8" />
+            <label for="detour">Factor máximo de desvío (1 a 1,20)</label>
+            <input id="detour" type="number" min="1" max="1.2" step="0.01" value="1.2" />
+            <label for="history-limit">Límite de recurrencia histórica</label>
+            <select id="history-limit">
+              <option value="">Desactivado: ordenar por exposición</option>
+              <option value="1">Clase máxima 1</option>
+              <option value="2">Clase máxima 2</option>
+              <option value="3">Clase máxima 3</option>
+              <option value="4">Clase máxima 4</option>
+              <option value="5">Clase máxima 5</option>
+            </select>
+            <p class="small">
+              Política preventiva simulada sobre recurrencia 2020–2024: excluye clases superiores y tramos sin información. No representa incendios activos.
+            </p>
+            <p class="small">
+              Solo se permiten restricciones más exigentes que las del informe. Las condiciones quedan fijas en la hora elegida.
+            </p>
+          </details>
+        </section>
+
+        <!-- 3. Problemas simulados -->
+        <section>
+          <h2 class="step-title"><span class="n">3</span> Prueba imprevistos</h2>
+          <p class="small">Los bloqueos son sintéticos y se distinguen de FIRMS y AIP.</p>
+          <label for="radius">Radio del bloqueo (m)</label>
+          <input id="radius" type="number" min="1" max="10000" value="250" />
+          <div class="pair">
+            <button id="block-point" class="secondary" type="button">Bloqueo circular</button>
+            <button id="block-polygon" class="secondary" type="button">Dibujar polígono</button>
+          </div>
+          <button id="finish-polygon" class="secondary" type="button" hidden>Cerrar polígono</button>
+          <button id="clear-events" class="secondary" type="button">Resolver bloqueos</button>
+          <p id="events-status" class="small">Sin eventos simulados.</p>
+          <details>
+            <summary>Replanificar en pleno vuelo</summary>
+            <p class="small">La replanificación ocurre en nodos; no se inventan maniobras dentro de un segmento.</p>
+            <label for="position">Posición simulada</label>
+            <select id="position"><option value="">Inicio de la misión</option></select>
+            <label for="phase">Fase</label>
+            <select id="phase">
+              <option value="outbound">Antes de observar</option>
+              <option value="return">Observación realizada: regreso</option>
+              <option value="emergency_return">Regreso sin completar vigilancia</option>
+            </select>
+            <label for="elapsed">Tiempo ya consumido (s)</label>
+            <input id="elapsed" type="number" min="0" value="0" />
+            <label class="toggle"><input id="on-edge" type="checkbox" /> Interrupción durante un segmento</label>
+            <button id="replan" type="button">Replanificar misión</button>
+          </details>
+        </section>
+
+        <!-- Resultados -->
+        <section id="comparison-summary" hidden aria-live="polite"></section>
+        <section class="results">
+          <div id="diagnostics" aria-live="polite" hidden></div>
+          <div id="alternatives"></div>
+          <button id="export" class="secondary" type="button" disabled>Descargar resultado y escenario</button>
+        </section>
+
+        <footer>
+          <p>Perfil académico: 10 m/s · 25 min · reserva 20 % · observación 60 s. Presupuesto utilizable: 1.200 s.</p>
+          <p>Las alternativas pueden compartir zonas de falla. La elevación superficial no equivale a altura de vuelo.</p>
+          <label class="toggle"><input id="tiles" type="checkbox" /> Fondo OpenStreetMap (requiere internet)</label>
+          <p>Fuentes S1–S7: SENAPRED, CONAF/CIREN, Copernicus, Open-Meteo, NASA FIRMS y DGAC/AIP. OSM solo como fondo opcional.</p>
+          <p id="counts" class="small"></p>
+        </footer>
+
+        <!-- Barra fija de acción -->
+        <div class="actions">
+          <div id="result" role="status" aria-live="polite">Cargando fuentes y red aérea…</div>
+          <div class="pair">
+            <button id="calculate" type="button" disabled>Calcular rutas</button>
+            <button id="compare" class="secondary" type="button" disabled>Comparar métodos</button>
+          </div>
+        </div>
+      </aside>
+      <div id="map" aria-label="Mapa de corredores aéreos de Valparaíso"></div>
+    </main>
+    <script src="/vendor/leaflet.js"></script>
+    <script src="/aerial.js"></script>
+  </body>
+</html>
