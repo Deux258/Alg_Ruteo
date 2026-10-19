@@ -45,6 +45,8 @@ def load_sources(config):
     data={}
     for key,entry in manifest['sources'].items():
         if 'catalogue' in entry:path(entry['catalogue'])
+        for attachment in ['index','validation']:
+            if attachment in entry:path(entry[attachment])
         if 'pages' in entry:
             features=[]
             ids=json.loads(path(entry['ids']).read_text(encoding='utf-8'))['objectIds'] or []

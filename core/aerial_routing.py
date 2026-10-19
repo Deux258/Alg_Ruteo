@@ -214,6 +214,13 @@ def paths(conn,edges,source,target,k=3,reference=False):
 
 
 def calculate(conn,rid,request):
+    result=_calculate(conn,rid,request)
+    from core.mission_diagnostics import diagnose
+    result['diagnostics']=diagnose(conn,rid,request,result)
+    return result
+
+
+def _calculate(conn,rid,request):
     if not isinstance(request,dict):raise ValueError('Solicitud JSON inválida')
     model,area,nodes,edges=data(conn,rid);profile=effective_profile(model['profile'],request.get('preferences'))
     model=dict(model,profile=profile)

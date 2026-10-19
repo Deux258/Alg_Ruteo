@@ -1,0 +1,21 @@
+ Container udp-ruteo-cierre-20261019-etl-run-b2f4395089b8 Creating 
+ Container udp-ruteo-cierre-20261019-etl-run-b2f4395089b8 Created 
+Adquiriendo S1
+Adquiriendo S1H
+Adquiriendo S2
+Adquiriendo S3
+Adquiriendo S4
+Adquiriendo S5
+Adquiriendo S6
+ERROR S6: <urlopen error [Errno -2] Name or service not known>
+Adquiriendo S7
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/app/Infraestructura/descargar_aereo.py", line 184, in <module>
+    download(json.loads(args.config.read_text(encoding='utf-8')),args.sources.split(',') if args.sources else None,args.reuse.split(',') if args.reuse else [])
+  File "/app/Infraestructura/descargar_aereo.py", line 174, in download
+    if errors:raise RuntimeError('Fuentes incompletas: '+json.dumps(errors,ensure_ascii=False))
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: Fuentes incompletas: {"S6": "<urlopen error [Errno -2] Name or service not known>"}
+

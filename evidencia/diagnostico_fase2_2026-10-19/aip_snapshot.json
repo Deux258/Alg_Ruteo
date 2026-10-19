@@ -1,0 +1,1361 @@
+{
+  "manifest_sha256": "12f8422edc7e4fea55dfa2f47a4344b55b30bef5dec72a200f9c6192f7ac76d0",
+  "new_document_comparison": "not_available_dns_failure",
+  "original": {
+    "bytes": 445770,
+    "fetched_at_utc": "2026-10-17T22:55:30.138736+00:00",
+    "file": "S6_fd2d8e065ebd2098.pdf",
+    "http_status": 200,
+    "product": "DGAC AIP ENR 5.1",
+    "reuse": {
+      "explicit": true,
+      "manifest_sha256": "c4c391e106725ca99e8d1f1196c20d3a1877df67adfb7298cef38cbf84bbb466"
+    },
+    "sha256": "fd2d8e065ebd209832d2820abe3592b17f15fb84265f210a092d9df6fc77598d",
+    "url": "https://aipchile.dgac.gob.cl/dasa/aip_chile_con_contenido/ais/2%20ENR%20Parte%202/ENR%205%20Zonas%20Prohibidas%2C%20Restringidas%20y%20Peligrosas/ENR%205.1-1%20Zonas%20P%2C%20R%2C%20D.pdf"
+  },
+  "page_dates": [
+    {
+      "amendments": [
+        "AMDT NR 44 "
+      ],
+      "dates": [
+        "08 DEC 2016"
+      ],
+      "page": 1,
+      "relevant": false
+    },
+    {
+      "amendments": [
+        "AMDT NR 44 AIS - CHILE "
+      ],
+      "dates": [
+        "08 DEC 2016"
+      ],
+      "page": 2,
+      "relevant": false
+    },
+    {
+      "amendments": [
+        "AMDT NR 49 "
+      ],
+      "dates": [
+        "13 AUG 2020"
+      ],
+      "page": 3,
+      "relevant": false
+    },
+    {
+      "amendments": [
+        "AMDT NR 49 AIS-CHILE "
+      ],
+      "dates": [
+        "13 AUG 2020"
+      ],
+      "page": 4,
+      "relevant": false
+    },
+    {
+      "amendments": [
+        "AMDT NR 66 "
+      ],
+      "dates": [
+        "14 MAY 2026"
+      ],
+      "page": 5,
+      "relevant": false
+    },
+    {
+      "amendments": [
+        "AMDT NR 66 AIS-CHILE "
+      ],
+      "dates": [
+        "14 MAY 2026"
+      ],
+      "page": 6,
+      "relevant": true
+    },
+    {
+      "amendments": [
+        "AMDT NR 64 "
+      ],
+      "dates": [
+        "07 AUG 2025"
+      ],
+      "page": 7,
+      "relevant": true
+    },
+    {
+      "amendments": [
+        "AMDT NR 64 AIS - CHILE "
+      ],
+      "dates": [
+        "07 AUG 2025"
+      ],
+      "page": 8,
+      "relevant": false
+    },
+    {
+      "amendments": [
+        "AMDT NR 67 "
+      ],
+      "dates": [
+        "06 AUG 2026"
+      ],
+      "page": 9,
+      "relevant": false
+    },
+    {
+      "amendments": [
+        "AMDT NR 67 AIS - CHILE "
+      ],
+      "dates": [
+        "06 AUG 2026"
+      ],
+      "page": 10,
+      "relevant": false
+    },
+    {
+      "amendments": [
+        "AMDT NR 67 "
+      ],
+      "dates": [
+        "06 AUG 2026"
+      ],
+      "page": 11,
+      "relevant": false
+    },
+    {
+      "amendments": [
+        "AMDT NR 67 AIS - CHILE "
+      ],
+      "dates": [
+        "06 AUG 2026"
+      ],
+      "page": 12,
+      "relevant": false
+    },
+    {
+      "amendments": [
+        "AMDT NR 67 "
+      ],
+      "dates": [
+        "06 AUG 2026"
+      ],
+      "page": 13,
+      "relevant": false
+    },
+    {
+      "amendments": [
+        "AMDT NR 67 AIS - CHILE "
+      ],
+      "dates": [
+        "06 AUG 2026"
+      ],
+      "page": 14,
+      "relevant": false
+    },
+    {
+      "amendments": [
+        "AMDT NR 67 "
+      ],
+      "dates": [
+        "06 AUG 2026"
+      ],
+      "page": 15,
+      "relevant": false
+    },
+    {
+      "amendments": [
+        "AMDT NR 67 AIS - CHILE "
+      ],
+      "dates": [
+        "06 AUG 2026"
+      ],
+      "page": 16,
+      "relevant": false
+    },
+    {
+      "amendments": [
+        "AMDT NR 67 "
+      ],
+      "dates": [
+        "06 AUG 2026"
+      ],
+      "page": 17,
+      "relevant": false
+    },
+    {
+      "amendments": [
+        "AMDT NR 67 AIS - CHILE "
+      ],
+      "dates": [
+        "06 AUG 2026"
+      ],
+      "page": 18,
+      "relevant": false
+    },
+    {
+      "amendments": [
+        "AMDT NR 67 "
+      ],
+      "dates": [
+        "06 AUG 2026"
+      ],
+      "page": 19,
+      "relevant": false
+    },
+    {
+      "amendments": [
+        "AMDT NR 67 AIS - CHILE "
+      ],
+      "dates": [
+        "06 AUG 2026"
+      ],
+      "page": 20,
+      "relevant": false
+    },
+    {
+      "amendments": [
+        "AMDT NR 67 "
+      ],
+      "dates": [
+        "06 AUG 2026"
+      ],
+      "page": 21,
+      "relevant": false
+    },
+    {
+      "amendments": [
+        "AMDT NR 67 AIS-CHILE "
+      ],
+      "dates": [
+        "06 AUG 2026"
+      ],
+      "page": 22,
+      "relevant": false
+    },
+    {
+      "amendments": [
+        "AMDT NR 67 "
+      ],
+      "dates": [
+        "06 AUG 2026"
+      ],
+      "page": 23,
+      "relevant": false
+    },
+    {
+      "amendments": [
+        "AMDT NR 67 AIS-CHILE "
+      ],
+      "dates": [
+        "06 AUG 2026"
+      ],
+      "page": 24,
+      "relevant": false
+    }
+  ],
+  "parser": {
+    "aip_margin_m": 300,
+    "counts": {
+      "SC-D": 9,
+      "SC-P": 32,
+      "SC-R": 37
+    },
+    "document_pages": [
+      "5",
+      "6",
+      "7",
+      "8",
+      "9",
+      "10",
+      "11",
+      "13",
+      "14",
+      "15",
+      "16",
+      "17",
+      "18",
+      "19",
+      "21",
+      "22"
+    ],
+    "explicit_exceptions": [
+      {
+        "code": "SC-P51",
+        "reason": "Las cuatro latitudes se leen, pero las longitudes aparecen como '07 031 15 W', con minutos no válidos; requiere cotejo visual del AIP."
+      },
+      {
+        "code": "SC-R45",
+        "reason": "Sin coordenadas publicadas en ENR 5.1; radiales/distancias desde NAS VOR/DME en FIR Punta Arenas, fuera del AOI de Valparaíso."
+      },
+      {
+        "code": "SC-R46",
+        "reason": "Sin coordenadas publicadas en ENR 5.1; radiales/distancias desde NAS VOR/DME en FIR Punta Arenas, fuera del AOI de Valparaíso."
+      },
+      {
+        "code": "SC-R47",
+        "reason": "Sin coordenadas publicadas en ENR 5.1; radiales/distancias desde NAS VOR/DME en FIR Punta Arenas, fuera del AOI de Valparaíso."
+      },
+      {
+        "code": "SC-R48",
+        "reason": "Sin coordenadas publicadas en ENR 5.1; radiales/distancias desde NAS VOR/DME en FIR Punta Arenas, fuera del AOI de Valparaíso."
+      }
+    ],
+    "records": [
+      {
+        "center": null,
+        "code": "SC-P3",
+        "convex_hull_distance_m": null,
+        "document_page": "5",
+        "geometry_reordered": false,
+        "geometry_type": "polygon",
+        "lower_limit": "GND",
+        "radius_m": null,
+        "status": "fuera_del_margen",
+        "upper_limit": "UNL",
+        "vertices": 4
+      },
+      {
+        "center": [
+          -73.55925277777777,
+          -37.33166666666667
+        ],
+        "code": "SC-P9",
+        "convex_hull_distance_m": null,
+        "document_page": "5",
+        "geometry_reordered": false,
+        "geometry_type": "circle",
+        "lower_limit": "GND",
+        "radius_m": 2778.0,
+        "status": "fuera_del_margen",
+        "upper_limit": "1600 FT AGL",
+        "vertices": null
+      },
+      {
+        "code": "SC-P10",
+        "document_page": "5",
+        "geometry_type": "arco de 40 NM y límites laterales mixtos",
+        "lower_limit": "GND",
+        "nearest_coordinate_distance_m": 1347243.7,
+        "status": "no_soportada_lejana",
+        "upper_limit": "UNL"
+      },
+      {
+        "center": null,
+        "code": "SC-P14",
+        "convex_hull_distance_m": null,
+        "document_page": "5",
+        "geometry_reordered": false,
+        "geometry_type": "polygon",
+        "lower_limit": "GND",
+        "radius_m": null,
+        "status": "fuera_del_margen",
+        "upper_limit": "5000 FT AGL",
+        "vertices": 8
+      },
+      {
+        "center": [
+          -72.863875,
+          -41.29835277777777
+        ],
+        "code": "SC-P15",
+        "convex_hull_distance_m": null,
+        "document_page": "5",
+        "geometry_reordered": false,
+        "geometry_type": "circle",
+        "lower_limit": "GND",
+        "radius_m": 1111.2,
+        "status": "fuera_del_margen",
+        "upper_limit": "5000 FT AGL",
+        "vertices": null
+      },
+      {
+        "center": null,
+        "code": "SC-P23",
+        "convex_hull_distance_m": null,
+        "document_page": "6",
+        "geometry_reordered": false,
+        "geometry_type": "polygon",
+        "lower_limit": "GND/MSL; GND/MSL",
+        "radius_m": null,
+        "status": "fuera_del_margen",
+        "upper_limit": "FL 195; 3 000 FT ALT",
+        "vertices": 6
+      },
+      {
+        "center": [
+          -70.65333333333334,
+          -33.43833333333333
+        ],
+        "code": "SC-P26",
+        "convex_hull_distance_m": null,
+        "document_page": "6",
+        "geometry_reordered": false,
+        "geometry_type": "circle",
+        "lower_limit": "GND",
+        "radius_m": 277.8,
+        "status": "fuera_del_margen",
+        "upper_limit": "1000 FT AGL",
+        "vertices": null
+      },
+      {
+        "center": null,
+        "code": "SC-P28",
+        "convex_hull_distance_m": null,
+        "document_page": "6",
+        "geometry_reordered": false,
+        "geometry_type": "polygon",
+        "lower_limit": "GND",
+        "radius_m": null,
+        "status": "fuera_del_margen",
+        "upper_limit": "3 000 FT ALT",
+        "vertices": 4
+      },
+      {
+        "center": [
+          -71.60527777777777,
+          -33.04805555555556
+        ],
+        "code": "SC-P29",
+        "convex_hull_distance_m": null,
+        "document_page": "6",
+        "geometry_reordered": false,
+        "geometry_type": "circle",
+        "lower_limit": "GND",
+        "radius_m": 277.8,
+        "status": "incluida",
+        "upper_limit": "1000 FT AGL",
+        "vertices": null
+      },
+      {
+        "center": [
+          -71.56416666666667,
+          -33.02055555555555
+        ],
+        "code": "SC-P30",
+        "convex_hull_distance_m": null,
+        "document_page": "6",
+        "geometry_reordered": false,
+        "geometry_type": "circle",
+        "lower_limit": "GND/MSL; GND/MSL",
+        "radius_m": 500.0,
+        "status": "fuera_del_margen",
+        "upper_limit": "1200 FT ALT; FL 50",
+        "vertices": null
+      },
+      {
+        "center": [
+          -70.52444444444444,
+          -33.42861111111111
+        ],
+        "code": "SC-P44",
+        "convex_hull_distance_m": null,
+        "document_page": "6",
+        "geometry_reordered": false,
+        "geometry_type": "circle",
+        "lower_limit": "GND",
+        "radius_m": 500.0,
+        "status": "fuera_del_margen",
+        "upper_limit": "3300 FT ALT",
+        "vertices": null
+      },
+      {
+        "center": [
+          -71.63333333333334,
+          -33.016666666666666
+        ],
+        "code": "SC-P50",
+        "convex_hull_distance_m": null,
+        "document_page": "7",
+        "geometry_reordered": false,
+        "geometry_type": "circle",
+        "lower_limit": "GND / MSL",
+        "radius_m": 3704.0,
+        "status": "incluida",
+        "upper_limit": "3 000 FT ALT",
+        "vertices": null
+      },
+      {
+        "code": "SC-P51",
+        "document_page": "7",
+        "geometry_type": "polígono_no_reconstruible",
+        "lower_limit": "GND",
+        "reason": "Las cuatro latitudes se leen, pero las longitudes aparecen como '07 031 15 W', con minutos no válidos; requiere cotejo visual del AIP.",
+        "status": "excepcion_sin_geometria",
+        "upper_limit": "3800 FT ALT"
+      },
+      {
+        "center": [
+          -70.10879444444444,
+          -20.25818888888889
+        ],
+        "code": "SC-P55",
+        "convex_hull_distance_m": null,
+        "document_page": "7",
+        "geometry_reordered": false,
+        "geometry_type": "circle",
+        "lower_limit": "GND",
+        "radius_m": 500.0,
+        "status": "fuera_del_margen",
+        "upper_limit": "2000 FT ALT",
+        "vertices": null
+      },
+      {
+        "center": null,
+        "code": "SC-P57",
+        "convex_hull_distance_m": null,
+        "document_page": "7",
+        "geometry_reordered": false,
+        "geometry_type": "polygon",
+        "lower_limit": "GND",
+        "radius_m": null,
+        "status": "fuera_del_margen",
+        "upper_limit": "3000 FT ALT",
+        "vertices": 4
+      },
+      {
+        "center": null,
+        "code": "SC-P59",
+        "convex_hull_distance_m": null,
+        "document_page": "7",
+        "geometry_reordered": false,
+        "geometry_type": "polygon",
+        "lower_limit": "GND",
+        "radius_m": null,
+        "status": "fuera_del_margen",
+        "upper_limit": "3000 FT ALT",
+        "vertices": 4
+      },
+      {
+        "center": null,
+        "code": "SC-P83",
+        "convex_hull_distance_m": null,
+        "document_page": "8",
+        "geometry_reordered": false,
+        "geometry_type": "polygon",
+        "lower_limit": "GND",
+        "radius_m": null,
+        "status": "fuera_del_margen",
+        "upper_limit": "600 FT AGL",
+        "vertices": 4
+      },
+      {
+        "center": null,
+        "code": "SC-P84",
+        "convex_hull_distance_m": 1365741.3,
+        "document_page": "8",
+        "geometry_reordered": true,
+        "geometry_type": "polygon",
+        "lower_limit": "GND",
+        "radius_m": null,
+        "status": "fuera_del_margen",
+        "upper_limit": "600 FT AGL",
+        "vertices": 4
+      },
+      {
+        "center": null,
+        "code": "SC-P85",
+        "convex_hull_distance_m": 1571582.7,
+        "document_page": "8",
+        "geometry_reordered": true,
+        "geometry_type": "polygon",
+        "lower_limit": "GND",
+        "radius_m": null,
+        "status": "fuera_del_margen",
+        "upper_limit": "600 FT AGL",
+        "vertices": 4
+      },
+      {
+        "center": null,
+        "code": "SC-P86",
+        "convex_hull_distance_m": null,
+        "document_page": "8",
+        "geometry_reordered": false,
+        "geometry_type": "polygon",
+        "lower_limit": "GND",
+        "radius_m": null,
+        "status": "fuera_del_margen",
+        "upper_limit": "600 FT AGL",
+        "vertices": 5
+      },
+      {
+        "center": [
+          -71.89325000000001,
+          -37.69841666666667
+        ],
+        "code": "SC-P87",
+        "convex_hull_distance_m": null,
+        "document_page": "8",
+        "geometry_reordered": false,
+        "geometry_type": "circle",
+        "lower_limit": "GND",
+        "radius_m": 11112.0,
+        "status": "fuera_del_margen",
+        "upper_limit": "10000 FT AGL",
+        "vertices": null
+      },
+      {
+        "center": null,
+        "code": "SC-P90",
+        "convex_hull_distance_m": null,
+        "document_page": "9",
+        "geometry_reordered": false,
+        "geometry_type": "polygon",
+        "lower_limit": "GND",
+        "radius_m": null,
+        "status": "fuera_del_margen",
+        "upper_limit": "1000 FT AGL",
+        "vertices": 8
+      },
+      {
+        "center": null,
+        "code": "SC-P91",
+        "convex_hull_distance_m": null,
+        "document_page": "9",
+        "geometry_reordered": false,
+        "geometry_type": "polygon",
+        "lower_limit": "GND",
+        "radius_m": null,
+        "status": "fuera_del_margen",
+        "upper_limit": "1000 FT AGL",
+        "vertices": 7
+      },
+      {
+        "center": null,
+        "code": "SC-P92",
+        "convex_hull_distance_m": null,
+        "document_page": "9",
+        "geometry_reordered": false,
+        "geometry_type": "polygon",
+        "lower_limit": "GND",
+        "radius_m": null,
+        "status": "fuera_del_margen",
+        "upper_limit": "1000 FT AGL",
+        "vertices": 6
+      },
+      {
+        "center": null,
+        "code": "SC-P93",
+        "convex_hull_distance_m": null,
+        "document_page": "9",
+        "geometry_reordered": false,
+        "geometry_type": "polygon",
+        "lower_limit": "GND",
+        "radius_m": null,
+        "status": "fuera_del_margen",
+        "upper_limit": "1000 FT AGL",
+        "vertices": 4
+      },
+      {
+        "center": null,
+        "code": "SC-P94",
+        "convex_hull_distance_m": null,
+        "document_page": "10",
+        "geometry_reordered": false,
+        "geometry_type": "polygon",
+        "lower_limit": "GND",
+        "radius_m": null,
+        "status": "fuera_del_margen",
+        "upper_limit": "1000 FT AGL",
+        "vertices": 4
+      },
+      {
+        "center": null,
+        "code": "SC-P95",
+        "convex_hull_distance_m": null,
+        "document_page": "10",
+        "geometry_reordered": false,
+        "geometry_type": "polygon",
+        "lower_limit": "GND",
+        "radius_m": null,
+        "status": "fuera_del_margen",
+        "upper_limit": "1000 FT AGL",
+        "vertices": 5
+      },
+      {
+        "center": null,
+        "code": "SC-P96",
+        "convex_hull_distance_m": null,
+        "document_page": "10",
+        "geometry_reordered": false,
+        "geometry_type": "polygon",
+        "lower_limit": "GND",
+        "radius_m": null,
+        "status": "fuera_del_margen",
+        "upper_limit": "1000 FT AGL",
+        "vertices": 5
+      },
+      {
+        "center": null,
+        "code": "SC-P97",
+        "convex_hull_distance_m": null,
+        "document_page": "10",
+        "geometry_reordered": false,
+        "geometry_type": "polygon",
+        "lower_limit": "GND",
+        "radius_m": null,
+        "status": "fuera_del_margen",
+        "upper_limit": "1000 FT AGL",
+        "vertices": 4
+      },
+      {
+        "center": null,
+        "code": "SC-P98",
+        "convex_hull_distance_m": null,
+        "document_page": "10",
+        "geometry_reordered": false,
+        "geometry_type": "polygon",
+        "lower_limit": "GND",
+        "radius_m": null,
+        "status": "fuera_del_margen",
+        "upper_limit": "1000 FT AGL",
+        "vertices": 4
+      },
+      {
+        "center": null,
+        "code": "SC-P99",
+        "convex_hull_distance_m": null,
+        "document_page": "11",
+        "geometry_reordered": false,
+        "geometry_type": "polygon",
+        "lower_limit": "GND",
+        "radius_m": null,
+        "status": "fuera_del_margen",
+        "upper_limit": "1000 FT AGL",
+        "vertices": 3
+      },
+      {
+        "center": null,
+        "code": "SC-P100",
+        "convex_hull_distance_m": null,
+        "document_page": "11",
+        "geometry_reordered": false,
+        "geometry_type": "polygon",
+        "lower_limit": "GND",
+        "radius_m": null,
+        "status": "fuera_del_margen",
+        "upper_limit": "1000 FT AGL",
+        "vertices": 5
+      },
+      {
+        "center": null,
+        "code": "SC-R1",
+        "convex_hull_distance_m": null,
+        "document_page": "13",
+        "geometry_reordered": false,
+        "geometry_type": "polygon",
+        "lower_limit": "3000 FT ALT",
+        "radius_m": null,
+        "status": "fuera_del_margen",
+        "upper_limit": "FL 90",
+        "vertices": 4
+      },
+      {
+        "center": null,
+        "code": "SC-R2",
+        "convex_hull_distance_m": null,
+        "document_page": "13",
+        "geometry_reordered": false,
+        "geometry_type": "polygon",
+        "lower_limit": "3000 FT ALT",
+        "radius_m": null,
+        "status": "fuera_del_margen",
+        "upper_limit": "FL 90",
+        "vertices": 4
+      },
+      {
+        "center": null,
+        "code": "SC-R6",
+        "convex_hull_distance_m": null,
+        "document_page": "13",
+        "geometry_reordered": false,
+        "geometry_type": "polygon",
+        "lower_limit": "3000 FT ALT",
+        "radius_m": null,
+        "status": "fuera_del_margen",
+        "upper_limit": "7000 FT ALT",
+        "vertices": 5
+      },
+      {
+        "center": null,
+        "code": "SC-R7",
+        "convex_hull_distance_m": null,
+        "document_page": "13",
+        "geometry_reordered": false,
+        "geometry_type": "polygon",
+        "lower_limit": "GND",
+        "radius_m": null,
+        "status": "fuera_del_margen",
+        "upper_limit": "3600 FT ALT",
+        "vertices": 4
+      },
+      {
+        "center": null,
+        "code": "SC-R8",
+        "convex_hull_distance_m": null,
+        "document_page": "13",
+        "geometry_reordered": false,
+        "geometry_type": "polygon",
+        "lower_limit": "5000 FT ALT",
+        "radius_m": null,
+        "status": "fuera_del_margen",
+        "upper_limit": "8500 FT ALT",
+        "vertices": 4
+      },
+      {
+        "center": null,
+        "code": "SC-R16",
+        "convex_hull_distance_m": null,
+        "document_page": "13",
+        "geometry_reordered": false,
+        "geometry_type": "polygon",
+        "lower_limit": "5000 FT ALT",
+        "radius_m": null,
+        "status": "fuera_del_margen",
+        "upper_limit": "FL 450",
+        "vertices": 6
+      },
+      {
+        "center": null,
+        "code": "SC-R17",
+        "convex_hull_distance_m": null,
+        "document_page": "14",
+        "geometry_reordered": false,
+        "geometry_type": "polygon",
+        "lower_limit": "GND",
+        "radius_m": null,
+        "status": "fuera_del_margen",
+        "upper_limit": "1000 FT AGL",
+        "vertices": 4
+      },
+      {
+        "center": [
+          -70.56666666666666,
+          -52.916666666666664
+        ],
+        "code": "SC-R18",
+        "convex_hull_distance_m": null,
+        "document_page": "14",
+        "geometry_reordered": false,
+        "geometry_type": "circle",
+        "lower_limit": "GND",
+        "radius_m": 1852.0,
+        "status": "fuera_del_margen",
+        "upper_limit": "1000 FT AGL",
+        "vertices": null
+      },
+      {
+        "center": [
+          -70.56666666666666,
+          -52.85
+        ],
+        "code": "SC-R19",
+        "convex_hull_distance_m": null,
+        "document_page": "14",
+        "geometry_reordered": false,
+        "geometry_type": "circle",
+        "lower_limit": "GND",
+        "radius_m": 1852.0,
+        "status": "fuera_del_margen",
+        "upper_limit": "1000 FT AGL",
+        "vertices": null
+      },
+      {
+        "center": null,
+        "code": "SC-R21",
+        "convex_hull_distance_m": null,
+        "document_page": "14",
+        "geometry_reordered": false,
+        "geometry_type": "polygon",
+        "lower_limit": "6000 FT ALT",
+        "radius_m": null,
+        "status": "fuera_del_margen",
+        "upper_limit": "9000 FT ALT",
+        "vertices": 3
+      },
+      {
+        "center": null,
+        "code": "SC-R22",
+        "convex_hull_distance_m": null,
+        "document_page": "14",
+        "geometry_reordered": false,
+        "geometry_type": "polygon",
+        "lower_limit": "GND",
+        "radius_m": null,
+        "status": "fuera_del_margen",
+        "upper_limit": "FL 450",
+        "vertices": 4
+      },
+      {
+        "center": null,
+        "code": "SC-R25",
+        "convex_hull_distance_m": null,
+        "document_page": "14",
+        "geometry_reordered": false,
+        "geometry_type": "polygon",
+        "lower_limit": "GND",
+        "radius_m": null,
+        "status": "fuera_del_margen",
+        "upper_limit": "FL 450",
+        "vertices": 7
+      },
+      {
+        "center": null,
+        "code": "SC-R27",
+        "convex_hull_distance_m": null,
+        "document_page": "15",
+        "geometry_reordered": false,
+        "geometry_type": "polygon",
+        "lower_limit": "GND",
+        "radius_m": null,
+        "status": "fuera_del_margen",
+        "upper_limit": "9 000 FT ALT",
+        "vertices": 7
+      },
+      {
+        "code": "SC-R32",
+        "document_page": "15",
+        "geometry_type": "límite lateral que sigue el arco D92 de IQQ",
+        "lower_limit": "MSL",
+        "nearest_coordinate_distance_m": 1440753.3,
+        "status": "no_soportada_lejana",
+        "upper_limit": "FL 450"
+      },
+      {
+        "center": null,
+        "code": "SC-R35",
+        "convex_hull_distance_m": null,
+        "document_page": "15",
+        "geometry_reordered": false,
+        "geometry_type": "polygon",
+        "lower_limit": "3000 FT ALT",
+        "radius_m": null,
+        "status": "fuera_del_margen",
+        "upper_limit": "FL 80",
+        "vertices": 4
+      },
+      {
+        "center": null,
+        "code": "SC-R36",
+        "convex_hull_distance_m": null,
+        "document_page": "15",
+        "geometry_reordered": false,
+        "geometry_type": "polygon",
+        "lower_limit": "GND",
+        "radius_m": null,
+        "status": "fuera_del_margen",
+        "upper_limit": "400 FT AGL",
+        "vertices": 4
+      },
+      {
+        "center": null,
+        "code": "SC-R37",
+        "convex_hull_distance_m": null,
+        "document_page": "15",
+        "geometry_reordered": false,
+        "geometry_type": "polygon",
+        "lower_limit": "GND",
+        "radius_m": null,
+        "status": "fuera_del_margen",
+        "upper_limit": "400 FT AGL",
+        "vertices": 4
+      },
+      {
+        "center": null,
+        "code": "SC-R38",
+        "convex_hull_distance_m": null,
+        "document_page": "15",
+        "geometry_reordered": false,
+        "geometry_type": "polygon",
+        "lower_limit": "GND",
+        "radius_m": null,
+        "status": "fuera_del_margen",
+        "upper_limit": "400 FT AGL",
+        "vertices": 4
+      },
+      {
+        "center": [
+          -70.93222222222222,
+          -33.45027777777778
+        ],
+        "code": "SC-R41",
+        "convex_hull_distance_m": null,
+        "document_page": "16",
+        "geometry_reordered": false,
+        "geometry_type": "circle",
+        "lower_limit": "GND",
+        "radius_m": 1852.0,
+        "status": "fuera_del_margen",
+        "upper_limit": "3500 FT ALT",
+        "vertices": null
+      },
+      {
+        "code": "SC-R45",
+        "document_page": "16",
+        "geometry_type": "sector definido por radiales y distancias desde NAS VOR/DME",
+        "lower_limit": "GND",
+        "reason": "Sin coordenadas publicadas en ENR 5.1; radiales/distancias desde NAS VOR/DME en FIR Punta Arenas, fuera del AOI de Valparaíso.",
+        "status": "no_soportada_lejana",
+        "upper_limit": "UNL"
+      },
+      {
+        "code": "SC-R46",
+        "document_page": "16",
+        "geometry_type": "sector definido por radiales y distancias desde NAS VOR/DME",
+        "lower_limit": "GND",
+        "reason": "Sin coordenadas publicadas en ENR 5.1; radiales/distancias desde NAS VOR/DME en FIR Punta Arenas, fuera del AOI de Valparaíso.",
+        "status": "no_soportada_lejana",
+        "upper_limit": "FL245"
+      },
+      {
+        "code": "SC-R47",
+        "document_page": "16",
+        "geometry_type": "sector definido por varios radiales y distancias desde NAS VOR/DME",
+        "lower_limit": "FL080; GND; GND",
+        "reason": "Sin coordenadas publicadas en ENR 5.1; radiales/distancias desde NAS VOR/DME en FIR Punta Arenas, fuera del AOI de Valparaíso.",
+        "status": "no_soportada_lejana",
+        "upper_limit": "UNL; 2.000 FT ALT; UNL"
+      },
+      {
+        "code": "SC-R48",
+        "document_page": "16",
+        "geometry_type": "sector definido por radiales y distancias desde NAS VOR/DME",
+        "lower_limit": "GND",
+        "reason": "Sin coordenadas publicadas en ENR 5.1; radiales/distancias desde NAS VOR/DME en FIR Punta Arenas, fuera del AOI de Valparaíso.",
+        "status": "no_soportada_lejana",
+        "upper_limit": "UNL"
+      },
+      {
+        "center": null,
+        "code": "SC-R52",
+        "convex_hull_distance_m": 1066019.0,
+        "document_page": "16",
+        "geometry_reordered": true,
+        "geometry_type": "polygon",
+        "lower_limit": "GND",
+        "radius_m": null,
+        "status": "fuera_del_margen",
+        "upper_limit": "FL 245",
+        "vertices": 4
+      },
+      {
+        "center": null,
+        "code": "SC-R53",
+        "convex_hull_distance_m": null,
+        "document_page": "17",
+        "geometry_reordered": false,
+        "geometry_type": "polygon",
+        "lower_limit": "SFC",
+        "radius_m": null,
+        "status": "fuera_del_margen",
+        "upper_limit": "7500 FT ALT",
+        "vertices": 4
+      },
+      {
+        "center": null,
+        "code": "SC-R54",
+        "convex_hull_distance_m": null,
+        "document_page": "17",
+        "geometry_reordered": false,
+        "geometry_type": "polygon",
+        "lower_limit": "SFC",
+        "radius_m": null,
+        "status": "fuera_del_margen",
+        "upper_limit": "7500 FT ALT",
+        "vertices": 4
+      },
+      {
+        "center": null,
+        "code": "SC-R58",
+        "convex_hull_distance_m": null,
+        "document_page": "17",
+        "geometry_reordered": false,
+        "geometry_type": "polygon",
+        "lower_limit": "5 000 FT ALT",
+        "radius_m": null,
+        "status": "fuera_del_margen",
+        "upper_limit": "8 500 FT ALT",
+        "vertices": 4
+      },
+      {
+        "center": null,
+        "code": "SC-R60",
+        "convex_hull_distance_m": null,
+        "document_page": "17",
+        "geometry_reordered": false,
+        "geometry_type": "polygon",
+        "lower_limit": "3 000 FT",
+        "radius_m": null,
+        "status": "fuera_del_margen",
+        "upper_limit": "4 500 FT",
+        "vertices": 5
+      },
+      {
+        "center": null,
+        "code": "SC-R61",
+        "convex_hull_distance_m": 103681.1,
+        "document_page": "18",
+        "geometry_reordered": true,
+        "geometry_type": "polygon",
+        "lower_limit": "6500 FT ALT",
+        "radius_m": null,
+        "status": "fuera_del_margen",
+        "upper_limit": "9000 FT ALT",
+        "vertices": 4
+      },
+      {
+        "center": null,
+        "code": "SC-R62",
+        "convex_hull_distance_m": 100581.0,
+        "document_page": "18",
+        "geometry_reordered": true,
+        "geometry_type": "polygon",
+        "lower_limit": "6500 FT ALT",
+        "radius_m": null,
+        "status": "fuera_del_margen",
+        "upper_limit": "9000 FT ALT",
+        "vertices": 4
+      },
+      {
+        "center": null,
+        "code": "SC-R67",
+        "convex_hull_distance_m": null,
+        "document_page": "18",
+        "geometry_reordered": false,
+        "geometry_type": "polygon",
+        "lower_limit": "GND",
+        "radius_m": null,
+        "status": "fuera_del_margen",
+        "upper_limit": "5000 FT ALT",
+        "vertices": 5
+      },
+      {
+        "center": null,
+        "code": "SC-R68",
+        "convex_hull_distance_m": 48021.9,
+        "document_page": "18",
+        "geometry_reordered": true,
+        "geometry_type": "polygon",
+        "lower_limit": "GND",
+        "radius_m": null,
+        "status": "fuera_del_margen",
+        "upper_limit": "FL 70",
+        "vertices": 4
+      },
+      {
+        "center": null,
+        "code": "SC-R69",
+        "convex_hull_distance_m": null,
+        "document_page": "18",
+        "geometry_reordered": false,
+        "geometry_type": "polygon",
+        "lower_limit": "MSL",
+        "radius_m": null,
+        "status": "fuera_del_margen",
+        "upper_limit": "FL 450",
+        "vertices": 4
+      },
+      {
+        "center": null,
+        "code": "SC-R71",
+        "convex_hull_distance_m": null,
+        "document_page": "19",
+        "geometry_reordered": false,
+        "geometry_type": "polygon",
+        "lower_limit": "GND",
+        "radius_m": null,
+        "status": "fuera_del_margen",
+        "upper_limit": "3000 FT ALT",
+        "vertices": 4
+      },
+      {
+        "center": null,
+        "code": "SC-R72",
+        "convex_hull_distance_m": null,
+        "document_page": "19",
+        "geometry_reordered": false,
+        "geometry_type": "polygon",
+        "lower_limit": "SFC",
+        "radius_m": null,
+        "status": "fuera_del_margen",
+        "upper_limit": "2000 FT AMSL",
+        "vertices": 3
+      },
+      {
+        "center": null,
+        "code": "SC-R73",
+        "convex_hull_distance_m": null,
+        "document_page": "19",
+        "geometry_reordered": false,
+        "geometry_type": "polygon",
+        "lower_limit": "GND",
+        "radius_m": null,
+        "status": "fuera_del_margen",
+        "upper_limit": "3500 FT AMSL",
+        "vertices": 4
+      },
+      {
+        "center": [
+          -68.91055555555556,
+          -22.449444444444445
+        ],
+        "code": "SC-R74",
+        "convex_hull_distance_m": null,
+        "document_page": "19",
+        "geometry_reordered": false,
+        "geometry_type": "circle",
+        "lower_limit": "8500FT",
+        "radius_m": 500.0,
+        "status": "fuera_del_margen",
+        "upper_limit": "1000FT AGL; GND",
+        "vertices": null
+      },
+      {
+        "center": [
+          -70.92361111111111,
+          -33.64222222222222
+        ],
+        "code": "SC-D4",
+        "convex_hull_distance_m": null,
+        "document_page": "21",
+        "geometry_reordered": false,
+        "geometry_type": "circle",
+        "lower_limit": "GND",
+        "radius_m": 1852.0,
+        "status": "fuera_del_margen",
+        "upper_limit": "2500 FT ALT",
+        "vertices": null
+      },
+      {
+        "center": [
+          -70.69833333333334,
+          -33.489444444444445
+        ],
+        "code": "SC-D5",
+        "convex_hull_distance_m": null,
+        "document_page": "21",
+        "geometry_reordered": false,
+        "geometry_type": "circle",
+        "lower_limit": "GND",
+        "radius_m": 1852.0,
+        "status": "fuera_del_margen",
+        "upper_limit": "3.000 FT ALT",
+        "vertices": null
+      },
+      {
+        "center": null,
+        "code": "SC-D11",
+        "convex_hull_distance_m": null,
+        "document_page": "21",
+        "geometry_reordered": false,
+        "geometry_type": "polygon",
+        "lower_limit": "1.000 FT AGL",
+        "radius_m": null,
+        "status": "fuera_del_margen",
+        "upper_limit": "5.500 FT ALT",
+        "vertices": 4
+      },
+      {
+        "center": [
+          -71.11,
+          -33.67722222222222
+        ],
+        "code": "SC-D13",
+        "convex_hull_distance_m": null,
+        "document_page": "21",
+        "geometry_reordered": false,
+        "geometry_type": "circle",
+        "lower_limit": "GND",
+        "radius_m": 1852.0,
+        "status": "fuera_del_margen",
+        "upper_limit": "Fl 100",
+        "vertices": null
+      },
+      {
+        "center": null,
+        "code": "SC-D22",
+        "convex_hull_distance_m": null,
+        "document_page": "22",
+        "geometry_reordered": false,
+        "geometry_type": "polygon",
+        "lower_limit": "4000 FT ALT",
+        "radius_m": null,
+        "status": "fuera_del_margen",
+        "upper_limit": "6000 FT ALT",
+        "vertices": 4
+      },
+      {
+        "center": null,
+        "code": "SC-D33",
+        "convex_hull_distance_m": null,
+        "document_page": "22",
+        "geometry_reordered": false,
+        "geometry_type": "polygon",
+        "lower_limit": "GND",
+        "radius_m": null,
+        "status": "fuera_del_margen",
+        "upper_limit": "FL 245",
+        "vertices": 4
+      },
+      {
+        "center": null,
+        "code": "SC-D34",
+        "convex_hull_distance_m": null,
+        "document_page": "22",
+        "geometry_reordered": false,
+        "geometry_type": "polygon",
+        "lower_limit": "GND",
+        "radius_m": null,
+        "status": "fuera_del_margen",
+        "upper_limit": "1000 FT ALT",
+        "vertices": 4
+      },
+      {
+        "center": [
+          -68.96666666666667,
+          -22.516666666666666
+        ],
+        "code": "SC-D66",
+        "convex_hull_distance_m": null,
+        "document_page": "22",
+        "geometry_reordered": false,
+        "geometry_type": "circle",
+        "lower_limit": "GND",
+        "radius_m": 1000.0,
+        "status": "fuera_del_margen",
+        "upper_limit": "3.000 FT AGL",
+        "vertices": null
+      },
+      {
+        "center": null,
+        "code": "SC-D70",
+        "convex_hull_distance_m": null,
+        "document_page": "22",
+        "geometry_reordered": false,
+        "geometry_type": "polygon",
+        "lower_limit": "GND",
+        "radius_m": null,
+        "status": "fuera_del_margen",
+        "upper_limit": "1.000 FT AGL",
+        "vertices": 4
+      }
+    ],
+    "section": "ENR 5.1",
+    "selected_codes": [
+      "SC-P29",
+      "SC-P50"
+    ],
+    "selection_crs": "EPSG:32719",
+    "total_records": 78,
+    "unsupported_near_limit_m": 50000
+  },
+  "self_comparison": {
+    "added": [],
+    "changed": [],
+    "removed": []
+  },
+  "sha256_verified": true,
+  "state": "verified_conserved_snapshot_not_new_download"
+}

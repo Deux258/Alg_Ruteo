@@ -169,6 +169,11 @@ interpreta la media como estimación estadística de éxito real. Plan y resulta
 
 ## Reproducibilidad y software
 
+El diagnóstico aditivo de adquisición y misiones se describe en
+[DIAGNOSTICO_FASE2.md](DIAGNOSTICO_FASE2.md). Mantiene los estados originales y
+separa motivos principales, causas simultáneas y comprobaciones no realizadas.
+La repetición exacta de 120 solicitudes conserva rutas, costos y métricas.
+
 requirements.lock pglast7.20 fija el wheel CPython3.12 Linuxamd64 verificado; los demás pins se conservan.
 Docker y CI instalan con --require-hashes y ejecutan pip check. Las pruebas informan versiones instaladas
 y discrepancias de locks. software.json conserva commit de base y hashes de código/SQL/configuración;

@@ -41,7 +41,7 @@ def status(conn):
         row['network']={k:dataset['validation'].get(k) for k in ['nodes','directed_edges','strong_count','weak_count']}
         row['base']=dataset['validation'].get('road_routing',{}).get('base')
     if dataset and dataset['source_id']=='DERIVED_AERIAL':
-        row.update(application='aerial_simulator',routing_ready=True,mission_ready=True,clearance_verified=False,
+        row.update(application='aerial_simulator',routing_ready=True,mission_ready=True,mission_feasibility='requires_specific_request',clearance_verified=False,
                    etl_complete=row['scope']=='completo',warnings=['Simulador académico; despeje vertical no verificado'])
         row['network']={k:dataset['validation'].get(k) for k in ['nodes','directed_edges','strong_count','weak_count']}
     return row

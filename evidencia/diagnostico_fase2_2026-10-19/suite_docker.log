@@ -1,0 +1,179 @@
+ Image udp-ruteo-diagnostico-tests-tests Building 
+#1 [internal] load local bake definitions
+#1 reading from stdin 737B 0.0s done
+#1 DONE 0.0s
+
+#2 [internal] load build definition from Dockerfile.app
+#2 transferring dockerfile: 757B done
+#2 DONE 0.0s
+
+#3 [internal] load metadata for docker.io/library/python:3.12.12-slim-bookworm@sha256:593bd06efe90efa80dc4eee3948be7c0fde4134606dd40d8dd8dbcade98e669c
+#3 DONE 0.0s
+
+#4 [internal] load .dockerignore
+#4 transferring context: 106B done
+#4 DONE 0.0s
+
+#5 [1/9] FROM docker.io/library/python:3.12.12-slim-bookworm@sha256:593bd06efe90efa80dc4eee3948be7c0fde4134606dd40d8dd8dbcade98e669c
+#5 resolve docker.io/library/python:3.12.12-slim-bookworm@sha256:593bd06efe90efa80dc4eee3948be7c0fde4134606dd40d8dd8dbcade98e669c 0.0s done
+#5 DONE 0.0s
+
+#6 [internal] load build context
+#6 transferring context: 107.94kB 0.0s done
+#6 DONE 0.1s
+
+#7 [2/9] WORKDIR /app
+#7 CACHED
+
+#8 [3/9] RUN apt-get update && apt-get install -y --no-install-recommends libexpat1=2.5.0-1+deb12u4 && rm -rf /var/lib/apt/lists/*
+#8 CACHED
+
+#9 [4/9] COPY requirements.lock /app/requirements.lock
+#9 CACHED
+
+#10 [5/9] RUN python -m pip install --no-cache-dir --require-hashes -r requirements.lock
+#10 CACHED
+
+#11 [6/9] COPY requirements.aerial.lock /app/requirements.aerial.lock
+#11 CACHED
+
+#12 [7/9] RUN python -m pip install --no-cache-dir --require-hashes -r requirements.aerial.lock
+#12 CACHED
+
+#13 [8/9] RUN python -m pip check
+#13 CACHED
+
+#14 [9/9] COPY . /app
+#14 DONE 1.5s
+
+#15 exporting to image
+#15 exporting layers
+#15 exporting layers 6.6s done
+#15 exporting manifest sha256:3a903f6324dbfd2d75d009d0d233995e850f8b073b5153c71b2f6ccbb2abc4bd 0.0s done
+#15 exporting config sha256:dc428e6c3a646085546702c5f376c7e2140c536b0a527660e5e6fcaccc92a583 0.0s done
+#15 exporting attestation manifest sha256:45426f6792c7abc619636303ebb0f6356d0c46a2741faec1d60ca8e7cfcc5bd5 0.0s done
+#15 exporting manifest list sha256:62cdd6d87713d364a3a19f43b15c9ea0cb77f1faab59c68acc4568b6101c9644 0.0s done
+#15 naming to docker.io/library/udp-ruteo-diagnostico-tests-tests:latest done
+#15 unpacking to docker.io/library/udp-ruteo-diagnostico-tests-tests:latest
+#15 unpacking to docker.io/library/udp-ruteo-diagnostico-tests-tests:latest 1.0s done
+#15 DONE 7.7s
+
+#16 resolving provenance for metadata file
+#16 DONE 0.0s
+ Image udp-ruteo-diagnostico-tests-tests Built 
+ Network udp-ruteo-diagnostico-tests_default Creating 
+ Network udp-ruteo-diagnostico-tests_default Creating 
+ Network udp-ruteo-diagnostico-tests_default Created 
+ Network udp-ruteo-diagnostico-tests_default Created 
+ Container udp-ruteo-diagnostico-tests-dbtest-1 Creating 
+ Container udp-ruteo-diagnostico-tests-dbtest-1 Created 
+ Container udp-ruteo-diagnostico-tests-tests-1 Creating 
+ Container udp-ruteo-diagnostico-tests-tests-1 Created 
+Attaching to dbtest-1, tests-1
+ Container udp-ruteo-diagnostico-tests-dbtest-1 Starting 
+ Container udp-ruteo-diagnostico-tests-dbtest-1 Started 
+ Container udp-ruteo-diagnostico-tests-dbtest-1 Waiting 
+dbtest-1  | The files belonging to this database system will be owned by user "postgres".
+dbtest-1  | This user must also own the server process.
+dbtest-1  | 
+dbtest-1  | The database cluster will be initialized with locale "en_US.utf8".
+dbtest-1  | The default database encoding has accordingly been set to "UTF8".
+dbtest-1  | The default text search configuration will be set to "english".
+dbtest-1  | 
+dbtest-1  | Data page checksums are disabled.
+dbtest-1  | 
+dbtest-1  | fixing permissions on existing directory /var/lib/postgresql/data ... ok
+dbtest-1  | creating subdirectories ... ok
+dbtest-1  | selecting dynamic shared memory implementation ... posix
+dbtest-1  | selecting default max_connections ... 100
+dbtest-1  | selecting default shared_buffers ... 128MB
+dbtest-1  | selecting default time zone ... Etc/UTC
+dbtest-1  | creating configuration files ... ok
+dbtest-1  | running bootstrap script ... ok
+dbtest-1  | performing post-bootstrap initialization ... ok
+dbtest-1  | syncing data to disk ... ok
+dbtest-1  | 
+dbtest-1  | 
+dbtest-1  | Success. You can now start the database server using:
+dbtest-1  | 
+dbtest-1  |     pg_ctl -D /var/lib/postgresql/data -l logfile start
+dbtest-1  | 
+dbtest-1  | initdb: warning: enabling "trust" authentication for local connections
+dbtest-1  | initdb: hint: You can change this by editing pg_hba.conf or using the option -A, or --auth-local and --auth-host, the next time you run initdb.
+dbtest-1  | waiting for server to start....2026-10-19 17:23:08.391 UTC [49] LOG:  starting PostgreSQL 16.9 (Debian 16.9-1.pgdg110+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit
+dbtest-1  | 2026-10-19 17:23:08.399 UTC [49] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+dbtest-1  | 2026-10-19 17:23:08.401 UTC [52] LOG:  database system was shut down at 2026-10-19 17:23:08 UTC
+dbtest-1  | 2026-10-19 17:23:08.403 UTC [49] LOG:  database system is ready to accept connections
+dbtest-1  |  done
+dbtest-1  | server started
+dbtest-1  | CREATE DATABASE
+dbtest-1  | 
+dbtest-1  | 
+dbtest-1  | /usr/local/bin/docker-entrypoint.sh: ignoring /docker-entrypoint-initdb.d/*
+dbtest-1  | 
+dbtest-1  | 2026-10-19 17:23:08.559 UTC [49] LOG:  received fast shutdown request
+dbtest-1  | waiting for server to shut down....2026-10-19 17:23:08.559 UTC [49] LOG:  aborting any active transactions
+dbtest-1  | 2026-10-19 17:23:08.561 UTC [49] LOG:  background worker "logical replication launcher" (PID 55) exited with exit code 1
+dbtest-1  | 2026-10-19 17:23:08.561 UTC [50] LOG:  shutting down
+dbtest-1  | 2026-10-19 17:23:08.561 UTC [50] LOG:  checkpoint starting: shutdown immediate
+dbtest-1  | 2026-10-19 17:23:08.568 UTC [50] LOG:  checkpoint complete: wrote 922 buffers (5.6%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.007 s, sync=0.001 s, total=0.007 s; sync files=301, longest=0.001 s, average=0.000 s; distance=4249 kB, estimate=4249 kB; lsn=0/190D0C0, redo lsn=0/190D0C0
+dbtest-1  | 2026-10-19 17:23:08.574 UTC [49] LOG:  database system is shut down
+dbtest-1  |  done
+dbtest-1  | server stopped
+dbtest-1  | 
+dbtest-1  | PostgreSQL init process complete; ready for start up.
+dbtest-1  | 
+dbtest-1  | 2026-10-19 17:23:08.676 UTC [1] LOG:  starting PostgreSQL 16.9 (Debian 16.9-1.pgdg110+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit
+dbtest-1  | 2026-10-19 17:23:08.676 UTC [1] LOG:  listening on IPv4 address "0.0.0.0", port 5432
+dbtest-1  | 2026-10-19 17:23:08.676 UTC [1] LOG:  listening on IPv6 address "::", port 5432
+dbtest-1  | 2026-10-19 17:23:08.678 UTC [1] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+dbtest-1  | 2026-10-19 17:23:08.680 UTC [65] LOG:  database system was shut down at 2026-10-19 17:23:08 UTC
+dbtest-1  | 2026-10-19 17:23:08.683 UTC [1] LOG:  database system is ready to accept connections
+ Container udp-ruteo-diagnostico-tests-dbtest-1 Healthy 
+ Container udp-ruteo-diagnostico-tests-tests-1 Starting 
+ Container udp-ruteo-diagnostico-tests-tests-1 Started 
+dbtest-1  | 2026-10-19 17:25:49.144 UTC [708] ERROR:  insert or update on table "edges" violates foreign key constraint "edges_run_id_source_fkey"
+dbtest-1  | 2026-10-19 17:25:49.144 UTC [708] DETAIL:  Key (run_id, source)=(a2162a76-66a3-4b3a-8875-0ec660c99bbf, 7768945858957426996) is not present in table "nodes".
+dbtest-1  | 2026-10-19 17:25:49.144 UTC [708] STATEMENT:  SET CONSTRAINTS ALL IMMEDIATE
+dbtest-1  | 2026-10-19 17:25:49.373 UTC [708] ERROR:  Datasets faltantes: {M1,M2,M3,M4,A1,A2,A3,A4}
+dbtest-1  | 2026-10-19 17:25:49.373 UTC [708] CONTEXT:  PL/pgSQL function routing.publish_run(uuid,text) line 11 at RAISE
+dbtest-1  | 2026-10-19 17:25:49.373 UTC [708] STATEMENT:  SELECT routing.publish_run($1,'completo')
+dbtest-1  | 2026-10-19 17:27:20.229 UTC [708] ERROR:  column "length_km" can only be updated to DEFAULT
+dbtest-1  | 2026-10-19 17:27:20.229 UTC [708] DETAIL:  Column "length_km" is a generated column.
+dbtest-1  | 2026-10-19 17:27:20.229 UTC [708] STATEMENT:  UPDATE routing.edges SET length_km=999 WHERE run_id=$1
+dbtest-1  | 2026-10-19 17:27:20.298 UTC [708] ERROR:  Arco 3582613719966992 no coincide con sus nodos (tolerancia 1 mm)
+dbtest-1  | 2026-10-19 17:27:20.298 UTC [708] CONTEXT:  PL/pgSQL function routing.check_edge_endpoints() line 10 at RAISE
+dbtest-1  | 2026-10-19 17:27:20.298 UTC [708] STATEMENT:  SET CONSTRAINTS ALL IMMEDIATE
+dbtest-1  | 2026-10-19 17:27:21.093 UTC [708] ERROR:  Cambio de nodo invalida el arco 3582613719966992
+dbtest-1  | 2026-10-19 17:27:21.093 UTC [708] CONTEXT:  PL/pgSQL function routing.check_edge_endpoints() line 19 at RAISE
+dbtest-1  | 2026-10-19 17:27:21.093 UTC [708] STATEMENT:  SET CONSTRAINTS ALL IMMEDIATE
+dbtest-1  | 2026-10-19 17:27:21.218 UTC [708] ERROR:  Snapshot 016e02a5-a8d1-4673-a7fb-f55b09f2fb95 es inmutable; crear un run nuevo
+dbtest-1  | 2026-10-19 17:27:21.218 UTC [708] CONTEXT:  PL/pgSQL function routing.immutable_snapshot() line 6 at RAISE
+dbtest-1  | 2026-10-19 17:27:21.218 UTC [708] STATEMENT:  UPDATE routing.edges SET geom=ST_Translate(geom,1,0) WHERE run_id=$1
+dbtest-1  | 2026-10-19 17:27:21.219 UTC [708] ERROR:  Run listo 016e02a5-a8d1-4673-a7fb-f55b09f2fb95 es inmutable
+dbtest-1  | 2026-10-19 17:27:21.219 UTC [708] CONTEXT:  PL/pgSQL function routing.protect_ready_run() line 4 at RAISE
+dbtest-1  | 2026-10-19 17:27:21.219 UTC [708] STATEMENT:  UPDATE routing.runs SET status='staging' WHERE run_id=$1
+dbtest-1  | 2026-10-19 17:27:21.219 UTC [708] ERROR:  Run listo 016e02a5-a8d1-4673-a7fb-f55b09f2fb95 es inmutable
+dbtest-1  | 2026-10-19 17:27:21.219 UTC [708] CONTEXT:  PL/pgSQL function routing.protect_ready_run() line 4 at RAISE
+dbtest-1  | 2026-10-19 17:27:21.219 UTC [708] STATEMENT:  DELETE FROM routing.runs WHERE run_id=$1
+dbtest-1  | 2026-10-19 17:27:21.411 UTC [1080] ERROR:  cannot execute INSERT in a read-only transaction
+dbtest-1  | 2026-10-19 17:27:21.411 UTC [1080] STATEMENT:  INSERT INTO routing.sources VALUES('forbidden','x',NULL,'')
+dbtest-1  | 2026-10-19 17:28:08.729 UTC [63] LOG:  checkpoint starting: time
+tests-1   | {"recorded_at_utc": "2026-10-19T17:29:01.342033+00:00", "tests_run": 128, "failures": 0, "errors": 0, "skipped": 0, "successful": true, "duration_s": 350.043, "python": "3.12.12", "omitted": [], "software": {"commit": "c72310c99455b084d4a89feaeab8326946312881", "code_sha256": "013800182c2acb7a8ad73d5c1447709203493e3637974eb0eae507089107dc4d", "files": {"core/__init__.py": "43b3f0b92b69c07393975d764d60fb07f5f2e287192a0df541772df9d5e3626c", "core/aerial_data.py": "942faf40fe21c856eb458a19c7c0c2f210c684715615ecbd919d20e406faa707", "core/aerial_etl.py": "e0236888c58f45da4d91eef1fa973370683b2325a9efdd1a8c6f1a5f53711910", "core/aerial_pipeline.py": "1b995de2fd6180e7c6ce09198077af3ad2b063688c04708a9ef91d10e3d2d67d", "core/aerial_routing.py": "3c787b52e4527f0593a1f0329ea1b407dc97a18d1da69107fbb48d92c67bd164", "core/aip_acquisition.py": "b3e9e53929618f33daf56fd8de7d1893ddf018358ce447f5930e2efa65117323", "core/area.py": "8771655e9c136dc05bc1ca9353bac711aaf4828b781ded1417ec9dacaae5fa5f", "core/contracts.py": "0228a0b9686b6e56749a5b88b2e3774470bd393e190d981739970d0b3ea5d02b", "core/db.py": "f5bc58fbe3f6477e0f218010072e20e5087b0fe1f9ede0c540d5e650e5c56935", "core/experiments.py": "a3e176c9b423ec3b2f46cd67f26d3657257277ad67819e50ac2fbb7f503c6a4c", "core/health.py": "7e7edfdce58fd49d29cc6968476bfb70e0fe532ec83be79838167a502a6d1d20", "core/metadata_hidalgo.py": "b241d2f85b64a5e6f421794eaa6c55de03aba59031f383a0e6ecc0f67dff9752", "core/mission_diagnostics.py": "c937533de285b1bc15d012086e07298e7ec25e6d0e4920c71391c8be8142c5d9", "core/mission_evaluation.py": "0d5a5735898add06d2801b440fcb859712cc5ee9a3fda7f9fd3ca6f8f6c6dd30", "core/pipeline.py": "fe2e3462dee040defa611c3dd229ca767331f8c858dd0c52e59cae2426cb3152", "core/provenance.py": "84719f937c54ba3fe1e3f13b8e20fcb6383a93f508e4218011ea0b69b1154fac", "core/roads.py": "9803df954fa062a11bc38b0dcdf05293a5f03fc55bed911717023bdc0b52caa3", "core/routing.py": "d5855796bdfb09999a81643187e3a34058c7062d5b13ad97c8c04f6b02a1c48b", "core/spatial_audit.py": "0047de2b30a31718465920d0a23c038f9367538b162f5a0c3e1070ba3e16bcac", "core/test_runner.py": "da0cbf6a9d71a6c02c0532e46080b5a6c9d1e270f336d142946854514d0705e2", "core/topology.py": "ae4d9d8cde7a11f54c051a941b63da507584fb618aa1de0b60b684fb1c3a97f8", "core/turns.py": "0a9e892235aa2cea68f197b7efb1ab77da4d9b988bb4ec7daa020e8479ce89bd", "core/web.py": "434d509796a224d0787f08d1f16c51f2f5da6ad2b81d070fee4c01f9060454f5", "Infraestructura/cargar.py": "99699a85efcc85905f2b8085a45d044c961393ccffee26682e9822329999d4bf", "Infraestructura/descargar_aereo.py": "3ea6723f629531c3a50e4a84854e4f91757eec92b6a95f5c879ce4528ee8ed24", "Infraestructura/descargar_vial.py": "71e669ea2ee0937d64ed21234428a338ac868a149bdede292cc052dc90c73d0f", "Infraestructura/infraestructura.schema.json": "fb7a68301669b0dc4d87bbaf961f4a2493686f3eb944e838ec8fd3d919e6a250", "Infraestructura/preparar_snapshot.py": "f0099c822d1f9475aff922f9306f764f5eefd77fd8a12cde261f3f60efb4927f", "Metadata/m1_bases.py": "cd4f6d5fbe87518e25f2d5f07e19588fd23a83651a8375641850ba73dc2e0b99", "Metadata/m2_cobertura.py": "a9bb66c1e6c9dad815e2c8312409c4931c6ff442678ac14da6da15eda7cf6f66", "Metadata/m3_elevacion.py": "7720c18c0f0116914249c1713866a97f7410a4366a9b26889b395fc2595564ff", "Metadata/m4_clima.py": "3e93d75f85252b8209de72ebe1075e1417407c201bca48827feb2599992d20ea", "Amenazas/a1_meteorologia.py": "774d1bbf0d7bbad0c4d927a8f97baba81c56880950cd844fb9f43e10eeca56b2", "Amenazas/a2_firms.py": "690412499e988d0a71e19602a9d67530b1e26df457628ff7b0537863eb7bdf1c", "Amenazas/a3_aip.py": "c4d3c30120168bee40626e0556e3884b4ef7ec3b3cf36055afd356957c999edd", "Amenazas/a4_historial.py": "f45cd75e5625ba4c4ad7ffbf1010feffa85d62b78b544fc3886741f3483b2dc4", "config/aereo.json": "71c7f6576a99ae70505ec48173d12e0940b575d8d6defc86f3f3482b314b28b6", "config/evaluacion_fase2.json": "bef3e42d38842c3c61551443f87314745cb9f9f0548e0a5e1db967330dd36fd1", "config/pipeline.json": "dabcf5a56cdfe4a42a3c8eed4d6bf6fb8755c7b548ffc4a50009a760a1e1166f", "config/pipeline_aereo.json": "0263a72b67295e8433721a15e282a8567ee1209b3006987aa6d0dfe7dc4f4fec", "config/proyecto.json": "4390613ed5f122f188e1b6a9078dd64b3afd2f21ca0c30ee7c2699ca4fd6671e", "config/proyecto_legacy.json": "f3a33eba5601b69796cfba9f72ea9136e48bca22ab3085f7839d9603a35d1d34", "config/proyecto_vial.json": "15d34472c48331c63533b283dfbfe55bc43463544ccb191f511571102e3a84a5", "BD/consultas_verificacion.sql": "ccf64f4677338e987b4d36af0c92fcf53d801155a4bb27d74b09200edd2faaa1", "BD/crear_bd.sql": "93d760f440e94085057fdfdc9b8a23c472258498dcf87e536579a556807e92f7", "BD/migraciones/002_red_vial.sql": "0010206080b42bc20bddde1aa48ab1120c6a04c961d0290eda6497246bbbddd5", "BD/migraciones/003_red_aerea.sql": "8979bc65959756aff0b1457614ca4daf2c9abe75ab541d8e4bd4db0f6e8f20a9", "BD/migraciones/004_metadata_transito.sql": "12ec9dc956fc9f80a7e5c52d196dc347aee9613d6991c941fbf0a727467534ca", "tests/__init__.py": "ca993d71b3ec33618092f1f89304a01b930c82025a41da938a311851a646a029", "tests/esperar_bd.py": "3b8040747ca2311da481748c372f6dce9a946dfe64e3ed2ec86b41f5137ad357", "tests/test_a2_firms.py": "6f21ade0ded07b063f4356d3bc3c85ae8243974ea8617a4eaccde043b970c6c6", "tests/test_a3_aip.py": "4e13dd18fc6d06c57de4f33466776b146d5fd5acceeaa2ef3c146b0a9bb38d6f", "tests/test_aerial.py": "f7c3d37ea3686cb9e37cebc86aff627ff86529c8e595d4db4c0c7ab7d03d002a", "tests/test_area.py": "5959b901cc19c32ece359864dfdc0d0ef1e5f5fcbd6b06b911e11915412b0045", "tests/test_contracts.py": "9988b3c4758cb4ec76c3a632c3d620f3abe3a855384c96292704914d83aea13b", "tests/test_diagnostics.py": "c76e098fcd9226d78c6467842da5f800bc4b9e56a0d1edf2f4754b29e926c171", "tests/test_integration.py": "52f525cf02fbd934ceebd31c753e7d347530caa0e4c29d2f0aa294215da371a3", "tests/test_main.py": "0e099e7fd0abcb6480a892570cca048c34ed269afca70b37de1493a0688d7245", "tests/test_phase2.py": "c87bb25b0eb90453f960251beaff8306019d3ed99a718f3876c5278f44eba2bb", "tests/test_road_integration.py": "aa9f20c33e6dd71939563b46a1eeda7c3c9ce5650b93edc0fce1acf9f9b82f97", "tests/test_roads.py": "f5c9edbee78ec50dadfd59a4c41e54e65ed0535db84a242a7f1b412ff1107e60", "tests/test_sql.py": "6ea33924545a2e7fbf76c354ca9209dd6d410918d3621eff6c17804a40a0a227", "Sitio Web/aerial.html": "81df752c6ea1def7ba957d923a7089441774c8821be5698f16ee3287d8d89e60", "Sitio Web/aerial.js": "0cfc18343d5dd4da4b4562590302f7e5a90983d60006e6ef1fb84885920f4fca", "Sitio Web/app.js": "48b5d384bf8a3f47d5cd3538cd7099566b66311d7e3583c8efd4949f033937ee", "Sitio Web/index.html": "f22ea073e86ede93e065754cca9448ffe4887fe41359866cddc8c1e9df9274aa", "Sitio Web/index_vial.html": "f1977c8611d1304747d29bb0d76c68bfd2011d08da8c441ec7d276e64492da73", "Sitio Web/style.css": "c8d571060a8f964ad10d31c250614824f91952e5010030a058af8c1b2c53efe7", "Sitio Web/vial.js": "48b5d384bf8a3f47d5cd3538cd7099566b66311d7e3583c8efd4949f033937ee", "main": "05a2e9239ae57e8dbecf924dabe94726df7ec943c6ca769ae400b0a992978514", "compose.yaml": "f90129c28fedcc3ac5dd21227c05e20013d403495e6aec3b4c9e193467432c1b", "compose.test.yaml": "a02c511c9a954ad3ea26d3b8afa92e9e00ee633fe61459deae3816620cafd4b9", "docker/Dockerfile.app": "20cc8f62fc7788c32df83781ae8d952c2a6c75eed713a17716dd1fd6dc389884", "requirements.in": "0ff3913a303bfd791faf43d00da55d8f19e40704efb9e16151245e1696274a07", "requirements.lock": "3ccfb1b184287809f5a57b4bcbb755a13a2be3babb983147db1a16dafd19cf0a", "requirements.aerial.lock": "18cfc275d1004a205d3d841fcad5c23e42ced9e763eaf365c1b7bd124a2ef4b7", ".gitlab-ci.yml": "ecd0d2119bcc30c1b92b95c35de7c578e42789a9b7e76693a023047a0a77ad85"}, "installed": {"attrs": "26.1.0", "jsonschema": "4.25.1", "jsonschema-specifications": "2025.9.1", "pglast": "7.20", "psycopg": "3.2.10", "psycopg-binary": "3.2.10", "pyyaml": "6.0.3", "referencing": "0.37.0", "rpds-py": "2026.9.1", "typing-extensions": "4.16.0", "shapely": "2.1.2", "numpy": "2.2.6", "affine": "3.0.1", "certifi": "2026.7.22", "click": "8.5.0", "click-plugins": "1.1.1.2", "cligj": "0.7.2", "pyparsing": "3.3.3", "pypdf": "6.1.1", "pyproj": "3.7.2", "rasterio": "1.4.3"}, "lock_mismatches": []}, "database_versions": {"postgres": "PostgreSQL 16.9 (Debian 16.9-1.pgdg110+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit", "postgis": "POSTGIS=\"3.5.2 dea6d0a\" [EXTENSION] PGSQL=\"160\" GEOS=\"3.9.0-CAPI-1.16.2\" PROJ=\"7.2.1 NETWORK_ENABLED=OFF URL_ENDPOINT=https://cdn.proj.org USER_WRITABLE_DIRECTORY=/var/lib/postgresql/.local/share/proj DATABASE_PATH=/usr/share/proj/proj.db\" (compiled against PROJ 7.2.1) LIBXML=\"2.9.10\" LIBJSON=\"0.15\" LIBPROTOBUF=\"1.3.3\" WAGYU=\"0.5.0 (Internal)\"", "pgrouting": "3.8.0"}}
+
+ Compose Stopping Aborting on container exit...
+[Ktests-1 exited with code 0
+ Container udp-ruteo-diagnostico-tests-tests-1 Stopping 
+ Container udp-ruteo-diagnostico-tests-tests-1 Stopped 
+ Container udp-ruteo-diagnostico-tests-dbtest-1 Stopping 
+dbtest-1  | 2026-10-19 17:29:02.157 UTC [1] LOG:  received fast shutdown request
+dbtest-1  | 2026-10-19 17:29:02.157 UTC [1] LOG:  aborting any active transactions
+dbtest-1  | 2026-10-19 17:29:02.161 UTC [1] LOG:  background worker "logical replication launcher" (PID 68) exited with exit code 1
+dbtest-1  | 2026-10-19 17:29:02.181 UTC [63] LOG:  checkpoint complete: wrote 5818 buffers (35.5%); 0 WAL file(s) added, 1 removed, 2 recycled; write=53.447 s, sync=0.001 s, total=53.452 s; sync files=302, longest=0.001 s, average=0.001 s; distance=49168 kB, estimate=49168 kB; lsn=0/9340B78, redo lsn=0/4911400
+dbtest-1  | 2026-10-19 17:29:02.181 UTC [63] LOG:  shutting down
+dbtest-1  | 2026-10-19 17:29:02.181 UTC [63] LOG:  checkpoint starting: shutdown immediate
+dbtest-1  | 2026-10-19 17:29:02.205 UTC [63] LOG:  checkpoint complete: wrote 5760 buffers (35.2%); 0 WAL file(s) added, 0 removed, 5 recycled; write=0.024 s, sync=0.001 s, total=0.024 s; sync files=42, longest=0.001 s, average=0.000 s; distance=75965 kB, estimate=75965 kB; lsn=0/9340BF0, redo lsn=0/9340BF0
+dbtest-1  | 2026-10-19 17:29:02.225 UTC [1] LOG:  database system is shut down
+ Container udp-ruteo-diagnostico-tests-dbtest-1 Stopped 
+
+[Kdbtest-1 exited with code 0

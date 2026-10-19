@@ -78,6 +78,10 @@ def main():
                 return payload
 
             initial = calculate()
+            expect(page.locator('#diagnostics')).to_be_visible()
+            expect(page.locator('#diagnostics')).to_contain_text('Dijkstra independiente')
+            assert initial['diagnostics']['independent_oracle']['routing_minimum_matches']
+            checks.append('Diagnóstico y mínimo independiente visibles con la respuesta real')
             assert initial["status"] == "ready"
             assert len(initial["alternatives"]) >= 2
             expect(page.locator(".alternative")).to_have_count(
@@ -209,7 +213,10 @@ def main():
                 (args.output / "exportacion_politica.json").read_text(encoding="utf-8")
             )
             assert exported["request"]["preferences"]["max_historical_class"] == 1
+            assert exported['result']['diagnostics'] == policy['diagnostics']
             page.locator("#history-limit").select_option("")
+            expect(page.locator('#diagnostics')).to_be_hidden()
+            expect(page.locator('#export')).to_be_disabled()
             disabled_policy = calculate()
             assert disabled_policy["effective_profile"]["max_historical_class"] is None
             checks.append(
@@ -231,6 +238,28 @@ def main():
             rejected = calculate()
             assert "Origen externo" in rejected["error"]
             checks.append("Origen externo libre rechazado y mapa anterior invalidado")
+            expect(page.locator('#diagnostics')).to_be_hidden()
+            page.get_by_role('button',name='Restablecer',exact=True).click()
+            page.locator('#method').select_option('proposed')
+            restricted_index=page.evaluate("data.bases.findIndex(b=>b.provider_id==='S1H:31')")
+            storm=page.evaluate("data.weather.find(w=>Math.max(w.wind_speed_ms,w.wind_gust_ms)>=8).valid_at")
+            page.locator('#bases').select_option(str(restricted_index))
+            page.locator('#examples').select_option('1')
+            page.locator('#weather-hour').select_option(storm)
+            simultaneous=calculate()
+            codes={c['code'] for c in simultaneous['diagnostics']['causes']}
+            assert {'aip_endpoint_restriction','weather_outside_profile'} <= codes
+            expect(page.locator('#diagnostics')).to_contain_text('SC-P50')
+            expect(page.locator('#diagnostics')).to_contain_text('meteorología')
+            page.locator('#diagnostics').scroll_into_view_if_needed()
+            page.screenshot(path=str(args.output/'causas_simultaneas.png'),full_page=True)
+            checks.append('Causas simultáneas reales AIP y meteorología identificadas en interfaz')
+            page.locator('#scenario-time').fill('2000-01-01T00:00')
+            page.locator('#scenario-time').press('Tab')
+            missing=calculate()
+            assert missing['status']=='unknown'
+            expect(page.locator('#diagnostics')).to_contain_text('Sin comprobar')
+            checks.append('Hora sin datos mantiene diagnóstico desconocido sin certificar inviabilidad')
             page.get_by_role("button", name="Restablecer", exact=True).click()
             page.locator("#method").select_option("proposed")
             page.locator("#weather-hour").select_option(hours[0])
@@ -250,6 +279,8 @@ def main():
             assert replanned["status"] == "ready"
             assert not replanned["alternatives"][0]["mission_completed"]
             assert replanned["remaining_s"] == 1100
+            assert replanned['diagnostics']['independent_oracle']['observation_s']==0
+            assert replanned['diagnostics']['independent_oracle']['remaining_s']==1100
             checks.append(
                 "Retorno de emergencia sin reiniciar autonomía ni completar vigilancia"
             )

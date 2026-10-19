@@ -1,0 +1,17 @@
+{
+  "code_sha256": "013800182c2acb7a8ad73d5c1447709203493e3637974eb0eae507089107dc4d",
+  "tests": 128,
+  "skipped": 0,
+  "tests_successful": true,
+  "ui_checks": 16,
+  "ui_successful": true,
+  "unchanged_requests": 120,
+  "oracle_contradictions": [],
+  "active_publication_unchanged": true,
+  "aip_diagnostic": "diagnostico_S6_20261019T172722918417Z.json",
+  "online_acquisition": "blocked_dns",
+  "native_presentation_review": "blocked_capture_timeout",
+  "a4_teacher_acceptance": "pending",
+  "git": "resolved_out_of_scope",
+  "canvas": "manual"
+}

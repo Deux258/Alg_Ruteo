@@ -1,0 +1,42 @@
+{
+  "source": "S6",
+  "state": "failed",
+  "index_url": "https://aipchile.dgac.gob.cl/aip/vol1/seccion/enr",
+  "attempts": [
+    {
+      "resource": "S6_index",
+      "attempt": 1,
+      "initial_url": "https://aipchile.dgac.gob.cl/aip/vol1/seccion/enr",
+      "timeout_s": 20,
+      "started_at_utc": "2026-10-19T17:21:03.743519+00:00",
+      "state": "failed",
+      "error_kind": "dns",
+      "error": "<urlopen error [Errno -2] Name or service not known>",
+      "redirects": []
+    },
+    {
+      "resource": "S6_index",
+      "attempt": 2,
+      "initial_url": "https://aipchile.dgac.gob.cl/aip/vol1/seccion/enr",
+      "timeout_s": 20,
+      "started_at_utc": "2026-10-19T17:21:08.761056+00:00",
+      "state": "failed",
+      "error_kind": "dns",
+      "error": "<urlopen error [Errno -2] Name or service not known>",
+      "redirects": []
+    },
+    {
+      "resource": "S6_index",
+      "attempt": 3,
+      "initial_url": "https://aipchile.dgac.gob.cl/aip/vol1/seccion/enr",
+      "timeout_s": 20,
+      "started_at_utc": "2026-10-19T17:21:15.779244+00:00",
+      "state": "failed",
+      "error_kind": "dns",
+      "error": "<urlopen error [Errno -2] Name or service not known>",
+      "redirects": []
+    }
+  ],
+  "error_kind": "dns",
+  "error": "<urlopen error [Errno -2] Name or service not known>"
+}

@@ -1,0 +1,4079 @@
+{
+  "diagnostics": {
+    "proposed": {
+      "aip_edge_intersections": {
+        "SC-P29": 6,
+        "SC-P50": 106
+      },
+      "alternative_search": "Hasta tres idas × tres retornos; ausencia de segunda opción no demuestra inexistencia",
+      "causes": [],
+      "counting": "Causas simultáneas y arcos por causa pueden solaparse; no sumarlos como casos",
+      "excluded_edges_by_cause": {
+        "restricted": 110
+      },
+      "independent_oracle": {
+        "admitted_edges": 1004,
+        "elapsed_s": 0,
+        "feasible": true,
+        "implementation": "heapq_dijkstra",
+        "minimum_remaining_s": 630.4304489738995,
+        "observation_s": 60,
+        "outbound_s": 299.53011809451687,
+        "proposed_rejection_contradiction": false,
+        "remaining_s": 1200.0,
+        "return_s": 270.9003308793827,
+        "routing_minimum_matches": true,
+        "scope": "Mismo grafo dirigido admitido, malla y condiciones estáticas; no espacio continuo",
+        "state": "computed",
+        "total_edges": 1114
+      },
+      "not_tested": [],
+      "other_causes": [],
+      "primary_reason": null,
+      "service_health_is_not_mission_feasibility": true,
+      "unique_excluded_edges": 110,
+      "version": "mission-diagnostics-v1"
+    },
+    "reference": {
+      "aip_edge_intersections": {
+        "SC-P29": 6,
+        "SC-P50": 106
+      },
+      "alternative_search": "Hasta tres idas × tres retornos; ausencia de segunda opción no demuestra inexistencia",
+      "causes": [],
+      "counting": "Causas simultáneas y arcos por causa pueden solaparse; no sumarlos como casos",
+      "excluded_edges_by_cause": {
+        "restricted": 110
+      },
+      "independent_oracle": {
+        "admitted_edges": 1004,
+        "elapsed_s": 0,
+        "feasible": true,
+        "implementation": "heapq_dijkstra",
+        "minimum_remaining_s": 630.4304489738995,
+        "observation_s": 60,
+        "outbound_s": 299.53011809451687,
+        "proposed_rejection_contradiction": false,
+        "remaining_s": 1200.0,
+        "return_s": 270.9003308793827,
+        "routing_minimum_matches": null,
+        "scope": "Mismo grafo dirigido admitido, malla y condiciones estáticas; no espacio continuo",
+        "state": "computed",
+        "total_edges": 1114
+      },
+      "not_tested": [],
+      "other_causes": [],
+      "primary_reason": null,
+      "service_health_is_not_mission_feasibility": true,
+      "unique_excluded_edges": 110,
+      "version": "mission-diagnostics-v1"
+    }
+  },
+  "effective_profile": {
+    "aip_margin_m": 300,
+    "air_speed_ms": 10,
+    "alternatives": 3,
+    "budget_s": 1200.0,
+    "builder": "aerial-grid-v2",
+    "clearance_verified": false,
+    "comparison_options": 2,
+    "detour_factor": 1.2,
+    "flight_minutes": 25,
+    "grid_m": 800,
+    "max_historical_class": null,
+    "max_link_m": 1500,
+    "neighbours": 8,
+    "observation_s": 60,
+    "operationally_certified": false,
+    "reserve_fraction": 0.2,
+    "temperature_max_c": 40,
+    "temperature_min_c": -5,
+    "thermal_buffer_m": 250,
+    "thermal_window_hours": 24,
+    "weather_max_age_minutes": 90,
+    "wind_limit_ms": 8
+  },
+  "evaluation_sha256": "8984844e79d99965181384ea0b09c6825091eff4e4d7c9435c1036edf2c1a762",
+  "evaluation_version": "mission-comparison-v2",
+  "features": [
+    {
+      "geometry": {
+        "coordinates": [
+          [
+            -71.6572392109999,
+            -33.10190168999999
+          ],
+          [
+            -71.66578056615478,
+            -33.093373212245005
+          ],
+          [
+            -71.66556289858946,
+            -33.086164848023245
+          ],
+          [
+            -71.66534530855743,
+            -33.078956474184075
+          ]
+        ],
+        "type": "LineString"
+      },
+      "properties": {
+        "length_km": 2.8375392667254515,
+        "method": "reference",
+        "rank": 1,
+        "role": "outbound"
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          [
+            -71.66534530855743,
+            -33.078956474184075
+          ],
+          [
+            -71.66556289858946,
+            -33.086164848023245
+          ],
+          [
+            -71.66578056615478,
+            -33.093373212245005
+          ],
+          [
+            -71.6572392109999,
+            -33.10190168999999
+          ]
+        ],
+        "type": "LineString"
+      },
+      "properties": {
+        "length_km": 2.8375392667254515,
+        "method": "reference",
+        "rank": 1,
+        "role": "return"
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          [
+            -71.6572392109999,
+            -33.10190168999999
+          ],
+          [
+            -71.65721693536275,
+            -33.09355617174517
+          ],
+          [
+            -71.66556289858946,
+            -33.086164848023245
+          ],
+          [
+            -71.66534530855743,
+            -33.078956474184075
+          ]
+        ],
+        "type": "LineString"
+      },
+      "properties": {
+        "length_km": 2.8572745369736037,
+        "method": "reference",
+        "rank": 2,
+        "role": "outbound"
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          [
+            -71.66534530855743,
+            -33.078956474184075
+          ],
+          [
+            -71.66556289858946,
+            -33.086164848023245
+          ],
+          [
+            -71.66578056615478,
+            -33.093373212245005
+          ],
+          [
+            -71.6572392109999,
+            -33.10190168999999
+          ]
+        ],
+        "type": "LineString"
+      },
+      "properties": {
+        "length_km": 2.8375392667254515,
+        "method": "reference",
+        "rank": 2,
+        "role": "return"
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          [
+            -71.6572392109999,
+            -33.10190168999999
+          ],
+          [
+            -71.65721693536275,
+            -33.09355617174517
+          ],
+          [
+            -71.65699996502964,
+            -33.08634775748977
+          ],
+          [
+            -71.66534530855743,
+            -33.078956474184075
+          ]
+        ],
+        "type": "LineString"
+      },
+      "properties": {
+        "length_km": 2.857274536974926,
+        "method": "proposed",
+        "rank": 1,
+        "role": "outbound"
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          [
+            -71.66534530855743,
+            -33.078956474184075
+          ],
+          [
+            -71.65699996502964,
+            -33.08634775748977
+          ],
+          [
+            -71.65721693536275,
+            -33.09355617174517
+          ],
+          [
+            -71.6572392109999,
+            -33.10190168999999
+          ]
+        ],
+        "type": "LineString"
+      },
+      "properties": {
+        "length_km": 2.857274536974926,
+        "method": "proposed",
+        "rank": 1,
+        "role": "return"
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          [
+            -71.6572392109999,
+            -33.10190168999999
+          ],
+          [
+            -71.65721693536275,
+            -33.09355617174517
+          ],
+          [
+            -71.66556289858946,
+            -33.086164848023245
+          ],
+          [
+            -71.66534530855743,
+            -33.078956474184075
+          ]
+        ],
+        "type": "LineString"
+      },
+      "properties": {
+        "length_km": 2.8572745369736037,
+        "method": "proposed",
+        "rank": 2,
+        "role": "outbound"
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          [
+            -71.66534530855743,
+            -33.078956474184075
+          ],
+          [
+            -71.65699996502964,
+            -33.08634775748977
+          ],
+          [
+            -71.65721693536275,
+            -33.09355617174517
+          ],
+          [
+            -71.6572392109999,
+            -33.10190168999999
+          ]
+        ],
+        "type": "LineString"
+      },
+      "properties": {
+        "length_km": 2.857274536974926,
+        "method": "proposed",
+        "rank": 2,
+        "role": "return"
+      },
+      "type": "Feature"
+    }
+  ],
+  "metrics": {
+    "delta_percentage_points": -3.0000000000000027,
+    "methods": {
+      "proposed": {
+        "individual": [
+          0.95,
+          0.95
+        ],
+        "mission_count": 2,
+        "set_survival": 0.95
+      },
+      "reference": {
+        "individual": [
+          0.98,
+          0.97
+        ],
+        "mission_count": 2,
+        "set_survival": 0.98
+      }
+    },
+    "total_scenarios": 100,
+    "unknown_scenarios": 0,
+    "valid_scenarios": 100
+  },
+  "request": {
+    "destination": [
+      -71.66534530855743,
+      -33.078956474184075
+    ],
+    "mode": "mission",
+    "origin": [
+      -71.6572392109999,
+      -33.10190169
+    ],
+    "preferences": {},
+    "time": "2026-10-19T04:00:00+00:00"
+  },
+  "results": [
+    {
+      "id": "control",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-001",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-002",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-003",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          false,
+          false
+        ]
+      }
+    },
+    {
+      "id": "closure-004",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-005",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-006",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-007",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-008",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-009",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-010",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-011",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-012",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-013",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-014",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-015",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-016",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-017",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-018",
+      "known": true,
+      "survives": {
+        "proposed": [
+          false,
+          false
+        ],
+        "reference": [
+          false,
+          false
+        ]
+      }
+    },
+    {
+      "id": "closure-019",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-020",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-021",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-022",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-023",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-024",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-025",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-026",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-027",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-028",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-029",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-030",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-031",
+      "known": true,
+      "survives": {
+        "proposed": [
+          false,
+          false
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-032",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-033",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-034",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-035",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-036",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-037",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-038",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-039",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-040",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-041",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-042",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-043",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-044",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-045",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-046",
+      "known": true,
+      "survives": {
+        "proposed": [
+          false,
+          false
+        ],
+        "reference": [
+          true,
+          false
+        ]
+      }
+    },
+    {
+      "id": "closure-047",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-048",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-049",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-050",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-051",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-052",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-053",
+      "known": true,
+      "survives": {
+        "proposed": [
+          false,
+          false
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-054",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-055",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-056",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-057",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-058",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-059",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-060",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-061",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-062",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-063",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-064",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-065",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-066",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-067",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-068",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-069",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-070",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-071",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-072",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-073",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-074",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-075",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-076",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-077",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-078",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-079",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-080",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-081",
+      "known": true,
+      "survives": {
+        "proposed": [
+          false,
+          false
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-082",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-083",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-084",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-085",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-086",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-087",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-088",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-089",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-090",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-091",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-092",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-093",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-094",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-095",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-096",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-097",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-098",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "closure-099",
+      "known": true,
+      "survives": {
+        "proposed": [
+          true,
+          true
+        ],
+        "reference": [
+          true,
+          true
+        ]
+      }
+    }
+  ],
+  "run_id": "b80f9b83-cad7-53b8-a8b8-34a2a17e614c",
+  "scenario_catalogue": {
+    "scenarios": [
+      {
+        "geometry": null,
+        "id": "control",
+        "radius_m": 0,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.55635888915575,
+            -33.1053945251493
+          ],
+          "type": "Point"
+        },
+        "id": "closure-001",
+        "radius_m": 100,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.60641981306536,
+            -33.07233312459406
+          ],
+          "type": "Point"
+        },
+        "id": "closure-002",
+        "radius_m": 250,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.662959655637,
+            -33.101307986210934
+          ],
+          "type": "Point"
+        },
+        "id": "closure-003",
+        "radius_m": 500,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.67138442036143,
+            -33.09630372303184
+          ],
+          "type": "Point"
+        },
+        "id": "closure-004",
+        "radius_m": 100,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.5950209234139,
+            -33.04411283715976
+          ],
+          "type": "Point"
+        },
+        "id": "closure-005",
+        "radius_m": 250,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.65198012313131,
+            -33.07186880824773
+          ],
+          "type": "Point"
+        },
+        "id": "closure-006",
+        "radius_m": 500,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.54677563657891,
+            -33.10199059271566
+          ],
+          "type": "Point"
+        },
+        "id": "closure-007",
+        "radius_m": 100,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.66259816040555,
+            -33.067086016685955
+          ],
+          "type": "Point"
+        },
+        "id": "closure-008",
+        "radius_m": 250,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.66379364127859,
+            -33.03756873090529
+          ],
+          "type": "Point"
+        },
+        "id": "closure-009",
+        "radius_m": 500,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.60812764874781,
+            -33.04658864618959
+          ],
+          "type": "Point"
+        },
+        "id": "closure-010",
+        "radius_m": 100,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.5982526052491,
+            -33.05910714020622
+          ],
+          "type": "Point"
+        },
+        "id": "closure-011",
+        "radius_m": 250,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.56545781972285,
+            -33.06569077662327
+          ],
+          "type": "Point"
+        },
+        "id": "closure-012",
+        "radius_m": 500,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.57700126974404,
+            -33.08088600142045
+          ],
+          "type": "Point"
+        },
+        "id": "closure-013",
+        "radius_m": 100,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.61064850136525,
+            -33.07527066894294
+          ],
+          "type": "Point"
+        },
+        "id": "closure-014",
+        "radius_m": 250,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.55402960238669,
+            -33.084059341243545
+          ],
+          "type": "Point"
+        },
+        "id": "closure-015",
+        "radius_m": 500,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.6496841741619,
+            -33.05245862094116
+          ],
+          "type": "Point"
+        },
+        "id": "closure-016",
+        "radius_m": 100,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.56079431849649,
+            -33.105616939076484
+          ],
+          "type": "Point"
+        },
+        "id": "closure-017",
+        "radius_m": 250,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.66209131739474,
+            -33.08422824953095
+          ],
+          "type": "Point"
+        },
+        "id": "closure-018",
+        "radius_m": 500,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.64880732442975,
+            -33.0389190875248
+          ],
+          "type": "Point"
+        },
+        "id": "closure-019",
+        "radius_m": 100,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.6244039131976,
+            -33.05720554529308
+          ],
+          "type": "Point"
+        },
+        "id": "closure-020",
+        "radius_m": 250,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.65052710527442,
+            -33.111347847906764
+          ],
+          "type": "Point"
+        },
+        "id": "closure-021",
+        "radius_m": 500,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.59374059761832,
+            -33.06543682986513
+          ],
+          "type": "Point"
+        },
+        "id": "closure-022",
+        "radius_m": 100,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.64644262119329,
+            -33.10819557552049
+          ],
+          "type": "Point"
+        },
+        "id": "closure-023",
+        "radius_m": 250,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.5404314592383,
+            -33.09100448948434
+          ],
+          "type": "Point"
+        },
+        "id": "closure-024",
+        "radius_m": 500,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.5801784401882,
+            -33.08543244199168
+          ],
+          "type": "Point"
+        },
+        "id": "closure-025",
+        "radius_m": 100,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.59311067084796,
+            -33.08184493474335
+          ],
+          "type": "Point"
+        },
+        "id": "closure-026",
+        "radius_m": 250,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.56305957500192,
+            -33.10006621342815
+          ],
+          "type": "Point"
+        },
+        "id": "closure-027",
+        "radius_m": 500,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.62319251935642,
+            -33.044709175529974
+          ],
+          "type": "Point"
+        },
+        "id": "closure-028",
+        "radius_m": 100,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.56818128946153,
+            -33.08698389901356
+          ],
+          "type": "Point"
+        },
+        "id": "closure-029",
+        "radius_m": 250,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.57104907978541,
+            -33.08861818974923
+          ],
+          "type": "Point"
+        },
+        "id": "closure-030",
+        "radius_m": 500,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.66358413202161,
+            -33.0803101879747
+          ],
+          "type": "Point"
+        },
+        "id": "closure-031",
+        "radius_m": 100,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.65763609206212,
+            -33.1124017067655
+          ],
+          "type": "Point"
+        },
+        "id": "closure-032",
+        "radius_m": 250,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.65058380317596,
+            -33.1065139527735
+          ],
+          "type": "Point"
+        },
+        "id": "closure-033",
+        "radius_m": 500,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.67120652045416,
+            -33.05500765688016
+          ],
+          "type": "Point"
+        },
+        "id": "closure-034",
+        "radius_m": 100,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.65470456617885,
+            -33.06465988182852
+          ],
+          "type": "Point"
+        },
+        "id": "closure-035",
+        "radius_m": 250,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.59072158924093,
+            -33.06578722176918
+          ],
+          "type": "Point"
+        },
+        "id": "closure-036",
+        "radius_m": 500,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.63902276012543,
+            -33.090589489149295
+          ],
+          "type": "Point"
+        },
+        "id": "closure-037",
+        "radius_m": 100,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.59857670230511,
+            -33.06950461814059
+          ],
+          "type": "Point"
+        },
+        "id": "closure-038",
+        "radius_m": 250,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.65295196150757,
+            -33.058551701619095
+          ],
+          "type": "Point"
+        },
+        "id": "closure-039",
+        "radius_m": 500,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.63248990614743,
+            -33.04988246280107
+          ],
+          "type": "Point"
+        },
+        "id": "closure-040",
+        "radius_m": 100,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.63183284211115,
+            -33.049972666691524
+          ],
+          "type": "Point"
+        },
+        "id": "closure-041",
+        "radius_m": 250,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.56026467418506,
+            -33.10451532799423
+          ],
+          "type": "Point"
+        },
+        "id": "closure-042",
+        "radius_m": 500,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.66005672697361,
+            -33.055334474157185
+          ],
+          "type": "Point"
+        },
+        "id": "closure-043",
+        "radius_m": 100,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.58488318973941,
+            -33.06882426068039
+          ],
+          "type": "Point"
+        },
+        "id": "closure-044",
+        "radius_m": 250,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.62778526275673,
+            -33.08583754871801
+          ],
+          "type": "Point"
+        },
+        "id": "closure-045",
+        "radius_m": 500,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.65791733550734,
+            -33.097991311622835
+          ],
+          "type": "Point"
+        },
+        "id": "closure-046",
+        "radius_m": 100,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.63373241647488,
+            -33.080717462317054
+          ],
+          "type": "Point"
+        },
+        "id": "closure-047",
+        "radius_m": 250,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.64169615893863,
+            -33.07190897186133
+          ],
+          "type": "Point"
+        },
+        "id": "closure-048",
+        "radius_m": 500,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.56242157051794,
+            -33.10326032748628
+          ],
+          "type": "Point"
+        },
+        "id": "closure-049",
+        "radius_m": 100,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.57420557080361,
+            -33.075957342739486
+          ],
+          "type": "Point"
+        },
+        "id": "closure-050",
+        "radius_m": 250,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.66582424773098,
+            -33.06029984265312
+          ],
+          "type": "Point"
+        },
+        "id": "closure-051",
+        "radius_m": 500,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.59133016400126,
+            -33.05465793992737
+          ],
+          "type": "Point"
+        },
+        "id": "closure-052",
+        "radius_m": 100,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.66026658182696,
+            -33.08657904612145
+          ],
+          "type": "Point"
+        },
+        "id": "closure-053",
+        "radius_m": 250,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.592940159522,
+            -33.08605659405214
+          ],
+          "type": "Point"
+        },
+        "id": "closure-054",
+        "radius_m": 500,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.65337876276496,
+            -33.053203950618546
+          ],
+          "type": "Point"
+        },
+        "id": "closure-055",
+        "radius_m": 100,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.65540922482734,
+            -33.03289962648351
+          ],
+          "type": "Point"
+        },
+        "id": "closure-056",
+        "radius_m": 250,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.62174872962642,
+            -33.04402500548388
+          ],
+          "type": "Point"
+        },
+        "id": "closure-057",
+        "radius_m": 500,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.65198143202625,
+            -33.070721081132135
+          ],
+          "type": "Point"
+        },
+        "id": "closure-058",
+        "radius_m": 100,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.5876925552175,
+            -33.04069257343961
+          ],
+          "type": "Point"
+        },
+        "id": "closure-059",
+        "radius_m": 250,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.54245093122786,
+            -33.11185690512172
+          ],
+          "type": "Point"
+        },
+        "id": "closure-060",
+        "radius_m": 500,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.59561472244016,
+            -33.064244451637364
+          ],
+          "type": "Point"
+        },
+        "id": "closure-061",
+        "radius_m": 100,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.61434374971725,
+            -33.06444252108487
+          ],
+          "type": "Point"
+        },
+        "id": "closure-062",
+        "radius_m": 250,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.67333961519554,
+            -33.0878864423663
+          ],
+          "type": "Point"
+        },
+        "id": "closure-063",
+        "radius_m": 500,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.66163066858228,
+            -33.03216962525506
+          ],
+          "type": "Point"
+        },
+        "id": "closure-064",
+        "radius_m": 100,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.55337403773004,
+            -33.07689117053904
+          ],
+          "type": "Point"
+        },
+        "id": "closure-065",
+        "radius_m": 250,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.5843759543296,
+            -33.105490685021024
+          ],
+          "type": "Point"
+        },
+        "id": "closure-066",
+        "radius_m": 500,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.66548870677778,
+            -33.108543905621964
+          ],
+          "type": "Point"
+        },
+        "id": "closure-067",
+        "radius_m": 100,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.63134440688377,
+            -33.04305601551209
+          ],
+          "type": "Point"
+        },
+        "id": "closure-068",
+        "radius_m": 250,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.5591499013984,
+            -33.109082248151985
+          ],
+          "type": "Point"
+        },
+        "id": "closure-069",
+        "radius_m": 500,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.65620377009893,
+            -33.10782789758559
+          ],
+          "type": "Point"
+        },
+        "id": "closure-070",
+        "radius_m": 100,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.66392306111273,
+            -33.03252338542932
+          ],
+          "type": "Point"
+        },
+        "id": "closure-071",
+        "radius_m": 250,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.64551092357118,
+            -33.084933572801546
+          ],
+          "type": "Point"
+        },
+        "id": "closure-072",
+        "radius_m": 500,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.56706006110862,
+            -33.103903034222085
+          ],
+          "type": "Point"
+        },
+        "id": "closure-073",
+        "radius_m": 100,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.5723625086258,
+            -33.09604872861946
+          ],
+          "type": "Point"
+        },
+        "id": "closure-074",
+        "radius_m": 250,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.61496364747502,
+            -33.062722100563576
+          ],
+          "type": "Point"
+        },
+        "id": "closure-075",
+        "radius_m": 500,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.65800485788348,
+            -33.07184897123527
+          ],
+          "type": "Point"
+        },
+        "id": "closure-076",
+        "radius_m": 100,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.6300878722364,
+            -33.10778037746427
+          ],
+          "type": "Point"
+        },
+        "id": "closure-077",
+        "radius_m": 250,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.54989896061052,
+            -33.088521038105036
+          ],
+          "type": "Point"
+        },
+        "id": "closure-078",
+        "radius_m": 500,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.63599796868688,
+            -33.11373511132367
+          ],
+          "type": "Point"
+        },
+        "id": "closure-079",
+        "radius_m": 100,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.54114933536202,
+            -33.099372607126625
+          ],
+          "type": "Point"
+        },
+        "id": "closure-080",
+        "radius_m": 250,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.65837090085368,
+            -33.083910486949094
+          ],
+          "type": "Point"
+        },
+        "id": "closure-081",
+        "radius_m": 500,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.56732954535904,
+            -33.07430955880161
+          ],
+          "type": "Point"
+        },
+        "id": "closure-082",
+        "radius_m": 100,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.64546440374639,
+            -33.03385974468648
+          ],
+          "type": "Point"
+        },
+        "id": "closure-083",
+        "radius_m": 250,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.61700821535327,
+            -33.116191079291625
+          ],
+          "type": "Point"
+        },
+        "id": "closure-084",
+        "radius_m": 500,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.59781329699204,
+            -33.06642626007499
+          ],
+          "type": "Point"
+        },
+        "id": "closure-085",
+        "radius_m": 100,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.61122188120586,
+            -33.09639482835691
+          ],
+          "type": "Point"
+        },
+        "id": "closure-086",
+        "radius_m": 250,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.61674857133028,
+            -33.10545509450338
+          ],
+          "type": "Point"
+        },
+        "id": "closure-087",
+        "radius_m": 500,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.64530104209878,
+            -33.08069097193958
+          ],
+          "type": "Point"
+        },
+        "id": "closure-088",
+        "radius_m": 100,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.5644491151122,
+            -33.09625688655959
+          ],
+          "type": "Point"
+        },
+        "id": "closure-089",
+        "radius_m": 250,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.67315523510847,
+            -33.083212414328514
+          ],
+          "type": "Point"
+        },
+        "id": "closure-090",
+        "radius_m": 500,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.64002956155792,
+            -33.07492211699371
+          ],
+          "type": "Point"
+        },
+        "id": "closure-091",
+        "radius_m": 100,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.60285536726278,
+            -33.07672501252486
+          ],
+          "type": "Point"
+        },
+        "id": "closure-092",
+        "radius_m": 250,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.64981007609069,
+            -33.10861214228881
+          ],
+          "type": "Point"
+        },
+        "id": "closure-093",
+        "radius_m": 500,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.6413138965071,
+            -33.04381045610241
+          ],
+          "type": "Point"
+        },
+        "id": "closure-094",
+        "radius_m": 100,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.5856539895224,
+            -33.06328282592688
+          ],
+          "type": "Point"
+        },
+        "id": "closure-095",
+        "radius_m": 250,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.63389795641507,
+            -33.091760062529254
+          ],
+          "type": "Point"
+        },
+        "id": "closure-096",
+        "radius_m": 500,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.63282022322188,
+            -33.0859706110808
+          ],
+          "type": "Point"
+        },
+        "id": "closure-097",
+        "radius_m": 100,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.65841729217418,
+            -33.0394690897768
+          ],
+          "type": "Point"
+        },
+        "id": "closure-098",
+        "radius_m": 250,
+        "synthetic": true
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            -71.6197360312117,
+            -33.04420893026063
+          ],
+          "type": "Point"
+        },
+        "id": "closure-099",
+        "radius_m": 500,
+        "synthetic": true
+      }
+    ],
+    "seed": 20261018,
+    "selection": "Uniforme por rechazo en el área de tránsito; independiente del método",
+    "version": "mission-survival-v1"
+  },
+  "scenario_sha256": "ebb780792ceac66f001f5627287bd8d9e4733386e05d007e00c5cca89af9251c",
+  "sets": {
+    "proposed": {
+      "alternative_count_note": null,
+      "alternatives": [
+        {
+          "evaluation": {
+            "admissible": true,
+            "exposure_m": 1512.0381203938196,
+            "known": true,
+            "reason": null,
+            "thermal_unknown_ids": [],
+            "time_s": 634.3917121158316,
+            "unknown_m": 1512.0381203938196
+          },
+          "exposure_m": 1512.0381203938198,
+          "length_km": 5.714549073949852,
+          "mission_completed": true,
+          "observation_s": 60,
+          "outbound": {
+            "coordinates": [
+              [
+                -71.6572392109999,
+                -33.10190168999999
+              ],
+              [
+                -71.65721693536275,
+                -33.09355617174517
+              ],
+              [
+                -71.65699996502964,
+                -33.08634775748977
+              ],
+              [
+                -71.66534530855743,
+                -33.078956474184075
+              ]
+            ],
+            "edge_ids": [
+              "4202824587145258950",
+              "3976830543307896474",
+              "4255198306549860523"
+            ],
+            "exposure_m": 756.0190601969099,
+            "length_km": 2.857274536974926,
+            "node_ids": [
+              "444204520825800637",
+              "481811177017561201",
+              "5735422331392964219",
+              "6899520314482545266"
+            ],
+            "time_s": 301.5107496654828,
+            "unknown_m": 756.0190601969099
+          },
+          "rank": 1,
+          "return_path": {
+            "coordinates": [
+              [
+                -71.66534530855743,
+                -33.078956474184075
+              ],
+              [
+                -71.65699996502964,
+                -33.08634775748977
+              ],
+              [
+                -71.65721693536275,
+                -33.09355617174517
+              ],
+              [
+                -71.6572392109999,
+                -33.10190168999999
+              ]
+            ],
+            "edge_ids": [
+              "7858329714915187480",
+              "5105428515290619895",
+              "8356491922891146573"
+            ],
+            "exposure_m": 756.0190601969099,
+            "length_km": 2.857274536974926,
+            "node_ids": [
+              "6899520314482545266",
+              "5735422331392964219",
+              "481811177017561201",
+              "444204520825800637"
+            ],
+            "time_s": 272.88096245034876,
+            "unknown_m": 756.0190601969099
+          },
+          "time_s": 634.3917121158315,
+          "unknown_m": 1512.0381203938198,
+          "within_50m_of_first_fraction": 1
+        },
+        {
+          "evaluation": {
+            "admissible": true,
+            "exposure_m": 1581.8499050623664,
+            "known": true,
+            "reason": null,
+            "thermal_unknown_ids": [],
+            "time_s": 634.3917121156986,
+            "unknown_m": 1581.8499050623664
+          },
+          "exposure_m": 1581.8499050623668,
+          "length_km": 5.71454907394853,
+          "mission_completed": true,
+          "observation_s": 60,
+          "outbound": {
+            "coordinates": [
+              [
+                -71.6572392109999,
+                -33.10190168999999
+              ],
+              [
+                -71.65721693536275,
+                -33.09355617174517
+              ],
+              [
+                -71.66556289858946,
+                -33.086164848023245
+              ],
+              [
+                -71.66534530855743,
+                -33.078956474184075
+              ]
+            ],
+            "edge_ids": [
+              "4202824587145258950",
+              "4066262075347064536",
+              "5287594050096030417"
+            ],
+            "exposure_m": 825.8308448654569,
+            "length_km": 2.8572745369736037,
+            "node_ids": [
+              "444204520825800637",
+              "481811177017561201",
+              "6929966905466219196",
+              "6899520314482545266"
+            ],
+            "time_s": 301.51074966534986,
+            "unknown_m": 825.8308448654569
+          },
+          "rank": 2,
+          "return_path": {
+            "coordinates": [
+              [
+                -71.66534530855743,
+                -33.078956474184075
+              ],
+              [
+                -71.65699996502964,
+                -33.08634775748977
+              ],
+              [
+                -71.65721693536275,
+                -33.09355617174517
+              ],
+              [
+                -71.6572392109999,
+                -33.10190168999999
+              ]
+            ],
+            "edge_ids": [
+              "7858329714915187480",
+              "5105428515290619895",
+              "8356491922891146573"
+            ],
+            "exposure_m": 756.0190601969099,
+            "length_km": 2.857274536974926,
+            "node_ids": [
+              "6899520314482545266",
+              "5735422331392964219",
+              "481811177017561201",
+              "444204520825800637"
+            ],
+            "time_s": 272.88096245034876,
+            "unknown_m": 756.0190601969099
+          },
+          "time_s": 634.3917121156986,
+          "unknown_m": 1581.8499050623668,
+          "within_50m_of_first_fraction": 0.37354654916835384
+        }
+      ],
+      "candidate_pairs_examined": 9,
+      "clearance_verified": false,
+      "destination": [
+        -71.66534530855743,
+        -33.078956474184075
+      ],
+      "diagnostics": {
+        "aip_edge_intersections": {
+          "SC-P29": 6,
+          "SC-P50": 106
+        },
+        "alternative_search": "Hasta tres idas × tres retornos; ausencia de segunda opción no demuestra inexistencia",
+        "causes": [],
+        "counting": "Causas simultáneas y arcos por causa pueden solaparse; no sumarlos como casos",
+        "excluded_edges_by_cause": {
+          "restricted": 110
+        },
+        "independent_oracle": {
+          "admitted_edges": 1004,
+          "elapsed_s": 0,
+          "feasible": true,
+          "implementation": "heapq_dijkstra",
+          "minimum_remaining_s": 630.4304489738995,
+          "observation_s": 60,
+          "outbound_s": 299.53011809451687,
+          "proposed_rejection_contradiction": false,
+          "remaining_s": 1200.0,
+          "return_s": 270.9003308793827,
+          "routing_minimum_matches": true,
+          "scope": "Mismo grafo dirigido admitido, malla y condiciones estáticas; no espacio continuo",
+          "state": "computed",
+          "total_edges": 1114
+        },
+        "not_tested": [],
+        "other_causes": [],
+        "primary_reason": null,
+        "service_health_is_not_mission_feasibility": true,
+        "unique_excluded_edges": 110,
+        "version": "mission-diagnostics-v1"
+      },
+      "diversity_note": "Alternativas distintas; no se garantiza independencia geográfica ni óptimo global de exposición",
+      "effective_profile": {
+        "aip_margin_m": 300,
+        "air_speed_ms": 10,
+        "alternatives": 3,
+        "budget_s": 1200.0,
+        "builder": "aerial-grid-v2",
+        "clearance_verified": false,
+        "comparison_options": 2,
+        "detour_factor": 1.2,
+        "flight_minutes": 25,
+        "grid_m": 800,
+        "max_historical_class": null,
+        "max_link_m": 1500,
+        "neighbours": 8,
+        "observation_s": 60,
+        "operationally_certified": false,
+        "reserve_fraction": 0.2,
+        "temperature_max_c": 40,
+        "temperature_min_c": -5,
+        "thermal_buffer_m": 250,
+        "thermal_window_hours": 24,
+        "weather_max_age_minutes": 90,
+        "wind_limit_ms": 8
+      },
+      "elapsed_s": 0,
+      "events": [],
+      "excluded_edges_by_reason": {},
+      "features": [
+        {
+          "geometry": {
+            "coordinates": [
+              [
+                -71.6572392109999,
+                -33.10190168999999
+              ],
+              [
+                -71.65721693536275,
+                -33.09355617174517
+              ],
+              [
+                -71.65699996502964,
+                -33.08634775748977
+              ],
+              [
+                -71.66534530855743,
+                -33.078956474184075
+              ]
+            ],
+            "type": "LineString"
+          },
+          "properties": {
+            "length_km": 2.857274536974926,
+            "rank": 1,
+            "role": "outbound"
+          },
+          "type": "Feature"
+        },
+        {
+          "geometry": {
+            "coordinates": [
+              [
+                -71.66534530855743,
+                -33.078956474184075
+              ],
+              [
+                -71.65699996502964,
+                -33.08634775748977
+              ],
+              [
+                -71.65721693536275,
+                -33.09355617174517
+              ],
+              [
+                -71.6572392109999,
+                -33.10190168999999
+              ]
+            ],
+            "type": "LineString"
+          },
+          "properties": {
+            "length_km": 2.857274536974926,
+            "rank": 1,
+            "role": "return"
+          },
+          "type": "Feature"
+        },
+        {
+          "geometry": {
+            "coordinates": [
+              [
+                -71.6572392109999,
+                -33.10190168999999
+              ],
+              [
+                -71.65721693536275,
+                -33.09355617174517
+              ],
+              [
+                -71.66556289858946,
+                -33.086164848023245
+              ],
+              [
+                -71.66534530855743,
+                -33.078956474184075
+              ]
+            ],
+            "type": "LineString"
+          },
+          "properties": {
+            "length_km": 2.8572745369736037,
+            "rank": 2,
+            "role": "outbound"
+          },
+          "type": "Feature"
+        },
+        {
+          "geometry": {
+            "coordinates": [
+              [
+                -71.66534530855743,
+                -33.078956474184075
+              ],
+              [
+                -71.65699996502964,
+                -33.08634775748977
+              ],
+              [
+                -71.65721693536275,
+                -33.09355617174517
+              ],
+              [
+                -71.6572392109999,
+                -33.10190168999999
+              ]
+            ],
+            "type": "LineString"
+          },
+          "properties": {
+            "length_km": 2.857274536974926,
+            "rank": 2,
+            "role": "return"
+          },
+          "type": "Feature"
+        }
+      ],
+      "method": "proposed",
+      "minimum_remaining_mission_s": 630.4304489738995,
+      "mode": "mission",
+      "operationally_certified": false,
+      "origin": [
+        -71.6572392109999,
+        -33.10190169
+      ],
+      "phase": "outbound",
+      "position": [
+        -71.6572392109999,
+        -33.10190169
+      ],
+      "reason": null,
+      "reference": [
+        {
+          "coordinates": [
+            [
+              -71.6572392109999,
+              -33.10190168999999
+            ],
+            [
+              -71.66578056615478,
+              -33.093373212245005
+            ],
+            [
+              -71.66556289858946,
+              -33.086164848023245
+            ],
+            [
+              -71.66534530855743,
+              -33.078956474184075
+            ]
+          ],
+          "edge_ids": [
+            "5655086202808997152",
+            "721013082674107502",
+            "5287594050096030417"
+          ],
+          "length_km": 2.8375392667254515
+        },
+        {
+          "coordinates": [
+            [
+              -71.6572392109999,
+              -33.10190168999999
+            ],
+            [
+              -71.65721693536275,
+              -33.09355617174517
+            ],
+            [
+              -71.66556289858946,
+              -33.086164848023245
+            ],
+            [
+              -71.66534530855743,
+              -33.078956474184075
+            ]
+          ],
+          "edge_ids": [
+            "4202824587145258950",
+            "4066262075347064536",
+            "5287594050096030417"
+          ],
+          "length_km": 2.8572745369736037
+        }
+      ],
+      "remaining_s": 1200.0,
+      "run_id": "b80f9b83-cad7-53b8-a8b8-34a2a17e614c",
+      "search_limited": true,
+      "status": "ready",
+      "temporal_model": "static_at_selected_hour",
+      "thermal_unknown_ids": [],
+      "time": "2026-10-19T04:00:00+00:00",
+      "type": "FeatureCollection",
+      "warnings": [
+        "Simulación académica; despeje vertical no verificado",
+        "AIP ENR 5.1: selección espacial; ver reporte de formas y excepciones",
+        "El viento a 10 m es una aproximación, no una medición a altura de vuelo"
+      ],
+      "waypoints": [
+        {
+          "coordinates": [
+            -71.6572392109999,
+            -33.10190168999999
+          ],
+          "id": "444204520825800637"
+        },
+        {
+          "coordinates": [
+            -71.65721693536275,
+            -33.09355617174517
+          ],
+          "id": "481811177017561201"
+        },
+        {
+          "coordinates": [
+            -71.65699996502964,
+            -33.08634775748977
+          ],
+          "id": "5735422331392964219"
+        },
+        {
+          "coordinates": [
+            -71.66534530855743,
+            -33.078956474184075
+          ],
+          "id": "6899520314482545266"
+        },
+        {
+          "coordinates": [
+            -71.66556289858946,
+            -33.086164848023245
+          ],
+          "id": "6929966905466219196"
+        }
+      ],
+      "weather": {
+        "cell": [
+          -71.5,
+          -33.0
+        ],
+        "precipitation_mm": 0.0,
+        "relative_humidity_pct": 93,
+        "temperature_c": 12.1,
+        "valid_at": "2026-10-19T04:00:00+00:00",
+        "wind_direction_deg": 291,
+        "wind_gust_ms": 4.1,
+        "wind_speed_ms": 0.85
+      }
+    },
+    "reference": {
+      "alternatives": [
+        {
+          "evaluation": {
+            "admissible": true,
+            "exposure_m": 2783.9335059424748,
+            "known": true,
+            "reason": null,
+            "thermal_unknown_ids": [],
+            "time_s": 630.4304489738996,
+            "unknown_m": 2783.9335059424748
+          },
+          "exposure_m": null,
+          "length_km": 5.675078533450903,
+          "mission_completed": false,
+          "observation_s": 60,
+          "outbound": {
+            "coordinates": [
+              [
+                -71.6572392109999,
+                -33.10190168999999
+              ],
+              [
+                -71.66578056615478,
+                -33.093373212245005
+              ],
+              [
+                -71.66556289858946,
+                -33.086164848023245
+              ],
+              [
+                -71.66534530855743,
+                -33.078956474184075
+              ]
+            ],
+            "edge_ids": [
+              "5655086202808997152",
+              "721013082674107502",
+              "5287594050096030417"
+            ],
+            "exposure_m": 0,
+            "length_km": 2.8375392667254515,
+            "node_ids": [
+              "444204520825800637",
+              "8009708950418183824",
+              "6929966905466219196",
+              "6899520314482545266"
+            ],
+            "time_s": 0,
+            "unknown_m": 0
+          },
+          "rank": 1,
+          "return_path": {
+            "coordinates": [
+              [
+                -71.66534530855743,
+                -33.078956474184075
+              ],
+              [
+                -71.66556289858946,
+                -33.086164848023245
+              ],
+              [
+                -71.66578056615478,
+                -33.093373212245005
+              ],
+              [
+                -71.6572392109999,
+                -33.10190168999999
+              ]
+            ],
+            "edge_ids": [
+              "6174312057540144262",
+              "2157151556044608237",
+              "9188854454744430006"
+            ],
+            "exposure_m": 0,
+            "length_km": 2.8375392667254515,
+            "node_ids": [
+              "6899520314482545266",
+              "6929966905466219196",
+              "8009708950418183824",
+              "444204520825800637"
+            ],
+            "time_s": 0,
+            "unknown_m": 0
+          },
+          "time_s": null,
+          "within_50m_of_first_fraction": 1
+        },
+        {
+          "evaluation": {
+            "admissible": true,
+            "exposure_m": 2217.797597836694,
+            "known": true,
+            "reason": null,
+            "thermal_unknown_ids": [],
+            "time_s": 632.4110805447326,
+            "unknown_m": 2217.797597836694
+          },
+          "exposure_m": null,
+          "length_km": 5.694813803699056,
+          "mission_completed": false,
+          "observation_s": 60,
+          "outbound": {
+            "coordinates": [
+              [
+                -71.6572392109999,
+                -33.10190168999999
+              ],
+              [
+                -71.65721693536275,
+                -33.09355617174517
+              ],
+              [
+                -71.66556289858946,
+                -33.086164848023245
+              ],
+              [
+                -71.66534530855743,
+                -33.078956474184075
+              ]
+            ],
+            "edge_ids": [
+              "4202824587145258950",
+              "4066262075347064536",
+              "5287594050096030417"
+            ],
+            "exposure_m": 0,
+            "length_km": 2.8572745369736037,
+            "node_ids": [
+              "444204520825800637",
+              "481811177017561201",
+              "6929966905466219196",
+              "6899520314482545266"
+            ],
+            "time_s": 0,
+            "unknown_m": 0
+          },
+          "rank": 2,
+          "return_path": {
+            "coordinates": [
+              [
+                -71.66534530855743,
+                -33.078956474184075
+              ],
+              [
+                -71.66556289858946,
+                -33.086164848023245
+              ],
+              [
+                -71.66578056615478,
+                -33.093373212245005
+              ],
+              [
+                -71.6572392109999,
+                -33.10190168999999
+              ]
+            ],
+            "edge_ids": [
+              "6174312057540144262",
+              "2157151556044608237",
+              "9188854454744430006"
+            ],
+            "exposure_m": 0,
+            "length_km": 2.8375392667254515,
+            "node_ids": [
+              "6899520314482545266",
+              "6929966905466219196",
+              "8009708950418183824",
+              "444204520825800637"
+            ],
+            "time_s": 0,
+            "unknown_m": 0
+          },
+          "time_s": null,
+          "within_50m_of_first_fraction": 0.33181183530301067
+        }
+      ],
+      "clearance_verified": false,
+      "destination": [
+        -71.66534530855743,
+        -33.078956474184075
+      ],
+      "diagnostics": {
+        "aip_edge_intersections": {
+          "SC-P29": 6,
+          "SC-P50": 106
+        },
+        "alternative_search": "Hasta tres idas × tres retornos; ausencia de segunda opción no demuestra inexistencia",
+        "causes": [],
+        "counting": "Causas simultáneas y arcos por causa pueden solaparse; no sumarlos como casos",
+        "excluded_edges_by_cause": {
+          "restricted": 110
+        },
+        "independent_oracle": {
+          "admitted_edges": 1004,
+          "elapsed_s": 0,
+          "feasible": true,
+          "implementation": "heapq_dijkstra",
+          "minimum_remaining_s": 630.4304489738995,
+          "observation_s": 60,
+          "outbound_s": 299.53011809451687,
+          "proposed_rejection_contradiction": false,
+          "remaining_s": 1200.0,
+          "return_s": 270.9003308793827,
+          "routing_minimum_matches": null,
+          "scope": "Mismo grafo dirigido admitido, malla y condiciones estáticas; no espacio continuo",
+          "state": "computed",
+          "total_edges": 1114
+        },
+        "not_tested": [],
+        "other_causes": [],
+        "primary_reason": null,
+        "service_health_is_not_mission_feasibility": true,
+        "unique_excluded_edges": 110,
+        "version": "mission-diagnostics-v1"
+      },
+      "effective_profile": {
+        "aip_margin_m": 300,
+        "air_speed_ms": 10,
+        "alternatives": 3,
+        "budget_s": 1200.0,
+        "builder": "aerial-grid-v2",
+        "clearance_verified": false,
+        "comparison_options": 2,
+        "detour_factor": 1.2,
+        "flight_minutes": 25,
+        "grid_m": 800,
+        "max_historical_class": null,
+        "max_link_m": 1500,
+        "neighbours": 8,
+        "observation_s": 60,
+        "operationally_certified": false,
+        "reserve_fraction": 0.2,
+        "temperature_max_c": 40,
+        "temperature_min_c": -5,
+        "thermal_buffer_m": 250,
+        "thermal_window_hours": 24,
+        "weather_max_age_minutes": 90,
+        "wind_limit_ms": 8
+      },
+      "elapsed_s": 0,
+      "events": [],
+      "features": [
+        {
+          "geometry": {
+            "coordinates": [
+              [
+                -71.6572392109999,
+                -33.10190168999999
+              ],
+              [
+                -71.66578056615478,
+                -33.093373212245005
+              ],
+              [
+                -71.66556289858946,
+                -33.086164848023245
+              ],
+              [
+                -71.66534530855743,
+                -33.078956474184075
+              ]
+            ],
+            "type": "LineString"
+          },
+          "properties": {
+            "length_km": 2.8375392667254515,
+            "rank": 1,
+            "role": "outbound"
+          },
+          "type": "Feature"
+        },
+        {
+          "geometry": {
+            "coordinates": [
+              [
+                -71.66534530855743,
+                -33.078956474184075
+              ],
+              [
+                -71.66556289858946,
+                -33.086164848023245
+              ],
+              [
+                -71.66578056615478,
+                -33.093373212245005
+              ],
+              [
+                -71.6572392109999,
+                -33.10190168999999
+              ]
+            ],
+            "type": "LineString"
+          },
+          "properties": {
+            "length_km": 2.8375392667254515,
+            "rank": 1,
+            "role": "return"
+          },
+          "type": "Feature"
+        },
+        {
+          "geometry": {
+            "coordinates": [
+              [
+                -71.6572392109999,
+                -33.10190168999999
+              ],
+              [
+                -71.65721693536275,
+                -33.09355617174517
+              ],
+              [
+                -71.66556289858946,
+                -33.086164848023245
+              ],
+              [
+                -71.66534530855743,
+                -33.078956474184075
+              ]
+            ],
+            "type": "LineString"
+          },
+          "properties": {
+            "length_km": 2.8572745369736037,
+            "rank": 2,
+            "role": "outbound"
+          },
+          "type": "Feature"
+        },
+        {
+          "geometry": {
+            "coordinates": [
+              [
+                -71.66534530855743,
+                -33.078956474184075
+              ],
+              [
+                -71.66556289858946,
+                -33.086164848023245
+              ],
+              [
+                -71.66578056615478,
+                -33.093373212245005
+              ],
+              [
+                -71.6572392109999,
+                -33.10190168999999
+              ]
+            ],
+            "type": "LineString"
+          },
+          "properties": {
+            "length_km": 2.8375392667254515,
+            "rank": 2,
+            "role": "return"
+          },
+          "type": "Feature"
+        }
+      ],
+      "method": "reference",
+      "mode": "mission",
+      "operationally_certified": false,
+      "origin": [
+        -71.6572392109999,
+        -33.10190169
+      ],
+      "phase": "outbound",
+      "position": [
+        -71.6572392109999,
+        -33.10190169
+      ],
+      "reason": null,
+      "reference": [
+        {
+          "coordinates": [
+            [
+              -71.6572392109999,
+              -33.10190168999999
+            ],
+            [
+              -71.66578056615478,
+              -33.093373212245005
+            ],
+            [
+              -71.66556289858946,
+              -33.086164848023245
+            ],
+            [
+              -71.66534530855743,
+              -33.078956474184075
+            ]
+          ],
+          "edge_ids": [
+            "5655086202808997152",
+            "721013082674107502",
+            "5287594050096030417"
+          ],
+          "length_km": 2.8375392667254515
+        },
+        {
+          "coordinates": [
+            [
+              -71.6572392109999,
+              -33.10190168999999
+            ],
+            [
+              -71.65721693536275,
+              -33.09355617174517
+            ],
+            [
+              -71.66556289858946,
+              -33.086164848023245
+            ],
+            [
+              -71.66534530855743,
+              -33.078956474184075
+            ]
+          ],
+          "edge_ids": [
+            "4202824587145258950",
+            "4066262075347064536",
+            "5287594050096030417"
+          ],
+          "length_km": 2.8572745369736037
+        }
+      ],
+      "remaining_s": 1200.0,
+      "run_id": "b80f9b83-cad7-53b8-a8b8-34a2a17e614c",
+      "status": "ready",
+      "temporal_model": "static_at_selected_hour",
+      "time": "2026-10-19T04:00:00+00:00",
+      "type": "FeatureCollection",
+      "warnings": [
+        "Simulación académica; despeje vertical no verificado",
+        "AIP ENR 5.1: selección espacial; ver reporte de formas y excepciones",
+        "El viento a 10 m es una aproximación, no una medición a altura de vuelo",
+        "Referencia matemática por distancia: no filtra amenazas ni autonomía al generar; misión incluye regreso"
+      ],
+      "waypoints": [
+        {
+          "coordinates": [
+            -71.6572392109999,
+            -33.10190168999999
+          ],
+          "id": "444204520825800637"
+        },
+        {
+          "coordinates": [
+            -71.66578056615478,
+            -33.093373212245005
+          ],
+          "id": "8009708950418183824"
+        },
+        {
+          "coordinates": [
+            -71.66556289858946,
+            -33.086164848023245
+          ],
+          "id": "6929966905466219196"
+        },
+        {
+          "coordinates": [
+            -71.66534530855743,
+            -33.078956474184075
+          ],
+          "id": "6899520314482545266"
+        },
+        {
+          "coordinates": [
+            -71.65721693536275,
+            -33.09355617174517
+          ],
+          "id": "481811177017561201"
+        }
+      ]
+    }
+  },
+  "software": {
+    "code_sha256": "013800182c2acb7a8ad73d5c1447709203493e3637974eb0eae507089107dc4d",
+    "commit": "c72310c99455b084d4a89feaeab8326946312881",
+    "files": {
+      ".gitlab-ci.yml": "ecd0d2119bcc30c1b92b95c35de7c578e42789a9b7e76693a023047a0a77ad85",
+      "Amenazas/a1_meteorologia.py": "774d1bbf0d7bbad0c4d927a8f97baba81c56880950cd844fb9f43e10eeca56b2",
+      "Amenazas/a2_firms.py": "690412499e988d0a71e19602a9d67530b1e26df457628ff7b0537863eb7bdf1c",
+      "Amenazas/a3_aip.py": "c4d3c30120168bee40626e0556e3884b4ef7ec3b3cf36055afd356957c999edd",
+      "Amenazas/a4_historial.py": "f45cd75e5625ba4c4ad7ffbf1010feffa85d62b78b544fc3886741f3483b2dc4",
+      "BD/consultas_verificacion.sql": "ccf64f4677338e987b4d36af0c92fcf53d801155a4bb27d74b09200edd2faaa1",
+      "BD/crear_bd.sql": "93d760f440e94085057fdfdc9b8a23c472258498dcf87e536579a556807e92f7",
+      "BD/migraciones/002_red_vial.sql": "0010206080b42bc20bddde1aa48ab1120c6a04c961d0290eda6497246bbbddd5",
+      "BD/migraciones/003_red_aerea.sql": "8979bc65959756aff0b1457614ca4daf2c9abe75ab541d8e4bd4db0f6e8f20a9",
+      "BD/migraciones/004_metadata_transito.sql": "12ec9dc956fc9f80a7e5c52d196dc347aee9613d6991c941fbf0a727467534ca",
+      "Infraestructura/cargar.py": "99699a85efcc85905f2b8085a45d044c961393ccffee26682e9822329999d4bf",
+      "Infraestructura/descargar_aereo.py": "3ea6723f629531c3a50e4a84854e4f91757eec92b6a95f5c879ce4528ee8ed24",
+      "Infraestructura/descargar_vial.py": "71e669ea2ee0937d64ed21234428a338ac868a149bdede292cc052dc90c73d0f",
+      "Infraestructura/infraestructura.schema.json": "fb7a68301669b0dc4d87bbaf961f4a2493686f3eb944e838ec8fd3d919e6a250",
+      "Infraestructura/preparar_snapshot.py": "f0099c822d1f9475aff922f9306f764f5eefd77fd8a12cde261f3f60efb4927f",
+      "Metadata/m1_bases.py": "cd4f6d5fbe87518e25f2d5f07e19588fd23a83651a8375641850ba73dc2e0b99",
+      "Metadata/m2_cobertura.py": "a9bb66c1e6c9dad815e2c8312409c4931c6ff442678ac14da6da15eda7cf6f66",
+      "Metadata/m3_elevacion.py": "7720c18c0f0116914249c1713866a97f7410a4366a9b26889b395fc2595564ff",
+      "Metadata/m4_clima.py": "3e93d75f85252b8209de72ebe1075e1417407c201bca48827feb2599992d20ea",
+      "Sitio Web/aerial.html": "81df752c6ea1def7ba957d923a7089441774c8821be5698f16ee3287d8d89e60",
+      "Sitio Web/aerial.js": "0cfc18343d5dd4da4b4562590302f7e5a90983d60006e6ef1fb84885920f4fca",
+      "Sitio Web/app.js": "48b5d384bf8a3f47d5cd3538cd7099566b66311d7e3583c8efd4949f033937ee",
+      "Sitio Web/index.html": "f22ea073e86ede93e065754cca9448ffe4887fe41359866cddc8c1e9df9274aa",
+      "Sitio Web/index_vial.html": "f1977c8611d1304747d29bb0d76c68bfd2011d08da8c441ec7d276e64492da73",
+      "Sitio Web/style.css": "c8d571060a8f964ad10d31c250614824f91952e5010030a058af8c1b2c53efe7",
+      "Sitio Web/vial.js": "48b5d384bf8a3f47d5cd3538cd7099566b66311d7e3583c8efd4949f033937ee",
+      "compose.test.yaml": "a02c511c9a954ad3ea26d3b8afa92e9e00ee633fe61459deae3816620cafd4b9",
+      "compose.yaml": "f90129c28fedcc3ac5dd21227c05e20013d403495e6aec3b4c9e193467432c1b",
+      "config/aereo.json": "71c7f6576a99ae70505ec48173d12e0940b575d8d6defc86f3f3482b314b28b6",
+      "config/evaluacion_fase2.json": "bef3e42d38842c3c61551443f87314745cb9f9f0548e0a5e1db967330dd36fd1",
+      "config/pipeline.json": "dabcf5a56cdfe4a42a3c8eed4d6bf6fb8755c7b548ffc4a50009a760a1e1166f",
+      "config/pipeline_aereo.json": "0263a72b67295e8433721a15e282a8567ee1209b3006987aa6d0dfe7dc4f4fec",
+      "config/proyecto.json": "4390613ed5f122f188e1b6a9078dd64b3afd2f21ca0c30ee7c2699ca4fd6671e",
+      "config/proyecto_legacy.json": "f3a33eba5601b69796cfba9f72ea9136e48bca22ab3085f7839d9603a35d1d34",
+      "config/proyecto_vial.json": "15d34472c48331c63533b283dfbfe55bc43463544ccb191f511571102e3a84a5",
+      "core/__init__.py": "43b3f0b92b69c07393975d764d60fb07f5f2e287192a0df541772df9d5e3626c",
+      "core/aerial_data.py": "942faf40fe21c856eb458a19c7c0c2f210c684715615ecbd919d20e406faa707",
+      "core/aerial_etl.py": "e0236888c58f45da4d91eef1fa973370683b2325a9efdd1a8c6f1a5f53711910",
+      "core/aerial_pipeline.py": "1b995de2fd6180e7c6ce09198077af3ad2b063688c04708a9ef91d10e3d2d67d",
+      "core/aerial_routing.py": "3c787b52e4527f0593a1f0329ea1b407dc97a18d1da69107fbb48d92c67bd164",
+      "core/aip_acquisition.py": "b3e9e53929618f33daf56fd8de7d1893ddf018358ce447f5930e2efa65117323",
+      "core/area.py": "8771655e9c136dc05bc1ca9353bac711aaf4828b781ded1417ec9dacaae5fa5f",
+      "core/contracts.py": "0228a0b9686b6e56749a5b88b2e3774470bd393e190d981739970d0b3ea5d02b",
+      "core/db.py": "f5bc58fbe3f6477e0f218010072e20e5087b0fe1f9ede0c540d5e650e5c56935",
+      "core/experiments.py": "a3e176c9b423ec3b2f46cd67f26d3657257277ad67819e50ac2fbb7f503c6a4c",
+      "core/health.py": "7e7edfdce58fd49d29cc6968476bfb70e0fe532ec83be79838167a502a6d1d20",
+      "core/metadata_hidalgo.py": "b241d2f85b64a5e6f421794eaa6c55de03aba59031f383a0e6ecc0f67dff9752",
+      "core/mission_diagnostics.py": "c937533de285b1bc15d012086e07298e7ec25e6d0e4920c71391c8be8142c5d9",
+      "core/mission_evaluation.py": "0d5a5735898add06d2801b440fcb859712cc5ee9a3fda7f9fd3ca6f8f6c6dd30",
+      "core/pipeline.py": "fe2e3462dee040defa611c3dd229ca767331f8c858dd0c52e59cae2426cb3152",
+      "core/provenance.py": "84719f937c54ba3fe1e3f13b8e20fcb6383a93f508e4218011ea0b69b1154fac",
+      "core/roads.py": "9803df954fa062a11bc38b0dcdf05293a5f03fc55bed911717023bdc0b52caa3",
+      "core/routing.py": "d5855796bdfb09999a81643187e3a34058c7062d5b13ad97c8c04f6b02a1c48b",
+      "core/spatial_audit.py": "0047de2b30a31718465920d0a23c038f9367538b162f5a0c3e1070ba3e16bcac",
+      "core/test_runner.py": "da0cbf6a9d71a6c02c0532e46080b5a6c9d1e270f336d142946854514d0705e2",
+      "core/topology.py": "ae4d9d8cde7a11f54c051a941b63da507584fb618aa1de0b60b684fb1c3a97f8",
+      "core/turns.py": "0a9e892235aa2cea68f197b7efb1ab77da4d9b988bb4ec7daa020e8479ce89bd",
+      "core/web.py": "434d509796a224d0787f08d1f16c51f2f5da6ad2b81d070fee4c01f9060454f5",
+      "docker/Dockerfile.app": "20cc8f62fc7788c32df83781ae8d952c2a6c75eed713a17716dd1fd6dc389884",
+      "main": "05a2e9239ae57e8dbecf924dabe94726df7ec943c6ca769ae400b0a992978514",
+      "requirements.aerial.lock": "18cfc275d1004a205d3d841fcad5c23e42ced9e763eaf365c1b7bd124a2ef4b7",
+      "requirements.in": "0ff3913a303bfd791faf43d00da55d8f19e40704efb9e16151245e1696274a07",
+      "requirements.lock": "3ccfb1b184287809f5a57b4bcbb755a13a2be3babb983147db1a16dafd19cf0a",
+      "tests/__init__.py": "ca993d71b3ec33618092f1f89304a01b930c82025a41da938a311851a646a029",
+      "tests/esperar_bd.py": "3b8040747ca2311da481748c372f6dce9a946dfe64e3ed2ec86b41f5137ad357",
+      "tests/test_a2_firms.py": "6f21ade0ded07b063f4356d3bc3c85ae8243974ea8617a4eaccde043b970c6c6",
+      "tests/test_a3_aip.py": "4e13dd18fc6d06c57de4f33466776b146d5fd5acceeaa2ef3c146b0a9bb38d6f",
+      "tests/test_aerial.py": "f7c3d37ea3686cb9e37cebc86aff627ff86529c8e595d4db4c0c7ab7d03d002a",
+      "tests/test_area.py": "5959b901cc19c32ece359864dfdc0d0ef1e5f5fcbd6b06b911e11915412b0045",
+      "tests/test_contracts.py": "9988b3c4758cb4ec76c3a632c3d620f3abe3a855384c96292704914d83aea13b",
+      "tests/test_diagnostics.py": "c76e098fcd9226d78c6467842da5f800bc4b9e56a0d1edf2f4754b29e926c171",
+      "tests/test_integration.py": "52f525cf02fbd934ceebd31c753e7d347530caa0e4c29d2f0aa294215da371a3",
+      "tests/test_main.py": "0e099e7fd0abcb6480a892570cca048c34ed269afca70b37de1493a0688d7245",
+      "tests/test_phase2.py": "c87bb25b0eb90453f960251beaff8306019d3ed99a718f3876c5278f44eba2bb",
+      "tests/test_road_integration.py": "aa9f20c33e6dd71939563b46a1eeda7c3c9ce5650b93edc0fce1acf9f9b82f97",
+      "tests/test_roads.py": "f5c9edbee78ec50dadfd59a4c41e54e65ed0535db84a242a7f1b412ff1107e60",
+      "tests/test_sql.py": "6ea33924545a2e7fbf76c354ca9209dd6d410918d3621eff6c17804a40a0a227"
+    },
+    "installed": {
+      "affine": "3.0.1",
+      "attrs": "26.1.0",
+      "certifi": "2026.7.22",
+      "click": "8.5.0",
+      "click-plugins": "1.1.1.2",
+      "cligj": "0.7.2",
+      "jsonschema": "4.25.1",
+      "jsonschema-specifications": "2025.9.1",
+      "numpy": "2.2.6",
+      "pglast": "7.20",
+      "psycopg": "3.2.10",
+      "psycopg-binary": "3.2.10",
+      "pyparsing": "3.3.3",
+      "pypdf": "6.1.1",
+      "pyproj": "3.7.2",
+      "pyyaml": "6.0.3",
+      "rasterio": "1.4.3",
+      "referencing": "0.37.0",
+      "rpds-py": "2026.9.1",
+      "shapely": "2.1.2",
+      "typing-extensions": "4.16.0"
+    },
+    "lock_mismatches": []
+  },
+  "status": "ready",
+  "temporal_model": "static_at_selected_hour",
+  "type": "FeatureCollection",
+  "warnings": [
+    "Misiones fijadas antes de aplicar escenarios; no se recalculan rutas en esta métrica",
+    "Supervivencia ante cierres sintéticos, no probabilidad real de éxito",
+    "La referencia ignora amenazas al generar rutas; ambos métodos se evalúan con las mismas restricciones",
+    "Sin despeje vertical verificado ni independencia geográfica garantizada"
+  ]
+}

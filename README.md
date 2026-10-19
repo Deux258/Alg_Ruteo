@@ -89,7 +89,7 @@ Se preservan S1–S7 del informe y se añade S1H como catálogo complementario d
 IDE Chile/Junta Nacional, republicado en ArcGIS. M1–M4 adaptan los aportes de Diego Hidalgo.
 La capa adicional de riesgo de clases sin procedencia/semántica verificadas queda excluida.
 Vegetación 2019, recurrencia 2020–2024, viento a 10 m y DSM ~30 m mantienen sus limitaciones.
-La actualización completa online depende de DGAC. GitLab UDP y Canvas requieren entrega del equipo.
+La actualización completa online depende de DGAC. Canvas requiere carga manual del equipo.
 `etl_complete` acredita cargas; `phase2_complete=false` no certifica nota, publicación ni seguridad.
 
 ## Cierre de rúbrica
@@ -104,9 +104,18 @@ delta medio +1,65 pp. Separados por perfil: +0,03 pp predeterminado y +3,27 pp c
 máxima 4. Solo 13/120 casos propuestos son viables en el control. Son resultados
 descriptivos de escenarios sintéticos, sin superioridad estadística demostrada.
 
-Entrega actual: [informe de cierre](evidencia/cierre_fase2_2026-10-19/INFORME.md),
-[matriz](presentacion/MATRIZ_RUBRICA.md) y `presentacion/fase2_valparaiso_cierre.pptx`
+Entrega actual: [informe de diagnóstico](evidencia/diagnostico_fase2_2026-10-19/INFORME.md),
+[matriz](presentacion/MATRIZ_RUBRICA.md) y `presentacion/fase2_valparaiso_diagnostico.pptx`
 (22 láminas principales y 14 anexos). La presentación anterior se conserva como antecedente.
-Consultar `evidencia/cierre_fase2_2026-10-19/ENTREGA_MANUAL.md` para GitLab UDP y Canvas.
+La conexión Git está resuelta por el equipo. Canvas mantiene carga manual.
+
+`./main diagnosticar-fuentes --source S6` comprueba desde Docker DNS, HTTPS,
+índice ENR y PDF, sin reemplazar originales activos. La última comprobación
+mantiene el bloqueo DNS de DGAC; el snapshot sigue funcionando. La adquisición
+completa no se declara exitosa. Ver [contrato y reproducción](docs/DIAGNOSTICO_FASE2.md).
+
+Rutas, replanificación y comparación incluyen `diagnostics`: causas simultáneas,
+comprobaciones pendientes y mínimo temporal de Dijkstra independiente. Se conserva
+el lote anterior: 120/120 resultados idénticos, sin contradicciones del oráculo.
 
 Se aplicaron geomaster y webapp-testing. La referencia de software está en la documentación ampliada.

@@ -99,7 +99,7 @@ def download(config, selected=None, reuse=None):
     bbox=list(transform(INV,transform(FWD,area).buffer(config['transit_buffer_m'],quad_segs=16)).bounds)
     previous_folder=ROOT/config.get('reuse_raw_directory','datos/entrada/aereo')
     if (folder/'manifest.json').exists():previous_folder=folder
-    previous=json.loads((previous_folder/'manifest.json').read_text(encoding='utf-8')) if reuse else {}
+    previous=json.loads((previous_folder/'manifest.json').read_text(encoding='utf-8')) if (previous_folder/'manifest.json').exists() else {}
     specs={s['id']:s for s in json.loads((ROOT/'datos/entrada/fase1/manifest_fuentes.json').read_text(encoding='utf-8'))['fuentes']}
     sources={};errors={}
     for key in sorted(keys):
@@ -111,13 +111,28 @@ def download(config, selected=None, reuse=None):
                 entry=json.loads(json.dumps(previous['sources'][key]))
                 files=[entry['ids']]+entry['pages'] if 'pages' in entry else [entry]
                 if 'catalogue' in entry:files=files+[entry['catalogue']]
+                files += [entry[k] for k in ['index','validation'] if k in entry]
                 for file in files:
                     original=previous_folder/file['file']
                     if hashlib.sha256(original.read_bytes()).hexdigest()!=file['sha256']:raise ValueError('Original reutilizado alterado')
                     target=folder/file['file']
                     if original.resolve()!=target.resolve():shutil.copyfile(original,target)
                 entry['reuse']=dict(explicit=True,manifest_sha256=hashlib.sha256((previous_folder/'manifest.json').read_bytes()).hexdigest())
+                entry['state']='reused_explicitly'
                 sources[key]=entry;continue
+            if key=='S6':
+                from core.aip_acquisition import acquire
+                flight=transform(INV,transform(FWD,area).buffer(config['transit_buffer_m'],quad_segs=16))
+                old=previous.get('sources',{}).get('S6',{})
+                old_path=previous_folder/old['file'] if old else None
+                if old_path and hashlib.sha256(old_path.read_bytes()).hexdigest()!=old['sha256']:
+                    raise ValueError('PDF anterior alterado; no se puede comparar')
+                audit={}
+                try:
+                    sources[key]=dict(product=specs[key]['product'],**acquire(folder,flight,previous=old_path,report=audit))
+                finally:
+                    (folder/'S6_ultimo_intento.json').write_text(json.dumps(audit,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+                continue
             catalogue=None
             if key=='S1H':
                 catalogue,body=fetch('https://www.arcgis.com/sharing/rest/content/items/ac7929a4d40e4879afd09b0c04b12fd3?f=json',folder,'S1H_catalogue')
@@ -139,7 +154,7 @@ def download(config, selected=None, reuse=None):
                     pages.append(meta);features.extend(doc['features'])
                 got=[f['properties'][field] for f in features]
                 if len(got)!=len(set(got)) or set(got)!=set(ids):raise ValueError('IDs/conteos no reconciliados')
-                sources[key]=dict(product=product,ids=idsmeta,pages=pages,record_count=len(features),id_field=field)
+                sources[key]=dict(product=product,ids=idsmeta,pages=pages,record_count=len(features),id_field=field,state='downloaded')
                 if catalogue:sources[key]['catalogue']=catalogue
             else:
                 if key=='S4':
@@ -150,7 +165,7 @@ def download(config, selected=None, reuse=None):
                 if key=='S4' and 'hourly' not in json.loads(body):raise ValueError('Pronóstico inválido')
                 if key=='S5' and not {'latitude','longitude','acq_date','acq_time','confidence','frp'}<=set(csv.DictReader(io.StringIO(body.decode('utf-8-sig'))).fieldnames or []):raise ValueError('CSV FIRMS inválido')
                 if key=='S6' and not body.startswith(b'%PDF'):raise ValueError('AIP no es PDF')
-                sources[key]=dict(product=product,**meta)
+                sources[key]=dict(product=product,state='downloaded',**meta)
         except Exception as exc:errors[key]=str(exc);print('ERROR '+key+': '+str(exc),flush=True)
     report=dict(version=2,bbox_wgs84=config['bbox_wgs84'],acquisition_bbox_wgs84=bbox,transit_buffer_m=config['transit_buffer_m'],sources=sources,errors=errors,fetched_at_utc=datetime.now(timezone.utc).isoformat())
     target=folder/('adquisicion_incompleta.json' if errors else 'manifest.json')

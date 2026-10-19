@@ -1,0 +1,177 @@
+ Image udp-ruteo-fase2-app:local Building 
+#1 [internal] load local bake definitions
+#1 reading from stdin 721B 0.0s done
+#1 DONE 0.0s
+
+#2 [internal] load build definition from Dockerfile.app
+#2 transferring dockerfile: 757B done
+#2 DONE 0.0s
+
+#3 [internal] load metadata for docker.io/library/python:3.12.12-slim-bookworm@sha256:593bd06efe90efa80dc4eee3948be7c0fde4134606dd40d8dd8dbcade98e669c
+#3 DONE 0.0s
+
+#4 [internal] load .dockerignore
+#4 transferring context: 106B done
+#4 DONE 0.0s
+
+#5 [1/9] FROM docker.io/library/python:3.12.12-slim-bookworm@sha256:593bd06efe90efa80dc4eee3948be7c0fde4134606dd40d8dd8dbcade98e669c
+#5 resolve docker.io/library/python:3.12.12-slim-bookworm@sha256:593bd06efe90efa80dc4eee3948be7c0fde4134606dd40d8dd8dbcade98e669c 0.0s done
+#5 DONE 0.0s
+
+#6 [2/9] WORKDIR /app
+#6 CACHED
+
+#7 [internal] load build context
+#7 transferring context: 98.73kB 0.0s done
+#7 DONE 0.1s
+
+#8 [3/9] RUN apt-get update && apt-get install -y --no-install-recommends libexpat1=2.5.0-1+deb12u4 && rm -rf /var/lib/apt/lists/*
+#8 0.248 Get:1 http://deb.debian.org/debian bookworm InRelease [151 kB]
+#8 0.267 Get:2 http://deb.debian.org/debian bookworm-updates InRelease [55.4 kB]
+#8 0.273 Get:3 http://deb.debian.org/debian-security bookworm-security InRelease [34.8 kB]
+#8 0.323 Get:4 http://deb.debian.org/debian bookworm/main amd64 Packages [8790 kB]
+#8 0.967 Get:5 http://deb.debian.org/debian bookworm-updates/main amd64 Packages [6924 B]
+#8 0.967 Get:6 http://deb.debian.org/debian-security bookworm-security/main amd64 Packages [354 kB]
+#8 1.546 Fetched 9393 kB in 1s (7104 kB/s)
+#8 1.546 Reading package lists...
+#8 2.169 Reading package lists...
+#8 2.986 Building dependency tree...
+#8 3.067 Reading state information...
+#8 3.189 The following NEW packages will be installed:
+#8 3.190   libexpat1
+#8 3.226 0 upgraded, 1 newly installed, 0 to remove and 22 not upgraded.
+#8 3.226 Need to get 106 kB of archives.
+#8 3.226 After this operation, 407 kB of additional disk space will be used.
+#8 3.226 Get:1 http://deb.debian.org/debian-security bookworm-security/main amd64 libexpat1 amd64 2.5.0-1+deb12u4 [106 kB]
+#8 3.495 debconf: delaying package configuration, since apt-utils is not installed
+#8 3.518 Fetched 106 kB in 0s (2583 kB/s)
+#8 3.540 Selecting previously unselected package libexpat1:amd64.
+#8 3.540 (Reading database ... 
+(Reading database ... 5%
+(Reading database ... 10%
+(Reading database ... 15%
+(Reading database ... 20%
+(Reading database ... 25%
+(Reading database ... 30%
+(Reading database ... 35%
+(Reading database ... 40%
+(Reading database ... 45%
+(Reading database ... 50%
+(Reading database ... 55%
+(Reading database ... 60%
+(Reading database ... 65%
+(Reading database ... 70%
+(Reading database ... 75%
+(Reading database ... 80%
+(Reading database ... 85%
+(Reading database ... 90%
+(Reading database ... 95%
+(Reading database ... 100%
+(Reading database ... 6695 files and directories currently installed.)
+#8 3.546 Preparing to unpack .../libexpat1_2.5.0-1+deb12u4_amd64.deb ...
+#8 3.552 Unpacking libexpat1:amd64 (2.5.0-1+deb12u4) ...
+#8 3.595 Setting up libexpat1:amd64 (2.5.0-1+deb12u4) ...
+#8 3.608 Processing triggers for libc-bin (2.36-9+deb12u13) ...
+#8 DONE 3.7s
+
+#9 [4/9] COPY requirements.lock /app/requirements.lock
+#9 DONE 0.0s
+
+#10 [5/9] RUN python -m pip install --no-cache-dir --require-hashes -r requirements.lock
+#10 1.219 Collecting attrs==26.1.0 (from -r requirements.lock (line 4))
+#10 1.276   Downloading attrs-26.1.0-py3-none-any.whl (67 kB)
+#10 1.310 Collecting jsonschema==4.25.1 (from -r requirements.lock (line 10))
+#10 1.316   Downloading jsonschema-4.25.1-py3-none-any.whl (90 kB)
+#10 1.342 Collecting jsonschema-specifications==2025.9.1 (from -r requirements.lock (line 14))
+#10 1.350   Downloading jsonschema_specifications-2025.9.1-py3-none-any.whl (18 kB)
+#10 1.385 Collecting pglast==7.20 (from -r requirements.lock (line 18))
+#10 1.392   Downloading pglast-7.20-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (6.2 MB)
+#10 1.802      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 6.2/6.2 MB 15.4 MB/s eta 0:00:00
+#10 1.823 Collecting psycopg==3.2.10 (from -r requirements.lock (line 21))
+#10 1.831   Downloading psycopg-3.2.10-py3-none-any.whl (206 kB)
+#10 1.976 Collecting psycopg-binary==3.2.10 (from -r requirements.lock (line 25))
+#10 1.983   Downloading psycopg_binary-3.2.10-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (4.4 MB)
+#10 2.188      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 4.4/4.4 MB 20.8 MB/s eta 0:00:00
+#10 2.223 Collecting pyyaml==6.0.3 (from -r requirements.lock (line 89))
+#10 2.229   Downloading pyyaml-6.0.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (807 kB)
+#10 2.259      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 807.9/807.9 kB 33.6 MB/s eta 0:00:00
+#10 2.281 Collecting referencing==0.37.0 (from -r requirements.lock (line 164))
+#10 2.288   Downloading referencing-0.37.0-py3-none-any.whl (26 kB)
+#10 2.486 Collecting rpds-py==2026.9.1 (from -r requirements.lock (line 170))
+#10 2.494   Downloading rpds_py-2026.9.1-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (371 kB)
+#10 2.588 Collecting typing-extensions==4.16.0 (from -r requirements.lock (line 303))
+#10 2.594   Downloading typing_extensions-4.16.0-py3-none-any.whl (45 kB)
+#10 2.686 Collecting shapely==2.1.2 (from -r requirements.lock (line 312))
+#10 2.693   Downloading shapely-2.1.2-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (3.1 MB)
+#10 2.910      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.1/3.1 MB 14.0 MB/s eta 0:00:00
+#10 3.080 Collecting numpy==2.2.6 (from -r requirements.lock (line 370))
+#10 3.087   Downloading numpy-2.2.6-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (16.5 MB)
+#10 4.568      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 16.5/16.5 MB 11.2 MB/s eta 0:00:00
+#10 4.647 Installing collected packages: pglast, typing-extensions, rpds-py, pyyaml, psycopg-binary, numpy, attrs, shapely, referencing, psycopg, jsonschema-specifications, jsonschema
+#10 7.526 Successfully installed attrs-26.1.0 jsonschema-4.25.1 jsonschema-specifications-2025.9.1 numpy-2.2.6 pglast-7.20 psycopg-3.2.10 psycopg-binary-3.2.10 pyyaml-6.0.3 referencing-0.37.0 rpds-py-2026.9.1 shapely-2.1.2 typing-extensions-4.16.0
+#10 7.526 WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+#10 7.611 
+#10 7.611 [notice] A new release of pip is available: 25.0.1 -> 26.2.1
+#10 7.611 [notice] To update, run: pip install --upgrade pip
+#10 DONE 8.0s
+
+#11 [6/9] COPY requirements.aerial.lock /app/requirements.aerial.lock
+#11 DONE 0.1s
+
+#12 [7/9] RUN python -m pip install --no-cache-dir --require-hashes -r requirements.aerial.lock
+#12 1.186 Collecting affine==3.0.1 (from -r requirements.aerial.lock (line 2))
+#12 1.226   Downloading affine-3.0.1-py3-none-any.whl (10 kB)
+#12 1.249 Collecting certifi==2026.7.22 (from -r requirements.aerial.lock (line 3))
+#12 1.259   Downloading certifi-2026.7.22-py3-none-any.whl (136 kB)
+#12 1.293 Collecting click==8.5.0 (from -r requirements.aerial.lock (line 4))
+#12 1.300   Downloading click-8.5.0-py3-none-any.whl (125 kB)
+#12 1.316 Collecting click-plugins==1.1.1.2 (from -r requirements.aerial.lock (line 5))
+#12 1.324   Downloading click_plugins-1.1.1.2-py2.py3-none-any.whl (11 kB)
+#12 1.336 Collecting cligj==0.7.2 (from -r requirements.aerial.lock (line 6))
+#12 1.344   Downloading cligj-0.7.2-py3-none-any.whl (7.1 kB)
+#12 1.368 Collecting pyparsing==3.3.3 (from -r requirements.aerial.lock (line 7))
+#12 1.376   Downloading pyparsing-3.3.3-py3-none-any.whl (126 kB)
+#12 1.408 Collecting pypdf==6.1.1 (from -r requirements.aerial.lock (line 8))
+#12 1.416   Downloading pypdf-6.1.1-py3-none-any.whl (323 kB)
+#12 1.501 Collecting pyproj==3.7.2 (from -r requirements.aerial.lock (line 9))
+#12 1.517   Downloading pyproj-3.7.2-cp312-cp312-manylinux_2_28_x86_64.whl (9.6 MB)
+#12 2.276      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 9.6/9.6 MB 12.6 MB/s eta 0:00:00
+#12 2.392 Collecting rasterio==1.4.3 (from -r requirements.aerial.lock (line 10))
+#12 2.403   Downloading rasterio-1.4.3-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (22.3 MB)
+#12 4.201      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 22.3/22.3 MB 12.3 MB/s eta 0:00:00
+#12 4.223 Requirement already satisfied: attrs>=21.3.0 in /usr/local/lib/python3.12/site-packages (from affine==3.0.1->-r requirements.aerial.lock (line 2)) (26.1.0)
+#12 4.231 Requirement already satisfied: numpy>=1.24 in /usr/local/lib/python3.12/site-packages (from rasterio==1.4.3->-r requirements.aerial.lock (line 10)) (2.2.6)
+#12 4.260 Installing collected packages: pypdf, pyparsing, click, certifi, affine, pyproj, cligj, click-plugins, rasterio
+#12 5.766 Successfully installed affine-3.0.1 certifi-2026.7.22 click-8.5.0 click-plugins-1.1.1.2 cligj-0.7.2 pyparsing-3.3.3 pypdf-6.1.1 pyproj-3.7.2 rasterio-1.4.3
+#12 5.767 WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+#12 5.858 
+#12 5.858 [notice] A new release of pip is available: 25.0.1 -> 26.2.1
+#12 5.858 [notice] To update, run: pip install --upgrade pip
+#12 DONE 6.2s
+
+#13 [8/9] RUN python -m pip check
+#13 0.908 No broken requirements found.
+#13 DONE 1.0s
+
+#14 [9/9] COPY . /app
+#14 DONE 2.4s
+
+#15 exporting to image
+#15 exporting layers
+#15 exporting layers 6.9s done
+#15 exporting manifest sha256:6b4296bfc01119b95fb9bbb7673d8ca719d707dbc38fbc6c94872e1d321aeef9 0.0s done
+#15 exporting config sha256:0ec1ef4926824c26c55db65fba9e2ab98088936a21f5001d1e6024c95ea2d016 0.0s done
+#15 exporting attestation manifest sha256:b642ecc247590446c4a532011ce7241bd41b3f8b819ffab1c65c41f2688c8d23 0.0s done
+#15 exporting manifest list sha256:2e4a9b87d1f095e913df31fc3343d8ac2c07177899c85cedf3444d7de3177c9f 0.0s done
+#15 naming to docker.io/library/udp-ruteo-fase2-app:local done
+#15 unpacking to docker.io/library/udp-ruteo-fase2-app:local
+#15 unpacking to docker.io/library/udp-ruteo-fase2-app:local 2.2s done
+#15 DONE 9.2s
+
+#16 resolving provenance for metadata file
+#16 DONE 0.0s
+ Image udp-ruteo-fase2-app:local Built 
+ Container udp-ruteo-cierre-20261019-etl-run-752517b54da9 Creating 
+ Container udp-ruteo-cierre-20261019-etl-run-752517b54da9 Created 
+{"report": "datos/runs/diagnosticos_fuentes/diagnostico_S6_20261019T171925768855Z.json", "state": "failed", "error_kind": "dns", "active_manifest_unchanged": true}
+

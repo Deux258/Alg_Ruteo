@@ -5,13 +5,14 @@ cd -- "$(dirname -- "${BASH_SOURCE[0]}")"
 
 help() {
   cat <<'TXT'
-Uso: ./main [iniciar|probar|estado|detener|logs|adquirir|evaluar] [opciones]
+Uso: ./main [iniciar|probar|estado|detener|logs|adquirir|diagnosticar-fuentes|evaluar] [opciones]
   iniciar (predeterminado)   Construye, aplica SQL, carga, valida y habilita web.
   probar                    Ejecuta pruebas unitarias y BD desechable separada.
   estado                    Muestra contenedores y salud del servicio.
   detener                   Detiene servicios; conserva volúmenes.
   logs                      Muestra logs recientes sin imprimir credenciales.
   adquirir --sources IDS --reuse IDS  Actualiza fuentes seleccionadas y conserva originales explícitos.
+  diagnosticar-fuentes --source S6  Comprueba DNS, HTTPS, índice y PDF sin publicar datos.
   evaluar --request RUTA    Compara una misión y conserva la evaluación en datos/runs/evaluaciones.
   evaluar --experiment RUTA Ejecuta el lote predefinido sin seleccionar resultados favorables.
 Opciones de iniciar: --scope base|completo --mode snapshot|online --run-id UUID
@@ -23,14 +24,15 @@ TXT
 if [[ "${1:-}" == '-h' || "${1:-}" == '--help' ]]; then help; exit 0; fi
 action="${1:-iniciar}"
 if (($#)); then shift; fi
-case "$action" in iniciar|probar|estado|detener|logs|adquirir|evaluar) ;; *) help >&2; exit 2;; esac
-scope=completo;mode=snapshot;run_id='';sources='';reuse='';request='';experiment=''
+case "$action" in iniciar|probar|estado|detener|logs|adquirir|diagnosticar-fuentes|evaluar) ;; *) help >&2; exit 2;; esac
+scope=completo;mode=snapshot;run_id='';sources='';reuse='';request='';experiment='';source=''
 while (($#)); do
   case "$1" in
     --scope) [[ $# -ge 2 ]] || exit 2;scope="$2";shift 2;;
     --mode) [[ $# -ge 2 ]] || exit 2;mode="$2";shift 2;;
     --run-id) [[ $# -ge 2 ]] || exit 2;run_id="$2";shift 2;;
     --sources) [[ $# -ge 2 ]] || exit 2;sources="$2";shift 2;;
+    --source) [[ $# -ge 2 ]] || exit 2;source="$2";shift 2;;
     --reuse) [[ $# -ge 2 ]] || exit 2;reuse="$2";shift 2;;
     --request) [[ $# -ge 2 ]] || exit 2;request="$2";shift 2;;
     --experiment) [[ $# -ge 2 ]] || exit 2;experiment="$2";shift 2;;
@@ -54,6 +56,11 @@ compose=(docker compose --env-file .env)
 export BUILD_COMMIT="$(git rev-parse HEAD 2>/dev/null || echo unknown)"
 "${compose[@]}" config --quiet
 case "$action" in
+  diagnosticar-fuentes)
+    [[ "$source" == S6 ]] || { echo 'Indicar --source S6' >&2;exit 2; }
+    "${compose[@]}" build etl
+    "${compose[@]}" run --rm --no-deps etl python -m core.aip_acquisition --source "$source"
+    ;;
   adquirir)
     "${compose[@]}" build etl
     args=(python -m Infraestructura.descargar_aereo)

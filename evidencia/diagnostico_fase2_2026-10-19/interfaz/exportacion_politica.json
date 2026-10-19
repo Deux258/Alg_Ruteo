@@ -1,0 +1,180 @@
+{
+  "request": {
+    "origin": [
+      -71.6572392109999,
+      -33.10190169
+    ],
+    "destination": [
+      -71.65721693536275,
+      -33.09355617174517
+    ],
+    "mode": "mission",
+    "method": "proposed",
+    "time": "2026-10-19T00:00:00Z",
+    "events": [],
+    "phase": "outbound",
+    "elapsed_s": 0,
+    "on_edge": false,
+    "preferences": {
+      "budget_s": 1200,
+      "wind_limit_ms": 8,
+      "detour_factor": 1.2,
+      "max_historical_class": 1
+    }
+  },
+  "result": {
+    "type": "FeatureCollection",
+    "features": [],
+    "run_id": "b80f9b83-cad7-53b8-a8b8-34a2a17e614c",
+    "status": "no_route",
+    "reason": "historical_class_unknown",
+    "alternatives": [],
+    "origin": [
+      -71.6572392109999,
+      -33.10190169
+    ],
+    "destination": [
+      -71.65721693536275,
+      -33.09355617174517
+    ],
+    "position": [
+      -71.6572392109999,
+      -33.10190169
+    ],
+    "mode": "mission",
+    "method": "proposed",
+    "phase": "outbound",
+    "time": "2026-10-19T00:00:00+00:00",
+    "elapsed_s": 0,
+    "remaining_s": 1200,
+    "events": [],
+    "clearance_verified": false,
+    "operationally_certified": false,
+    "effective_profile": {
+      "aip_margin_m": 300,
+      "air_speed_ms": 10,
+      "alternatives": 3,
+      "builder": "aerial-grid-v2",
+      "clearance_verified": false,
+      "comparison_options": 2,
+      "detour_factor": 1.2,
+      "flight_minutes": 25,
+      "grid_m": 800,
+      "max_link_m": 1500,
+      "neighbours": 8,
+      "observation_s": 60,
+      "operationally_certified": false,
+      "reserve_fraction": 0.2,
+      "temperature_max_c": 40,
+      "temperature_min_c": -5,
+      "thermal_buffer_m": 250,
+      "thermal_window_hours": 24,
+      "weather_max_age_minutes": 90,
+      "wind_limit_ms": 8,
+      "budget_s": 1200,
+      "max_historical_class": 1
+    },
+    "temporal_model": "static_at_selected_hour",
+    "warnings": [
+      "Simulación académica; despeje vertical no verificado",
+      "AIP ENR 5.1: selección espacial; ver reporte de formas y excepciones",
+      "El viento a 10 m es una aproximación, no una medición a altura de vuelo"
+    ],
+    "reference": [
+      {
+        "length_km": 0.9259036870758327,
+        "edge_ids": [
+          "4202824587145258950"
+        ],
+        "coordinates": [
+          [
+            -71.6572392109999,
+            -33.10190168999999
+          ],
+          [
+            -71.65721693536275,
+            -33.09355617174517
+          ]
+        ]
+      },
+      {
+        "length_km": 0.92746249617113,
+        "edge_ids": [
+          "3033628799933365303",
+          "2573021938500782508"
+        ],
+        "coordinates": [
+          [
+            -71.6572392109999,
+            -33.10190168999999
+          ],
+          [
+            -71.65743398300695,
+            -33.10076457638967
+          ],
+          [
+            -71.65721693536275,
+            -33.09355617174517
+          ]
+        ]
+      }
+    ],
+    "thermal_unknown_ids": [],
+    "diagnostics": {
+      "version": "mission-diagnostics-v1",
+      "primary_reason": "historical_class_unknown",
+      "causes": [
+        {
+          "code": "historical_class_unknown",
+          "endpoint": "current",
+          "policy": "preventive_optional"
+        },
+        {
+          "code": "historical_class_unknown",
+          "endpoint": "home",
+          "policy": "preventive_optional"
+        },
+        {
+          "code": "no_outbound_on_admitted_graph"
+        },
+        {
+          "code": "missing_return_on_admitted_graph"
+        }
+      ],
+      "other_causes": [
+        "missing_return_on_admitted_graph",
+        "no_outbound_on_admitted_graph"
+      ],
+      "not_tested": [],
+      "independent_oracle": {
+        "state": "computed",
+        "implementation": "heapq_dijkstra",
+        "outbound_s": null,
+        "return_s": null,
+        "observation_s": 60,
+        "remaining_s": 1200,
+        "minimum_remaining_s": null,
+        "feasible": false,
+        "scope": "Mismo grafo dirigido admitido, malla y condiciones estáticas; no espacio continuo",
+        "admitted_edges": 204,
+        "total_edges": 1114,
+        "elapsed_s": 0,
+        "routing_minimum_matches": null,
+        "proposed_rejection_contradiction": false
+      },
+      "excluded_edges_by_cause": {
+        "historical_class_exceeded": 630,
+        "restricted": 110,
+        "historical_class_unknown": 272
+      },
+      "unique_excluded_edges": 910,
+      "aip_edge_intersections": {
+        "SC-P50": 106,
+        "SC-P29": 6
+      },
+      "counting": "Causas simultáneas y arcos por causa pueden solaparse; no sumarlos como casos",
+      "service_health_is_not_mission_feasibility": true,
+      "alternative_search": "Hasta tres idas × tres retornos; ausencia de segunda opción no demuestra inexistencia"
+    }
+  }
+}

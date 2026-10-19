@@ -70,7 +70,7 @@ def main():
         ),
         files=files,
         external_delivery=dict(
-            gitlab="pendiente de carga manual del equipo",
+            git="conexión resuelta por el equipo; fuera de este incremento",
             canvas="pendiente de carga manual del equipo",
         ),
         warning="El commit de base no contiene los cambios locales; los hashes identifican la entrega. No incluye secretos ni datos/runs.",

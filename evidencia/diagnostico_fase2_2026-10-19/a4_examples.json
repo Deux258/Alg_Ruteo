@@ -1,0 +1,80 @@
+{
+  "acceptance": "Criterio 5.1 pendiente de confirmación docente",
+  "cases": [
+    {
+      "geometry": {
+        "coordinates": [
+          [
+            1.0,
+            5.0
+          ],
+          [
+            9.0,
+            5.0
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "disabled",
+      "limit": null,
+      "reason": null
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          [
+            1.0,
+            1.0
+          ],
+          [
+            3.0,
+            1.0
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "allowed",
+      "limit": 4,
+      "reason": null
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          [
+            1.0,
+            5.0
+          ],
+          [
+            9.0,
+            5.0
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "exceeded",
+      "limit": 4,
+      "reason": "historical_class_exceeded"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          [
+            1.0,
+            1.0
+          ],
+          [
+            11.0,
+            1.0
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "unknown",
+      "limit": 4,
+      "reason": "historical_class_unknown"
+    }
+  ],
+  "crs": "Plano métrico local de prueba; no son incidentes observados",
+  "historical_source_period": "2020–2024",
+  "synthetic": true
+}

@@ -35,7 +35,7 @@
 <label for="elapsed">Tiempo ya consumido (s)</label><input id="elapsed" type="number" min="0" value="0">
 <label class="toggle"><input id="on-edge" type="checkbox"> Interrupción durante un segmento</label>
 <button id="replan">Replanificar misión</button></details></section>
-<section><div id="result" role="status" aria-live="polite">Cargando fuentes y red aérea…</div><div id="alternatives"></div><button id="export" class="secondary" disabled>Descargar resultado y escenario</button></section>
+<section><div id="result" role="status" aria-live="polite">Cargando fuentes y red aérea…</div><div id="diagnostics" aria-live="polite" hidden></div><div id="alternatives"></div><button id="export" class="secondary" disabled>Descargar resultado y escenario</button></section>
 <footer><p>Perfil académico: 10 m/s · 25 min · reserva 20 % · observación 60 s. Presupuesto utilizable: 1.200 s.</p><p>Las alternativas pueden compartir zonas de falla. La elevación superficial no equivale a altura de vuelo.</p><label class="toggle"><input id="tiles" type="checkbox"> Fondo OpenStreetMap (requiere internet)</label><p>S1–S7: SENAPRED, CONAF/CIREN, Copernicus, Open-Meteo, NASA FIRMS y DGAC/AIP. OSM se usa solo como fondo opcional.</p></footer>
 </aside><div id="map" aria-label="Mapa de corredores aéreos de Valparaíso"></div></main>
 <script src="/vendor/leaflet.js"></script><script src="/aerial.js"></script></body></html>

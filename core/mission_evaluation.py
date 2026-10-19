@@ -98,6 +98,7 @@ def compare(conn,rid,request):
             'La referencia ignora amenazas al generar rutas; ambos métodos se evalúan con las mismas restricciones',
             'Sin despeje vertical verificado ni independencia geográfica garantizada'])
     from core.provenance import software_manifest
+    response['diagnostics']={method:result['diagnostics'] for method,result in frozen.items()}
     response['software']=software_manifest()
     response['evaluation_sha256']=hashlib.sha256(canonical(response)).hexdigest()
     return response

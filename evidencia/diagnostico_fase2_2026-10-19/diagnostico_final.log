@@ -1,0 +1,4 @@
+ Container udp-ruteo-cierre-20261019-etl-run-766f7d5a2de3 Creating 
+ Container udp-ruteo-cierre-20261019-etl-run-766f7d5a2de3 Created 
+{"report": "datos/runs/diagnosticos_fuentes/diagnostico_S6_20261019T172722918417Z.json", "state": "failed", "error_kind": "dns", "active_manifest_unchanged": true}
+
