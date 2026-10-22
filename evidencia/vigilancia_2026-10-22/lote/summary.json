@@ -1,0 +1,702 @@
+{
+  "by_objective_count": {
+    "1": {
+      "cases": 3,
+      "mean_delta_pp": 32.37179487179487,
+      "valid": 3,
+      "with_two_proposed": 1
+    },
+    "2": {
+      "cases": 3,
+      "mean_delta_pp": 32.37179487179487,
+      "valid": 3,
+      "with_two_proposed": 1
+    },
+    "3": {
+      "cases": 3,
+      "mean_delta_pp": 32.37179487179487,
+      "valid": 3,
+      "with_two_proposed": 1
+    }
+  },
+  "cases": [
+    {
+      "alternatives": {
+        "proposed": 0,
+        "reference": 1
+      },
+      "id": "n1-h0",
+      "metrics": {
+        "by_family": {
+          "environment": {
+            "delta_percentage_points": 0.0,
+            "methods": {
+              "proposed": {
+                "individual": [],
+                "mission_count": 0,
+                "set_survival": 0.0
+              },
+              "reference": {
+                "individual": [
+                  0.0
+                ],
+                "mission_count": 1,
+                "set_survival": 0.0
+              }
+            },
+            "total_scenarios": 4,
+            "unknown_scenarios": 0,
+            "valid_scenarios": 4
+          },
+          "spatial": {
+            "delta_percentage_points": 0.0,
+            "methods": {
+              "proposed": {
+                "individual": [],
+                "mission_count": 0,
+                "set_survival": 0.0
+              },
+              "reference": {
+                "individual": [
+                  0.0
+                ],
+                "mission_count": 1,
+                "set_survival": 0.0
+              }
+            },
+            "total_scenarios": 100,
+            "unknown_scenarios": 0,
+            "valid_scenarios": 100
+          }
+        },
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0
+            ],
+            "mission_count": 1,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 104,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 104
+      },
+      "objective_count": 1
+    },
+    {
+      "alternatives": {
+        "proposed": 0,
+        "reference": 1
+      },
+      "id": "n1-h1",
+      "metrics": {
+        "by_family": {
+          "environment": {
+            "delta_percentage_points": 0.0,
+            "methods": {
+              "proposed": {
+                "individual": [],
+                "mission_count": 0,
+                "set_survival": 0.0
+              },
+              "reference": {
+                "individual": [
+                  0.0
+                ],
+                "mission_count": 1,
+                "set_survival": 0.0
+              }
+            },
+            "total_scenarios": 4,
+            "unknown_scenarios": 0,
+            "valid_scenarios": 4
+          },
+          "spatial": {
+            "delta_percentage_points": 0.0,
+            "methods": {
+              "proposed": {
+                "individual": [],
+                "mission_count": 0,
+                "set_survival": 0.0
+              },
+              "reference": {
+                "individual": [
+                  0.0
+                ],
+                "mission_count": 1,
+                "set_survival": 0.0
+              }
+            },
+            "total_scenarios": 100,
+            "unknown_scenarios": 0,
+            "valid_scenarios": 100
+          }
+        },
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0
+            ],
+            "mission_count": 1,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 104,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 104
+      },
+      "objective_count": 1
+    },
+    {
+      "alternatives": {
+        "proposed": 2,
+        "reference": 1
+      },
+      "id": "n1-h2",
+      "metrics": {
+        "by_family": {
+          "environment": {
+            "delta_percentage_points": 50.0,
+            "methods": {
+              "proposed": {
+                "individual": [
+                  0.5,
+                  0.5
+                ],
+                "mission_count": 2,
+                "set_survival": 0.5
+              },
+              "reference": {
+                "individual": [
+                  0.0
+                ],
+                "mission_count": 1,
+                "set_survival": 0.0
+              }
+            },
+            "total_scenarios": 4,
+            "unknown_scenarios": 0,
+            "valid_scenarios": 4
+          },
+          "spatial": {
+            "delta_percentage_points": 99.0,
+            "methods": {
+              "proposed": {
+                "individual": [
+                  0.99,
+                  0.99
+                ],
+                "mission_count": 2,
+                "set_survival": 0.99
+              },
+              "reference": {
+                "individual": [
+                  0.0
+                ],
+                "mission_count": 1,
+                "set_survival": 0.0
+              }
+            },
+            "total_scenarios": 100,
+            "unknown_scenarios": 0,
+            "valid_scenarios": 100
+          }
+        },
+        "delta_percentage_points": 97.11538461538461,
+        "methods": {
+          "proposed": {
+            "individual": [
+              0.9711538461538461,
+              0.9711538461538461
+            ],
+            "mission_count": 2,
+            "set_survival": 0.9711538461538461
+          },
+          "reference": {
+            "individual": [
+              0.0
+            ],
+            "mission_count": 1,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 104,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 104
+      },
+      "objective_count": 1
+    },
+    {
+      "alternatives": {
+        "proposed": 0,
+        "reference": 2
+      },
+      "id": "n2-h0",
+      "metrics": {
+        "by_family": {
+          "environment": {
+            "delta_percentage_points": 0.0,
+            "methods": {
+              "proposed": {
+                "individual": [],
+                "mission_count": 0,
+                "set_survival": 0.0
+              },
+              "reference": {
+                "individual": [
+                  0.0,
+                  0.0
+                ],
+                "mission_count": 2,
+                "set_survival": 0.0
+              }
+            },
+            "total_scenarios": 4,
+            "unknown_scenarios": 0,
+            "valid_scenarios": 4
+          },
+          "spatial": {
+            "delta_percentage_points": 0.0,
+            "methods": {
+              "proposed": {
+                "individual": [],
+                "mission_count": 0,
+                "set_survival": 0.0
+              },
+              "reference": {
+                "individual": [
+                  0.0,
+                  0.0
+                ],
+                "mission_count": 2,
+                "set_survival": 0.0
+              }
+            },
+            "total_scenarios": 100,
+            "unknown_scenarios": 0,
+            "valid_scenarios": 100
+          }
+        },
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 104,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 104
+      },
+      "objective_count": 2
+    },
+    {
+      "alternatives": {
+        "proposed": 0,
+        "reference": 2
+      },
+      "id": "n2-h1",
+      "metrics": {
+        "by_family": {
+          "environment": {
+            "delta_percentage_points": 0.0,
+            "methods": {
+              "proposed": {
+                "individual": [],
+                "mission_count": 0,
+                "set_survival": 0.0
+              },
+              "reference": {
+                "individual": [
+                  0.0,
+                  0.0
+                ],
+                "mission_count": 2,
+                "set_survival": 0.0
+              }
+            },
+            "total_scenarios": 4,
+            "unknown_scenarios": 0,
+            "valid_scenarios": 4
+          },
+          "spatial": {
+            "delta_percentage_points": 0.0,
+            "methods": {
+              "proposed": {
+                "individual": [],
+                "mission_count": 0,
+                "set_survival": 0.0
+              },
+              "reference": {
+                "individual": [
+                  0.0,
+                  0.0
+                ],
+                "mission_count": 2,
+                "set_survival": 0.0
+              }
+            },
+            "total_scenarios": 100,
+            "unknown_scenarios": 0,
+            "valid_scenarios": 100
+          }
+        },
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 104,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 104
+      },
+      "objective_count": 2
+    },
+    {
+      "alternatives": {
+        "proposed": 2,
+        "reference": 2
+      },
+      "id": "n2-h2",
+      "metrics": {
+        "by_family": {
+          "environment": {
+            "delta_percentage_points": 50.0,
+            "methods": {
+              "proposed": {
+                "individual": [
+                  0.5,
+                  0.5
+                ],
+                "mission_count": 2,
+                "set_survival": 0.5
+              },
+              "reference": {
+                "individual": [
+                  0.0,
+                  0.0
+                ],
+                "mission_count": 2,
+                "set_survival": 0.0
+              }
+            },
+            "total_scenarios": 4,
+            "unknown_scenarios": 0,
+            "valid_scenarios": 4
+          },
+          "spatial": {
+            "delta_percentage_points": 99.0,
+            "methods": {
+              "proposed": {
+                "individual": [
+                  0.99,
+                  0.99
+                ],
+                "mission_count": 2,
+                "set_survival": 0.99
+              },
+              "reference": {
+                "individual": [
+                  0.0,
+                  0.0
+                ],
+                "mission_count": 2,
+                "set_survival": 0.0
+              }
+            },
+            "total_scenarios": 100,
+            "unknown_scenarios": 0,
+            "valid_scenarios": 100
+          }
+        },
+        "delta_percentage_points": 97.11538461538461,
+        "methods": {
+          "proposed": {
+            "individual": [
+              0.9711538461538461,
+              0.9711538461538461
+            ],
+            "mission_count": 2,
+            "set_survival": 0.9711538461538461
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 104,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 104
+      },
+      "objective_count": 2
+    },
+    {
+      "alternatives": {
+        "proposed": 0,
+        "reference": 2
+      },
+      "id": "n3-h0",
+      "metrics": {
+        "by_family": {
+          "environment": {
+            "delta_percentage_points": 0.0,
+            "methods": {
+              "proposed": {
+                "individual": [],
+                "mission_count": 0,
+                "set_survival": 0.0
+              },
+              "reference": {
+                "individual": [
+                  0.0,
+                  0.0
+                ],
+                "mission_count": 2,
+                "set_survival": 0.0
+              }
+            },
+            "total_scenarios": 4,
+            "unknown_scenarios": 0,
+            "valid_scenarios": 4
+          },
+          "spatial": {
+            "delta_percentage_points": 0.0,
+            "methods": {
+              "proposed": {
+                "individual": [],
+                "mission_count": 0,
+                "set_survival": 0.0
+              },
+              "reference": {
+                "individual": [
+                  0.0,
+                  0.0
+                ],
+                "mission_count": 2,
+                "set_survival": 0.0
+              }
+            },
+            "total_scenarios": 100,
+            "unknown_scenarios": 0,
+            "valid_scenarios": 100
+          }
+        },
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 104,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 104
+      },
+      "objective_count": 3
+    },
+    {
+      "alternatives": {
+        "proposed": 0,
+        "reference": 2
+      },
+      "id": "n3-h1",
+      "metrics": {
+        "by_family": {
+          "environment": {
+            "delta_percentage_points": 0.0,
+            "methods": {
+              "proposed": {
+                "individual": [],
+                "mission_count": 0,
+                "set_survival": 0.0
+              },
+              "reference": {
+                "individual": [
+                  0.0,
+                  0.0
+                ],
+                "mission_count": 2,
+                "set_survival": 0.0
+              }
+            },
+            "total_scenarios": 4,
+            "unknown_scenarios": 0,
+            "valid_scenarios": 4
+          },
+          "spatial": {
+            "delta_percentage_points": 0.0,
+            "methods": {
+              "proposed": {
+                "individual": [],
+                "mission_count": 0,
+                "set_survival": 0.0
+              },
+              "reference": {
+                "individual": [
+                  0.0,
+                  0.0
+                ],
+                "mission_count": 2,
+                "set_survival": 0.0
+              }
+            },
+            "total_scenarios": 100,
+            "unknown_scenarios": 0,
+            "valid_scenarios": 100
+          }
+        },
+        "delta_percentage_points": 0.0,
+        "methods": {
+          "proposed": {
+            "individual": [],
+            "mission_count": 0,
+            "set_survival": 0.0
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 104,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 104
+      },
+      "objective_count": 3
+    },
+    {
+      "alternatives": {
+        "proposed": 2,
+        "reference": 2
+      },
+      "id": "n3-h2",
+      "metrics": {
+        "by_family": {
+          "environment": {
+            "delta_percentage_points": 50.0,
+            "methods": {
+              "proposed": {
+                "individual": [
+                  0.5,
+                  0.5
+                ],
+                "mission_count": 2,
+                "set_survival": 0.5
+              },
+              "reference": {
+                "individual": [
+                  0.0,
+                  0.0
+                ],
+                "mission_count": 2,
+                "set_survival": 0.0
+              }
+            },
+            "total_scenarios": 4,
+            "unknown_scenarios": 0,
+            "valid_scenarios": 4
+          },
+          "spatial": {
+            "delta_percentage_points": 99.0,
+            "methods": {
+              "proposed": {
+                "individual": [
+                  0.99,
+                  0.99
+                ],
+                "mission_count": 2,
+                "set_survival": 0.99
+              },
+              "reference": {
+                "individual": [
+                  0.0,
+                  0.0
+                ],
+                "mission_count": 2,
+                "set_survival": 0.0
+              }
+            },
+            "total_scenarios": 100,
+            "unknown_scenarios": 0,
+            "valid_scenarios": 100
+          }
+        },
+        "delta_percentage_points": 97.11538461538461,
+        "methods": {
+          "proposed": {
+            "individual": [
+              0.9711538461538461,
+              0.9711538461538461
+            ],
+            "mission_count": 2,
+            "set_survival": 0.9711538461538461
+          },
+          "reference": {
+            "individual": [
+              0.0,
+              0.0
+            ],
+            "mission_count": 2,
+            "set_survival": 0.0
+          }
+        },
+        "total_scenarios": 104,
+        "unknown_scenarios": 0,
+        "valid_scenarios": 104
+      },
+      "objective_count": 3
+    }
+  ],
+  "run_id": "ec99211d-6781-5076-9294-c7b52641c5fc",
+  "schema_version": "patrol-experiment-1",
+  "sha256": "755202579aa9beb20d89315c422fa223ceafcd6c881c097e077e722fb2ec36b8"
+}

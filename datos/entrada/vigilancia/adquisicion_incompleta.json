@@ -1,0 +1,27 @@
+{
+  "bbox_wgs84": [
+    -71.68007088697591,
+    -33.123071625240655,
+    -71.53442836532935,
+    -33.02804382631618
+  ],
+  "errors": {
+    "S8": "Relación OSM no soportada: 17689008"
+  },
+  "fetched_at_utc": "2026-10-22T20:19:16.045571+00:00",
+  "sources": {
+    "S4H": {
+      "fetched_at_utc": "2026-10-22T20:19:17.059231+00:00",
+      "file": "S4H_77f9bef4b630c7f5.json",
+      "http_status": 200,
+      "license": "Proveedor Open-Meteo / ECMWF; conservar atribución",
+      "model": "ecmwf_ifs",
+      "query": null,
+      "record_count": 168,
+      "sha256": "77f9bef4b630c7f5daba0e93d98eae4781937725546a2f6ba4eefff00e3db296",
+      "url": "https://api.open-meteo.com/v1/forecast?latitude=-33.07943045211222&longitude=-71.61475827560452&models=ecmwf_ifs&hourly=temperature_2m%2Crelative_humidity_2m%2Cwind_speed_10m%2Cwind_direction_10m%2Cwind_gusts_10m%2Cwind_speed_100m%2Cwind_direction_100m%2Cprecipitation%2Cvisibility&timezone=UTC&wind_speed_unit=ms&forecast_days=7"
+    }
+  },
+  "version": "patrol-sources-1",
+  "vertical_datum": "EGM2008"
+}

@@ -5,7 +5,7 @@ cd -- "$(dirname -- "${BASH_SOURCE[0]}")"
 
 help() {
   cat <<'TXT'
-Uso: ./main [iniciar|probar|estado|detener|logs|adquirir|diagnosticar-fuentes|evaluar] [opciones]
+Uso: ./main [iniciar|probar|estado|detener|logs|adquirir|diagnosticar-fuentes|evaluar|vigilancia] [opciones]
   iniciar (predeterminado)   Construye, aplica SQL, carga, valida y habilita web.
   probar                    Ejecuta pruebas unitarias y BD desechable separada.
   estado                    Muestra contenedores y salud del servicio.
@@ -15,6 +15,11 @@ Uso: ./main [iniciar|probar|estado|detener|logs|adquirir|diagnosticar-fuentes|ev
   diagnosticar-fuentes --source S6  Comprueba DNS, HTTPS, índice y PDF sin publicar datos.
   evaluar --request RUTA    Compara una misión y conserva la evaluación en datos/runs/evaluaciones.
   evaluar --experiment RUTA Ejecuta el lote predefinido sin seleccionar resultados favorables.
+  vigilancia adquirir      Descarga IFS HRES y obstáculos OSM; conserva originales.
+  vigilancia preparar      Construye la red adaptativa y carga once JSON.
+  vigilancia evaluar --request RUTA | --experiment RUTA
+  vigilancia extraer --dataset M5 --output datos/runs/exportados
+  vigilancia cargar --file RUTA
 Opciones de iniciar: --scope base|completo --mode snapshot|online --run-id UUID
 El modo snapshot reconstruye la red desde originales conservados, sin consultas externas.
 --mode online actualiza S1-S7 para la red aérea configurada. El alcance completo
@@ -24,6 +29,12 @@ TXT
 if [[ "${1:-}" == '-h' || "${1:-}" == '--help' ]]; then help; exit 0; fi
 action="${1:-iniciar}"
 if (($#)); then shift; fi
+if [[ "$action" == vigilancia ]]; then
+  command -v docker >/dev/null || { echo 'Falta Docker' >&2;exit 1; }
+  docker compose --env-file .env build etl web
+  docker compose --env-file .env run --rm --no-deps etl python -m core.patrol "$@"
+  exit $?
+fi
 case "$action" in iniciar|probar|estado|detener|logs|adquirir|diagnosticar-fuentes|evaluar) ;; *) help >&2; exit 2;; esac
 scope=completo;mode=snapshot;run_id='';sources='';reuse='';request='';experiment='';source=''
 while (($#)); do
@@ -85,12 +96,17 @@ case "$action" in
     [[ -z "$run_id" ]] || args+=(--run-id "$run_id")
     # Una ejecución one-shot real; un fallo detiene main antes de habilitar web.
     "${compose[@]}" run --rm --no-deps etl "${args[@]}"
+    if [[ -f datos/entrada/vigilancia/manifest.json ]]; then
+      "${compose[@]}" run --rm --no-deps etl python -m core.patrol preparar
+    fi
     "${compose[@]}" up -d --no-deps --wait web
     "${compose[@]}" exec -T web python -m core.health --scope "$scope"
     printf 'Aplicación de ruteo: http://%s\n' "$("${compose[@]}" port web 8000)"
     ;;
   probar)
-    docker compose --env-file .env -f compose.test.yaml up --build --abort-on-container-exit --exit-code-from tests
+    # Cada corrida necesita otro tmpfs: la BD no puede reutilizar un run listo
+    # cuyos JSON pertenecían al contenedor de pruebas anterior.
+    docker compose --env-file .env -f compose.test.yaml up --build --force-recreate --abort-on-container-exit --exit-code-from tests
     ;;
   estado)
     "${compose[@]}" ps

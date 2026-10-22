@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Vigilancia forestal · Valparaíso</title>
+    <link rel="stylesheet" href="/vendor/leaflet.css" />
+    <link rel="stylesheet" href="/patrol.css" />
+  </head>
+  <body>
+    <header>
+      <div>
+        <h1>Vigilancia forestal</h1>
+        <p>Valparaíso · Planificación de rutas y observación</p>
+      </div>
+      <a href="/anterior">Versión anterior</a>
+    </header>
+    <main>
+      <aside>
+        <section>
+          <h2>1. Punto de lanzamiento</h2>
+          <label for="base">Instalación de referencia</label
+          ><select id="base">
+            <option>Cargando…</option>
+          </select>
+          <p class="hint">
+            La instalación conserva su posición. Elige un punto de lanzamiento
+            compatible con los obstáculos del mapa.
+          </p>
+          <label for="origin">Longitud, latitud</label>
+          <div class="inline">
+            <input id="origin" placeholder="−71.65, −33.10" /><button
+              id="pick-origin"
+              type="button"
+            >
+              Marcar
+            </button>
+          </div>
+        </section>
+        <section>
+          <h2>2. Sectores de observación</h2>
+          <p class="hint">
+            Selecciona de uno a tres objetivos. El planificador buscará el orden
+            de visita y el regreso.
+          </p>
+          <div class="inline">
+            <button id="pick-target" type="button">Añadir en el mapa</button
+            ><button id="clear" type="button" class="secondary">Limpiar</button>
+          </div>
+          <label for="target-coordinates">Objetivo por coordenadas</label>
+          <div class="inline">
+            <input
+              id="target-coordinates"
+              placeholder="Longitud, latitud"
+            /><button id="add-target" type="button">Añadir</button>
+          </div>
+          <label for="examples">Puntos de vegetación</label
+          ><select id="examples">
+            <option value="">Seleccionar punto</option>
+          </select>
+          <ol id="targets"></ol>
+          <p id="pick-status" role="status" class="hint">
+            Pulsa «Añadir en el mapa» para marcar un sector.
+          </p>
+        </section>
+        <section>
+          <h2>3. Condiciones y presupuesto</h2>
+          <label for="time">Hora UTC del escenario</label
+          ><select id="time"></select>
+          <details>
+            <summary>Preferencias</summary>
+            <label for="budget">Presupuesto máximo (s equivalentes)</label
+            ><input
+              id="budget"
+              type="number"
+              min="1"
+              max="1200"
+              placeholder="1200"
+            />
+            <label for="wind">Límite de viento (m/s)</label
+            ><input
+              id="wind"
+              type="number"
+              min="0.1"
+              max="8"
+              step="0.1"
+              placeholder="8"
+            />
+            <label for="coverage">Cobertura mínima (%)</label
+            ><input
+              id="coverage"
+              type="number"
+              min="60"
+              max="100"
+              placeholder="60"
+            />
+            <label for="climb">Factor de consumo en ascenso</label
+            ><select id="climb">
+              <option value="1.5">1,5</option>
+              <option value="1.25">1,25</option>
+              <option value="2">2</option>
+            </select>
+          </details>
+          <div class="actions">
+            <button id="calculate" type="button">Planificar misión</button
+            ><button id="compare" type="button" class="secondary">
+              Comparar métodos
+            </button>
+          </div>
+        </section>
+        <section>
+          <h2>Resultado</h2>
+          <div id="result" aria-live="polite">Preparando el mapa…</div>
+          <div id="route-controls"></div>
+          <div id="route-detail"></div>
+          <svg
+            id="profile"
+            viewBox="0 0 360 150"
+            role="img"
+            aria-label="Perfil de superficie y altitud de vuelo"
+          ></svg>
+          <button id="export" type="button" disabled class="secondary">
+            Descargar resultado
+          </button>
+        </section>
+        <details class="technical">
+          <summary>Perfil técnico y fuentes</summary>
+          <div id="technical"></div>
+          <a href="/api/v1/vigilancia/mapa" target="_blank" rel="noopener"
+            >Metadata y procedencia</a
+          >
+        </details>
+      </aside>
+      <div id="map" aria-label="Mapa de vigilancia">
+        <div class="map-legend">
+          <span class="green">●</span> Observación
+          <span class="red">●</span> Obstáculo
+          <span class="purple">●</span> Restricción aérea
+        </div>
+      </div>
+    </main>
+    <script src="/vendor/leaflet.js"></script>
+    <script src="/patrol.js"></script>
+  </body>
+</html>

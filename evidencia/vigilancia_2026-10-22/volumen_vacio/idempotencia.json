@@ -1,0 +1,5 @@
+{
+  "run_id": "ec99211d-6781-5076-9294-c7b52641c5fc",
+  "idempotent": true,
+  "command": "docker compose --env-file .env -p udp-ruteo-vigilancia-clean run --rm --no-deps etl python -m core.patrol preparar"
+}

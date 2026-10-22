@@ -1,0 +1,24 @@
+Anclas 5834; estados 17502. Construyendo corredores…
+Corredores: 500/5834 anclas; 51490 arcos
+Corredores: 1000/5834 anclas; 79182 arcos
+Corredores: 1500/5834 anclas; 106790 arcos
+Corredores: 2000/5834 anclas; 134258 arcos
+Corredores: 2500/5834 anclas; 161880 arcos
+Corredores: 3000/5834 anclas; 189152 arcos
+Corredores: 3500/5834 anclas; 216732 arcos
+Corredores: 4000/5834 anclas; 244242 arcos
+Corredores: 4500/5834 anclas; 271906 arcos
+Corredores: 5000/5834 anclas; 298954 arcos
+Corredores: 5500/5834 anclas; 326296 arcos
+JSON I escrito
+JSON M1 escrito
+JSON M2 escrito
+JSON M3 escrito
+JSON M4 escrito
+JSON M5 escrito
+JSON A1 escrito
+JSON A2 escrito
+JSON A3 escrito
+JSON A4 escrito
+JSON A5 escrito
+{"run_id": "ec99211d-6781-5076-9294-c7b52641c5fc", "base_run_id": "b80f9b83-cad7-53b8-a8b8-34a2a17e614c", "schema_version": "patrol-graph-1", "status": "ready", "counts": {"anchors": 5834, "states": 17502, "directed_edges": 342970, "nodata_anchors": 0, "refined_anchors": 5694, "terrain_admitted": 192720, "strong_components": 1, "spatial_audit": {"outside_states": 0, "outside_edges": 0, "inconsistent_endpoints": 0}}, "datasets": ["I", "M1", "M2", "M3", "M4", "M5", "A1", "A2", "A3", "A4", "A5"], "input_hash": "431dc50acdc0ca34d932407575a4b5c3165074693392d9ec196d3105955182df"}

@@ -1,0 +1,98 @@
+{
+  "run_id": "ec99211d-6781-5076-9294-c7b52641c5fc",
+  "scope": "Sensibilidad del consumo de las mismas trayectorias verificadas. Se mantiene viento, duración y demás fases. No replanifica ni calibra una batería real.",
+  "cases": [
+    {
+      "source": "mision_1.json",
+      "rank": 1,
+      "objective_count": 1,
+      "ascending_time_s": 52.4649222703801,
+      "values": [
+        {
+          "climb_factor": 1.25,
+          "consumption_eq_s": 214.28876023803662,
+          "reserve_fraction": 0.8571408265079756
+        },
+        {
+          "climb_factor": 1.5,
+          "consumption_eq_s": 227.40499080563166,
+          "reserve_fraction": 0.8483966727962455
+        },
+        {
+          "climb_factor": 2,
+          "consumption_eq_s": 253.6374519408217,
+          "reserve_fraction": 0.8309083653727856
+        }
+      ]
+    },
+    {
+      "source": "mision_1.json",
+      "rank": 2,
+      "objective_count": 1,
+      "ascending_time_s": 58.948908059900546,
+      "values": [
+        {
+          "climb_factor": 1.25,
+          "consumption_eq_s": 206.72557793684942,
+          "reserve_fraction": 0.8621829480421004
+        },
+        {
+          "climb_factor": 1.5,
+          "consumption_eq_s": 221.46280495182455,
+          "reserve_fraction": 0.852358130032117
+        },
+        {
+          "climb_factor": 2,
+          "consumption_eq_s": 250.93725898177482,
+          "reserve_fraction": 0.8327084940121501
+        }
+      ]
+    },
+    {
+      "source": "mision_3.json",
+      "rank": 1,
+      "objective_count": 3,
+      "ascending_time_s": 53.1897708628336,
+      "values": [
+        {
+          "climb_factor": 1.25,
+          "consumption_eq_s": 375.16343574465895,
+          "reserve_fraction": 0.749891042836894
+        },
+        {
+          "climb_factor": 1.5,
+          "consumption_eq_s": 388.4608784603674,
+          "reserve_fraction": 0.7410260810264218
+        },
+        {
+          "climb_factor": 2,
+          "consumption_eq_s": 415.0557638917842,
+          "reserve_fraction": 0.7232961574054773
+        }
+      ]
+    },
+    {
+      "source": "mision_3.json",
+      "rank": 2,
+      "objective_count": 3,
+      "ascending_time_s": 53.1897708628336,
+      "values": [
+        {
+          "climb_factor": 1.25,
+          "consumption_eq_s": 375.16343574465895,
+          "reserve_fraction": 0.749891042836894
+        },
+        {
+          "climb_factor": 1.5,
+          "consumption_eq_s": 388.4608784603674,
+          "reserve_fraction": 0.7410260810264218
+        },
+        {
+          "climb_factor": 2,
+          "consumption_eq_s": 415.0557638917842,
+          "reserve_fraction": 0.7232961574054773
+        }
+      ]
+    }
+  ]
+}

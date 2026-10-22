@@ -44,12 +44,15 @@ def status(conn):
         row.update(application='aerial_simulator',routing_ready=True,mission_ready=True,mission_feasibility='requires_specific_request',clearance_verified=False,
                    etl_complete=row['scope']=='completo',warnings=['Simulador académico; despeje vertical no verificado'])
         row['network']={k:dataset['validation'].get(k) for k in ['nodes','directed_edges','strong_count','weak_count']}
+    patrol=conn.execute("SELECT r.id,r.context->'counts' AS counts FROM routing.patrol_publication p JOIN routing.patrol_runs r ON r.id=p.run_id WHERE p.singleton AND r.status='ready'").fetchone()
+    if patrol:row['vigilancia']=dict(run_id=str(patrol['id']),counts=patrol['counts'],api='/api/v1/vigilancia/mapa')
     return row
 
 
 class Handler(BaseHTTPRequestHandler):
     def do_POST(self):
-        if urlsplit(self.path).path not in ['/api/aereo/rutas','/api/aereo/replanificar','/api/aereo/comparar']:
+        endpoint=urlsplit(self.path).path
+        if endpoint not in ['/api/aereo/rutas','/api/aereo/replanificar','/api/aereo/comparar','/api/v1/vigilancia/planificar','/api/v1/vigilancia/comparar']:
             return self.reply(404,b'{"error":"not_found"}')
         try:
             length=int(self.headers.get('Content-Length','0'))
@@ -59,7 +62,16 @@ class Handler(BaseHTTPRequestHandler):
                 current=status(conn)
                 if not current:return self.reply(503,b'{"status":"not_ready"}')
                 from core.aerial_routing import calculate
-                if urlsplit(self.path).path=='/api/aereo/comparar':
+                if endpoint.startswith('/api/v1/vigilancia/'):
+                    publication=conn.execute('SELECT run_id FROM routing.patrol_publication WHERE singleton').fetchone()
+                    if not publication:return self.reply(503,b'{"error":"Preparar vigilancia con ./main vigilancia preparar"}')
+                    if endpoint.endswith('/comparar'):
+                        from core.patrol_evaluation import compare as patrol_compare
+                        result=patrol_compare(conn,str(publication['run_id']),request)
+                    else:
+                        from core.patrol_routing import plan
+                        result=plan(conn,str(publication['run_id']),request)
+                elif urlsplit(self.path).path=='/api/aereo/comparar':
                     from core.mission_evaluation import compare
                     result=compare(conn,current['run_id'],request)
                 else:result=calculate(conn,current['run_id'],request)
@@ -73,6 +85,7 @@ class Handler(BaseHTTPRequestHandler):
     def do_GET(self):
         parsed=urlsplit(self.path); path=parsed.path
         static={'/':'index.html','/app.js':'app.js','/aerial.js':'aerial.js','/vial.js':'vial.js','/style.css':'style.css',
+                '/vigilancia':'patrol.html','/patrol.js':'patrol.js','/patrol.css':'patrol.css','/anterior':'aerial.html',
                 '/vendor/leaflet.js':'vendor/leaflet.js','/vendor/leaflet.css':'vendor/leaflet.css'}
         static.update({f'/vendor/images/{name}':f'vendor/images/{name}' for name in ['layers.png','layers-2x.png','marker-icon.png','marker-icon-2x.png','marker-shadow.png']})
         if path in static:
@@ -81,17 +94,23 @@ class Handler(BaseHTTPRequestHandler):
                     current=status(conn)
                     if current and current['application']=='road_routing':static['/']='index_vial.html'
                     if current and current['application']=='aerial_simulator':static['/']='aerial.html'
+                    if current and conn.execute('SELECT 1 FROM routing.patrol_publication WHERE singleton').fetchone():static['/']='patrol.html'
             file=ROOT/'Sitio Web'/static[path]
             if file.is_file():
                 return self.reply(200,file.read_bytes(),mimetypes.guess_type(str(file))[0] or 'application/octet-stream')
-        if path not in ("/health","/api/topologia","/api/mapa","/api/ruta","/api/nodo","/api/aereo/mapa"):
+        if path not in ("/health","/api/topologia","/api/mapa","/api/ruta","/api/nodo","/api/aereo/mapa","/api/v1/vigilancia/mapa"):
             return self.reply(404,b'{"error":"not_found"}')
         try:
             with connect() as conn:
                 current=status(conn)
                 if not current:
                     return self.reply(503,b'{"status":"not_ready"}')
-                if path=="/api/topologia":
+                if path=='/api/v1/vigilancia/mapa':
+                    from core.patrol_routing import map_data as patrol_map
+                    publication=conn.execute('SELECT run_id FROM routing.patrol_publication WHERE singleton').fetchone()
+                    if not publication:return self.reply(503,b'{"error":"Preparar vigilancia con ./main vigilancia preparar"}')
+                    current=patrol_map(str(publication['run_id']))
+                elif path=="/api/topologia":
                     current["topology"]=conn.execute("SELECT routing.topology_report(%s) AS report",(current["run_id"],)).fetchone()["report"]
                     current['validation']=conn.execute("SELECT validation FROM routing.datasets WHERE run_id=%s AND dataset_key='I'",(current['run_id'],)).fetchone()['validation']
                 elif path in ['/api/mapa','/api/aereo/mapa']:

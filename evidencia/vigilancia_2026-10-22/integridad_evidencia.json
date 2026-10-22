@@ -1,0 +1,17 @@
+{
+  "checks": [
+    {
+      "file": "comparacion_1.json",
+      "sha256": "4c6d3a96bcf663a2639e8b71fa6d5d10f61edb4a62ccadf26e843a6a2e23884a",
+      "nested_plans_valid": true
+    },
+    {
+      "file": "exportacion_interfaz.json",
+      "sha256": "4c6d3a96bcf663a2639e8b71fa6d5d10f61edb4a62ccadf26e843a6a2e23884a",
+      "nested_plans_valid": true
+    }
+  ],
+  "exact_browser_export": true,
+  "fresh_database_same_run_and_counts": true,
+  "run_id": "ec99211d-6781-5076-9294-c7b52641c5fc"
+}

@@ -1,0 +1,14 @@
+{
+  "mode": "rendering_from_verified_http_responses",
+  "sources": [
+    "comparacion_1.json",
+    "mision_3_interfaz.json"
+  ],
+  "purpose": "Encuadre estable después de terminar animaciones y carga de teselas. Sin recalcular ni alterar rutas o métricas.",
+  "files": [
+    "interfaz_resultado.png",
+    "mapa_dijkstra.png",
+    "mapa_propuesto.png",
+    "patrulla_resultado.png"
+  ]
+}

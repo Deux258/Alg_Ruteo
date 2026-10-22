@@ -1,0 +1,224 @@
+:root {
+  font-family: Inter, system-ui, sans-serif;
+  color: #16312b;
+  background: #f3f6f3;
+  font-size: 14px;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+}
+header {
+  height: 88px;
+  background: #103e36;
+  color: #fff;
+  padding: 16px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+h1 {
+  font-size: 24px;
+  margin: 0 0 4px;
+}
+header p {
+  margin: 0;
+  color: #c9ded6;
+}
+header a {
+  color: #fff;
+}
+main {
+  display: grid;
+  grid-template-columns: 390px 1fr;
+  height: calc(100vh - 88px);
+}
+aside {
+  overflow: auto;
+  background: #fff;
+  padding: 10px 22px 24px;
+  border-right: 1px solid #d6dfd9;
+}
+section {
+  padding: 15px 0;
+  border-bottom: 1px solid #dee5df;
+}
+h2 {
+  font-size: 16px;
+  margin: 0 0 12px;
+}
+label {
+  display: block;
+  font-weight: 600;
+  font-size: 12px;
+  margin: 12px 0 6px;
+}
+input,
+select,
+button {
+  font: inherit;
+  border-radius: 6px;
+  min-height: 38px;
+}
+input,
+select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #bdcbc1;
+  background: #fff;
+  color: #16312b;
+}
+button {
+  background: #15634f;
+  color: #fff;
+  border: 1px solid #15634f;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-weight: 600;
+}
+button.secondary {
+  background: #fff;
+  color: #15634f;
+}
+button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+.inline {
+  display: flex;
+  gap: 6px;
+}
+.inline input {
+  min-width: 0;
+}
+.inline button {
+  white-space: nowrap;
+}
+.actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 18px;
+}
+.actions button {
+  flex: 1;
+}
+.hint {
+  color: #5b7068;
+  font-size: 12px;
+  line-height: 1.6;
+  margin: 7px 0;
+}
+#targets {
+  padding-left: 24px;
+}
+#targets li {
+  padding: 7px 0;
+}
+#targets button {
+  min-height: 24px;
+  padding: 2px 7px;
+  margin-left: 8px;
+  font-size: 11px;
+}
+#map {
+  height: 100%;
+  position: relative;
+  background: #dbe5dc;
+}
+.map-legend {
+  position: absolute;
+  bottom: 20px;
+  left: 14px;
+  z-index: 700;
+  background: white;
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-size: 12px;
+  box-shadow: 0 1px 8px #0002;
+}
+.green {
+  color: #1f9471;
+}
+.red {
+  color: #bf493c;
+}
+.purple {
+  color: #854cb0;
+}
+summary {
+  cursor: pointer;
+  font-weight: 600;
+  margin: 12px 0;
+}
+#result {
+  line-height: 1.6;
+  font-size: 13px;
+}
+.failure {
+  color: #9a3d27;
+}
+.success {
+  color: #15634f;
+}
+.technical {
+  padding-top: 12px;
+  color: #556b61;
+  font-size: 12px;
+  line-height: 1.6;
+}
+#profile {
+  width: 100%;
+  background: #f4f7f3;
+  margin: 12px 0;
+  display: none;
+}
+#route-controls label {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  font-size: 13px;
+}
+#route-controls input {
+  width: auto;
+  min-height: 0;
+}
+.metric {
+  margin: 8px 0;
+}
+#route-detail {
+  font-size: 12px;
+  line-height: 1.7;
+}
+.leaflet-container {
+  font-family: inherit;
+}
+.leaflet-popup-content {
+  line-height: 1.6;
+}
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 3px solid #d6a657;
+  outline-offset: 2px;
+}
+@media (max-width: 800px) {
+  main {
+    height: auto;
+    grid-template-columns: 1fr;
+  }
+  aside {
+    overflow: visible;
+  }
+  #map {
+    height: 65vh;
+    grid-row: 1;
+  }
+  header {
+    padding: 14px 16px;
+  }
+  h1 {
+    font-size: 20px;
+  }
+}

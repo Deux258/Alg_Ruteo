@@ -1,0 +1,51 @@
+{
+  "url": "http://127.0.0.1:8080",
+  "run_id": "ec99211d-6781-5076-9294-c7b52641c5fc",
+  "request": {
+    "origin": [
+      -71.65812682418014,
+      -33.10153871817491
+    ],
+    "objectives": [
+      [
+        -71.658160754698,
+        -33.10266502975805
+      ],
+      [
+        -71.65946501655476,
+        -33.101510153637065
+      ],
+      [
+        -71.65682254340192,
+        -33.10269358117096
+      ]
+    ],
+    "time": "2026-10-22T23:00:00+00:00",
+    "preferences": {
+      "climb_factor": 1.5
+    }
+  },
+  "checks": [
+    "tres sectores por coordenadas",
+    "cuarto sector rechazado sin alterar selección",
+    "planificación real mediante HTTP",
+    "dos patrullas completas",
+    "tres observaciones y regreso con reserva",
+    "dos trazas y perfil",
+    "sin errores de página"
+  ],
+  "errors": [],
+  "orders": [
+    [
+      "3",
+      "1",
+      "2"
+    ],
+    [
+      "1",
+      "3",
+      "2"
+    ]
+  ],
+  "sha256": "9fae3eba27b361b5c686527423f043c08481570871422576573d177365f31c76"
+}

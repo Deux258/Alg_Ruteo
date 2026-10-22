@@ -1,0 +1,15 @@
+{
+  "run_id": "b80f9b83-cad7-53b8-a8b8-34a2a17e614c",
+  "total": 120,
+  "unchanged": 120,
+  "differences": [],
+  "contradictions": [],
+  "primary_reasons": {
+    "endpoint_blocked": 32,
+    "historical_class_unknown": 12,
+    "insufficient_return_budget": 23,
+    "none": 13,
+    "weather_outside_profile": 40
+  },
+  "publication_unchanged": true
+}

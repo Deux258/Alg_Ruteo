@@ -1,0 +1,124 @@
+{
+  "url": "http://127.0.0.1:8080",
+  "run_id": "ec99211d-6781-5076-9294-c7b52641c5fc",
+  "checks": [
+    "interfaz y capas reales cargadas",
+    "cinco instalaciones y 168 horas",
+    "objetivo por coordenadas y lanzamiento exacto",
+    "D1/D2/P1/P2 reales y cuatro controles",
+    "idas físicamente distintas por método",
+    "perfil superficial y altitud",
+    "capas individuales y huellas de observación",
+    "exportación exacta de respuesta y hashes",
+    "invalidación al modificar preferencias",
+    "respuesta tardía descartada después de cambiar solicitud",
+    "cero errores de página",
+    "disposición móvil"
+  ],
+  "errors": [],
+  "metrics": {
+    "total_scenarios": 104,
+    "valid_scenarios": 104,
+    "unknown_scenarios": 0,
+    "methods": {
+      "reference": {
+        "mission_count": 2,
+        "individual": [
+          0,
+          0
+        ],
+        "set_survival": 0
+      },
+      "proposed": {
+        "mission_count": 2,
+        "individual": [
+          0.9711538461538461,
+          0.9711538461538461
+        ],
+        "set_survival": 0.9711538461538461
+      }
+    },
+    "delta_percentage_points": 97.11538461538461,
+    "by_family": {
+      "spatial": {
+        "total_scenarios": 100,
+        "valid_scenarios": 100,
+        "unknown_scenarios": 0,
+        "methods": {
+          "reference": {
+            "mission_count": 2,
+            "individual": [
+              0,
+              0
+            ],
+            "set_survival": 0
+          },
+          "proposed": {
+            "mission_count": 2,
+            "individual": [
+              0.99,
+              0.99
+            ],
+            "set_survival": 0.99
+          }
+        },
+        "delta_percentage_points": 99
+      },
+      "environment": {
+        "total_scenarios": 4,
+        "valid_scenarios": 4,
+        "unknown_scenarios": 0,
+        "methods": {
+          "reference": {
+            "mission_count": 2,
+            "individual": [
+              0,
+              0
+            ],
+            "set_survival": 0
+          },
+          "proposed": {
+            "mission_count": 2,
+            "individual": [
+              0.5,
+              0.5
+            ],
+            "set_survival": 0.5
+          }
+        },
+        "delta_percentage_points": 50
+      }
+    }
+  },
+  "scenario_count": 104,
+  "form_input": {
+    "objectives": [
+      [
+        -71.658160754698,
+        -33.10266502975805
+      ]
+    ],
+    "origin": [
+      -71.65812682418014,
+      -33.10153871817491
+    ],
+    "time": "2026-10-22T23:00:00+00:00"
+  },
+  "request": {
+    "origin": [
+      -71.65812682418014,
+      -33.10153871817491
+    ],
+    "objectives": [
+      [
+        -71.658160754698,
+        -33.10266502975805
+      ]
+    ],
+    "time": "2026-10-22T23:00:00+00:00",
+    "preferences": {
+      "climb_factor": 1.5
+    }
+  },
+  "export_sha256": "4c6d3a96bcf663a2639e8b71fa6d5d10f61edb4a62ccadf26e843a6a2e23884a"
+}

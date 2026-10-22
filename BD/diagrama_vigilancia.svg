@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="890" viewBox="0 0 1080 890">
+<rect width="1080" height="890" fill="#f6f8f3"/><style>text{font-family:DejaVu Sans,sans-serif;fill:#183b30}.link{fill:none;stroke:#719183;stroke-width:2}</style>
+<text x="30" y="42" font-size="25">Vigilancia · publicación y grafo tridimensional</text>
+<text x="30" y="70" font-size="14">SQL inicial y migraciones 002–005 · relaciones nuevas sin modificar las instantáneas previas</text>
+<path d="M330 145H370" class="link"/>
+<path d="M670 145H710" class="link"/>
+<path d="M520 290V325H180V350" class="link"/>
+<path d="M520 290V350" class="link"/>
+<path d="M520 290V325H860V350" class="link"/>
+<path d="M180 570V650" class="link"/>
+<path d="M520 590V650" class="link"/>
+<path d="M330 430H370" class="link"/>
+<rect x="30" y="100" width="300" height="120" rx="4" fill="white" stroke="#719183"/>
+<text x="45" y="132" font-size="19" font-weight="bold">runs</text>
+<text x="45" y="165" font-size="13">PK run_id</text>
+<text x="45" y="190" font-size="13">status / scope / mode</text>
+<rect x="370" y="100" width="300" height="170" rx="4" fill="white" stroke="#719183"/>
+<text x="385" y="132" font-size="19" font-weight="bold">patrol_runs</text>
+<text x="385" y="165" font-size="13">PK id</text>
+<text x="385" y="190" font-size="13">FK base_run_id → runs</text>
+<text x="385" y="215" font-size="13">input_hash UNIQUE</text>
+<text x="385" y="240" font-size="13">profile / context / status</text>
+<rect x="710" y="100" width="300" height="120" rx="4" fill="white" stroke="#719183"/>
+<text x="725" y="132" font-size="19" font-weight="bold">patrol_publication</text>
+<text x="725" y="165" font-size="13">PK singleton=true</text>
+<text x="725" y="190" font-size="13">FK run_id → patrol_runs</text>
+<rect x="30" y="350" width="300" height="170" rx="4" fill="white" stroke="#719183"/>
+<text x="45" y="382" font-size="19" font-weight="bold">flight_states</text>
+<text x="45" y="415" font-size="13">PK run_id, id</text>
+<text x="45" y="440" font-size="13">anchor_id / resolution_m</text>
+<text x="45" y="465" font-size="13">surface_m / surface_offset_m</text>
+<text x="45" y="490" font-size="13">geom PointZ 32719</text>
+<rect x="370" y="350" width="300" height="220" rx="4" fill="white" stroke="#719183"/>
+<text x="385" y="382" font-size="19" font-weight="bold">flight_edges</text>
+<text x="385" y="415" font-size="13">PK run_id, id</text>
+<text x="385" y="440" font-size="13">FK run_id, source → states</text>
+<text x="385" y="465" font-size="13">FK run_id, target → states</text>
+<text x="385" y="490" font-size="13">flight_km / horizontal_km</text>
+<text x="385" y="515" font-size="13">clearance / surface_known</text>
+<text x="385" y="540" font-size="13">profile_samples / geom Z</text>
+<rect x="710" y="350" width="300" height="170" rx="4" fill="white" stroke="#719183"/>
+<text x="725" y="382" font-size="19" font-weight="bold">flight_obstacles</text>
+<text x="725" y="415" font-size="13">PK run_id, provider_id</text>
+<text x="725" y="440" font-size="13">FK run_id → patrol_runs</text>
+<text x="725" y="465" font-size="13">kind / height_m nullable</text>
+<text x="725" y="490" font-size="13">original_tags / geom / exclusion</text>
+<rect x="30" y="650" width="300" height="145" rx="4" fill="white" stroke="#719183"/>
+<text x="45" y="682" font-size="19" font-weight="bold">patrol_datasets</text>
+<text x="45" y="715" font-size="13">PK run_id, key</text>
+<text x="45" y="740" font-size="13">FK run_id → patrol_runs</text>
+<text x="45" y="765" font-size="13">document / records hash</text>
+<rect x="370" y="650" width="300" height="145" rx="4" fill="white" stroke="#719183"/>
+<text x="385" y="682" font-size="19" font-weight="bold">patrol_evaluations</text>
+<text x="385" y="715" font-size="13">PK run_id, sha256</text>
+<text x="385" y="740" font-size="13">FK run_id → patrol_runs</text>
+<text x="385" y="765" font-size="13">result / request / scenarios</text>
+<text x="710" y="730" font-size="14">X/Y: UTM 19S, metros</text><text x="710" y="755" font-size="14">Z: metros EGM2008</text><text x="710" y="780" font-size="14">Datos ready: inmutables</text></svg>

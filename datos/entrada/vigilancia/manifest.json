@@ -1,0 +1,36 @@
+{
+  "bbox_wgs84": [
+    -71.68007088697591,
+    -33.123071625240655,
+    -71.53442836532935,
+    -33.02804382631618
+  ],
+  "errors": {},
+  "fetched_at_utc": "2026-10-22T20:21:09.685861+00:00",
+  "sources": {
+    "S4H": {
+      "fetched_at_utc": "2026-10-22T20:21:10.739174+00:00",
+      "file": "S4H_9fb1c1694b8b062c.json",
+      "http_status": 200,
+      "license": "Proveedor Open-Meteo / ECMWF; conservar atribución",
+      "model": "ecmwf_ifs",
+      "query": null,
+      "record_count": 168,
+      "sha256": "9fb1c1694b8b062c734f7f57b4978532490f5c4020362cb4af14af580a240a1c",
+      "url": "https://api.open-meteo.com/v1/forecast?latitude=-33.07943045211222&longitude=-71.61475827560452&models=ecmwf_ifs&hourly=temperature_2m%2Crelative_humidity_2m%2Cwind_speed_10m%2Cwind_direction_10m%2Cwind_gusts_10m%2Cwind_speed_100m%2Cwind_direction_100m%2Cprecipitation%2Cvisibility&timezone=UTC&wind_speed_unit=ms&forecast_days=7"
+    },
+    "S8": {
+      "fetched_at_utc": "2026-10-22T20:22:05.949064+00:00",
+      "file": "S8_830a7522508d1478.json",
+      "http_status": 200,
+      "license": "ODbL 1.0; © OpenStreetMap contributors",
+      "model": null,
+      "query": "[out:json][timeout:180];(nwr[\"building\"](-33.123071625240655,-71.68007088697591,-33.02804382631618,-71.53442836532935);nwr[\"power\"~\"^(line|minor_line|cable|tower|pole)$\"](-33.123071625240655,-71.68007088697591,-33.02804382631618,-71.53442836532935);nwr[\"man_made\"~\"^(tower|mast|antenna|communications_tower)$\"](-33.123071625240655,-71.68007088697591,-33.02804382631618,-71.53442836532935););out meta geom;",
+      "record_count": 25483,
+      "sha256": "830a7522508d147858fa50b0e0f523cedcfccc7337488cc8c48e3db9d40da080",
+      "url": "https://overpass-api.de/api/interpreter"
+    }
+  },
+  "version": "patrol-sources-1",
+  "vertical_datum": "EGM2008"
+}

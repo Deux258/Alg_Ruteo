@@ -1,0 +1,80 @@
+{
+  "examples": [
+    {
+      "admitted": true,
+      "edge_id": "30113077992520",
+      "excluded_by": {},
+      "input": {
+        "blocked_obstacle": false,
+        "clearance_m": 119.2967529296875,
+        "flight_km": 0.12500061685225156,
+        "horizontal_km": 0.125,
+        "obstacle_distance_m": 100.0,
+        "surface_known": true
+      },
+      "label": "admitido_sin_penalizacion",
+      "weights": {
+        "cost": 28.5591642929606,
+        "eq_s": 28.5591642929606,
+        "risk": 0,
+        "time_s": 19.039442861973733
+      }
+    },
+    {
+      "admitted": true,
+      "edge_id": "126042690565322",
+      "excluded_by": {},
+      "input": {
+        "blocked_obstacle": false,
+        "clearance_m": 57.39483642578125,
+        "flight_km": 0.18520713382920947,
+        "horizontal_km": 0.1767766952966369,
+        "obstacle_distance_m": 100.0,
+        "surface_known": true
+      },
+      "label": "admitido_penalizado",
+      "weights": {
+        "cost": 43.23045789798075,
+        "eq_s": 27.621017455999976,
+        "risk": 0.5651290893554688,
+        "time_s": 27.621017455999976
+      }
+    },
+    {
+      "admitted": false,
+      "edge_id": "7169790587633",
+      "excluded_by": {
+        "obstacle_intersection": 1
+      },
+      "input": {
+        "blocked_obstacle": true,
+        "clearance_m": 78.31105041503906,
+        "flight_km": 0.1780395670152519,
+        "horizontal_km": 0.1767766952966369,
+        "obstacle_distance_m": 0.0,
+        "surface_known": true
+      },
+      "label": "excluido_obstaculo"
+    },
+    {
+      "admitted": false,
+      "edge_id": "485057211191887",
+      "excluded_by": {
+        "surface_clearance": 1
+      },
+      "input": {
+        "blocked_obstacle": false,
+        "clearance_m": 6.31640625,
+        "flight_km": 0.15001557165523027,
+        "horizontal_km": 0.125,
+        "obstacle_distance_m": 100.0,
+        "surface_known": true
+      },
+      "label": "excluido_despeje"
+    }
+  ],
+  "run_id": "ec99211d-6781-5076-9294-c7b52641c5fc",
+  "scope": "Ejemplos de corredor con meteorología admisible. Restricciones AIP y eventos no se incorporan en este aislamiento del costo.",
+  "weather_problem": null,
+  "weather_time": "2026-10-22T23:00:00+00:00"
+}

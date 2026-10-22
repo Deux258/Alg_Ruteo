@@ -44,6 +44,7 @@ services:
       - ./datos/entrada/vial:/app/datos/entrada/vial
       - ./datos/entrada/aereo:/app/datos/entrada/aereo
       - ./datos/entrada/aereo_v2:/app/datos/entrada/aereo_v2
+      - ./datos/entrada/vigilancia:/app/datos/entrada/vigilancia
     depends_on:
       db: {condition: service_healthy}
     restart: 'no'
@@ -55,6 +56,8 @@ services:
       DB_USER: routing_web
       DB_PASSWORD: ${WEB_DB_PASSWORD:?Ejecutar ./main para generar .env}
     ports: ['127.0.0.1:${WEB_PORT:-8080}:8000']
+    volumes:
+      - ./datos/entrada/vigilancia:/app/datos/entrada/vigilancia:ro
     depends_on:
       db: {condition: service_healthy}
       etl: {condition: service_completed_successfully}
