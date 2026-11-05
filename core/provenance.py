@@ -12,10 +12,10 @@ def software_manifest():
         for p in sorted((ROOT/folder).rglob('*')):
             if p.is_file() and p.suffix in ['.py','.sql','.json','.html','.js','.css'] and 'vendor' not in p.parts:
                 files[p.relative_to(ROOT).as_posix()]=sha256(p)
-    for name in ['main','compose.yaml','compose.test.yaml','docker/Dockerfile.app','requirements.in','requirements.lock','requirements.aerial.lock','.gitlab-ci.yml']:
+    for name in ['main','compose.yaml','compose.test.yaml','compose.gurobi.yaml','docker/Dockerfile.app','requirements.in','requirements.lock','requirements.aerial.lock','requirements.patrol.lock','.gitlab-ci.yml']:
         files[name]=sha256(ROOT/name)
     installed={};mismatches=[]
-    for name in ['requirements.lock','requirements.aerial.lock']:
+    for name in ['requirements.lock','requirements.aerial.lock','requirements.patrol.lock']:
         for line in (ROOT/name).read_text().splitlines():
             match=re.match(r'^([A-Za-z0-9_-]+)==([^ ]+)',line)
             if not match:continue

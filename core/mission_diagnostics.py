@@ -46,7 +46,7 @@ def minimum_mission(edges, source, target, home, observation_s, remaining_s, nee
 
 def diagnose(conn, rid, request, result):
     from core.aerial_routing import (data, effective_profile, overlay, available, restrictions,
-                                    events_geometry, historical_policy, edge_time)
+                                    events_geometry, historical_policy, edge_time, metric_line)
     model,area,nodes,edges=data(conn,rid)
     profile=effective_profile(model['profile'],request.get('preferences')); model=dict(model,profile=profile)
     clock=iso(result['time']); mode=result['mode']; phase=result['phase']
@@ -99,7 +99,7 @@ def diagnose(conn, rid, request, result):
         admitted=[]
         aip_shapes=[(r.get('provider_id',r.get('code')),transform(FWD,shape(r['geometry']))) for r in model['records']['A3']]
         for edge in edges:
-            line=transform(FWD,LineString(edge['coordinates'])); reasons=[]
+            line=metric_line(tuple(map(tuple,edge['coordinates']))); reasons=[]
             if blocked.intersects(line): reasons.append('restricted')
             for zone,polygon in aip_shapes:
                 if polygon.intersects(line): zone_counts[zone]+=1

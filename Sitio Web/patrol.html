@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="es">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Patrullaje forestal · Valparaíso</title>
+<link rel="stylesheet" href="/vendor/leaflet.css"><link rel="stylesheet" href="/patrol.css"></head>
+<body>
+<header><div><span class="eyebrow">VALPARAÍSO / VIGILANCIA FORESTAL</span><h1>Patrullaje aéreo <span>Fase final</span></h1></div><nav><a href="/fase2">Consultas puntuales</a><button id="view-toggle">Ver terreno 3D</button></nav></header>
+<main><aside>
+<section><div class="section-heading"><h2>01 · Misión</h2><button id="demo" class="text">Cargar ejemplo</button></div>
+<label for="base">Base de salida</label><select id="base"></select>
+<div class="buttons"><button id="draw">Dibujar objetivo</button><button id="finish" disabled>Cerrar polígono</button></div>
+<label class="file">Importar polígono GeoJSON<input id="import" type="file" accept=".json,.geojson"></label>
+<p id="area-status" class="muted">Dibuja un polígono dentro de vigilancia.</p>
+<label for="weather">Hora del snapshot · UTC</label><select id="weather"></select>
+<details><summary>Perfil de vuelo · Mavic 3T</summary>
+<div class="fields"><label>Altura AGL (m)<input id="altitude" type="number" min="20" max="120" value="60"></label><label>Viento máximo (m/s)<input id="wind" type="number" min="0.01" max="8" step="0.1" value="8"></label><label>Vuelo por batería (s)<input id="battery" type="number" min="1" max="1200" value="1200"></label><label>Tiempo total (s)<input id="budget" type="number" min="1" max="14400" value="3600"></label><label>Peso del riesgo λ<input id="risk" type="number" min="0" max="10" step="0.1" value="1"></label><label>Recurrencia ×<select id="history"><option value="0.5">0,5 · bajo</option><option value="1" selected>1 · central</option><option value="2">2 · alto</option></select></label></div>
+<p class="muted">10 m/s · 25 min nominales de planificación · reserva 20 %. Radio de observación supuesto: 100 m. Altura sobre DSM EGM2008.</p></details>
+<details><summary>Estaciones hipotéticas</summary><div id="stations"></div><p class="muted">Una batería por estación y 120 s de cambio. No son cargadores verificados.</p></details>
+<button id="calculate" class="primary" disabled>Comparar las cuatro técnicas</button><p id="message" role="status">Cargando snapshot…</p>
+</section>
+<section><div class="section-heading"><h2>02 · Alternativas</h2><span id="network" class="badge">—</span></div><div id="results"><p class="muted">Las rutas se mostrarán junto a su cobertura, resiliencia y tiempo de cálculo.</p></div></section>
+<section><h2>03 · Simulación</h2><label for="chosen">Ruta a reproducir</label><select id="chosen"></select>
+<div class="fields"><label>Semilla<input id="seed" type="number" min="0" max="2147483647" value="20261104"></label><label>Velocidad<select id="speed"><option value="1">Tiempo real</option><option value="20" selected>20×</option><option value="100">100×</option></select></label></div>
+<div class="buttons"><button id="fire">Marcar foco</button><button id="clear-fire">Quitar foco</button></div>
+<p id="fire-status" class="muted">Foco sintético opcional: al detectarlo, reportar y regresar.</p>
+<div class="buttons"><button id="hazard">Añadir amenaza</button><button id="clear-hazards">Limpiar</button></div>
+<div class="fields"><label>Probabilidad (%)<input id="probability" type="number" min="0" max="100" value="80"></label><label>Radio (m)<input id="radius" type="number" min="1" max="500" value="60"></label></div>
+<details><summary>Amenaza por coordenadas</summary><label for="hazard-coordinates">Longitud, latitud</label><input id="hazard-coordinates" placeholder="−71.65, −33.10"><button id="hazard-coordinate-add">Añadir por coordenadas</button></details>
+<div class="buttons"><button id="simulate" disabled>Sortear y reproducir</button><button id="pause" disabled>Pausar</button></div>
+<button id="replan" disabled>Replanificar con amenazas activadas</button>
+<label class="check"><input id="active-only" type="checkbox"> Solo amenazas activadas en esta simulación</label>
+<div id="flight" class="flight" aria-live="polite">Sin vuelo activo.</div><progress id="progress" max="100" value="0"></progress><ol id="log"></ol></section>
+<section><h2>Datos y reproducción</h2><label>Comuna de las capas<select id="commune"><option value="">Todas las disponibles</option></select></label><p id="wind-label" class="muted"></p><p id="engine" class="muted"></p><div class="buttons"><button id="export" disabled>Exportar misión</button><button id="failures" disabled>Probabilidades JSON</button></div><p class="muted">Escenarios académicos. La cobertura se evalúa en celdas de 30 m con línea de vista. La precisión del DSM limita el despeje modelado.</p></section>
+</aside><div class="viewport"><div id="map" aria-label="Mapa de patrullaje"></div><canvas id="terrain" hidden aria-label="Terreno y trayectorias 3D"></canvas><div class="map-label"><span class="dot"></span><span id="view-label">MAPA 2D · WGS84</span></div><div id="terrain-help" hidden>Arrastrar para orbitar · rueda para acercar</div></div></main>
+<script src="/vendor/leaflet.js"></script><script type="module" src="/patrol.js"></script></body></html>

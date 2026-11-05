@@ -1,8 +1,8 @@
 {
   "builder": "aerial-grid-v2",
-  "grid_m": 800,
+  "grid_m": 100,
   "neighbours": 8,
-  "max_link_m": 1500,
+  "max_link_m": 200,
   "air_speed_ms": 10,
   "flight_minutes": 25,
   "reserve_fraction": 0.2,

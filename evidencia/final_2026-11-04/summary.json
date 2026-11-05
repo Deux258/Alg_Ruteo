@@ -1,0 +1,528 @@
+{
+  "schema_version": "patrol-delivery-1",
+  "application": "http://127.0.0.1:18083",
+  "run_id": "2e6808a3-a8c3-5543-a051-cf5f4ac1c5d0",
+  "result_sha256": "25dd518a29ec241fabf5d91046edd745e92f45c9238506e66d23f6fc9b1d17c1",
+  "code_sha256": "7718cc930788c47d325d5f407f2daf7f2f4249ca7864e4a31b07a5d3c1b599e7",
+  "installed": {
+    "attrs": "26.1.0",
+    "jsonschema": "4.25.1",
+    "jsonschema-specifications": "2025.9.1",
+    "pglast": "7.20",
+    "psycopg": "3.2.10",
+    "psycopg-binary": "3.2.10",
+    "pyyaml": "6.0.3",
+    "referencing": "0.37.0",
+    "rpds-py": "2026.9.1",
+    "typing-extensions": "4.16.0",
+    "shapely": "2.1.2",
+    "numpy": "2.2.6",
+    "affine": "3.0.1",
+    "certifi": "2026.7.22",
+    "click": "8.5.0",
+    "click-plugins": "1.1.1.2",
+    "cligj": "0.7.2",
+    "pyparsing": "3.3.3",
+    "pypdf": "6.1.1",
+    "pyproj": "3.7.2",
+    "rasterio": "1.4.3",
+    "gurobipy": "13.0.3"
+  },
+  "lock_mismatches": [],
+  "network": {
+    "nodes": 9788,
+    "directed_edges": 70932,
+    "max_horizontal_link_m": 163.12554125799642
+  },
+  "browser": {
+    "checks": {
+      "example_polygon": true,
+      "four_routes": true,
+      "pgr_dijkstra": true,
+      "max_link_200m": true,
+      "gurobi_solution": true,
+      "complete_coverage": true,
+      "four_independent_checkboxes": true,
+      "webgl": true,
+      "fire_report_return": true,
+      "battery_nonnegative": true,
+      "random_closure_activated": true,
+      "interrupted_patrol_not_completed": true,
+      "alternative_after_failure": true,
+      "alternative_avoids_closure": true,
+      "download_probabilities": true,
+      "mobile_no_overflow": true
+    },
+    "browser_errors": [],
+    "successful": true,
+    "video": null
+  },
+  "charging": {
+    "checks": {
+      "real_station_budget": true,
+      "one_swap": true,
+      "completed": true,
+      "reset_only_at_station": true,
+      "nonnegative_battery": true
+    },
+    "browser_errors": [],
+    "successful": true,
+    "video": null,
+    "method": "dijkstra_distance",
+    "station_ids": [
+      "104"
+    ],
+    "battery_budget_s": 130,
+    "stops": [
+      {
+        "station_id": "104",
+        "coordinate_index": 71,
+        "arrival_s": 114.46048250426415,
+        "service_s": 140
+      }
+    ]
+  },
+  "patrol_units": {
+    "tests": 10,
+    "successful": true,
+    "errors": 0,
+    "failures": 0,
+    "seconds": 0.543,
+    "environment": "Docker CPython 3.12; requirements.lock + requirements.aerial.lock + requirements.patrol.lock",
+    "command": "python -m unittest tests.test_patrol -v",
+    "source_sha256": "50ee39e16c9d0eb90f23dd0c82c05f921f65c2ada8983ec7681536ca6894850a",
+    "scenarios": [
+      "battery inventory",
+      "alternative landing base",
+      "terrain samples",
+      "full polygon",
+      "seeded failure draws",
+      "node uniqueness",
+      "unknown history",
+      "input validation"
+    ],
+    "tests_sha256": "dc598804e21e5cb6e43eadc5553148be505b95703c05573bf5a2839932d6deee"
+  },
+  "regression": {
+    "completed": true,
+    "successful": true,
+    "tests": 136,
+    "seconds": 1276.246
+  },
+  "batch": {
+    "cases": [
+      {
+        "case": 1,
+        "compute_s": 15.25820189499973,
+        "methods": {
+          "annealing": {
+            "compute_s": 0.21951635100049316,
+            "resilience": 0.816,
+            "status": "ready",
+            "time_s": 146.68254057658018
+          },
+          "dijkstra_distance": {
+            "compute_s": 2.654305973999726,
+            "resilience": 0.816,
+            "status": "ready",
+            "time_s": 146.68254057658018
+          },
+          "dijkstra_weighted": {
+            "compute_s": 2.5627551419993324,
+            "resilience": 0.816,
+            "status": "ready",
+            "time_s": 146.68254057658018
+          },
+          "gurobi": {
+            "compute_s": 0.030628516000433592,
+            "resilience": 0.816,
+            "status": "ready",
+            "time_s": 147.88526816702355
+          }
+        },
+        "recommended": [
+          "annealing",
+          "dijkstra_distance",
+          "dijkstra_weighted"
+        ],
+        "sha256": "f687e57214953d0c89e0fd4bc41ab5d5d7a8db31f421133675c6b8d9170e1376"
+      },
+      {
+        "case": 2,
+        "compute_s": 15.183117777999541,
+        "methods": {
+          "annealing": {
+            "compute_s": 0.23508898799991584,
+            "resilience": 0.816,
+            "status": "ready",
+            "time_s": 146.68254057658018
+          },
+          "dijkstra_distance": {
+            "compute_s": 2.318770940999457,
+            "resilience": 0.816,
+            "status": "ready",
+            "time_s": 146.68254057658018
+          },
+          "dijkstra_weighted": {
+            "compute_s": 2.4657592260000456,
+            "resilience": 0.816,
+            "status": "ready",
+            "time_s": 146.68254057658018
+          },
+          "gurobi": {
+            "compute_s": 0.02211412099950394,
+            "resilience": 0.816,
+            "status": "ready",
+            "time_s": 147.88526816702355
+          }
+        },
+        "recommended": [
+          "annealing",
+          "dijkstra_distance",
+          "dijkstra_weighted"
+        ],
+        "sha256": "904bf0375c38c1f20e247d89d7ad931d950ab27b9e18fa792e282e3a5069f6d7"
+      },
+      {
+        "case": 3,
+        "compute_s": 14.875281480000012,
+        "methods": {
+          "annealing": {
+            "compute_s": 0.26930657400043856,
+            "resilience": 0.816,
+            "status": "ready",
+            "time_s": 146.68254057658018
+          },
+          "dijkstra_distance": {
+            "compute_s": 2.398890124999525,
+            "resilience": 0.816,
+            "status": "ready",
+            "time_s": 146.68254057658018
+          },
+          "dijkstra_weighted": {
+            "compute_s": 2.510071771999719,
+            "resilience": 0.816,
+            "status": "ready",
+            "time_s": 146.68254057658018
+          },
+          "gurobi": {
+            "compute_s": 0.02994905900050071,
+            "resilience": 0.816,
+            "status": "ready",
+            "time_s": 147.88526816702355
+          }
+        },
+        "recommended": [
+          "annealing",
+          "dijkstra_distance",
+          "dijkstra_weighted"
+        ],
+        "sha256": "6672e8221f3c1968275a4bc8a0790e4040b88c2e82a70b17875f420280f7a4b6"
+      },
+      {
+        "case": 4,
+        "compute_s": 21.455627085999367,
+        "methods": {
+          "annealing": {
+            "compute_s": 2.2497757689998252,
+            "resilience": 0.816,
+            "status": "ready",
+            "time_s": 323.9426903750823
+          },
+          "dijkstra_distance": {
+            "compute_s": 4.309299182000359,
+            "resilience": 0.816,
+            "status": "ready",
+            "time_s": 334.07655100764305
+          },
+          "dijkstra_weighted": {
+            "compute_s": 4.677346853000017,
+            "resilience": 0.816,
+            "status": "ready",
+            "time_s": 334.07655100764305
+          },
+          "gurobi": {
+            "compute_s": 0.07354721599949698,
+            "resilience": 0.816,
+            "status": "ready",
+            "time_s": 323.9426903750823
+          }
+        },
+        "recommended": [
+          "annealing",
+          "gurobi",
+          "dijkstra_distance"
+        ],
+        "sha256": "e6ae01717aef01f9c3f7c7174bb9759c1831a1ae1e2052ef1e2a02cc7c67183d"
+      },
+      {
+        "case": 5,
+        "compute_s": 19.858137854999768,
+        "methods": {
+          "annealing": {
+            "compute_s": 1.9953263500001412,
+            "resilience": 0.816,
+            "status": "ready",
+            "time_s": 323.9426903750823
+          },
+          "dijkstra_distance": {
+            "compute_s": 4.145962252000572,
+            "resilience": 0.816,
+            "status": "ready",
+            "time_s": 334.07655100764305
+          },
+          "dijkstra_weighted": {
+            "compute_s": 4.232460431999243,
+            "resilience": 0.816,
+            "status": "ready",
+            "time_s": 334.07655100764305
+          },
+          "gurobi": {
+            "compute_s": 0.07015613000021403,
+            "resilience": 0.816,
+            "status": "ready",
+            "time_s": 323.9426903750823
+          }
+        },
+        "recommended": [
+          "annealing",
+          "gurobi",
+          "dijkstra_distance"
+        ],
+        "sha256": "8f8ea63462473aac07e1b84979c53398e6c83e443f76a10061fbbb4682e581c1"
+      },
+      {
+        "case": 6,
+        "compute_s": 19.461034445000223,
+        "methods": {
+          "annealing": {
+            "compute_s": 2.173737516000074,
+            "resilience": 0.816,
+            "status": "ready",
+            "time_s": 323.9426903750823
+          },
+          "dijkstra_distance": {
+            "compute_s": 4.119845377000274,
+            "resilience": 0.816,
+            "status": "ready",
+            "time_s": 334.07655100764305
+          },
+          "dijkstra_weighted": {
+            "compute_s": 4.167189677000351,
+            "resilience": 0.816,
+            "status": "ready",
+            "time_s": 334.07655100764305
+          },
+          "gurobi": {
+            "compute_s": 0.06980795100025716,
+            "resilience": 0.816,
+            "status": "ready",
+            "time_s": 323.9426903750823
+          }
+        },
+        "recommended": [
+          "annealing",
+          "gurobi",
+          "dijkstra_distance"
+        ],
+        "sha256": "e6a8e13f8e22300e16a9886118e30f69458edc8a68ef1c07ea6872b73c184266"
+      }
+    ],
+    "invalid_cases": 0,
+    "output": "datos/runs/patrullaje/batch_cbcd7f66ac76ad94",
+    "plan_sha256": "cbcd7f66ac76ad94d1396ff64e289cb9c4db23aec67efb899b794eca83a7fcfb",
+    "protocol": "patrol-batch-2",
+    "total_cases": 6
+  },
+  "methods": {
+    "dijkstra_distance": {
+      "status": "ready",
+      "time_s": 146.9733580341769,
+      "compute_s": 2.6682992910000394,
+      "coverage": {
+        "percent": 100.0000000000013,
+        "complete": true,
+        "cells": 63,
+        "covered_cells": 63,
+        "unknown_cells": 0,
+        "support_m": 30,
+        "pending_geometry": {
+          "type": "GeometryCollection",
+          "geometries": []
+        }
+      },
+      "resilience": {
+        "value": 0.816,
+        "successes": 816,
+        "scenarios": 1000,
+        "known": true,
+        "definition": "Frozen full-coverage mission and safe return under common threat events"
+      },
+      "solver": {
+        "engine": "pgr_dijkstra",
+        "task_order": "serpentine",
+        "station_search": "beam16"
+      }
+    },
+    "dijkstra_weighted": {
+      "status": "ready",
+      "time_s": 146.9733580341769,
+      "compute_s": 2.352216092999697,
+      "coverage": {
+        "percent": 100.0000000000013,
+        "complete": true,
+        "cells": 63,
+        "covered_cells": 63,
+        "unknown_cells": 0,
+        "support_m": 30,
+        "pending_geometry": {
+          "type": "GeometryCollection",
+          "geometries": []
+        }
+      },
+      "resilience": {
+        "value": 0.816,
+        "successes": 816,
+        "scenarios": 1000,
+        "known": true,
+        "definition": "Frozen full-coverage mission and safe return under common threat events"
+      },
+      "solver": {
+        "engine": "pgr_dijkstra",
+        "task_order": "serpentine",
+        "station_search": "beam16"
+      }
+    },
+    "gurobi": {
+      "status": "ready",
+      "time_s": 147.9476330696951,
+      "compute_s": 0.030770350999773655,
+      "coverage": {
+        "percent": 100.0000000000013,
+        "complete": true,
+        "cells": 63,
+        "covered_cells": 63,
+        "unknown_cells": 0,
+        "support_m": 30,
+        "pending_geometry": {
+          "type": "GeometryCollection",
+          "geometries": []
+        }
+      },
+      "resilience": {
+        "value": 0.816,
+        "successes": 816,
+        "scenarios": 1000,
+        "known": true,
+        "definition": "Frozen full-coverage mission and safe return under common threat events"
+      },
+      "solver": {
+        "status": "optimal",
+        "license_checked": true,
+        "variables": 99,
+        "constraints": 25,
+        "formulation": "Directed strip states, flow, order, battery propagation, optional single-use stations",
+        "gap": 0.007167770813666736,
+        "solutions": 2
+      }
+    },
+    "annealing": {
+      "status": "ready",
+      "time_s": 146.9733580341769,
+      "compute_s": 0.22751883100045234,
+      "coverage": {
+        "percent": 100.0000000000013,
+        "complete": true,
+        "cells": 63,
+        "covered_cells": 63,
+        "unknown_cells": 0,
+        "support_m": 30,
+        "pending_geometry": {
+          "type": "GeometryCollection",
+          "geometries": []
+        }
+      },
+      "resilience": {
+        "value": 0.816,
+        "successes": 816,
+        "scenarios": 1000,
+        "known": true,
+        "definition": "Frozen full-coverage mission and safe return under common threat events"
+      },
+      "solver": {
+        "iterations": 10000,
+        "seed": 20261104,
+        "unique_fitness_evaluations": 8,
+        "search_limited": true
+      }
+    }
+  },
+  "alternative": {
+    "seed": 20261104,
+    "closure_coordinates": [
+      -71.65585816060121,
+      -33.10204088601339
+    ],
+    "interrupted_status": "interrupted_and_returned",
+    "baseline_sha": "25dd518a29ec241fabf5d91046edd745e92f45c9238506e66d23f6fc9b1d17c1",
+    "replanned_sha": "ee3c0aa9a52646fa626fe517962480b8456189adba4c636d91adb865b957d015",
+    "recommended": [
+      "annealing",
+      "dijkstra_distance",
+      "dijkstra_weighted"
+    ],
+    "methods": {
+      "dijkstra_distance": {
+        "status": "ready",
+        "time_s": 147.08136601323164,
+        "resilience": {
+          "value": 0.822,
+          "successes": 822,
+          "scenarios": 1000,
+          "known": true,
+          "definition": "Frozen full-coverage mission and safe return under common threat events"
+        }
+      },
+      "dijkstra_weighted": {
+        "status": "ready",
+        "time_s": 147.08136601323164,
+        "resilience": {
+          "value": 0.822,
+          "successes": 822,
+          "scenarios": 1000,
+          "known": true,
+          "definition": "Frozen full-coverage mission and safe return under common threat events"
+        }
+      },
+      "gurobi": {
+        "status": "ready",
+        "time_s": 148.27497705443625,
+        "resilience": {
+          "value": 0.822,
+          "successes": 822,
+          "scenarios": 1000,
+          "known": true,
+          "definition": "Frozen full-coverage mission and safe return under common threat events"
+        }
+      },
+      "annealing": {
+        "status": "ready",
+        "time_s": 147.08136601323164,
+        "resilience": {
+          "value": 0.822,
+          "successes": 822,
+          "scenarios": 1000,
+          "known": true,
+          "definition": "Frozen full-coverage mission and safe return under common threat events"
+        }
+      }
+    }
+  },
+  "assumptions": [
+    "100 m visual radius and class probabilities are academic assumptions",
+    "Hypothetical battery-swap stations; one battery each, no in-flight recharge",
+    "DSM ~30 m EGM2008; modeled clearance, no certified obstacle database",
+    "Weather is static during the mission; source forecasts are historical snapshots",
+    "Unmapped historical recurrence: explicitly assumed 20% per mission; separate from observed classes"
+  ]
+}

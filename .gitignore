@@ -1,9 +1,11 @@
 .env
+*.lic
 __pycache__/
 *.pyc
 .venv/
 datos/runs/
 evidencia/local/
+evidencia/final_2026-11-04/video_raw/
 *.log
 tmp/
 !evidencia/cierre_fase2_2026-10-19/*.log

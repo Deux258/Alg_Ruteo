@@ -3,11 +3,26 @@ import json
 import logging
 import os
 import mimetypes
+import gzip
+import threading
+from collections import OrderedDict
 from urllib.parse import urlsplit,parse_qs
 from http.server import BaseHTTPRequestHandler,ThreadingHTTPServer
 
 from core.db import connect
 from core.contracts import ROOT
+
+PATROL_LOCK = threading.Lock()
+PATROL_RESULTS = OrderedDict()
+
+
+def patrol_model(conn=None, current=None):
+    from core.patrol import snapshot_context
+    path = os.getenv('PATROL_CONTEXT')
+    if path:
+        return snapshot_context(path)
+    model=conn.execute('SELECT context FROM routing.aerial_models WHERE run_id=%s',(current['run_id'],)).fetchone()['context']
+    return dict(model,_run_id=current['run_id'])
 
 
 def safe_numbers(value):
@@ -49,12 +64,36 @@ def status(conn):
 
 class Handler(BaseHTTPRequestHandler):
     def do_POST(self):
-        if urlsplit(self.path).path not in ['/api/aereo/rutas','/api/aereo/replanificar','/api/aereo/comparar']:
+        path = urlsplit(self.path).path
+        if path not in ['/api/aereo/rutas','/api/aereo/replanificar','/api/aereo/comparar','/api/aereo/patrullaje','/api/aereo/patrullaje/simular']:
             return self.reply(404,b'{"error":"not_found"}')
         try:
             length=int(self.headers.get('Content-Length','0'))
             if not 0<length<=262144:raise ValueError('Solicitud vacía o mayor de 256 KiB')
             request=json.loads(self.rfile.read(length))
+            if not isinstance(request,dict):raise ValueError('Solicitud JSON debe ser un objeto')
+            if path.startswith('/api/aereo/patrullaje') or 'target_polygon' in request:
+                if not PATROL_LOCK.acquire(blocking=False):
+                    return self.reply(429,b'{"error":"Hay un patrullaje en calculo. Reintentar al finalizar."}')
+                try:
+                    from core.patrol import calculate,simulate
+                    if path.endswith('/simular'):
+                        previous=PATROL_RESULTS.get(request.get('sha256'))
+                        if previous is None:raise ValueError('Resultado no disponible: recalcular la misión antes de simular')
+                        result=simulate(previous,request)
+                    elif os.getenv('PATROL_CONTEXT'):
+                        result=calculate(patrol_model(),request)
+                    else:
+                        with connect() as conn:
+                            current=status(conn)
+                            if not current:return self.reply(503,b'{"status":"not_ready"}')
+                            result=calculate(patrol_model(conn,current),request,conn)
+                    if 'routes' in result:
+                        PATROL_RESULTS[result['sha256']]=result
+                        while len(PATROL_RESULTS)>3:PATROL_RESULTS.popitem(last=False)
+                    return self.reply(200,json.dumps(safe_numbers(result),ensure_ascii=False,allow_nan=False).encode())
+                finally:
+                    PATROL_LOCK.release()
             with connect() as conn:
                 current=status(conn)
                 if not current:return self.reply(503,b'{"status":"not_ready"}')
@@ -75,15 +114,37 @@ class Handler(BaseHTTPRequestHandler):
         static={'/':'index.html','/app.js':'app.js','/aerial.js':'aerial.js','/vial.js':'vial.js','/style.css':'style.css',
                 '/vendor/leaflet.js':'vendor/leaflet.js','/vendor/leaflet.css':'vendor/leaflet.css'}
         static.update({f'/vendor/images/{name}':f'vendor/images/{name}' for name in ['layers.png','layers-2x.png','marker-icon.png','marker-icon-2x.png','marker-shadow.png']})
+        static.update({'/patrullaje':'patrol.html','/patrol.js':'patrol.js','/patrol.css':'patrol.css','/terrain3d.js':'terrain3d.js','/fase2':'aerial.html'})
+        if os.getenv('PATROL_CONTEXT'):static['/']='patrol.html'
         if path in static:
-            if path=='/':
+            if path=='/' and not os.getenv('PATROL_CONTEXT'):
                 with connect() as conn:
                     current=status(conn)
                     if current and current['application']=='road_routing':static['/']='index_vial.html'
-                    if current and current['application']=='aerial_simulator':static['/']='aerial.html'
+                    if current and current['application']=='aerial_simulator':static['/']='patrol.html'
             file=ROOT/'Sitio Web'/static[path]
             if file.is_file():
                 return self.reply(200,file.read_bytes(),mimetypes.guess_type(str(file))[0] or 'application/octet-stream')
+        if path=='/api/aereo/patrullaje/mapa':
+            try:
+                from core.patrol import map_data
+                if os.getenv('PATROL_CONTEXT'):
+                    result=map_data(patrol_model())
+                    result['engine']='snapshot local · Dijkstra Python (sin pgRouting)'
+                else:
+                    with connect() as conn:
+                        current=status(conn)
+                        if not current:return self.reply(503,b'{"status":"not_ready"}')
+                        result=map_data(patrol_model(conn,current))
+                        result['engine']='PostGIS + pgRouting'
+                return self.reply(200,json.dumps(result,ensure_ascii=False,allow_nan=False).encode())
+            except (ValueError,KeyError) as exc:
+                return self.reply(422,json.dumps({'error':str(exc)},ensure_ascii=False).encode())
+            except Exception:
+                logging.exception('Mapa de patrullaje falló')
+                return self.reply(503,b'{"error":"No se pudo cargar el snapshot de patrullaje"}')
+        if path=='/health' and os.getenv('PATROL_CONTEXT'):
+            return self.reply(200,b'{"status":"ready","mode":"patrol_snapshot","database":false}')
         if path not in ("/health","/api/topologia","/api/mapa","/api/ruta","/api/nodo","/api/aereo/mapa"):
             return self.reply(404,b'{"error":"not_found"}')
         try:
@@ -129,9 +190,13 @@ class Handler(BaseHTTPRequestHandler):
             return self.reply(503,b'{"status":"database_unavailable"}')
 
     def reply(self,code,body,content_type="application/json; charset=utf-8"):
+        compressed=len(body)>1048576 and 'gzip' in self.headers.get('Accept-Encoding','') and content_type.startswith('application/json')
+        if compressed:body=gzip.compress(body,compresslevel=1)
         self.send_response(code)
         self.send_header("Content-Type",content_type)
         self.send_header("Content-Length",str(len(body)))
+        if compressed:self.send_header('Content-Encoding','gzip')
+        self.send_header('Vary','Accept-Encoding')
         self.send_header("Cache-Control","no-store")
         self.send_header("X-Content-Type-Options","nosniff")
         self.end_headers();self.wfile.write(body)

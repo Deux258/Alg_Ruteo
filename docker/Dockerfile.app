@@ -8,6 +8,8 @@ COPY requirements.lock /app/requirements.lock
 RUN python -m pip install --no-cache-dir --require-hashes -r requirements.lock
 COPY requirements.aerial.lock /app/requirements.aerial.lock
 RUN python -m pip install --no-cache-dir --require-hashes -r requirements.aerial.lock
+COPY requirements.patrol.lock /app/requirements.patrol.lock
+RUN python -m pip install --no-cache-dir --require-hashes -r requirements.patrol.lock
 RUN python -m pip check
 COPY . /app
 CMD ["python", "-m", "core.pipeline", "run"]

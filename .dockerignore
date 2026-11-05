@@ -1,4 +1,5 @@
 .env
+*.lic
 .git
 __pycache__
 *.pyc
@@ -6,3 +7,5 @@ datos/runs
 evidencia/local
 *.log
 tmp/
+.venv/
+evidencia/final_2026-11-04/

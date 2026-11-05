@@ -8,15 +8,32 @@ from itertools import product
 from psycopg import sql
 from shapely.geometry import shape,Point,LineString,mapping
 from shapely.ops import transform,unary_union
+from shapely.strtree import STRtree
+from shapely import from_wkb
 
 from core.aerial_data import FWD,INV,iso
 from core.contracts import canonical
 
 
+class IndexedHistory(list):
+    """Preserve the original risk order while limiting spatial work per edge."""
+    def __init__(self, rows):
+        super().__init__(rows)
+        self.tree=STRtree([g for g,_ in self])
+        self.coverage=None
+        self.exposure_cache={}
+
+
+@lru_cache(maxsize=100000)
+def metric_line(coordinates):
+    """Immutable geometry, keyed by exact WGS84 coordinates (including direction)."""
+    return transform(FWD,LineString(coordinates))
+
+
 @lru_cache(maxsize=4)
 def model_from_text(text):
     model=json.loads(text)
-    model['history']=sorted([(transform(FWD,shape(r['geometry'])),(r['ordinal_class']-1)/4) for r in model['records']['A4']],key=lambda p:-p[1])
+    model['history']=IndexedHistory(sorted([(transform(FWD,shape(r['geometry'])),(r['ordinal_class']-1)/4) for r in model['records']['A4']],key=lambda p:-p[1]))
     return model
 
 
@@ -64,13 +81,22 @@ def overlay(conn,nodes,edges,points,area,profile):
 
 
 def exposure(line,history):
+    cache=history.exposure_cache if isinstance(history,IndexedHistory) else None
+    key=line.wkb if cache is not None else None
+    if cache is not None and key in cache:return cache[key]
     covered=LineString();value=0
-    for polygon,risk in history:
+    indices=sorted(history.tree.query(line,predicate='intersects')) if isinstance(history,IndexedHistory) else range(len(history))
+    for i in indices:
+        polygon,risk=history[i]
         part=line.intersection(polygon).difference(covered)
         value+=part.length*risk
         covered=unary_union([covered,part])
     unknown=max(0,line.length-covered.length)
-    return value+unknown,unknown
+    result=value+unknown,unknown
+    if cache is not None:
+        if len(cache)>=100000:cache.clear()
+        cache[key]=result
+    return result
 
 
 @lru_cache(maxsize=16)
@@ -83,9 +109,13 @@ def historical_policy(geometry,model):
     limit=model['profile'].get('max_historical_class')
     if limit is None:return None
     history=model['history']
-    if any(risk>(limit-1)/4 and polygon.intersects(geometry) for polygon,risk in history):
+    indices=history.tree.query(geometry,predicate='intersects') if isinstance(history,IndexedHistory) else range(len(history))
+    if any(history[i][1]>(limit-1)/4 and history[i][0].intersects(geometry) for i in indices):
         return 'historical_class_exceeded'
-    coverage=historical_coverage(tuple(polygon for polygon,_ in history))
+    if isinstance(history,IndexedHistory):
+        if history.coverage is None:history.coverage=unary_union([g for g,_ in history])
+        coverage=history.coverage
+    else:coverage=historical_coverage(tuple(polygon for polygon,_ in history))
     if not coverage.covers(geometry):return 'historical_class_unknown'
     return None
 
@@ -158,12 +188,18 @@ def restrictions(model,clock,events):
 
 
 def edge_time(line,weather,profile):
+    return _edge_time(line.wkb,weather['wind_speed_ms'],weather['wind_direction_deg'],profile['air_speed_ms'])
+
+
+@lru_cache(maxsize=200000)
+def _edge_time(geometry,wind_speed_ms,wind_direction_deg,air_speed_ms):
+    line=from_wkb(geometry)
     a,b=line.coords[0],line.coords[-1];dx=b[0]-a[0];dy=b[1]-a[1];length=math.hypot(dx,dy)
     if length==0:return 0
-    angle=math.radians(weather['wind_direction_deg']);wx=-weather['wind_speed_ms']*math.sin(angle);wy=-weather['wind_speed_ms']*math.cos(angle)
+    angle=math.radians(wind_direction_deg);wx=-wind_speed_ms*math.sin(angle);wy=-wind_speed_ms*math.cos(angle)
     parallel=(wx*dx+wy*dy)/length;cross2=max(0,wx*wx+wy*wy-parallel*parallel)
-    if cross2>=profile['air_speed_ms']**2:return None
-    speed=math.sqrt(profile['air_speed_ms']**2-cross2)+parallel
+    if cross2>=air_speed_ms**2:return None
+    speed=math.sqrt(air_speed_ms**2-cross2)+parallel
     return line.length/speed if speed>0 else None
 
 
@@ -181,7 +217,9 @@ def paths(conn,edges,source,target,k=3,reference=False):
     if reference:
         def dijkstra(excluded=None):
             q=query if excluded is None else graph_query(conn,[e for e in edges if e['id']!=excluded],'length_km')
-            return conn.execute('SELECT edge,agg_cost FROM pgr_dijkstra(%s,%s::bigint,%s::bigint,true) ORDER BY path_seq',(q,int(source),int(target))).fetchall()
+            # pgRouting 3.8 can repeat path_seq for negative temporary vertices.
+            # seq remains ordered through the terminal row; never sort by path_seq.
+            return conn.execute('SELECT edge,agg_cost FROM pgr_dijkstra(%s,%s::bigint,%s::bigint,true) ORDER BY seq',(q,int(source),int(target))).fetchall()
         first=dijkstra();sequences=[]
         if first:
             sequence=[r['edge'] for r in first if r['edge']!=-1];sequences.append((sequence,first[-1]['agg_cost']))
@@ -192,7 +230,7 @@ def paths(conn,edges,source,target,k=3,reference=False):
             if alternatives:
                 best=min(alternatives,key=lambda p:(p[1],p[0]));sequences.append(best)
     else:
-        rows=conn.execute('SELECT path_id,edge,agg_cost FROM pgr_ksp(%s,%s::bigint,%s::bigint,%s,true) ORDER BY path_id,path_seq',(query,int(source),int(target),k)).fetchall()
+        rows=conn.execute('SELECT path_id,edge,agg_cost FROM pgr_ksp(%s,%s::bigint,%s::bigint,%s,true) ORDER BY path_id,seq',(query,int(source),int(target),k)).fetchall()
         grouped={}
         for r in rows:
             entry=grouped.setdefault(r['path_id'],[[],0]);entry[1]=r['agg_cost']
@@ -280,7 +318,7 @@ def _calculate(conn,rid,request):
         if problem:response.update(reason=problem);return response
     response['excluded_edges_by_reason']={}
     for e in edges:
-        line=transform(FWD,LineString(e['coordinates']))
+        line=metric_line(tuple(map(tuple,e['coordinates'])))
         if blocked.intersects(line):continue
         problem=historical_policy(line,model)
         if problem:

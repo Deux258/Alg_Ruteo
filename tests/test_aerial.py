@@ -86,7 +86,10 @@ class AerialIntegration(unittest.TestCase):
         self.assertAlmostEqual(self.request['origin'][0],-71.6572392109999,places=12)
         self.assertTrue(self.area.covers(Point(self.request['origin'])))
         self.assertEqual(self.result['status'],'ready')
-        self.assertGreater(self.result['alternatives'][0]['length_km'],1)
+        # The 100 m lattice has nearby examples; check real positive routing and
+        # the new link ceiling instead of assuming a kilometre-scale fixture.
+        self.assertGreater(self.result['alternatives'][0]['length_km'],0)
+        self.assertTrue(all(e['length_km']<=0.200001 for e in self.edges))
         self.assertFalse(self.result['clearance_verified'])
 
     def test_endpoints_away_from_roads_are_kept_exactly_without_publishing_nodes(self):
@@ -157,12 +160,16 @@ class AerialIntegration(unittest.TestCase):
         self.assertEqual(aip_blocked['reason'],'endpoint_blocked')
 
     def test_blockage_removes_whole_segments_and_reference_stays_unchanged(self):
-        p=LineString(self.result['alternatives'][0]['outbound']['coordinates']).interpolate(.5,normalized=True)
-        event=dict(id='test',state='blocked',observed_at=self.clock,geometry=mapping(p),radius_m=80)
+        line=transform(FWD,LineString(self.result['alternatives'][0]['outbound']['coordinates']))
+        center=line.interpolate(.5,normalized=True)
+        # Keep both endpoints outside the obstacle on the denser 100 m lattice.
+        radius=min(30,center.distance(Point(line.coords[0]))/3,center.distance(Point(line.coords[-1]))/3)
+        p=transform(INV,center)
+        event=dict(id='test',state='blocked',observed_at=self.clock,geometry=mapping(p),radius_m=radius)
         result=calculate(self.conn,self.rid,dict(self.request,events=[event]))
         self.assertEqual(result['reference'],self.result['reference'])
         self.assertEqual(result['status'],'ready')
-        obstacle=Point(FWD(p.x,p.y)).buffer(80)
+        obstacle=Point(FWD(p.x,p.y)).buffer(radius)
         for f in result['features']:self.assertFalse(transform(FWD,shape_geometry(f)).intersects(obstacle))
 
     def test_all_blocked_and_weather_out_of_window_have_explicit_causes(self):

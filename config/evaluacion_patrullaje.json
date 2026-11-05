@@ -1,0 +1,8 @@
+{
+  "protocol": "patrol-batch-2",
+  "polygon_scales": [1, 2],
+  "historical_multipliers": [0.5, 1, 2],
+  "scenarios": 1000,
+  "seed": 20261104,
+  "description": "Six cases fixed before routing; scaled polygons clipped to study area inset 1 m before planning. All candidate swap stations; first admissible hour after acquisition. No selection by route success."
+}

@@ -1,0 +1,21 @@
+{
+  "tests": 10,
+  "successful": true,
+  "errors": 0,
+  "failures": 0,
+  "seconds": 0.543,
+  "environment": "Docker CPython 3.12; requirements.lock + requirements.aerial.lock + requirements.patrol.lock",
+  "command": "python -m unittest tests.test_patrol -v",
+  "source_sha256": "50ee39e16c9d0eb90f23dd0c82c05f921f65c2ada8983ec7681536ca6894850a",
+  "scenarios": [
+    "battery inventory",
+    "alternative landing base",
+    "terrain samples",
+    "full polygon",
+    "seeded failure draws",
+    "node uniqueness",
+    "unknown history",
+    "input validation"
+  ],
+  "tests_sha256": "dc598804e21e5cb6e43eadc5553148be505b95703c05573bf5a2839932d6deee"
+}

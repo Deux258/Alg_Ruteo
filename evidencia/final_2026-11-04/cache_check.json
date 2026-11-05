@@ -1,0 +1,19 @@
+{
+  "request": {
+    "origin": [
+      -71.6572392109999,
+      -33.10190169
+    ],
+    "destination": [
+      -71.65639056202231,
+      -33.101688461956016
+    ],
+    "mode": "mission"
+  },
+  "cold_s": 24.665487923,
+  "warm_s": 6.554750244999923,
+  "response_identical": true,
+  "context": "PostGIS snapshot 2e6808a3-a8c3-5543-a051-cf5f4ac1c5d0; conservative profile, first admissible snapshot hour",
+  "source_sha256": "2ef610b2b96bae2e37b5cff8ffdf795e9dc32cce2ac4d6f7a79135dec4a2ec8a",
+  "limitation": "One repeated request; timings are descriptive, not a general performance guarantee"
+}

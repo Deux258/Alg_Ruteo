@@ -1,0 +1,2 @@
+# CPython 3.12 Linux x86_64, wheel checked during phase-final implementation.
+gurobipy==13.0.3 --hash=sha256:34f0b9528edfbf29e96a74e0b69b8cc832375d43342d6376754fd436c570bb2a

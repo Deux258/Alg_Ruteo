@@ -1,0 +1,225 @@
+{
+  "cases": [
+    {
+      "case": 1,
+      "compute_s": 15.25820189499973,
+      "methods": {
+        "annealing": {
+          "compute_s": 0.21951635100049316,
+          "resilience": 0.816,
+          "status": "ready",
+          "time_s": 146.68254057658018
+        },
+        "dijkstra_distance": {
+          "compute_s": 2.654305973999726,
+          "resilience": 0.816,
+          "status": "ready",
+          "time_s": 146.68254057658018
+        },
+        "dijkstra_weighted": {
+          "compute_s": 2.5627551419993324,
+          "resilience": 0.816,
+          "status": "ready",
+          "time_s": 146.68254057658018
+        },
+        "gurobi": {
+          "compute_s": 0.030628516000433592,
+          "resilience": 0.816,
+          "status": "ready",
+          "time_s": 147.88526816702355
+        }
+      },
+      "recommended": [
+        "annealing",
+        "dijkstra_distance",
+        "dijkstra_weighted"
+      ],
+      "sha256": "f687e57214953d0c89e0fd4bc41ab5d5d7a8db31f421133675c6b8d9170e1376"
+    },
+    {
+      "case": 2,
+      "compute_s": 15.183117777999541,
+      "methods": {
+        "annealing": {
+          "compute_s": 0.23508898799991584,
+          "resilience": 0.816,
+          "status": "ready",
+          "time_s": 146.68254057658018
+        },
+        "dijkstra_distance": {
+          "compute_s": 2.318770940999457,
+          "resilience": 0.816,
+          "status": "ready",
+          "time_s": 146.68254057658018
+        },
+        "dijkstra_weighted": {
+          "compute_s": 2.4657592260000456,
+          "resilience": 0.816,
+          "status": "ready",
+          "time_s": 146.68254057658018
+        },
+        "gurobi": {
+          "compute_s": 0.02211412099950394,
+          "resilience": 0.816,
+          "status": "ready",
+          "time_s": 147.88526816702355
+        }
+      },
+      "recommended": [
+        "annealing",
+        "dijkstra_distance",
+        "dijkstra_weighted"
+      ],
+      "sha256": "904bf0375c38c1f20e247d89d7ad931d950ab27b9e18fa792e282e3a5069f6d7"
+    },
+    {
+      "case": 3,
+      "compute_s": 14.875281480000012,
+      "methods": {
+        "annealing": {
+          "compute_s": 0.26930657400043856,
+          "resilience": 0.816,
+          "status": "ready",
+          "time_s": 146.68254057658018
+        },
+        "dijkstra_distance": {
+          "compute_s": 2.398890124999525,
+          "resilience": 0.816,
+          "status": "ready",
+          "time_s": 146.68254057658018
+        },
+        "dijkstra_weighted": {
+          "compute_s": 2.510071771999719,
+          "resilience": 0.816,
+          "status": "ready",
+          "time_s": 146.68254057658018
+        },
+        "gurobi": {
+          "compute_s": 0.02994905900050071,
+          "resilience": 0.816,
+          "status": "ready",
+          "time_s": 147.88526816702355
+        }
+      },
+      "recommended": [
+        "annealing",
+        "dijkstra_distance",
+        "dijkstra_weighted"
+      ],
+      "sha256": "6672e8221f3c1968275a4bc8a0790e4040b88c2e82a70b17875f420280f7a4b6"
+    },
+    {
+      "case": 4,
+      "compute_s": 21.455627085999367,
+      "methods": {
+        "annealing": {
+          "compute_s": 2.2497757689998252,
+          "resilience": 0.816,
+          "status": "ready",
+          "time_s": 323.9426903750823
+        },
+        "dijkstra_distance": {
+          "compute_s": 4.309299182000359,
+          "resilience": 0.816,
+          "status": "ready",
+          "time_s": 334.07655100764305
+        },
+        "dijkstra_weighted": {
+          "compute_s": 4.677346853000017,
+          "resilience": 0.816,
+          "status": "ready",
+          "time_s": 334.07655100764305
+        },
+        "gurobi": {
+          "compute_s": 0.07354721599949698,
+          "resilience": 0.816,
+          "status": "ready",
+          "time_s": 323.9426903750823
+        }
+      },
+      "recommended": [
+        "annealing",
+        "gurobi",
+        "dijkstra_distance"
+      ],
+      "sha256": "e6ae01717aef01f9c3f7c7174bb9759c1831a1ae1e2052ef1e2a02cc7c67183d"
+    },
+    {
+      "case": 5,
+      "compute_s": 19.858137854999768,
+      "methods": {
+        "annealing": {
+          "compute_s": 1.9953263500001412,
+          "resilience": 0.816,
+          "status": "ready",
+          "time_s": 323.9426903750823
+        },
+        "dijkstra_distance": {
+          "compute_s": 4.145962252000572,
+          "resilience": 0.816,
+          "status": "ready",
+          "time_s": 334.07655100764305
+        },
+        "dijkstra_weighted": {
+          "compute_s": 4.232460431999243,
+          "resilience": 0.816,
+          "status": "ready",
+          "time_s": 334.07655100764305
+        },
+        "gurobi": {
+          "compute_s": 0.07015613000021403,
+          "resilience": 0.816,
+          "status": "ready",
+          "time_s": 323.9426903750823
+        }
+      },
+      "recommended": [
+        "annealing",
+        "gurobi",
+        "dijkstra_distance"
+      ],
+      "sha256": "8f8ea63462473aac07e1b84979c53398e6c83e443f76a10061fbbb4682e581c1"
+    },
+    {
+      "case": 6,
+      "compute_s": 19.461034445000223,
+      "methods": {
+        "annealing": {
+          "compute_s": 2.173737516000074,
+          "resilience": 0.816,
+          "status": "ready",
+          "time_s": 323.9426903750823
+        },
+        "dijkstra_distance": {
+          "compute_s": 4.119845377000274,
+          "resilience": 0.816,
+          "status": "ready",
+          "time_s": 334.07655100764305
+        },
+        "dijkstra_weighted": {
+          "compute_s": 4.167189677000351,
+          "resilience": 0.816,
+          "status": "ready",
+          "time_s": 334.07655100764305
+        },
+        "gurobi": {
+          "compute_s": 0.06980795100025716,
+          "resilience": 0.816,
+          "status": "ready",
+          "time_s": 323.9426903750823
+        }
+      },
+      "recommended": [
+        "annealing",
+        "gurobi",
+        "dijkstra_distance"
+      ],
+      "sha256": "e6a8e13f8e22300e16a9886118e30f69458edc8a68ef1c07ea6872b73c184266"
+    }
+  ],
+  "invalid_cases": 0,
+  "output": "datos/runs/patrullaje/batch_cbcd7f66ac76ad94",
+  "plan_sha256": "cbcd7f66ac76ad94d1396ff64e289cb9c4db23aec67efb899b794eca83a7fcfb",
+  "protocol": "patrol-batch-2",
+  "total_cases": 6
+}

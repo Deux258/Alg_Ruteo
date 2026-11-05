@@ -9,6 +9,7 @@ from uuid import UUID,NAMESPACE_URL,uuid5
 import rasterio
 from pyproj import Transformer
 from shapely import make_valid
+from shapely.strtree import STRtree
 from shapely.geometry import shape,Point,LineString,Polygon,MultiPolygon,mapping
 from shapely.ops import transform,unary_union
 
@@ -110,8 +111,11 @@ def assemble(config):
         key='aerial:base:S1:'+base['provider_id'];base['node_id']=stable_id(key)
         nodes.append(dict(id=base['node_id'],natural_key=key,kind='base_candidata',source_record_id=base['provider_id'],geometry=base['geometry']))
     metric={n['id']:transform(FWD,shape(n['geometry'])) for n in nodes};by_id={n['id']:n for n in nodes};pairs=set()
+    node_ids=[n['id'] for n in nodes]
+    tree=STRtree([metric[i] for i in node_ids])
     for n in nodes:
-        near=sorted((metric[n['id']].distance(metric[m['id']]),m['id']) for m in nodes if m['id']!=n['id'])
+        neighbours=tree.query(metric[n['id']],predicate='dwithin',distance=profile['max_link_m'])
+        near=sorted((metric[n['id']].distance(metric[node_ids[int(k)]]),node_ids[int(k)]) for k in neighbours if node_ids[int(k)]!=n['id'])
         for distance,target in near[:profile['neighbours']]:
             if distance<=profile['max_link_m']:
                 segment=LineString([n['geometry']['coordinates'],by_id[target]['geometry']['coordinates']])

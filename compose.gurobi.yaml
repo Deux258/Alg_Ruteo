@@ -1,0 +1,19 @@
+# Optional academic license. Point GUROBI_LICENSE_PATH at your own license file.
+# Never put license contents or credentials in version control.
+services:
+  etl:
+    environment:
+      GRB_LICENSE_FILE: /run/gurobi/gurobi.lic
+    volumes:
+      - type: bind
+        source: ${GUROBI_LICENSE_PATH:?Indicar ruta absoluta al archivo gurobi.lic}
+        target: /run/gurobi/gurobi.lic
+        read_only: true
+  web:
+    environment:
+      GRB_LICENSE_FILE: /run/gurobi/gurobi.lic
+    volumes:
+      - type: bind
+        source: ${GUROBI_LICENSE_PATH:?Indicar ruta absoluta al archivo gurobi.lic}
+        target: /run/gurobi/gurobi.lic
+        read_only: true

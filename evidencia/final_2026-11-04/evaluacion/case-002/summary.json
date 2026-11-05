@@ -1,0 +1,36 @@
+{
+  "case": 2,
+  "compute_s": 15.183117777999541,
+  "methods": {
+    "annealing": {
+      "compute_s": 0.23508898799991584,
+      "resilience": 0.816,
+      "status": "ready",
+      "time_s": 146.68254057658018
+    },
+    "dijkstra_distance": {
+      "compute_s": 2.318770940999457,
+      "resilience": 0.816,
+      "status": "ready",
+      "time_s": 146.68254057658018
+    },
+    "dijkstra_weighted": {
+      "compute_s": 2.4657592260000456,
+      "resilience": 0.816,
+      "status": "ready",
+      "time_s": 146.68254057658018
+    },
+    "gurobi": {
+      "compute_s": 0.02211412099950394,
+      "resilience": 0.816,
+      "status": "ready",
+      "time_s": 147.88526816702355
+    }
+  },
+  "recommended": [
+    "annealing",
+    "dijkstra_distance",
+    "dijkstra_weighted"
+  ],
+  "sha256": "904bf0375c38c1f20e247d89d7ad931d950ab27b9e18fa792e282e3a5069f6d7"
+}
