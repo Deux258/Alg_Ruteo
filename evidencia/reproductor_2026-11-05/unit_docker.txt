@@ -1,0 +1,94 @@
+test_battery_swap_is_needed_and_inventory_is_finite (tests.test_patrol.PatrolTests.test_battery_swap_is_needed_and_inventory_is_finite) ... ok
+test_detection_can_return_to_a_selected_alternative_base (tests.test_patrol.PatrolTests.test_detection_can_return_to_a_selected_alternative_base) ... ok
+test_full_mission_four_methods_and_replay (tests.test_patrol.PatrolTests.test_full_mission_four_methods_and_replay) ... ok
+test_hard_block_and_stochastic_marginal (tests.test_patrol.PatrolTests.test_hard_block_and_stochastic_marginal) ... ok
+test_indexed_history_preserves_exposure_and_policy (tests.test_patrol.PatrolTests.test_indexed_history_preserves_exposure_and_policy) ... ok
+test_intermediate_dsm_is_sampled (tests.test_patrol.PatrolTests.test_intermediate_dsm_is_sampled) ... ok
+test_invalid_inputs_and_unknown_terrain (tests.test_patrol.PatrolTests.test_invalid_inputs_and_unknown_terrain) ... ok
+test_origin_and_station_share_one_physical_node (tests.test_patrol.PatrolTests.test_origin_and_station_share_one_physical_node) ... ok
+test_uniform_zero_hundred_and_common_seed (tests.test_patrol.PatrolTests.test_uniform_zero_hundred_and_common_seed) ... ok
+test_unmapped_history_has_explicit_probability (tests.test_patrol.PatrolTests.test_unmapped_history_has_explicit_probability) ... ok
+test_four_spatial_circuits_and_original_comparison_preserved (tests.test_patrol_alternatives.DistinctCircuitTests.test_four_spatial_circuits_and_original_comparison_preserved) ... ok
+test_nominal_replay_is_separate_from_sampled_failures (tests.test_patrol_alternatives.DistinctCircuitTests.test_nominal_replay_is_separate_from_sampled_failures) ... ok
+test_replay_respects_vertical_speed_between_samples (tests.test_patrol_alternatives.DistinctCircuitTests.test_replay_respects_vertical_speed_between_samples) ... ok
+test_reverse_resampling_and_near_coincidence_are_not_diversity (tests.test_patrol_alternatives.DistinctCircuitTests.test_reverse_resampling_and_near_coincidence_are_not_diversity) ... ok
+test_single_corridor_returns_one_circuit_instead_of_duplicates (tests.test_patrol_alternatives.DistinctCircuitTests.test_single_corridor_returns_one_circuit_instead_of_duplicates) ... ok
+test_swap_is_on_ground_and_uses_edges_instead_of_sample_indices (tests.test_patrol_alternatives.DistinctCircuitTests.test_swap_is_on_ground_and_uses_edges_instead_of_sample_indices) ... ok
+test_clipped_coastline_endpoints_are_noded_to_area_boundary (tests.test_geographic_scene.GeographicSceneTests.test_clipped_coastline_endpoints_are_noded_to_area_boundary) ... ok
+test_coastline_water_is_on_right_only (tests.test_geographic_scene.GeographicSceneTests.test_coastline_water_is_on_right_only) ... ok
+test_contours_follow_plane_and_respect_nodata (tests.test_geographic_scene.GeographicSceneTests.test_contours_follow_plane_and_respect_nodata) ... ok
+test_dsm_obstacle_height_is_not_added_twice (tests.test_geographic_scene.GeographicSceneTests.test_dsm_obstacle_height_is_not_added_twice) ... ok
+test_forest_canopy_follows_local_slope (tests.test_geographic_scene.GeographicSceneTests.test_forest_canopy_follows_local_slope) ... ok
+test_height_units_and_provenance (tests.test_geographic_scene.GeographicSceneTests.test_height_units_and_provenance) ... ok
+test_multipolygon_preserves_courtyard_and_does_not_close_missing_rings (tests.test_geographic_scene.GeographicSceneTests.test_multipolygon_preserves_courtyard_and_does_not_close_missing_rings) ... ok
+test_narrow_building_is_sampled_and_occludes_sight (tests.test_geographic_scene.GeographicSceneTests.test_narrow_building_is_sampled_and_occludes_sight) ... ok
+test_touching_obstacles_do_not_create_coincident_samples (tests.test_geographic_scene.GeographicSceneTests.test_touching_obstacles_do_not_create_coincident_samples) ... ok
+test_water_disallows_landing_and_preserves_islands (tests.test_geographic_scene.GeographicSceneTests.test_water_disallows_landing_and_preserves_islands) ... ok
+test_conserved_real_pdf_validates_and_dates_are_per_page (tests.test_diagnostics.AcquisitionTests.test_conserved_real_pdf_validates_and_dates_are_per_page) ... ok
+test_html_instead_of_pdf_is_not_a_success (tests.test_diagnostics.AcquisitionTests.test_html_instead_of_pdf_is_not_a_success) ... ok
+test_invalid_pdf_and_parser_failure_never_activate_manifest (tests.test_diagnostics.AcquisitionTests.test_invalid_pdf_and_parser_failure_never_activate_manifest) ... EOF marker not found
+EOF marker not found
+Adquiriendo S1
+Adquiriendo S1H
+Adquiriendo S2
+Adquiriendo S3
+Adquiriendo S4
+Adquiriendo S5
+Adquiriendo S6
+ERROR S6: simulated
+Adquiriendo S7
+Adquiriendo S1
+Adquiriendo S1H
+Adquiriendo S2
+Adquiriendo S3
+Adquiriendo S4
+Adquiriendo S5
+Adquiriendo S6
+ERROR S6: simulated
+Adquiriendo S7
+Adquiriendo S1
+Adquiriendo S1H
+Adquiriendo S2
+Adquiriendo S3
+Adquiriendo S4
+Adquiriendo S5
+Adquiriendo S6
+ERROR S6: simulated
+Adquiriendo S7
+Adquiriendo S1
+Adquiriendo S1H
+Adquiriendo S2
+Adquiriendo S3
+Adquiriendo S4
+Adquiriendo S5
+Adquiriendo S6
+ERROR S6: simulated
+Adquiriendo S7
+Adquiriendo S1
+Adquiriendo S1H
+Adquiriendo S2
+Adquiriendo S3
+Adquiriendo S4
+Adquiriendo S5
+Adquiriendo S6
+ERROR S6: simulated
+Adquiriendo S7
+Adquiriendo S1
+Adquiriendo S1H
+Adquiriendo S2
+Adquiriendo S3
+Adquiriendo S4
+Adquiriendo S5
+Adquiriendo S6
+ERROR S6: simulated
+Adquiriendo S7
+ok
+test_official_link_discovery_and_https_redirect_policy (tests.test_diagnostics.AcquisitionTests.test_official_link_discovery_and_https_redirect_policy) ... ok
+test_transport_errors_classified_and_three_attempts_with_1_3_waits (tests.test_diagnostics.AcquisitionTests.test_transport_errors_classified_and_three_attempts_with_1_3_waits) ... ok
+test_zone_diff_additions_removals_geometry_and_attributes (tests.test_diagnostics.AcquisitionTests.test_zone_diff_additions_removals_geometry_and_attributes) ... ok
+test_directed_minimum_return_equality_elapsed_and_disconnection (tests.test_diagnostics.OracleTests.test_directed_minimum_return_equality_elapsed_and_disconnection) ... ok
+
+----------------------------------------------------------------------
+Ran 33 tests in 3.333s
+
+OK

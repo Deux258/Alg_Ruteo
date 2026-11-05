@@ -129,6 +129,11 @@ las rutas congeladas y repite los umbrales A4 con multiplicadores 0,5, 1 y 2.
 
 ## API y visualización
 
+La vista inicial ofrece circuitos espacialmente distintos. El selector de comparación
+conserva los cuatro resultados originales, que pueden coincidir. El reproductor incluye
+pausa, barra temporal, inicio/fin, seguimiento, cámara del dron y centrado del objetivo
+en ambas vistas. Ver [modelo y reproducción](ALTERNATIVAS_REPRODUCTOR.md).
+
 - `GET /api/aereo/patrullaje/mapa`: áreas, catálogo, metadata, amenazas, clima y malla DSM.
 - `POST /api/aereo/patrullaje`: polígono y perfil; cuatro rutas y evaluación común.
 - Los endpoints existentes de rutas/comparación también aceptan `target_polygon`.

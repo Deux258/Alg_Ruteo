@@ -25,6 +25,7 @@ def main():
         page=context.new_page()
         page.on('pageerror',lambda e:errors.append(str(e)))
         page.goto(args.url);page.wait_for_load_state('networkidle')
+        page.locator('#route-mode').select_option('comparison')
         page.get_by_role('button',name='Cargar ejemplo').click()
         checks.append(('example_polygon',page.locator('#calculate').is_enabled()))
         with page.expect_response(lambda r:r.url.endswith('/api/aereo/patrullaje') and r.request.method=='POST',timeout=300000) as pending:

@@ -1,10 +1,12 @@
 import { TerrainView } from "./terrain3d.js";
+import { sampleFlight, projectUTM, clockLabel } from "./flight-player.js";
 const $ = (id) => document.getElementById(id);
 const colors = {
   dijkstra_distance: "#326b99",
   dijkstra_weighted: "#237c55",
   gurobi: "#b17724",
   annealing: "#90508d",
+  alt_1: "#326b99", alt_2: "#237c55", alt_3: "#b17724", alt_4: "#90508d",
 };
 const rgb = (hex) =>
   [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255);
@@ -60,6 +62,9 @@ let layerControl,
   sourceLayers = {},
   activeIds = new Set(),
   comparisonHistory = [];
+let calculating=false,simulationLoading=false,configurationRevision=0,lastRender=0,lastFollow=0,lastLog='';
+const displayedRoutes=()=>!result?{}:$("route-mode").value==='comparison'?result.routes:result.route_alternatives||{};
+const displayedRecommended=()=>$("route-mode").value==='comparison'?result?.recommended||[]:result?.alternative_recommended||[];
 const message = (text, error = false) => {
   $("message").textContent = text;
   $("message").classList.toggle("error", error);
@@ -212,12 +217,18 @@ $("export-geography").onclick = () => {
     },
   });
 };
-$("terrain-reset").onclick = () => terrainView?.reset();
-$("terrain-mission").onclick = () => terrainView?.focusRoutes();
+$("terrain-reset").onclick = () => {exitDroneView();$("follow-drone").checked=false;terrainView?.reset();};
+$("terrain-mission").onclick = () => {exitDroneView();$("follow-drone").checked=false;terrainView?.focusRoutes();};
 function invalidate() {
+  configurationRevision++;
   playing = false;
   fresh = false;
   simulation = null;
+  flightLayer.clearLayers();drone=null;exitDroneView();terrainView?.setMarker(null);
+  Object.values(routes).forEach(layer=>map.removeLayer(layer));routes={};
+  $("results").replaceChildren();$("chosen").replaceChildren();
+  $("flight").textContent='Sin vuelo activo.';$("log").replaceChildren();$("progress").value=0;
+  clock=0;update3d();refreshPlaybackControls();
   $("simulate").disabled = true;
   $("export").disabled = true;
   $("failures").disabled = true;
@@ -228,6 +239,9 @@ function setTarget(geo) {
   const g = geo.type === "Feature" ? geo.geometry : geo;
   if (g.type !== "Polygon") throw new Error("Importa un Polygon GeoJSON.");
   target = g;
+  mode='';$("finish").disabled=true;$("draw-tools").hidden=true;
+  fire=null;fireLayer.clearLayers();$("fire-status").textContent='Sin foco sintético.';
+  $("focus-target").disabled=false;
   selection.clearLayers();
   L.geoJSON(g, {
     style: {
@@ -240,12 +254,16 @@ function setTarget(geo) {
   $("area-status").textContent =
     "Objetivo poligonal listo · barrido completo con radio de 100 m.";
   invalidate();
+  focusTarget();
 }
 $("draw").onclick = () => {
+  if(view3d)setView3d(false);
   mode = "polygon";
   vertices = [];
   selection.clearLayers();
-  $("finish").disabled = false;
+  playing=false;refreshPlaybackControls();
+  $("finish").disabled = true;
+  $("draw-tools").dataset.vertices="0";$("draw-tools").hidden=false;
   message("Marca los vértices del objetivo y pulsa Cerrar polígono.");
 };
 $("finish").onclick = () => {
@@ -283,15 +301,18 @@ $("demo").onclick = () => {
   map.fitBounds(L.geoJSON(target).getBounds().pad(1));
 };
 $("fire").onclick = () => {
+  if(view3d)setView3d(false);
   mode = "fire";
   message("Marca un foco sintético dentro del polígono objetivo.");
 };
 $("clear-fire").onclick = () => {
   fire = null;
   fireLayer.clearLayers();
+  playing=false;simulation=null;refreshPlaybackControls();update3d();
   $("fire-status").textContent = "Sin foco sintético.";
 };
 $("hazard").onclick = () => {
+  if(view3d)setView3d(false);
   mode = "hazard";
   message(
     "Marca el centro de una amenaza sintética; luego recalcula las rutas.",
@@ -337,13 +358,7 @@ map.on("click", (e) => {
   const c = [e.latlng.lng, e.latlng.lat];
   if (mode === "polygon") {
     vertices.push(c);
-    selection.clearLayers();
-    L.polyline(
-      vertices.map((p) => [p[1], p[0]]),
-      { color: "#31683d" },
-    ).addTo(selection);
-    for (const v of vertices)
-      L.circleMarker([v[1], v[0]], { radius: 4 }).addTo(selection);
+    redrawVertices();
   } else if (mode === "fire") {
     fire = c;
     fireLayer.clearLayers();
@@ -358,7 +373,7 @@ map.on("click", (e) => {
       .bindPopup(popup("Foco sintético", { coordinates: c }));
     $("fire-status").textContent =
       `Foco de demostración: ${c.map((v) => v.toFixed(5)).join(", ")}`;
-    mode = "";
+    mode = "";playing=false;simulation=null;refreshPlaybackControls();update3d();
   } else if (mode === "hazard") {
     const radius = Number($("radius").value),
       probability = Number($("probability").value);
@@ -421,24 +436,22 @@ function request() {
   };
 }
 function busy(value) {
-  if (value) {
-    $("export").disabled = true;
-    $("failures").disabled = true;
-  }
-  $("calculate").disabled = value || !target;
-  $("simulate").disabled = value || !fresh || !result?.recommended.length;
-  $("replan").disabled = value || !simulation;
-  $("calculate").textContent = value
-    ? "Calculando rutas y 1.000 escenarios…"
-    : "Comparar las cuatro técnicas";
+ calculating=value;
+ if(value){$('export').disabled=true;$('failures').disabled=true;}
+ $('calculate').disabled=value||!target;
+ $('simulate').disabled=value||!fresh||!displayedRecommended().length;
+ $('replan').disabled=value||!simulation;
+ $('calculate').textContent=value?'Calculando técnicas y corredores diferentes…':'Comparar las cuatro técnicas';
+ refreshPlaybackControls();
 }
 async function calculate() {
   if (!target) return;
   playing = false;
   fresh = false;
+  const revision=configurationRevision;
   busy(true);
   message(
-    "Construyendo grafo, consultando algoritmos y evaluando cobertura. Puede tardar hasta dos minutos.",
+    "Construyendo grafo, consultando algoritmos y evaluando cobertura. Puede tardar unos minutos.",
   );
   try {
     if (result)
@@ -451,7 +464,9 @@ async function calculate() {
           ]),
         ),
       });
-    result = await api("/api/aereo/patrullaje", request());
+    const answer = await api("/api/aereo/patrullaje", request());
+    if(revision!==configurationRevision){message('La configuración cambió durante el cálculo. Vuelve a comparar.');return;}
+    result=answer;
     fresh = true;
     simulation = null;
     activeIds.clear();
@@ -460,7 +475,7 @@ async function calculate() {
     $("export").disabled = false;
     $("failures").disabled = false;
     message(
-      `${result.network.nodes.toLocaleString()} nodos · ${result.network.directed_edges.toLocaleString()} arcos · ${result.recommended.length} candidatas destacadas. Mayor resiliencia: ${result.resilience_leaders?.length ?? 0} técnica(s) empatadas.`,
+      `${result.network.nodes.toLocaleString()} nodos · ${result.network.directed_edges.toLocaleString()} arcos · ${result.diversity.count} circuitos distintos validados. La comparación original de técnicas está disponible en el selector.`,
     );
     refreshSources();
   } catch (e) {
@@ -491,8 +506,10 @@ function renderResults() {
   Object.values(routes).forEach((l) => map.removeLayer(l));
   routes = {};
   $("results").replaceChildren();
+  const previousChoice=$("chosen").value;
   $("chosen").replaceChildren();
-  for (const [key, r] of Object.entries(result.routes)) {
+  const available=displayedRoutes();
+  for (const [key, r] of Object.entries(available)) {
     const card = document.createElement("div");
     card.className = "route-card";
     card.style.setProperty("--route", colors[key]);
@@ -503,24 +520,24 @@ function renderResults() {
     check.checked = true;
     check.id = `show-${key}`;
     visible[key] = true;
-    const label = document.createElement("label");
-    label.htmlFor = check.id;
-    label.textContent = r.label;
+    const label = document.createElement("button");
+    label.type="button";label.className="route-choice";
+    label.textContent = r.label;label.onclick=()=>{if(r.status!=="ready")return;$("chosen").value=key;changeRoute();};
     title.append(check, label);
-    const rank = result.recommended.indexOf(key);
+    const rank = displayedRecommended().indexOf(key);
     if (rank >= 0) {
       const b = document.createElement("span");
       b.className = "rank";
       b.textContent = `OPCIÓN ${rank + 1}`;
       title.append(b);
     }
-    card.append(title);
+    card.dataset.route=key;card.append(title);
     if (r.coordinates.length) {
       routes[key] = L.polyline(
         r.coordinates.map((c) => [c[1], c[0]]),
         {
           color: colors[key],
-          weight: 3 + (3 - Object.keys(result.routes).indexOf(key)),
+          weight: 3 + (3 - Object.keys(available).indexOf(key)),
           opacity: 0.8,
           dashArray:
             key === "dijkstra_distance"
@@ -558,7 +575,7 @@ function renderResults() {
         r.time_s === null ? "—" : (r.time_s / 60).toFixed(1) + " min",
         "Tiempo de misión",
       ],
-      [r.compute_s.toFixed(2) + " s", "Cómputo"],
+      [r.compute_s.toFixed(2) + " s", $("route-mode").value==='alternatives'?"Generación acumulada":"Cómputo"],
       [
         r.coverage ? r.coverage.percent.toFixed(1) + " %" : "—",
         "Cobertura de celdas",
@@ -574,8 +591,10 @@ function renderResults() {
     }
     card.append(metrics);
     const note = document.createElement("p");
-    note.textContent = `${r.status} · ${r.distance_m === null ? "sin recorrido" : (r.distance_m / 1000).toFixed(2) + " km"} · ${r.stops.length} recargas${r.solver.engine ? " · " + r.solver.engine : ""}${r.solver.status ? " · solver " + r.solver.status : ""}${r.solver.gap != null ? " · gap " + (100 * r.solver.gap).toFixed(2) + " %" : ""}`;
+    const engineLabel=r.solver.engine==='comparison_result'?'Referencia':r.solver.engine==='diverse_dijkstra'?'Corredor diversificado':r.solver.engine;
+    note.textContent = `${r.status} · ${r.distance_m === null ? "sin recorrido" : (r.distance_m / 1000).toFixed(2) + " km"} · ${r.stops.length} recargas${engineLabel ? " · " + engineLabel : ""}${r.solver.status ? " · solver " + r.solver.status : ""}${r.solver.gap != null ? " · gap " + (100 * r.solver.gap).toFixed(2) + " %" : ""}`;
     card.append(note);
+    if(r.diversity){const shared=document.createElement('p');shared.textContent=r.solver.engine==='comparison_result'?'Circuito de referencia · resultado original de la técnica.':`Corredor alternativo · hasta ${(100*r.diversity.max_shared_transit).toFixed(0)} % de tránsito compartido con los anteriores.`;card.append(shared);}
     if (r.solver.reason) {
       const error = document.createElement("p");
       error.textContent = r.solver.reason;
@@ -584,34 +603,35 @@ function renderResults() {
     $("results").append(card);
     if (r.status === "ready") $("chosen").append(new Option(r.label, key));
   }
-  if (result.recommended.length) $("chosen").value = result.recommended[0];
+  const recommended=displayedRecommended();
+  $('chosen').value=available[previousChoice]?.status==='ready'?previousChoice:recommended[0]||'';
+  $('diversity-note').textContent=$('route-mode').value==='alternatives'?`${result.diversity.count} circuitos diferentes. Comparten el barrido del objetivo; el tránsito se compara con tolerancia de 12 m.${result.diversity.reason?' '+result.diversity.reason:''}`:'Resultados originales por técnica. Si coinciden en el óptimo, pueden compartir exactamente el mismo recorrido.';
+  markSelection();refreshPlaybackControls();
+  if(view3d)terrainView?.focusRoutes();else if(Object.keys(routes).length)map.fitBounds(L.featureGroup(Object.values(routes)).getBounds().pad(.15),{maxZoom:17});
   $("network").textContent =
     `≤ ${result.network.max_horizontal_link_m.toFixed(0)} m`;
   update3d();
 }
-function update3d() {
-  if (!terrainView || !result) return;
-  const lines = Object.entries(result.routes)
-    .filter(([k, r]) => visible[k] && r.coordinates_utm?.length)
-    .map(([k, r]) => ({ points: r.coordinates_utm, color: rgb(colors[k]) }));
-  for (const station of result.stations)
-    lines.push({
-      points: [station.position_utm],
-      color: [0.9, 0.65, 0.1],
-      point: true,
-    });
-  for (const threat of result.threats)
-    if (
-      threat.position_utm &&
-      (!$("active-only").checked || activeIds.has(threat.id))
-    )
-      lines.push({
-        points: [threat.position_utm],
-        color: [0.8, 0.25, 0.15],
-        point: true,
-      });
-  terrainView.setRoutes(lines);
+function meshHeight(x,y){const m=model?.terrain;if(!m)return 0;const i=Math.max(0,Math.min(m.width-1,Math.round((x-m.origin_utm[0])/(m.x[1]-m.x[0])))),j=Math.max(0,Math.min(m.height-1,Math.round((y-m.origin_utm[1])/(m.y[1]-m.y[0]))));return m.elevations[j*m.width+i]??0;}
+function targetPoints(){if(!target)return [];return target.coordinates[0].map(c=>{const [x,y]=projectUTM(c);return [x,y,meshHeight(x,y)];});}
+function update3d(){
+ if(!terrainView)return;const lines=[];
+ if(fresh&&result){for(const [key,r] of Object.entries(displayedRoutes()))if(visible[key]&&r.coordinates_utm?.length)lines.push({points:r.coordinates_utm,color:rgb(colors[key]),width:key===$('chosen').value?4:2});
+ for(const station of result.stations)lines.push({points:[station.position_utm],color:[.9,.65,.1],point:true});
+ for(const threat of result.threats)if(threat.position_utm&&(!$('active-only').checked||activeIds.has(threat.id)))lines.push({points:[threat.position_utm],color:[.8,.25,.15],point:true});}
+ if(target){const points=targetPoints(),outline=[];for(let i=1;i<points.length;i++){const a=points[i-1],b=points[i],count=Math.max(1,Math.ceil(Math.hypot(b[0]-a[0],b[1]-a[1])/15));for(let j=0;j<count;j++){const t=j/count,x=a[0]+(b[0]-a[0])*t,y=a[1]+(b[1]-a[1])*t;outline.push([x,y,meshHeight(x,y)+3]);}}outline.push(points.at(-1));lines.push({points:outline,color:[.85,.35,.08],width:3,target:true});}
+ if(fire){const [x,y]=projectUTM(fire);lines.push({points:[[x,y,meshHeight(x,y)+8]],color:[1,.2,.05],point:true});}
+ terrainView.setRoutes(lines);
 }
+function exitDroneView(){terrainView?.setFirstPerson(false);$('drone-view').setAttribute('aria-pressed','false');$('fpv-hud').hidden=true;}
+function focusTarget(){if(!target)return;exitDroneView();$('follow-drone').checked=false;if(view3d&&terrainView)terrainView.focusPoints(targetPoints(),'target');else map.fitBounds(L.geoJSON(target).getBounds().pad(.4),{maxZoom:18});$('focus-target').dataset.view=view3d?'3d':'2d';}
+$('focus-target').onclick=focusTarget;
+function markSelection(){for(const card of document.querySelectorAll('.route-card'))card.classList.toggle('selected',card.dataset.route===$('chosen').value);for(const [key,line] of Object.entries(routes)){line.setStyle({weight:key===$('chosen').value?6:3,opacity:key===$('chosen').value?1:.65});if(key===$('chosen').value)line.bringToFront();}update3d();}
+function changeRoute(){playing=false;simulation=null;flightLayer.clearLayers();drone=null;terrainView?.setMarker(null);exitDroneView();clock=0;markSelection();refreshPlaybackControls();$('flight').textContent='Ruta seleccionada. Pulsa Reproducir para iniciar desde la base.';}
+$('chosen').onchange=changeRoute;
+$('route-mode').onchange=()=>{if(!result||!fresh)return;changeRoute();renderResults();};
+function setRouteVisibility(all){for(const [key,layer] of Object.entries(routes)){const show=all||key===$('chosen').value;visible[key]=show;const input=$(`show-${key}`);if(input)input.checked=show;show?layer.addTo(map):map.removeLayer(layer);}update3d();}
+$('show-selected').onclick=()=>setRouteVisibility(false);$('show-all').onclick=()=>setRouteVisibility(true);
 function refreshUnknown() {
   uncertaintyLayer.clearLayers();
   for (const threat of result?.threats || [])
@@ -709,7 +729,8 @@ $("active-only").onchange = refreshSources;
 $("commune").onchange = refreshSources;
 let loading3d = false,
   sceneRender;
-$("view-toggle").onclick = async () => {
+async function setView3d(enabled) {
+  if(enabled===!!view3d)return true;
   if (loading3d || !model) return;
   if (!view3d && !terrainView) {
     loading3d = true;
@@ -727,7 +748,7 @@ $("view-toggle").onclick = async () => {
       $("view-toggle").disabled = false;
     }
   }
-  view3d = !view3d;
+  view3d = enabled;
   $("terrain").hidden = !view3d;
   $("map").hidden = view3d;
   for (const id of ["terrain-help", "terrain-legend", "terrain-credit"])
@@ -753,99 +774,72 @@ $("view-toggle").onclick = async () => {
     } catch (e) {
       message(e.message, true);
     }
-  } else map.invalidateSize();
-};
-$("simulate").onclick = async () => {
-  playing = false;
-  try {
-    message("Sorteando amenazas y verificando retorno…");
-    simulation = await api("/api/aereo/patrullaje/simular", {
-      sha256: result.sha256,
-      method: $("chosen").value,
-      seed: Number($("seed").value),
-      fire,
-    });
-    activeIds = new Set(simulation.active_threat_ids);
-    refreshSources();
-    flightLayer.clearLayers();
-    drone = L.marker(
-      [
-        simulation.timeline[0].coordinates[1],
-        simulation.timeline[0].coordinates[0],
-      ],
-      {
-        icon: L.divIcon({
-          className: "drone-icon",
-          html: "✥",
-          iconSize: [28, 28],
-          iconAnchor: [14, 14],
-        }),
-      },
-    ).addTo(flightLayer);
-    const returns = simulation.timeline.filter((f) => f.phase === "return");
-    if (returns.length)
-      L.polyline(
-        returns.map((f) => [f.coordinates[1], f.coordinates[0]]),
-        { color: "#d45732", weight: 3, dashArray: "6 4" },
-      ).addTo(flightLayer);
-    $("log").replaceChildren();
-    const li = document.createElement("li");
-    li.textContent = `Semilla ${simulation.seed}: ${simulation.active_threat_ids.length} amenazas activadas. Distribución uniforme [0,100).`;
-    $("log").append(li);
-    logged = false;
-    frame = 0;
-    clock = 0;
-    lastFrame = 0;
-    playing = true;
-    $("pause").disabled = false;
-    $("pause").textContent = "Pausar";
-    $("replan").disabled = false;
-    message(`Simulación lista: ${simulation.status}.`);
-  } catch (e) {
-    message(e.message, true);
-  }
-};
-$("pause").onclick = () => {
-  playing = !playing;
-  lastFrame = 0;
-  $("pause").textContent = playing ? "Pausar" : "Continuar";
-};
-function animate(now) {
-  requestAnimationFrame(animate);
-  if (!simulation || !playing) return;
-  if (lastFrame) clock += ((now - lastFrame) / 1000) * Number($("speed").value);
-  lastFrame = now;
-  const first = simulation.timeline[0].time_s;
-  while (
-    frame < simulation.timeline.length - 1 &&
-    simulation.timeline[frame + 1].time_s <= clock + first
-  )
-    frame++;
-  const f = simulation.timeline[frame];
-  drone?.setLatLng([f.coordinates[1], f.coordinates[0]]);
-  terrainView?.setMarker(f.position_utm);
-  $("flight").textContent =
-    `${f.phase.toUpperCase()} · ${(f.time_s / 60).toFixed(1)} min\nBatería útil ${f.battery_pct.toFixed(1)} % · altura ${f.coordinates[2].toFixed(1)} m EGM2008`;
-  $("progress").value = (100 * frame) / (simulation.timeline.length - 1);
-  if (
-    !logged &&
-    simulation.detection &&
-    f.time_s >= simulation.detection.detected_at_s
-  ) {
-    logged = true;
-    const li = document.createElement("li");
-    li.textContent = `Foco detectado: ${simulation.detection.fire_coordinates.map((v) => v.toFixed(5)).join(", ")}. Verificación y reporte: 60 s. Regreso iniciado.`;
-    $("log").append(li);
-  }
-  if (frame === simulation.timeline.length - 1) {
-    playing = false;
-    const li = document.createElement("li");
-    li.textContent = `Fin: ${simulation.status} · servicio ${simulation.mission_completed ? "cumplido" : "interrumpido"}.`;
-    $("log").append(li);
-    $("pause").disabled = true;
-  }
+  } else {exitDroneView();map.invalidateSize();}
+  if(view3d&&target&&!fresh)focusTarget();
+  if(simulation)renderFlight(true);
+  return true;
+}
+$('view-toggle').onclick=()=>setView3d(!view3d);
+const phaseNames={takeoff:'Despegue',patrol:'Vigilancia',report:'Reporte del foco',return:'Regreso',landing:'Aterrizaje',landed:'En tierra',battery_swap:'Cambio de batería'};
+function refreshPlaybackControls(){
+ const ready=fresh&&!!displayedRoutes()[$('chosen').value]&&!calculating&&!simulationLoading;
+ $('play').disabled=!ready;$('simulate').disabled=!ready;$('replay-nominal').disabled=!ready;
+ for(const id of ['restart','finish-playback','seek','drone-view'])$(id).disabled=!simulation||simulationLoading||calculating;
+ $('pause').disabled=!simulation||!playing;$('play').textContent=simulation&&clock>=simulation.time_s?'↻ Repetir':'▶ Reproducir';
+ $('show-selected').disabled=!ready;$('show-all').disabled=!ready;
+ if(!simulation){$('seek').value=0;$('seek').max=1;$('playback-time').textContent='00:00 / 00:00';$('playback-state').textContent=ready?'Lista para despegar':'Selecciona una ruta';}
+}
+function updateFlightLog(sample){
+ const signature=`${sample.time_s>= (simulation.detection?.detected_at_s??Infinity)}:${sample.time_s>= (simulation.detection?.reported_at_s??Infinity)}:${sample.ended}`;
+ if(signature===lastLog)return;lastLog=signature;$('log').replaceChildren();
+ const add=text=>{const li=document.createElement('li');li.textContent=text;$('log').append(li);};
+ add(simulation.scenario==='nominal'?'Recorrido nominal sin sorteo de fallas.':`Semilla ${simulation.seed}: ${simulation.active_threat_ids.length} amenazas activadas. Distribución uniforme [0,100).`);
+ if(simulation.detection&&sample.time_s>=simulation.detection.detected_at_s)add(`Foco detectado: ${simulation.detection.fire_coordinates.map(v=>v.toFixed(5)).join(', ')}. Verificando durante 60 s.`);
+ if(simulation.detection&&sample.time_s>=simulation.detection.reported_at_s)add('Foco reportado. Regreso iniciado.');
+ if(sample.ended)add(`Fin: ${simulation.status} · servicio ${simulation.mission_completed?'cumplido':'interrumpido'}.`);
+}
+function renderFlight(force=false,now=performance.now()){
+ if(!simulation)return;const sample=sampleFlight(simulation.timeline,clock);if(!sample)return;
+ drone?.setLatLng([sample.coordinates[1],sample.coordinates[0]]);
+ if(view3d&&(force||now-lastRender>=70)){terrainView?.setFlightPose(sample.position_utm,sample.look_ahead,$('follow-drone').checked);lastRender=now;}
+ if(!view3d&&$('follow-drone').checked&&(force||now-lastFollow>250)){map.panTo([sample.coordinates[1],sample.coordinates[0]],{animate:false});lastFollow=now;}
+ $('flight').textContent=`${phaseNames[sample.phase]||sample.phase} · ${clockLabel(sample.time_s)} / ${clockLabel(simulation.time_s)}\nBatería útil ${sample.battery_pct.toFixed(1)} % · cota ${sample.coordinates[2].toFixed(1)} m EGM2008`;
+ $('progress').value=100*sample.time_s/Math.max(1,simulation.time_s);$('seek').max=simulation.time_s;$('seek').value=sample.time_s;
+ $('playback-time').textContent=`${clockLabel(sample.time_s)} / ${clockLabel(simulation.time_s)}`;$('playback-state').textContent=phaseNames[sample.phase]||sample.phase;
+ const dx=sample.look_ahead[0]-sample.position_utm[0],dy=sample.look_ahead[1]-sample.position_utm[1];
+ $('fpv-heading').textContent=`Rumbo ${((Math.atan2(dx,dy)*180/Math.PI+360)%360).toFixed(0)}°`;$('fpv-height').textContent=`Cota ${sample.coordinates[2].toFixed(0)} m`;$('fpv-battery').textContent=`Batería ${sample.battery_pct.toFixed(0)} %`;
+ $('fpv-hud').hidden=!view3d||$('drone-view').getAttribute('aria-pressed')!=='true';updateFlightLog(sample);
+ $('player').dataset.time=sample.time_s.toFixed(2);$('player').dataset.phase=sample.phase;$('player').dataset.playing=String(playing);
+}
+async function preparePlayback(scenario,autoplay=true){
+ if(simulationLoading||calculating||!fresh)return;
+ playing=false;simulationLoading=true;refreshPlaybackControls();message(scenario==='nominal'?'Preparando el recorrido desde la base…':'Sorteando amenazas y verificando retorno…');
+ const revision=configurationRevision,chosen=$('chosen').value,set=$('route-mode').value;
+ try{const answer=await api('/api/aereo/patrullaje/simular',{sha256:result.sha256,method:chosen,route_set:set,scenario,seed:Number($('seed').value),fire});
+ if(revision!==configurationRevision||chosen!==$('chosen').value||set!==$('route-mode').value)return;
+ simulation=answer;activeIds=new Set(simulation.active_threat_ids);refreshSources();flightLayer.clearLayers();
+ const first=simulation.timeline[0];drone=L.marker([first.coordinates[1],first.coordinates[0]],{icon:L.divIcon({className:'drone-icon',html:'✥',iconSize:[28,28],iconAnchor:[14,14]})}).addTo(flightLayer);
+ const returns=simulation.timeline.filter(f=>f.phase==='return');if(returns.length)L.polyline(returns.map(f=>[f.coordinates[1],f.coordinates[0]]),{color:'#d45732',weight:3,dashArray:'6 4'}).addTo(flightLayer);
+ clock=0;lastFrame=0;lastLog='';playing=autoplay;$('replan').disabled=scenario==='nominal';renderFlight(true);
+ message(scenario==='nominal'?'Recorrido listo: despegue, vigilancia y aterrizaje.':`Simulación lista: ${simulation.status}.`);
+ }catch(e){message(e.message,true);}finally{simulationLoading=false;refreshPlaybackControls();}
+}
+$('simulate').onclick=()=>preparePlayback('sampled');$('replay-nominal').onclick=()=>preparePlayback('nominal',false);
+$('play').onclick=async()=>{if(!simulation)return preparePlayback('nominal');if(clock>=simulation.time_s)clock=0;playing=true;lastFrame=0;refreshPlaybackControls();renderFlight(true);};
+$('pause').onclick=()=>{playing=false;lastFrame=0;refreshPlaybackControls();renderFlight(true);};
+function seekFlight(seconds){if(!simulation)return;clock=Math.max(0,Math.min(seconds,simulation.time_s));playing=false;lastFrame=0;refreshPlaybackControls();renderFlight(true);}
+$('restart').onclick=()=>seekFlight(0);$('finish-playback').onclick=()=>seekFlight(simulation?.time_s||0);$('seek').oninput=()=>seekFlight(Number($('seek').value));
+$('follow-drone').onchange=()=>renderFlight(true);
+$('drone-view').onclick=async()=>{if(!simulation)return;if($('drone-view').getAttribute('aria-pressed')==='true'){exitDroneView();return;}if(!await setView3d(true))return;const sample=sampleFlight(simulation.timeline,clock);terrainView.setFlightPose(sample.position_utm,sample.look_ahead,false);terrainView.setFirstPerson(true);$('drone-view').setAttribute('aria-pressed','true');renderFlight(true);};
+function animate(now){requestAnimationFrame(animate);if(!simulation||!playing)return;if(lastFrame)clock=Math.min(simulation.time_s,clock+(now-lastFrame)/1000*Number($('speed').value));lastFrame=now;
+ if(clock>=simulation.time_s){playing=false;refreshPlaybackControls();renderFlight(true,now);}else renderFlight(false,now);
 }
 requestAnimationFrame(animate);
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&playing){playing=false;lastFrame=0;refreshPlaybackControls();}});
+function redrawVertices(){$('finish').disabled=vertices.length<3;$('draw-tools').dataset.vertices=vertices.length;$('area-status').textContent=`${vertices.length} vértices · cierra el polígono al terminar.`;selection.clearLayers();L.polyline(vertices.map(p=>[p[1],p[0]]),{color:'#31683d'}).addTo(selection);for(const v of vertices)L.circleMarker([v[1],v[0]],{radius:4}).addTo(selection);}
+$('undo-vertex').onclick=()=>{if(mode==='polygon'){vertices.pop();redrawVertices();}};
+$('cancel-draw').onclick=()=>{mode='';vertices=[];$('finish').disabled=true;$('draw-tools').hidden=true;selection.clearLayers();if(target)L.geoJSON(target,{style:{color:'#255e40',weight:2,fillOpacity:.15}}).addTo(selection);$('area-status').textContent=target?'Se conserva el objetivo anterior.':'Dibuja un polígono dentro de vigilancia.';message('Edición cancelada.');};
+document.addEventListener('keydown',e=>{if(['INPUT','SELECT','TEXTAREA','BUTTON'].includes(document.activeElement.tagName))return;if(e.key==='Escape'){if(mode)$('cancel-draw').click();else exitDroneView();}if(mode==='polygon'&&(e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){e.preventDefault();$('undo-vertex').click();}if(e.code==='Space'&&fresh&&!mode){e.preventDefault();playing?$('pause').click():$('play').click();}});
 $("replan").onclick = async () => {
   if (!simulation) return;
   for (const threat of result.threats)
@@ -962,7 +956,7 @@ for (const id of [
           "Recurrencia A4": sourceLayers.A4,
           "Amenazas sintéticas": eventsLayer,
         },
-        { collapsed: false },
+        { collapsed: true },
       )
       .addTo(map);
     const communes = new Set(

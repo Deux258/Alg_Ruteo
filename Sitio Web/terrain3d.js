@@ -11,6 +11,7 @@ export class TerrainView {
     this.marker = null;
     this.groups = {};
     this.visibility = {};
+    this.firstPerson=false;this.flightPose=null;this.fpvYaw=0;this.fpvPitch=-.18;this.fov=70;
     const gl = (this.gl = canvas.getContext("webgl", {
       antialias: true,
       preserveDrawingBuffer: true,
@@ -26,7 +27,7 @@ export class TerrainView {
     };
     const vs = shader(
       gl.VERTEX_SHADER,
-      `attribute vec3 position;attribute vec3 color;varying vec3 tint;uniform vec3 center;uniform vec4 camera;uniform float aspect;void main(){vec3 p=position-center;float x=cos(camera.x)*p.x-sin(camera.x)*p.y;float y=sin(camera.x)*p.x+cos(camera.x)*p.y;gl_Position=vec4(x*camera.z,(y*sin(camera.y)+p.z*cos(camera.y))*camera.z*aspect,(y*cos(camera.y)-p.z*sin(camera.y))*camera.z*.15,1.);gl_PointSize=13.;tint=color;}`,
+      `attribute vec3 position;attribute vec3 color;varying vec3 tint;uniform vec3 center;uniform vec4 camera;uniform float aspect;uniform bool firstPerson;uniform vec3 eye;uniform vec3 forward;uniform vec3 right;uniform vec3 up;uniform float focal;void main(){if(firstPerson){vec3 p=position-eye;float z=dot(p,forward);gl_Position=vec4(dot(p,right)*focal/aspect,dot(p,up)*focal,1.000100005*z-2.000100005,z);}else{vec3 p=position-center;float x=cos(camera.x)*p.x-sin(camera.x)*p.y;float y=sin(camera.x)*p.x+cos(camera.x)*p.y;gl_Position=vec4(x*camera.z,(y*sin(camera.y)+p.z*cos(camera.y))*camera.z*aspect,(y*cos(camera.y)-p.z*sin(camera.y))*camera.z*.15,1.);}gl_PointSize=13.;tint=color;}`,
     );
     const fs = shader(
       gl.FRAGMENT_SHADER,
@@ -44,6 +45,9 @@ export class TerrainView {
       center: gl.getUniformLocation(program, "center"),
       camera: gl.getUniformLocation(program, "camera"),
       aspect: gl.getUniformLocation(program, "aspect"),
+      firstPerson:gl.getUniformLocation(program,'firstPerson'),eye:gl.getUniformLocation(program,'eye'),
+      forward:gl.getUniformLocation(program,'forward'),right:gl.getUniformLocation(program,'right'),
+      up:gl.getUniformLocation(program,'up'),focal:gl.getUniformLocation(program,'focal'),
     };
     const vertices = [];
     const { width, height, x, y, elevations } = mesh;
@@ -114,7 +118,8 @@ export class TerrainView {
       if (!drag) return;
       const dx = e.clientX - drag.x,
         dy = e.clientY - drag.y;
-      if (drag.pan) {
+      if(this.firstPerson){this.fpvYaw-=dx*.005;this.fpvPitch=Math.max(-1.2,Math.min(.8,this.fpvPitch+dy*.004));}
+      else if (drag.pan) {
         const scale = ((this.extent / this.zoom) * 2) / canvas.clientWidth;
         const c = Math.cos(this.yaw),
           s = Math.sin(this.yaw),
@@ -135,6 +140,7 @@ export class TerrainView {
       "wheel",
       (e) => {
         e.preventDefault();
+        if(this.firstPerson){this.fov=Math.max(40,Math.min(100,this.fov+e.deltaY*.025));this.draw();return;}
         this.zoom = Math.max(
           0.3,
           Math.min(60, this.zoom * Math.exp(-e.deltaY * 0.001)),
@@ -179,7 +185,7 @@ export class TerrainView {
     this.draw();
   }
   focusRoutes() {
-    const points = this.lines.filter((l) => !l.point).flatMap((l) => l.points);
+    const points = this.lines.filter((l) => !l.point&&!l.target).flatMap((l) => l.points);
     if (!points.length) return;
     const ox = this.mesh.origin_utm[0],
       oy = this.mesh.origin_utm[1];
@@ -217,6 +223,18 @@ export class TerrainView {
   }
   setMarker(position) {
     this.marker = position;
+    this.draw();
+  }
+  focusPoints(points,kind='target'){
+    if(!points.length)return;this.firstPerson=false;
+    const xs=points.map(p=>p[0]-this.mesh.origin_utm[0]),ys=points.map(p=>p[1]-this.mesh.origin_utm[1]);
+    this.center=[(Math.min(...xs)+Math.max(...xs))/2,(Math.min(...ys)+Math.max(...ys))/2,points.reduce((s,p)=>s+p[2],0)/points.length];
+    this.extent=Math.max(350,Math.max(...xs)-Math.min(...xs)+200,Math.max(...ys)-Math.min(...ys)+200);this.zoom=1.4;this.focused=true;this.canvas.dataset.focus=kind;this.draw();
+  }
+  setFirstPerson(enabled){this.firstPerson=!!enabled;if(enabled){this.fpvYaw=0;this.fpvPitch=-.18;}this.draw();}
+  setFlightPose(position,ahead,follow=false){
+    this.marker=position;this.flightPose={position,ahead};
+    if(follow&&!this.firstPerson)this.center=[position[0]-this.mesh.origin_utm[0],position[1]-this.mesh.origin_utm[1],position[2]-35];
     this.draw();
   }
   bind(buffer) {
@@ -258,6 +276,13 @@ export class TerrainView {
       0,
     );
     gl.uniform1f(this.locations.aspect, width / height);
+    const fpv=this.firstPerson&&this.flightPose;
+    gl.uniform1i(this.locations.firstPerson,fpv?1:0);c.dataset.camera=fpv?'drone':'orbit';
+    if(fpv){const {position:p,ahead:a}=this.flightPose,heading=Math.atan2(a[1]-p[1],a[0]-p[0])+this.fpvYaw;
+      const forward=[Math.cos(heading)*Math.cos(this.fpvPitch),Math.sin(heading)*Math.cos(this.fpvPitch),Math.sin(this.fpvPitch)],right=[Math.sin(heading),-Math.cos(heading),0],up=[right[1]*forward[2],-right[0]*forward[2],right[0]*forward[1]-right[1]*forward[0]];
+      gl.uniform3f(this.locations.eye,p[0]-m.origin_utm[0],p[1]-m.origin_utm[1],p[2]+1.2);
+      gl.uniform3f(this.locations.forward,...forward);gl.uniform3f(this.locations.right,...right);gl.uniform3f(this.locations.up,...up);gl.uniform1f(this.locations.focal,1/Math.tan(this.fov*Math.PI/360));
+    }
     this.bind(this.terrain.buffer);
     gl.drawArrays(this.terrain.mode, 0, this.terrain.count);
     let rendered = 0;
@@ -273,6 +298,7 @@ export class TerrainView {
       .filter((k) => this.visibility[k])
       .join(",");
     for (const line of this.lines) {
+      if(fpv&&!line.target&&!line.point)continue;
       const data = [];
       const add = (p) =>
         data.push(
@@ -289,8 +315,8 @@ export class TerrainView {
             b = line.points[i],
             d = Math.hypot(b[0] - a[0], b[1] - a[1]);
           if (!d) continue;
-          const dx = (-(b[1] - a[1]) / d) * 1.5,
-            dy = ((b[0] - a[0]) / d) * 1.5;
+          const dx = (-(b[1] - a[1]) / d) * (line.width||1.5),
+            dy = ((b[0] - a[0]) / d) * (line.width||1.5);
           const v = [a[0] + dx, a[1] + dy, a[2]],
             w = [a[0] - dx, a[1] - dy, a[2]],
             x = [b[0] + dx, b[1] + dy, b[2]],
@@ -301,7 +327,7 @@ export class TerrainView {
       gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(data), gl.DYNAMIC_DRAW);
       gl.drawArrays(line.point ? gl.POINTS : gl.TRIANGLES, 0, data.length / 6);
     }
-    if (this.marker) {
+    if (this.marker&&!fpv) {
       const p = this.marker;
       this.bind(this.dynamic);
       gl.bufferData(

@@ -23,6 +23,7 @@ def main():
         context=browser.new_context(viewport={'width':1440,'height':1000},**recording)
         page=context.new_page();page.on('pageerror',lambda e:errors.append(str(e)))
         page.goto(args.url);page.wait_for_load_state('networkidle')
+        page.locator('#route-mode').select_option('comparison')
         page.locator('#demo').click()
         page.get_by_text('Perfil de vuelo · Mavic 3T',exact=True).click()
         page.locator('#battery').fill('130')

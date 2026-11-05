@@ -1,0 +1,12 @@
+✔ Continuous interpolation follows physical seconds and clamps both ends (1.4758ms)
+✔ Battery swap holds on the ground and resets at the swap endpoint (0.1649ms)
+✔ UTM target centering matches EPSG:32719 reference at the origin (0.5543ms)
+✔ Return heading remains defined at the end and stationary frames (0.1656ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 74.7054

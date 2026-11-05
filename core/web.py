@@ -115,6 +115,7 @@ class Handler(BaseHTTPRequestHandler):
                 '/vendor/leaflet.js':'vendor/leaflet.js','/vendor/leaflet.css':'vendor/leaflet.css'}
         static.update({f'/vendor/images/{name}':f'vendor/images/{name}' for name in ['layers.png','layers-2x.png','marker-icon.png','marker-icon-2x.png','marker-shadow.png']})
         static.update({'/patrullaje':'patrol.html','/patrol.js':'patrol.js','/patrol.css':'patrol.css','/terrain3d.js':'terrain3d.js','/fase2':'aerial.html'})
+        static['/flight-player.js']='flight-player.js'
         if os.getenv('PATROL_CONTEXT'):static['/']='patrol.html'
         if path in static:
             if path=='/' and not os.getenv('PATROL_CONTEXT'):

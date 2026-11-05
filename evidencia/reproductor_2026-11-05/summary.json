@@ -1,0 +1,108 @@
+{
+  "application": "http://127.0.0.1:18083",
+  "result_sha256": "6483ac2e54c684598d48f50351ee7b858d1fa1501952e260506abca1f4009044",
+  "code_sha256": "b565d6feb8e753149f24a438ea392ab65a7f11679cb429c3d6e9ed8784dc29ab",
+  "scene_sha256": "d89e9f14df2e66166d4d20f1a273e592f5d7571f1a6904535ce72439e3b762ea",
+  "tests": {
+    "python": 33,
+    "player": 4,
+    "ui": 44
+  },
+  "checks": {
+    "player": {
+      "target_focus_2d": true,
+      "four_different_circuits": true,
+      "geometrically_distinct_not_reversed": true,
+      "coverage_and_constraints": true,
+      "default_alternatives_view": true,
+      "four_original_methods_preserved": true,
+      "coincidence_explained": true,
+      "isolate_selected": true,
+      "nominal_start_and_land": true,
+      "pause_holds_clock": true,
+      "resume_continues_clock": true,
+      "seek_by_time": true,
+      "finish_lands": true,
+      "restart_at_ground": true,
+      "real_perspective_camera": true,
+      "fpv_no_webgl_error": true,
+      "target_focus_3d": true,
+      "target_focus_after_switch": true,
+      "draw_vertices_count": true,
+      "undo_vertex": true,
+      "cancel_restores_target": true,
+      "mobile_no_overflow": true,
+      "new_target_invalidates_old_flight": true
+    },
+    "regression": {
+      "example_polygon": true,
+      "four_routes": true,
+      "pgr_dijkstra": true,
+      "max_link_200m": true,
+      "gurobi_solution": true,
+      "complete_coverage": true,
+      "four_independent_checkboxes": true,
+      "webgl": true,
+      "fire_report_return": true,
+      "battery_nonnegative": true,
+      "random_closure_activated": true,
+      "interrupted_patrol_not_completed": true,
+      "alternative_after_failure": true,
+      "alternative_avoids_closure": true,
+      "download_probabilities": true,
+      "mobile_no_overflow": true
+    },
+    "battery": {
+      "real_station_budget": true,
+      "one_swap": true,
+      "completed": true,
+      "reset_only_at_station": true,
+      "nonnegative_battery": true
+    }
+  },
+  "alternatives": {
+    "alt_1": {
+      "time_s": 146.62993320110604,
+      "distance_m": 1242.881042703366,
+      "coverage_percent": 100.0000000000013,
+      "resilience": 0.816,
+      "max_shared_transit": 0
+    },
+    "alt_2": {
+      "time_s": 158.3521029248332,
+      "distance_m": 1340.5745963681695,
+      "coverage_percent": 100.0000000000013,
+      "resilience": 0.816,
+      "max_shared_transit": 0.4526381161233295
+    },
+    "alt_3": {
+      "time_s": 169.94415176944273,
+      "distance_m": 1456.3788494548196,
+      "coverage_percent": 100.0000000000013,
+      "resilience": 0.816,
+      "max_shared_transit": 0.22719044147981873
+    },
+    "alt_4": {
+      "time_s": 236.1635847674947,
+      "distance_m": 2100.4156016879333,
+      "coverage_percent": 100.0000000000013,
+      "resilience": 0.816,
+      "max_shared_transit": 0.4050972569506433
+    }
+  },
+  "diversity": {
+    "count": 4,
+    "requested": 4,
+    "max_shared_transit": 0.8,
+    "tolerance_m": 12,
+    "rejected_duplicates": 3,
+    "search_attempts": 24,
+    "compute_s": 3.522014119000005,
+    "status": "complete",
+    "time_limit_s": 15,
+    "reason": null,
+    "comparison_unchanged": true,
+    "maximum_time_s": 323.9338797619909
+  },
+  "video": null
+}

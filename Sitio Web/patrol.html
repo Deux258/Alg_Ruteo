@@ -31,6 +31,7 @@
             <button id="draw">Dibujar objetivo</button
             ><button id="finish" disabled>Cerrar polígono</button>
           </div>
+          <div class="buttons draw-tools" id="draw-tools" hidden><button id="undo-vertex">Deshacer vértice</button><button id="cancel-draw">Cancelar</button></div>
           <label class="file"
             >Importar polígono GeoJSON<input
               id="import"
@@ -114,6 +115,9 @@
             <h2>02 · Alternativas</h2>
             <span id="network" class="badge">—</span>
           </div>
+          <label for="route-mode">Mostrar rutas</label><select id="route-mode"><option value="alternatives">Circuitos diferentes</option><option value="comparison">Comparación de las cuatro técnicas</option></select>
+          <p id="diversity-note" class="muted">Los circuitos alternativos se validan por cobertura, batería y separación de corredores.</p>
+          <div class="buttons"><button id="show-selected" disabled>Solo la seleccionada</button><button id="show-all" disabled>Mostrar todas</button></div>
           <div id="results">
             <p class="muted">
               Las rutas se mostrarán junto a su cobertura, resiliencia y tiempo
@@ -179,7 +183,7 @@
           </details>
           <div class="buttons">
             <button id="simulate" disabled>Sortear y reproducir</button
-            ><button id="pause" disabled>Pausar</button>
+            ><button id="replay-nominal" disabled>Preparar sin sorteo</button>
           </div>
           <button id="replan" disabled>
             Replanificar con amenazas activadas
@@ -250,6 +254,12 @@
           hidden
           aria-label="Terreno y trayectorias 3D"
         ></canvas>
+        <div class="map-actions"><button id="focus-target" disabled title="Centrar el último polígono objetivo">⌖ Centrar objetivo</button></div>
+        <div id="player" class="player" aria-label="Reproductor de vuelo">
+          <div class="player-buttons"><button id="restart" disabled title="Ir al inicio">⏮ Inicio</button><button id="play" disabled>▶ Reproducir</button><button id="pause" disabled>⏸ Pausar</button><button id="finish-playback" disabled title="Ir al aterrizaje final">Fin ⏭</button><button id="drone-view" disabled aria-pressed="false">Vista del dron</button><label class="check"><input id="follow-drone" type="checkbox"> Seguir dron</label></div>
+          <div class="player-track"><output id="playback-time">00:00 / 00:00</output><input id="seek" aria-label="Posición de reproducción" type="range" min="0" max="1" step="0.1" value="0" disabled><span id="playback-state">Selecciona una ruta</span></div>
+        </div>
+        <div id="fpv-hud" hidden><span id="fpv-heading">Rumbo —</span><span id="fpv-height">Cota —</span><span id="fpv-battery">Batería —</span></div>
         <div class="map-label">
           <span class="dot"></span
           ><span id="view-label">MAPA 2D · OPENSTREETMAP</span>

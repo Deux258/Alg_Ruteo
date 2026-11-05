@@ -450,6 +450,7 @@ def fixed_route(order, states, graph, home, stations, metric):
                         if label['time_s']+duration > graph.p['mission_budget_s']:
                             continue
                         stop = dict(station_id=station['id'],coordinate_index=max(0,len(graph.coordinates(label['path']+leg))-1),
+                                    after_edge_count=len(label['path'])+len(leg),
                                     arrival_s=label['time_s']+t['time_s'],service_s=duration-t['time_s'])
                         next_queue.append(dict(node=station['node'],energy=takeoff,time_s=label['time_s']+duration,
                             cost=label['cost']+t[metric]+(duration-t['time_s'] if metric=='cost' else 0),
@@ -585,6 +586,7 @@ def gurobi_route(states, graph, home, stations):
                     action = actions[nxt]
                     if action['kind']=='station':
                         stops.append(dict(station_id=action['station']['id'],coordinate_index=max(0,len(graph.coordinates(route))-1),
+                                          after_edge_count=len(route),
                                           arrival_s=seconds,service_s=action['time_s']))
                     route.extend(action['path'])
                     seconds += action['time_s']
@@ -628,11 +630,11 @@ def coverage(path, graph, target):
 
 def evaluate_failures(routes, graph):
     rng = random.Random(graph.p['seed'])
-    survivors = {k:0 for k in METHODS}
+    survivors = {k:0 for k in routes}
     needed = {k:set(i for e in route.get('edge_ids',[]) for i in graph.edges[int(e)]['hazard_ids']) for k,route in routes.items()}
     # All draws are shared between algorithms; one event affects its whole footprint.
     sample, all_scenarios = [], []
-    sensitivity={str(f):{k:0 for k in METHODS} for f in (0.5,1,2)}
+    sensitivity={str(f):{k:0 for k in routes} for f in (0.5,1,2)}
     catalogue = hashlib.sha256()
     for scenario in range(graph.p['scenarios']):
         draws = [rng.random()*100 for _ in graph.hazards.rows]
@@ -764,7 +766,9 @@ def calculate(model, request, conn=None, terrain_override=None):
                          distance_m=graph.totals(answer['path'])['distance_m'])
         route['compute_s'] = time.monotonic()-begin
         routes[method] = route
-    evaluation = evaluate_failures(routes,graph)
+    from core.patrol_alternatives import distinct_circuits
+    alternatives,diversity=distinct_circuits(graph,tasks,home,stations,target,routes)
+    evaluation = evaluate_failures({**routes,**alternatives},graph)
     viable = sorted((r for r in routes.values() if r['status']=='ready'),key=lambda r:(-r['resilience']['value'],round(r['time_s'],3),r['method']))
     leaders=[r['method'] for r in viable if r['resilience']['value']==viable[0]['resilience']['value']] if viable else []
     # Geometry exported for replay and recovery, separate from route candidate generation.
@@ -778,7 +782,9 @@ def calculate(model, request, conn=None, terrain_override=None):
     result = dict(schema_version='patrol-result-1',request=request,effective_profile=p,time=clock.isoformat(),weather=weather,
                   run_id=model.get('_run_id'),source_context_sha256=hashlib.sha256(canonical({k:v for k,v in model.items() if not k.startswith('_')})).hexdigest(),
                   terrain_sha256=getattr(graph.terrain,'source_sha256','fixture'),target_polygon=mapping(transform(INV,target)),
-                  origin=origin,stations=stations,routes=routes,recommended=[r['method'] for r in viable[:3]],resilience_leaders=leaders,evaluation=evaluation,
+                  origin=origin,stations=stations,routes=routes,route_alternatives=alternatives,diversity=diversity,
+                  alternative_recommended=[r['method'] for r in sorted(alternatives.values(),key=lambda r:(-r['resilience']['value'],r['time_s']))],
+                  recommended=[r['method'] for r in viable[:3]],resilience_leaders=leaders,evaluation=evaluation,
                   threats=threat_rows,failure_probabilities=graph.export_failures(),
                   graph=dict(nodes=[dict(id=str(i),coordinates=[*INV(c[0],c[1]),c[2]]) for i,c in graph.nodes.items()],edges=graph_rows,home=str(home)),
                   network=dict(nodes=len(graph.nodes),directed_edges=len(graph.edges),max_horizontal_link_m=max((e['horizontal_m'] for e in graph.edges.values()),default=0)),
@@ -838,18 +844,23 @@ def simulate(result, request, terrain_override=None):
     A failed link detected ahead triggers safe return from its source. This is
     explicitly an interrupted patrol, never counted as completed surveillance.
     """
-    method = request.get('method',result['recommended'][0] if result['recommended'] else '')
-    if method not in result['routes'] or result['routes'][method]['status']!='ready':
+    route_set=request.get('route_set','comparison')
+    if route_set not in ('comparison','alternatives'):raise ValueError('route_set debe ser comparison o alternatives')
+    available=result['routes'] if route_set=='comparison' else result.get('route_alternatives',{})
+    method = request.get('method',next(iter(available),''))
+    if method not in available or available[method]['status']!='ready':
         raise ValueError('Elegir una ruta viable para simular')
     p = result['effective_profile']
     seed=request.get('seed',p['seed'])
     if type(seed) is not int or not 0<=seed<2**31:
         raise ValueError('seed requiere un entero entre 0 y 2147483647')
+    scenario=request.get('scenario','sampled')
+    if scenario not in ('sampled','nominal'):raise ValueError('scenario debe ser sampled o nominal')
     rng = random.Random(seed)
     active,draws = set(),[]
     for threat in result['threats']:
         value = rng.random()*100
-        occurs = value<threat['probability_pct']
+        occurs = scenario=='sampled' and value<threat['probability_pct']
         draws.append(dict(id=threat['id'],draw=value,probability_pct=threat['probability_pct'],active=occurs))
         if occurs:
             active.add(threat['id'])
@@ -869,7 +880,7 @@ def simulate(result, request, terrain_override=None):
     fire_z = t.at(*fire_xy) if fire else None
     if fire is not None and fire_z is None:
         raise ValueError('Foco sin elevación; detección desconocida')
-    route = result['routes'][method]
+    route = available[method]
     edges = {e['id']:dict(e) for e in result['graph']['edges']}
     nodes = {n['id']:n['coordinates'] for n in result['graph']['nodes']}
     def sample_edge(edge):
@@ -892,23 +903,49 @@ def simulate(result, request, terrain_override=None):
     initial_ascent = p['altitude_agl_m']/p['climb_ms']
     elapsed = initial_ascent
     remaining = p['battery_budget_s']-initial_ascent
-    timeline = [dict(coordinates=nodes[home],time_s=elapsed,battery_pct=100*remaining/p['battery_budget_s'],phase='patrol')]
+    ground=[*nodes[home][:2],nodes[home][2]-p['altitude_agl_m']]
+    timeline = [dict(coordinates=ground,time_s=0.,battery_pct=100.,phase='takeoff'),
+                dict(coordinates=nodes[home],time_s=elapsed,battery_pct=100*remaining/p['battery_budget_s'],phase='patrol')]
     current = home
     detection = None
     interrupted = False
     coordinate_index = 0
     station_stops = {s['coordinate_index']:s for s in route['stops']}
+    edge_stops={s['after_edge_count']:s for s in route['stops'] if 'after_edge_count' in s}
     used_stations = set()
+    wind_angle=math.radians(result['weather']['wind_direction_deg'])
+    wx=-result['weather']['wind_speed_ms']*math.sin(wind_angle)
+    wy=-result['weather']['wind_speed_ms']*math.cos(wind_angle)
+    def segment_times(points):
+        values=[]
+        for a,b in zip(points,points[1:]):
+            ax,ay=FWD(*a[:2]);bx,by=FWD(*b[:2]);dx,dy=bx-ax,by-ay;horizontal=math.hypot(dx,dy);dz=b[2]-a[2]
+            vertical=abs(dz)/(p['climb_ms'] if dz>=0 else p['descent_ms'])
+            if horizontal<1e-7:values.append(vertical);continue
+            along=(wx*dx+wy*dy)/horizontal;cross=(wx*dy-wy*dx)/horizontal
+            speed=math.sqrt(max(0,p['cruise_ms']**2-cross**2))+along
+            values.append(max(horizontal/max(speed,1e-9),vertical))
+        return values
     def append_points(points,seconds,phase):
         nonlocal elapsed,remaining
-        lengths = [math.dist(FWD(*a[:2]),FWD(*b[:2])) for a,b in zip(points,points[1:])]
+        lengths = segment_times(points)
         total = sum(lengths)
         for c,length in zip(points[1:],lengths):
             dt = seconds*length/total if total else 0
             elapsed += dt
             remaining -= dt
             timeline.append(dict(coordinates=c,time_s=elapsed,battery_pct=max(0,100*remaining/p['battery_budget_s']),phase=phase))
-    for ident in route['edge_ids']:
+    def battery_swap(duration):
+        nonlocal elapsed,remaining
+        last=timeline[-1]['coordinates'];ground=[last[0],last[1],last[2]-p['altitude_agl_m']]
+        landing=p['altitude_agl_m']/p['descent_ms'];elapsed+=landing;remaining-=landing
+        timeline.append(dict(coordinates=ground,time_s=elapsed,battery_pct=max(0,100*remaining/p['battery_budget_s']),phase='battery_swap'))
+        elapsed+=max(0,duration-landing-initial_ascent)
+        remaining=p['battery_budget_s']
+        timeline.append(dict(coordinates=ground,time_s=elapsed,battery_pct=100.,phase='takeoff'))
+        elapsed+=initial_ascent;remaining-=initial_ascent
+        timeline.append(dict(coordinates=last,time_s=elapsed,battery_pct=100*remaining/p['battery_budget_s'],phase='patrol'))
+    for completed_edges,ident in enumerate(route['edge_ids'],1):
         e = edges[ident]
         if active.intersection(e['hazard_ids']):
             interrupted = True
@@ -923,7 +960,7 @@ def simulate(result, request, terrain_override=None):
                     hit = k
                     break
         if hit is not None:
-            distances = [math.dist(FWD(*a[:2]),FWD(*b[:2])) for a,b in zip(points,points[1:])]
+            distances = segment_times(points)
             fraction = sum(distances[:hit])/sum(distances) if sum(distances) else 0
             append_points(points[:hit+1],e['time_s']*fraction,'patrol')
             elapsed += p['verification_s']
@@ -935,7 +972,7 @@ def simulate(result, request, terrain_override=None):
             reverse = next((r for r in edges.values() if r['source']==e['target'] and r['target']==e['source']),None)
             # Both residual arcs preserve their original wind-dependent durations.
             for name,target,coords,duration in [('ahead',e['target'],suffix,e['time_s']*(1-fraction)),
-                                               ('behind',e['source'],list(reversed(points[:hit+1])),reverse['time_s']*fraction if reverse else math.inf)]:
+                                               ('behind',e['source'],list(reversed(points[:hit+1])),sum(segment_times(list(reversed(points[:hit+1])))) if reverse else math.inf)]:
                 if not math.isfinite(duration):
                     continue
                 edge_id = f'split-{name}'
@@ -950,12 +987,11 @@ def simulate(result, request, terrain_override=None):
         append_points(points,e['time_s'],'patrol')
         coordinate_index += len(points)-1
         current = e['target']
-        if coordinate_index in station_stops:
-            stop = station_stops[coordinate_index]
-            elapsed += stop['service_s']
-            remaining = p['battery_budget_s']-initial_ascent
+        stop=edge_stops.get(completed_edges)
+        if stop is None and not edge_stops:stop=station_stops.get(coordinate_index)
+        if stop is not None:
+            battery_swap(stop['service_s'])
             used_stations.add(stop['station_id'])
-            timeline.append(dict(coordinates=nodes[current],time_s=elapsed,battery_pct=100*remaining/p['battery_budget_s'],phase='battery_swap'))
     landing = p['altitude_agl_m']/p['descent_ms']
     state = 'completed'
     returned_to='origin'
@@ -999,9 +1035,7 @@ def simulate(result, request, terrain_override=None):
             stops = {i:(duration,ident) for i,duration,ident in stops}
             for j,i in enumerate(path):
                 if j in stops:
-                    elapsed += stops[j][0]
-                    remaining = p['battery_budget_s']-initial_ascent
-                    timeline.append(dict(coordinates=timeline[-1]['coordinates'],time_s=elapsed,battery_pct=100*remaining/p['battery_budget_s'],phase='battery_swap'))
+                    battery_swap(stops[j][0])
                 append_points(sample_edge(edges[i]),edges[i]['time_s'],'return')
             state = 'detected_and_returned' if detection else 'interrupted_and_returned'
     if state!='no_safe_return':
@@ -1011,7 +1045,7 @@ def simulate(result, request, terrain_override=None):
         timeline.append(dict(coordinates=[last[0],last[1],last[2]-p['altitude_agl_m']],time_s=elapsed,battery_pct=max(0,100*remaining/p['battery_budget_s']),phase='landed'))
     for frame in timeline:
         frame['position_utm']=[*FWD(*frame['coordinates'][:2]),frame['coordinates'][2]]
-    return dict(schema_version='patrol-simulation-1',result_sha256=result['sha256'],method=method,
+    return dict(schema_version='patrol-simulation-2',result_sha256=result['sha256'],method=method,route_set=route_set,scenario=scenario,
                 seed=request.get('seed',p['seed']),draws=draws,active_threat_ids=sorted(active),timeline=timeline,
                 detection=detection,status=state,time_s=elapsed,mission_completed=state in ('completed','detected_and_returned'),
                 fire_found=detection is not None,patrol_completed=state=='completed',return_base_id=returned_to if state!='no_safe_return' else None,hypothetical=True)

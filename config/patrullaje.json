@@ -30,5 +30,10 @@
   "solver_gap": 0.01,
   "annealing_iterations": 10000,
   "coverage_cell_m": 30,
-  "max_tasks": 30
+  "max_tasks": 30,
+  "alternative_max_shared_transit": 0.8,
+  "alternative_corridor_tolerance_m": 12,
+  "alternative_max_time_factor": 1.8,
+  "alternative_max_time_slack_s": 60,
+  "alternative_search_seconds": 15
 }
