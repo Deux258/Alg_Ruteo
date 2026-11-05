@@ -1,0 +1,13 @@
+{
+  "checks": {
+    "osm_attribution": true,
+    "local_vector_attribution": true,
+    "no_remote_tiles_in_local_mode": true,
+    "mobile_no_overflow": true,
+    "latest_js_deployed": true,
+    "published_run_preserved": true
+  },
+  "errors": [],
+  "successful": true,
+  "video": null
+}

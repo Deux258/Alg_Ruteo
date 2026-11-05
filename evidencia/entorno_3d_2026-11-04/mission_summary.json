@@ -1,0 +1,81 @@
+{
+  "geographic_scene": {
+    "sha256": "d89e9f14df2e66166d4d20f1a273e592f5d7571f1a6904535ce72439e3b762ea",
+    "surface_sha256": "9f3982319ff8eaa1c9ad5b0617e412df7466e21fb69d814bc31b8de5854e1107",
+    "osm_sha256": "9a19064dbe6239ddda45f6013c7e7685d6f613007a2a3105641244a50afd929a",
+    "timestamp_osm_base": "2026-11-05T01:44:20Z",
+    "obstacle_count": 26501,
+    "height_model": "max(DSM, nearby DSM minimum + tagged/estimated height)"
+  },
+  "network": {
+    "nodes": 9788,
+    "directed_edges": 70932,
+    "max_horizontal_link_m": 163.12554125799642
+  },
+  "routes": {
+    "dijkstra_distance": {
+      "status": "ready",
+      "time_s": 146.62993320110604,
+      "coverage": {
+        "percent": 100.0000000000013,
+        "complete": true,
+        "cells": 63,
+        "covered_cells": 63,
+        "unknown_cells": 0,
+        "support_m": 30,
+        "pending_geometry": {
+          "type": "GeometryCollection",
+          "geometries": []
+        }
+      }
+    },
+    "dijkstra_weighted": {
+      "status": "ready",
+      "time_s": 146.62993320110604,
+      "coverage": {
+        "percent": 100.0000000000013,
+        "complete": true,
+        "cells": 63,
+        "covered_cells": 63,
+        "unknown_cells": 0,
+        "support_m": 30,
+        "pending_geometry": {
+          "type": "GeometryCollection",
+          "geometries": []
+        }
+      }
+    },
+    "gurobi": {
+      "status": "ready",
+      "time_s": 147.51859042971012,
+      "coverage": {
+        "percent": 100.0000000000013,
+        "complete": true,
+        "cells": 63,
+        "covered_cells": 63,
+        "unknown_cells": 0,
+        "support_m": 30,
+        "pending_geometry": {
+          "type": "GeometryCollection",
+          "geometries": []
+        }
+      }
+    },
+    "annealing": {
+      "status": "ready",
+      "time_s": 146.62993320110604,
+      "coverage": {
+        "percent": 100.0000000000013,
+        "complete": true,
+        "cells": 63,
+        "covered_cells": 63,
+        "unknown_cells": 0,
+        "support_m": 30,
+        "pending_geometry": {
+          "type": "GeometryCollection",
+          "geometries": []
+        }
+      }
+    }
+  }
+}

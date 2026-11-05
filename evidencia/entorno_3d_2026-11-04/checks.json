@@ -1,0 +1,60 @@
+{
+  "checks": {
+    "six_real_geographic_layers": true,
+    "source_sha_and_license": true,
+    "osm_base_and_credit": true,
+    "osm_tiles_loaded": true,
+    "height_estimates_disclosed": true,
+    "offline_local_base": true,
+    "webgl_geometry": true,
+    "webgl_no_error": true,
+    "independent_3d_layers": true,
+    "zoom_changes_render": true,
+    "four_terrain_aware_routes": true,
+    "same_obstacle_snapshot": true,
+    "links_up_to_200m": true,
+    "osm_returns_after_3d": true,
+    "export_all_layers": true,
+    "mobile_no_overflow": true
+  },
+  "counts": {
+    "buildings": 25148,
+    "water": 413,
+    "landcover": 1153,
+    "trees": 789,
+    "roads": 7171,
+    "contours": 500
+  },
+  "height_estimates": 25950,
+  "woodland_symbols": 12244,
+  "source": {
+    "attribution": "© OpenStreetMap contributors",
+    "attribution_url": "https://www.openstreetmap.org/copyright",
+    "bbox_wgs84": [
+      -71.68060489517181,
+      -33.1235212124161,
+      -71.53389219792024,
+      -33.027594120296605
+    ],
+    "bytes": 36962353,
+    "fallback_errors": [
+      {
+        "error": "<urlopen error [Errno 11001] getaddrinfo failed>",
+        "url": "https://overpass.private.coffee/api/interpreter"
+      }
+    ],
+    "fetched_at_utc": "2026-11-05T01:45:33.881060+00:00",
+    "file": "osm_9a19064dbe6239dd.json",
+    "http_status": 200,
+    "license": "ODbL 1.0",
+    "query": null,
+    "schema_version": "scene-acquisition-1",
+    "sha256": "9a19064dbe6239ddda45f6013c7e7685d6f613007a2a3105641244a50afd929a",
+    "timestamp_osm_base": "2026-11-05T01:44:20Z",
+    "url": "https://overpass-api.de/api/interpreter"
+  },
+  "scene_sha256": "d89e9f14df2e66166d4d20f1a273e592f5d7571f1a6904535ce72439e3b762ea",
+  "errors": [],
+  "video": null,
+  "successful": true
+}

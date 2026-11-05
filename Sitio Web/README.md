@@ -1,6 +1,11 @@
 # Interfaces de ruteo
 
-La interfaz activa es el **simulador aéreo de drones**, servido desde
+La interfaz activa es el **patrullaje poligonal**, servido desde `patrol.html`
+y `patrol.js`; `terrain3d.js` muestra el DSM con edificios, agua, cobertura,
+árboles, caminos y curvas locales. El mapa 2D incluye OpenStreetMap y una
+alternativa vectorial sin conexión. Ver [Entorno 3D](../docs/ENTORNO_3D.md).
+
+Las consultas aéreas puntuales anteriores siguen en `/fase2`, desde
 `aerial.html` y `aerial.js`. Su uso, API y limitaciones están documentados en
 [README general](../README.md) y [Datos aéreos](../docs/DATOS_AEREOS.md).
 Permite elegir ambos extremos, comparar misiones y simular bloqueos.

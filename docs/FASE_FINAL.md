@@ -44,12 +44,12 @@ El barrido divide el polígono en pasadas de hasta 150 m de separación y crea p
 de conexión separados por hasta 100 m. Cada pasada admite dos orientaciones. Las
 conexiones completas respetan el área de tránsito y las exclusiones conocidas.
 La cobertura evalúa una muestra por celda recortada de 30 m, ponderada por superficie,
-con radio horizontal supuesto de 100 m y línea de vista contra el DSM. Es cobertura
+con radio horizontal supuesto de 100 m y línea de vista contra el DSM y los obstáculos. Es cobertura
 muestreada, no una prueba de visibilidad de cada punto continuo del terreno. Los
 sectores pendientes se exportan en `pending_geometry` y no califican como misión lista.
 
 Se verifica el hash y CRS del Copernicus GLO-30 conservado. Los tramos se muestrean
-cada 15 m y su altura es `DSM + AGL`, inicialmente 60 m. Z se expresa en metros EGM2008,
+cada 15 m y en los cortes de obstáculos. Su altura es `superficie modelada + AGL`, inicialmente 60 m. Z se expresa en metros EGM2008,
 no altura elipsoidal GNSS. NoData impide utilizar el punto o enlace. El tiempo de cada
 subtramo es el máximo entre tiempo horizontal dirigido por viento y tiempo de ascenso
 o descenso, usando 6 m/s como límite vertical del perfil Mavic 3T. La meteorología
@@ -142,7 +142,10 @@ recalcular antes de simular. Se comprimen las respuestas JSON grandes.
 Hay controles independientes para las cuatro técnicas y hasta tres candidatas viables
 destacadas. Popups usan texto DOM para evitar interpretar datos como HTML. El checkbox
 de amenazas activadas filtra el escenario sorteado, conservando sus probabilidades.
-El terreno WebGL se genera localmente desde el DSM; no usa CDN ni requiere Maps3D.
+El terreno WebGL se genera localmente desde el DSM, con edificios, agua, cobertura,
+árboles, caminos y curvas. OpenStreetMap está disponible como base 2D, además del
+mapa vectorial local. La envolvente de obstáculos modifica alturas y visibilidad.
+Ver [fuentes, estimaciones y reproducción](ENTORNO_3D.md). No requiere Maps3D.
 Maps3D puede servir como referencia externa; su GeoJSON en planta no se da por válido
 como raster de elevación. La precisión DSM ~30 m no incluye un inventario certificado
 de cables u obstáculos pequeños.

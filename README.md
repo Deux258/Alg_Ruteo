@@ -25,10 +25,16 @@ identificados por su run; no se reemplaza una publicación hasta terminar las ca
 4. Activar las cuatro rutas por separado y revisar cobertura, resiliencia y cómputo.
 5. Sortear amenazas con semilla, filtrar las activadas y replanificar.
 6. Marcar un foco sintético y reproducir detección, reporte y regreso.
-7. Ver el terreno 3D y exportar la misión y las probabilidades.
+7. Ver edificios, agua, cobertura, árboles y curvas en 3D; exportar misión y capas.
 
-La red usa malla de 100 m y enlaces de hasta 200 m. El DSM se muestrea dentro de
-los tramos; la altura inicial es 60 m AGL. La cobertura es una evaluación por celdas
+OpenStreetMap vuelve como mapa base 2D, con calles y nombres. El panel **Cartografía
+y entorno** permite alternar al mapa vectorial local y controlar seis capas tanto
+en 2D como en 3D. Edificios y vegetación también afectan altura de vuelo y visibilidad.
+Las fuentes y alturas estimadas se detallan en [Entorno 3D](docs/ENTORNO_3D.md).
+
+La red usa malla de 100 m y enlaces de hasta 200 m. El DSM y los obstáculos se
+muestrean dentro de los tramos; la altura inicial es 60 m sobre la superficie modelada.
+La cobertura es una evaluación por celdas
 de 30 m con alcance horizontal supuesto de 100 m y línea de vista.
 
 El perfil Mavic 3T conserva parámetros conservadores del proyecto: 10 m/s, 25 min,

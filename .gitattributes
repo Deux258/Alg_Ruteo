@@ -7,6 +7,10 @@ datos/entrada/aoi/*.geojson -text
 datos/entrada/vial/* -text
 datos/entrada/aereo/* -text
 datos/entrada/aereo_v2/* -text
+datos/entrada/escena/* -text
+# Mantener reutilizable la escena preprocesada y sus hashes en Windows/Linux.
+core/geographic_scene.py text eol=lf
+evidencia/entorno_3d_2026-11-04/** -text
 evidencia/red_vial_2026-10-17/manifest_online.json -text
 "Sitio Web/vendor/*" -text
 "Sitio Web/vendor/images/*" -text

@@ -1,0 +1,25 @@
+{
+  "checks": {
+    "real_station_budget": true,
+    "one_swap": true,
+    "completed": true,
+    "reset_only_at_station": true,
+    "nonnegative_battery": true
+  },
+  "browser_errors": [],
+  "successful": true,
+  "video": null,
+  "method": "dijkstra_distance",
+  "station_ids": [
+    "104"
+  ],
+  "battery_budget_s": 130,
+  "stops": [
+    {
+      "station_id": "104",
+      "coordinate_index": 113,
+      "arrival_s": 113.96007981631564,
+      "service_s": 140
+    }
+  ]
+}

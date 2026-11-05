@@ -1,0 +1,12 @@
+{
+  "schema_version": "geographic-scene-1",
+  "directory": "datos/entrada/escena",
+  "building_default_height_m": 9,
+  "floor_height_m": 3,
+  "tree_default_height_m": 8,
+  "tree_default_crown_m": 4,
+  "woodland_default_height_m": 12,
+  "contour_interval_m": 20,
+  "mesh_step_m": 30,
+  "osm_tile_url": "https://tile.openstreetmap.org/{z}/{x}/{y}.png"
+}

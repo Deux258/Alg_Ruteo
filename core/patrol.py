@@ -117,6 +117,17 @@ def terrain():
     return Terrain(raster_path())
 
 
+def flight_terrain(model):
+    from core.geographic_scene import get_scene
+    return get_scene(model,terrain()).surface
+
+
+def segment_fractions(surface,a,b):
+    if hasattr(surface,'fractions'):
+        return surface.fractions(a,b)
+    return np.linspace(0,1,max(2,math.ceil(math.dist(a[:2],b[:2])/15)+1))
+
+
 class Hazards:
     def __init__(self, model, clock, p, events):
         self.rows = []
@@ -251,7 +262,7 @@ class Graph:
                     probability_pct=100,by_threat={self.hazards.rows[i]['id']:self.hazards.rows[i]['probability_pct'] for i in ids},reason='hard_restriction'))
             return
         coords = []
-        for f in np.linspace(0, 1, max(2, math.ceil(d/15)+1)):
+        for f in segment_fractions(self.terrain,pa,pb):
             x, y = pa[0]+(pb[0]-pa[0])*f, pa[1]+(pb[1]-pa[1])*f
             h = self.terrain.at(x, y)
             if h is None:
@@ -267,6 +278,10 @@ class Graph:
             for c, q in zip(points, points[1:]):
                 dx, dy, dz = q[0]-c[0], q[1]-c[1], q[2]-c[2]
                 horizontal = math.hypot(dx,dy)
+                if horizontal<1e-7:
+                    seconds += abs(dz)/(self.p['climb_ms'] if dz>=0 else self.p['descent_ms'])
+                    length += abs(dz)
+                    continue
                 along = (wx*dx+wy*dy)/horizontal
                 cross = (wx*dy-wy*dx)/horizontal
                 if abs(cross) >= self.p['cruise_ms']:
@@ -688,7 +703,7 @@ def calculate(model, request, conn=None, terrain_override=None):
     hazards = Hazards(model,clock,p,request.get('events',[]))
     area = transform(FWD,shape(model['flight_geometry']))
     started = time.monotonic()
-    graph = Graph(area,terrain_override or terrain(),hazards,weather,p,conn)
+    graph = Graph(area,terrain_override or flight_terrain(model),hazards,weather,p,conn)
     candidates = [s for s in model['records']['M1'] if s.get('candidate',True)]
     if not candidates:raise ValueError('El snapshot no contiene bases candidatas')
     base=next((s for s in candidates if s['provider_id']=='104'),candidates[0])
@@ -696,6 +711,8 @@ def calculate(model, request, conn=None, terrain_override=None):
     if not study.covers(Point(origin)) and not any(Point(origin).distance(Point(s['geometry']['coordinates']))<1e-9 for s in candidates):
         raise ValueError('Origen exterior debe coincidir con una base candidata')
     home = graph.point(origin)
+    if hasattr(graph.terrain,'can_land') and not graph.terrain.can_land(*graph.nodes[home][:2]):
+        raise ValueError('La base de salida está sobre agua cartografiada')
     requested_stations = request.get('station_ids',[s['provider_id'] for s in candidates])
     if not isinstance(requested_stations,list) or any(not isinstance(i,str) for i in requested_stations):
         raise ValueError('station_ids debe ser una lista de IDs de bases')
@@ -708,6 +725,8 @@ def calculate(model, request, conn=None, terrain_override=None):
         try:
             node = graph.point(s['geometry']['coordinates'])
         except ValueError:
+            continue
+        if hasattr(graph.terrain,'can_land') and not graph.terrain.can_land(*graph.nodes[node][:2]):
             continue
         stations.append(dict(id=s['provider_id'],name=s['name'],node=node,hypothetical=True,position_utm=graph.nodes[node]))
     tasks = sweep_tasks(target,graph)
@@ -769,6 +788,13 @@ def calculate(model, request, conn=None, terrain_override=None):
                                'DSM ~30 m EGM2008; modeled clearance, no certified obstacle database',
                                'Weather is static during the mission; source forecasts are historical snapshots'])
     result['assumptions'].append('Unmapped historical recurrence: explicitly assumed 20% per mission; separate from observed classes')
+    if terrain_override is None:
+        from core.geographic_scene import get_scene
+        scene=get_scene(model,terrain())
+        result['geographic_scene']=dict(sha256=scene.source_hash,surface_sha256=scene.surface.source_sha256,
+            osm_sha256=scene.manifest['sha256'],timestamp_osm_base=scene.manifest.get('timestamp_osm_base'),
+            obstacle_count=len(scene.surface.obstacles),height_model='max(DSM, nearby DSM minimum + tagged/estimated height)')
+        result['assumptions'].append('Mapped buildings, trees and woodland canopy affect flight height and line of sight; missing heights and ground are estimated, not surveyed')
     from core.provenance import software_manifest
     result['software']=software_manifest()
     result['sha256'] = hashlib.sha256(canonical(result)).hexdigest()
@@ -776,6 +802,7 @@ def calculate(model, request, conn=None, terrain_override=None):
 
 
 def map_data(model):
+    from core.geographic_scene import prepared_scene
     p = defaults()
     study = shape(model['study_geometry'])
     area = transform(FWD,shape(model['flight_geometry']))
@@ -790,11 +817,19 @@ def map_data(model):
         if transform(FWD,study).covers(g) and not hard.intersects(g):
             demo = mapping(transform(INV,g))
             break
-    return dict(schema_version='patrol-map-1',area=model['study_geometry'],flight_area=model['flight_geometry'],
+    scene=prepared_scene(model,terrain())
+    return dict(schema_version='patrol-map-2',area=model['study_geometry'],flight_area=model['flight_geometry'],
                 bases=bases,base_catalogue=model['records']['M1'],default_origin=home['geometry']['coordinates'],demo_polygon=demo,
                 weather=model['records']['M4'],reference_time=model['reference_time'],profile=p,
                 layers={k:model['records'][k] for k in ('M2','A2','A3','A4')},
-                terrain=terrain().mesh(area,step=60),sources=model.get('raster'),hypothetical_stations=True)
+                terrain=scene['terrain'],geography={k:v for k,v in scene['geography'].items() if k!='render'},
+                sources=model.get('raster'),hypothetical_stations=True)
+
+
+def scene_data(model):
+    from core.geographic_scene import prepared_scene
+    scene=prepared_scene(model,terrain())['geography']
+    return dict(schema_version='geographic-render-1',sha256=scene['sha256'],render=scene['render'])
 
 
 def simulate(result, request, terrain_override=None):
@@ -825,7 +860,11 @@ def simulate(result, request, terrain_override=None):
         fire = [number(fire[0],'longitud',-180,180),number(fire[1],'latitud',-90,90)]
         if not shape(result['target_polygon']).covers(Point(fire)):
             raise ValueError('Foco simulado debe quedar dentro del polígono objetivo')
-    t = terrain_override or terrain()
+    if terrain_override is None:
+        # Recover exactly the scene used by this in-memory result, not a silently changed snapshot.
+        from core.geographic_scene import surface_by_hash
+        t=surface_by_hash(result.get('geographic_scene',{}).get('sha256'))
+    else:t=terrain_override
     fire_xy = FWD(*fire) if fire else None
     fire_z = t.at(*fire_xy) if fire else None
     if fire is not None and fire_z is None:
@@ -838,7 +877,7 @@ def simulate(result, request, terrain_override=None):
         a,b=nodes[edge['source']],nodes[edge['target']]
         ax,ay=FWD(*a[:2]);bx,by=FWD(*b[:2])
         points=[]
-        for f in np.linspace(0,1,max(2,math.ceil(math.hypot(bx-ax,by-ay)/15)+1)):
+        for f in segment_fractions(t,[ax,ay],[bx,by]):
             x,y=ax+(bx-ax)*f,ay+(by-ay)*f
             z=t.at(x,y)
             if z is None:raise ValueError('Retorno con elevación desconocida')

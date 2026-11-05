@@ -1,0 +1,23 @@
+{
+  "checks": {
+    "example_polygon": true,
+    "four_routes": true,
+    "pgr_dijkstra": true,
+    "max_link_200m": true,
+    "gurobi_solution": true,
+    "complete_coverage": true,
+    "four_independent_checkboxes": true,
+    "webgl": true,
+    "fire_report_return": true,
+    "battery_nonnegative": true,
+    "random_closure_activated": true,
+    "interrupted_patrol_not_completed": true,
+    "alternative_after_failure": true,
+    "alternative_avoids_closure": true,
+    "download_probabilities": true,
+    "mobile_no_overflow": true
+  },
+  "browser_errors": [],
+  "successful": true,
+  "video": null
+}

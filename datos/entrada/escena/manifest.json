@@ -1,0 +1,26 @@
+{
+  "attribution": "© OpenStreetMap contributors",
+  "attribution_url": "https://www.openstreetmap.org/copyright",
+  "bbox_wgs84": [
+    -71.68060489517181,
+    -33.1235212124161,
+    -71.53389219792024,
+    -33.027594120296605
+  ],
+  "bytes": 36962353,
+  "fallback_errors": [
+    {
+      "error": "<urlopen error [Errno 11001] getaddrinfo failed>",
+      "url": "https://overpass.private.coffee/api/interpreter"
+    }
+  ],
+  "fetched_at_utc": "2026-11-05T01:45:33.881060+00:00",
+  "file": "osm_9a19064dbe6239dd.json",
+  "http_status": 200,
+  "license": "ODbL 1.0",
+  "query": "[out:json][timeout:180];(\n      nwr[\"building\"](-33.1235212124161,-71.68060489517181,-33.027594120296605,-71.53389219792024);nwr[\"building:part\"](-33.1235212124161,-71.68060489517181,-33.027594120296605,-71.53389219792024);\n      nwr[\"natural\"~\"^(water|wood|tree|tree_row|scrub|grassland|wetland|sand|bare_rock|coastline)$\"](-33.1235212124161,-71.68060489517181,-33.027594120296605,-71.53389219792024);\n      nwr[\"landuse\"](-33.1235212124161,-71.68060489517181,-33.027594120296605,-71.53389219792024);nwr[\"landcover\"](-33.1235212124161,-71.68060489517181,-33.027594120296605,-71.53389219792024);\n      nwr[\"waterway\"](-33.1235212124161,-71.68060489517181,-33.027594120296605,-71.53389219792024);nwr[\"leisure\"=\"park\"](-33.1235212124161,-71.68060489517181,-33.027594120296605,-71.53389219792024);\n      way[\"highway\"](-33.1235212124161,-71.68060489517181,-33.027594120296605,-71.53389219792024);\n    );out meta geom;",
+  "schema_version": "scene-acquisition-1",
+  "sha256": "9a19064dbe6239ddda45f6013c7e7685d6f613007a2a3105641244a50afd929a",
+  "timestamp_osm_base": "2026-11-05T01:44:20Z",
+  "url": "https://overpass-api.de/api/interpreter"
+}

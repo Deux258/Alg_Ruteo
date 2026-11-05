@@ -1,0 +1,16 @@
+{
+  "schema_version": "scene-artifact-1",
+  "file": "scene_d89e9f14df2e6616.json.gz",
+  "sha256": "2892b73265439cb17290c3c2bb409113306cfa95a72d70d74bf37cc1af7d639f",
+  "scene_sha256": "d89e9f14df2e66166d4d20f1a273e592f5d7571f1a6904535ce72439e3b762ea",
+  "code_sha256": "bc558a8ebdb87a003fbc75707cdcfceaea6126695e2ffd9f375afba8c9bd349e",
+  "counts": {
+    "buildings": 25148,
+    "water": 413,
+    "landcover": 1153,
+    "trees": 789,
+    "roads": 7171,
+    "contours": 500
+  },
+  "source_osm_sha256": "9a19064dbe6239ddda45f6013c7e7685d6f613007a2a3105641244a50afd929a"
+}

@@ -48,7 +48,7 @@ def main():
         for method in result['routes']:
             page.locator(f'#show-{method}').uncheck();page.locator(f'#show-{method}').check()
         checks.append(('four_independent_checkboxes',True))
-        page.locator('#view-toggle').click();page.wait_for_timeout(1200)
+        page.locator('#view-toggle').click();page.wait_for_function("Number(document.querySelector('#terrain').dataset.sceneVertices)>10000",timeout=120000)
         checks.append(('webgl',page.locator('#terrain').is_visible() and page.evaluate("!!document.querySelector('#terrain').getContext('webgl')")))
         page.screenshot(path=str(folder/'terreno_3d.png'))
         page.locator('#view-toggle').click()

@@ -1,0 +1,61 @@
+{
+  "seed": 20261104,
+  "closure_coordinates": [
+    -71.6558717239513,
+    -33.102491411280944
+  ],
+  "interrupted_status": "interrupted_and_returned",
+  "baseline_sha": "efd59b79e9bec49e2db8acea5985ab463b89e973a73d1caabfcf56c4b0670c82",
+  "replanned_sha": "b618754820c29a51d459ef88c7beb2dc325a2fb5aa687521afa485463cc43039",
+  "recommended": [
+    "annealing",
+    "dijkstra_distance",
+    "dijkstra_weighted"
+  ],
+  "methods": {
+    "dijkstra_distance": {
+      "status": "ready",
+      "time_s": 147.45922232268643,
+      "resilience": {
+        "value": 0.822,
+        "successes": 822,
+        "scenarios": 1000,
+        "known": true,
+        "definition": "Frozen full-coverage mission and safe return under common threat events"
+      }
+    },
+    "dijkstra_weighted": {
+      "status": "ready",
+      "time_s": 147.45922232268643,
+      "resilience": {
+        "value": 0.822,
+        "successes": 822,
+        "scenarios": 1000,
+        "known": true,
+        "definition": "Frozen full-coverage mission and safe return under common threat events"
+      }
+    },
+    "gurobi": {
+      "status": "ready",
+      "time_s": 148.3417129631518,
+      "resilience": {
+        "value": 0.822,
+        "successes": 822,
+        "scenarios": 1000,
+        "known": true,
+        "definition": "Frozen full-coverage mission and safe return under common threat events"
+      }
+    },
+    "annealing": {
+      "status": "ready",
+      "time_s": 147.45922232268643,
+      "resilience": {
+        "value": 0.822,
+        "successes": 822,
+        "scenarios": 1000,
+        "known": true,
+        "definition": "Frozen full-coverage mission and safe return under common threat events"
+      }
+    }
+  }
+}

@@ -1,0 +1,72 @@
+{
+  "application": "http://127.0.0.1:18083",
+  "scene_sha256": "d89e9f14df2e66166d4d20f1a273e592f5d7571f1a6904535ce72439e3b762ea",
+  "counts": {
+    "buildings": 25148,
+    "water": 413,
+    "landcover": 1153,
+    "trees": 789,
+    "roads": 7171,
+    "contours": 500
+  },
+  "unit_tests": 27,
+  "ui_checks": 37,
+  "geography": {
+    "six_real_geographic_layers": true,
+    "source_sha_and_license": true,
+    "osm_base_and_credit": true,
+    "osm_tiles_loaded": true,
+    "height_estimates_disclosed": true,
+    "offline_local_base": true,
+    "webgl_geometry": true,
+    "webgl_no_error": true,
+    "independent_3d_layers": true,
+    "zoom_changes_render": true,
+    "four_terrain_aware_routes": true,
+    "same_obstacle_snapshot": true,
+    "links_up_to_200m": true,
+    "osm_returns_after_3d": true,
+    "export_all_layers": true,
+    "mobile_no_overflow": true
+  },
+  "patrol": {
+    "example_polygon": true,
+    "four_routes": true,
+    "pgr_dijkstra": true,
+    "max_link_200m": true,
+    "gurobi_solution": true,
+    "complete_coverage": true,
+    "four_independent_checkboxes": true,
+    "webgl": true,
+    "fire_report_return": true,
+    "battery_nonnegative": true,
+    "random_closure_activated": true,
+    "interrupted_patrol_not_completed": true,
+    "alternative_after_failure": true,
+    "alternative_avoids_closure": true,
+    "download_probabilities": true,
+    "mobile_no_overflow": true
+  },
+  "charging": {
+    "real_station_budget": true,
+    "one_swap": true,
+    "completed": true,
+    "reset_only_at_station": true,
+    "nonnegative_battery": true
+  },
+  "video": null,
+  "validation": "La suite completa fue aprobada; el ajuste posterior de atribución fue verificado de forma independiente en la versión desplegada.",
+  "attribution": {
+    "checks": {
+      "osm_attribution": true,
+      "local_vector_attribution": true,
+      "no_remote_tiles_in_local_mode": true,
+      "mobile_no_overflow": true,
+      "latest_js_deployed": true,
+      "published_run_preserved": true
+    },
+    "errors": [],
+    "successful": true,
+    "video": null
+  }
+}

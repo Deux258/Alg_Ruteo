@@ -125,17 +125,18 @@ class Handler(BaseHTTPRequestHandler):
             file=ROOT/'Sitio Web'/static[path]
             if file.is_file():
                 return self.reply(200,file.read_bytes(),mimetypes.guess_type(str(file))[0] or 'application/octet-stream')
-        if path=='/api/aereo/patrullaje/mapa':
+        if path in ('/api/aereo/patrullaje/mapa','/api/aereo/patrullaje/escena3d'):
             try:
-                from core.patrol import map_data
+                from core.patrol import map_data,scene_data
+                build=scene_data if path.endswith('/escena3d') else map_data
                 if os.getenv('PATROL_CONTEXT'):
-                    result=map_data(patrol_model())
+                    result=build(patrol_model())
                     result['engine']='snapshot local · Dijkstra Python (sin pgRouting)'
                 else:
                     with connect() as conn:
                         current=status(conn)
                         if not current:return self.reply(503,b'{"status":"not_ready"}')
-                        result=map_data(patrol_model(conn,current))
+                        result=build(patrol_model(conn,current))
                         result['engine']='PostGIS + pgRouting'
                 return self.reply(200,json.dumps(result,ensure_ascii=False,allow_nan=False).encode())
             except (ValueError,KeyError) as exc:
