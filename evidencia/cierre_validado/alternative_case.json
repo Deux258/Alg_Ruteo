@@ -1,0 +1,85 @@
+{
+  "baseline_sha": "079d1dac2a8b502e7bb780a0488c1dfa28f62b559f49995f6cb75457e91c4682",
+  "closure_coordinates": [
+    -71.6558717239513,
+    -33.102491411280944
+  ],
+  "interrupted_status": "interrupted_and_returned",
+  "methods": {
+    "annealing": {
+      "resilience": {
+        "confidence_interval": {
+          "high": 0.8141110806263744,
+          "level": 0.95,
+          "low": 0.7636693994520037,
+          "method": "wilson"
+        },
+        "definition": "Frozen full-coverage mission and safe return under common threat events",
+        "known": true,
+        "scenarios": 1000,
+        "successes": 790,
+        "value": 0.79
+      },
+      "status": "ready",
+      "time_s": 147.24743191816702
+    },
+    "dijkstra_distance": {
+      "resilience": {
+        "confidence_interval": {
+          "high": 0.8141110806263744,
+          "level": 0.95,
+          "low": 0.7636693994520037,
+          "method": "wilson"
+        },
+        "definition": "Frozen full-coverage mission and safe return under common threat events",
+        "known": true,
+        "scenarios": 1000,
+        "successes": 790,
+        "value": 0.79
+      },
+      "status": "ready",
+      "time_s": 147.24743191816702
+    },
+    "dijkstra_weighted": {
+      "resilience": {
+        "confidence_interval": {
+          "high": 0.8141110806263744,
+          "level": 0.95,
+          "low": 0.7636693994520037,
+          "method": "wilson"
+        },
+        "definition": "Frozen full-coverage mission and safe return under common threat events",
+        "known": true,
+        "scenarios": 1000,
+        "successes": 790,
+        "value": 0.79
+      },
+      "status": "ready",
+      "time_s": 147.24743191816702
+    },
+    "gurobi": {
+      "resilience": {
+        "confidence_interval": {
+          "high": 0.8141110806263744,
+          "level": 0.95,
+          "low": 0.7636693994520037,
+          "method": "wilson"
+        },
+        "definition": "Frozen full-coverage mission and safe return under common threat events",
+        "known": true,
+        "scenarios": 1000,
+        "successes": 790,
+        "value": 0.79
+      },
+      "status": "ready",
+      "time_s": 148.10465766400645
+    }
+  },
+  "recommended": [
+    "gurobi",
+    "dijkstra_weighted",
+    "dijkstra_distance"
+  ],
+  "replanned_sha": "95d4cdb9ee38eefaa90585ae826cc362bd2ce21ddffe682de94d55ebecf70743",
+  "seed": 20261106
+}

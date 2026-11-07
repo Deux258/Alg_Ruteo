@@ -1,0 +1,233 @@
+{
+  "cierre": {
+    "browser_errors": [],
+    "checks": {
+      "60s_rejected_without_fictional_route": true,
+      "all_layers_spatially_clipped_05101": true,
+      "all_layers_spatially_clipped_05109": true,
+      "blocked_A1_exportable": true,
+      "blocked_routes_empty": true,
+      "budgets_separated": true,
+      "dynamic_no_store": true,
+      "explicit_resilience_result": true,
+      "flight_change_during_camera_safe": true,
+      "immutable_etag": true,
+      "initial_under_1MiB": true,
+      "mission_under_1MiB": true,
+      "resource_304": true,
+      "seed_change_invalidates_old_mission": true,
+      "shared_weather_declared": true,
+      "stale_focus_simulation_ignored": true,
+      "terrain_and_objects_filtered_05101": true,
+      "terrain_and_objects_filtered_05109": true
+    },
+    "sizes_bytes": {
+      "blocked_summary": 32347,
+      "commune_05101": 350051,
+      "commune_05109": 50837,
+      "map_summary": 51557,
+      "mission_summary": 195316
+    },
+    "successful": true,
+    "video": null
+  },
+  "entorno": {
+    "checks": {
+      "export_all_layers": true,
+      "height_estimates_disclosed": true,
+      "independent_3d_layers": true,
+      "mobile_no_overflow": true,
+      "offline_local_base": true,
+      "osm_base_and_credit": true,
+      "osm_returns_after_3d": true,
+      "osm_tiles_loaded": true,
+      "six_real_geographic_layers": true,
+      "source_sha_and_license": true,
+      "webgl_geometry": true,
+      "webgl_no_error": true,
+      "zoom_changes_render": true
+    },
+    "counts": {
+      "buildings": 25148,
+      "contours": 500,
+      "landcover": 1153,
+      "roads": 7171,
+      "trees": 789,
+      "water": 413
+    },
+    "errors": [],
+    "height_estimates": 25950,
+    "scene_sha256": "8d7c033caf75accc89e09bf6130f142e9488ebf9943555fbdfacf25d955fdf5c",
+    "source": {
+      "attribution": "© OpenStreetMap contributors",
+      "attribution_url": "https://www.openstreetmap.org/copyright",
+      "bbox_wgs84": [
+        -71.68060489517181,
+        -33.1235212124161,
+        -71.53389219792024,
+        -33.027594120296605
+      ],
+      "bytes": 36962353,
+      "fallback_errors": [
+        {
+          "error": "<urlopen error [Errno 11001] getaddrinfo failed>",
+          "url": "https://overpass.private.coffee/api/interpreter"
+        }
+      ],
+      "fetched_at_utc": "2026-11-05T01:45:33.881060+00:00",
+      "file": "osm_9a19064dbe6239dd.json",
+      "http_status": 200,
+      "license": "ODbL 1.0",
+      "query": null,
+      "schema_version": "scene-acquisition-1",
+      "sha256": "9a19064dbe6239ddda45f6013c7e7685d6f613007a2a3105641244a50afd929a",
+      "timestamp_osm_base": "2026-11-05T01:44:20Z",
+      "url": "https://overpass-api.de/api/interpreter"
+    },
+    "successful": true,
+    "video": null,
+    "woodland_symbols": 12244
+  },
+  "estados_ui": {
+    "api": "controlled HTTP fixtures; live API acceptance is separate",
+    "browser_errors": [],
+    "checks": {
+      "blocked_weather_allows_diagnostic_request": true,
+      "blocked_weather_keeps_probability_export": true,
+      "changed_route_during_camera_load_keeps_fpv_off": true,
+      "changed_seed_drops_delayed_calculation": true,
+      "cleared_focus_cannot_restore_old_flight": true,
+      "drag_during_edit_does_not_add_vertex": true,
+      "draw_over_interactive_layer": true,
+      "duplicate_calculation_control_disabled": true,
+      "late_commune_response_cannot_replace_newer_selection": true,
+      "literal_four_way_tie": true,
+      "seed_edit_then_add_threat_keeps_click": true,
+      "separate_flight_and_report_budgets": true,
+      "undo_vertex_over_interactive_layer": true,
+      "webgl_failure_preserves_2d": true
+    },
+    "successful": true,
+    "video": null
+  },
+  "patrullaje": {
+    "browser_errors": [],
+    "checks": {
+      "alternative_after_failure": true,
+      "alternative_avoids_closure": true,
+      "battery_nonnegative": true,
+      "complete_coverage": true,
+      "download_probabilities": true,
+      "example_polygon": true,
+      "fire_report_return": true,
+      "four_independent_checkboxes": true,
+      "four_routes": true,
+      "gurobi_solution": true,
+      "interrupted_patrol_not_completed": true,
+      "max_link_200m": true,
+      "mobile_no_overflow": true,
+      "pgr_dijkstra": true,
+      "random_closure_activated": true,
+      "webgl": true
+    },
+    "successful": true,
+    "video": null
+  },
+  "recarga": {
+    "battery_budget_s": 190,
+    "browser_errors": [],
+    "checks": {
+      "completed": true,
+      "nonnegative_battery": true,
+      "one_swap": true,
+      "real_station_budget": true,
+      "reset_only_at_station": true
+    },
+    "flight_budget_s": 130,
+    "method": "annealing",
+    "report_reserve_s": 60,
+    "station_ids": [
+      "104"
+    ],
+    "stops": [
+      {
+        "after_edge_count": 12,
+        "arrival_s": 113.345949658444,
+        "coordinate_index": 113,
+        "service_s": 140,
+        "station_id": "104"
+      }
+    ],
+    "successful": true,
+    "video": null
+  },
+  "reproductor": {
+    "checks": {
+      "cancel_restores_target": true,
+      "coincidence_explained": true,
+      "coverage_and_constraints": true,
+      "default_alternatives_view": true,
+      "draw_vertices_count": true,
+      "finish_lands": true,
+      "four_different_circuits": true,
+      "four_original_methods_preserved": true,
+      "fpv_no_webgl_error": true,
+      "geometrically_distinct_not_reversed": true,
+      "isolate_selected": true,
+      "mobile_no_overflow": true,
+      "new_target_invalidates_old_flight": true,
+      "nominal_start_and_land": true,
+      "pause_holds_clock": true,
+      "real_perspective_camera": true,
+      "restart_at_ground": true,
+      "resume_continues_clock": true,
+      "seek_by_time": true,
+      "target_focus_2d": true,
+      "target_focus_3d": true,
+      "target_focus_after_switch": true,
+      "undo_vertex": true
+    },
+    "diversity": {
+      "comparison_unchanged": true,
+      "compute_s": 3.440720718999728,
+      "count": 4,
+      "max_shared_transit": 0.8,
+      "maximum_time_s": 323.6029576029386,
+      "reason": null,
+      "rejected_duplicates": 3,
+      "requested": 4,
+      "search_attempts": 24,
+      "status": "complete",
+      "time_limit_s": 15,
+      "tolerance_m": 12
+    },
+    "draw_trace": [
+      {
+        "hit": {
+          "classes": "leaflet-zoom-animated",
+          "tag": "CANVAS"
+        },
+        "vertices": "1"
+      },
+      {
+        "hit": {
+          "classes": "leaflet-zoom-animated leaflet-interactive",
+          "tag": "CANVAS"
+        },
+        "vertices": "2"
+      },
+      {
+        "hit": {
+          "classes": "leaflet-zoom-animated leaflet-interactive",
+          "tag": "CANVAS"
+        },
+        "vertices": "3"
+      }
+    ],
+    "errors": [],
+    "result_sha256": "3120414071402cefc09f007ed116d2237bb86c988789a1aaa0d1fce0e3aa5ecf",
+    "scene_sha256": "8d7c033caf75accc89e09bf6130f142e9488ebf9943555fbdfacf25d955fdf5c",
+    "successful": true,
+    "video": null
+  }
+}

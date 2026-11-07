@@ -58,11 +58,10 @@
                   id="wind"
                   type="number"
                   min="0.01"
-                  max="8"
                   step="0.1"
                   value="8" /></label
               ><label
-                >Vuelo por batería (s)<input
+                >Batería útil, incluida reserva de reporte (s)<input
                   id="battery"
                   type="number"
                   min="1"
@@ -108,6 +107,8 @@
           <button id="calculate" class="primary" disabled>
             Comparar las cuatro técnicas
           </button>
+          <p id="budget-note" class="muted">Cargando presupuesto de vuelo…</p>
+          <p id="constraint-status" role="status" class="muted"></p>
           <p id="message" role="status">Cargando snapshot…</p>
         </section>
         <section>
@@ -116,6 +117,7 @@
             <span id="network" class="badge">—</span>
           </div>
           <label for="route-mode">Mostrar rutas</label><select id="route-mode"><option value="alternatives">Circuitos diferentes</option><option value="comparison">Comparación de las cuatro técnicas</option></select>
+          <p id="resilience-summary" class="muted" aria-live="polite"></p>
           <p id="diversity-note" class="muted">Los circuitos alternativos se validan por cobertura, batería y separación de corredores.</p>
           <div class="buttons"><button id="show-selected" disabled>Solo la seleccionada</button><button id="show-all" disabled>Mostrar todas</button></div>
           <div id="results">
@@ -224,7 +226,7 @@
               árboles. Las curvas cada 20 m representan la superficie del DSM.
             </p>
             <button id="export-geography" disabled>
-              Exportar capas GeoJSON
+              Exportar originales GeoJSON
             </button>
           </details>
         </section>
@@ -235,6 +237,7 @@
               <option value="">Todas las disponibles</option>
             </select></label
           >
+          <p class="muted">El filtro de comuna solo cambia las capas visibles. El objetivo, las bases elegidas y el área de planificación se conservan. El clima corresponde a toda el área de vuelo. Las exportaciones conservan las geometrías originales, sin recortarlas.</p>
           <p id="wind-label" class="muted"></p>
           <p id="engine" class="muted"></p>
           <div class="buttons">

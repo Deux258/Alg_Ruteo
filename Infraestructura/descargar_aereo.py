@@ -113,7 +113,8 @@ def download(config, selected=None, reuse=None):
                 if 'catalogue' in entry:files=files+[entry['catalogue']]
                 files += [entry[k] for k in ['index','validation'] if k in entry]
                 for file in files:
-                    original=previous_folder/file['file']
+                    from core.assets import resolve_asset
+                    original=resolve_asset(previous_folder/file['file'],file['sha256'])
                     if hashlib.sha256(original.read_bytes()).hexdigest()!=file['sha256']:raise ValueError('Original reutilizado alterado')
                     target=folder/file['file']
                     if original.resolve()!=target.resolve():shutil.copyfile(original,target)

@@ -1,0 +1,215 @@
+{
+  "cases": {
+    "case-001": {
+      "exports": {
+        "case-001/comparison.json.gz": {
+          "bytes": 2853131,
+          "sha256": "d066c3cd85481e27c7d38d510497365612500503c5506dfd4b83fe653ddfafb0"
+        },
+        "case-001/failure_probabilities.json.gz": {
+          "bytes": 735073,
+          "sha256": "9bd5f5ae60d7e18a2a62a3052f718d338ab3ded90b4b5898e3e1baa759b077a7"
+        }
+      },
+      "gurobi": {
+        "constraints": 25,
+        "formulation": "Directed strip states, flow, order, battery propagation, optional single-use stations",
+        "gap": 0.005758387454033646,
+        "license_checked": true,
+        "preflight": {
+          "capacity_check": "actual_delivery_model_optimization",
+          "capacity_checked": true,
+          "general_constraints": 148,
+          "gurobi_version": [
+            13,
+            0,
+            3
+          ],
+          "license_checked": true,
+          "linear_constraints": 25,
+          "variables": 99
+        },
+        "solutions": 2,
+        "status": "optimal",
+        "variables": 99
+      },
+      "sha256": "5aab54526c80fc5e449c2de8ba2964e34e9242dfdc0b6ad0ed7192846c3414e7"
+    },
+    "case-002": {
+      "exports": {
+        "case-002/comparison.json.gz": {
+          "bytes": 2865734,
+          "sha256": "887d06f869b8f999d77b7ff6e08fb03ead3518fe1e27c15f6dca4761a3f3f3ce"
+        },
+        "case-002/failure_probabilities.json.gz": {
+          "bytes": 735321,
+          "sha256": "5b804608de2caff26b42130b0e9f4f9c623ad7a9421a0e72623505cc82f9aaf9"
+        }
+      },
+      "gurobi": {
+        "constraints": 25,
+        "formulation": "Directed strip states, flow, order, battery propagation, optional single-use stations",
+        "gap": 0.004980603345423194,
+        "license_checked": true,
+        "preflight": {
+          "capacity_check": "actual_delivery_model_optimization",
+          "capacity_checked": true,
+          "general_constraints": 148,
+          "gurobi_version": [
+            13,
+            0,
+            3
+          ],
+          "license_checked": true,
+          "linear_constraints": 25,
+          "variables": 99
+        },
+        "solutions": 2,
+        "status": "optimal",
+        "variables": 99
+      },
+      "sha256": "d7bc3f655588e5899140e8d77a637873d3fa88a4243bd8ffb74b167a53d333ea"
+    },
+    "case-003": {
+      "exports": {
+        "case-003/comparison.json.gz": {
+          "bytes": 2867382,
+          "sha256": "3212e09324f597d675c5d933a262c5d95aaec057c433e328d691ccd3f0ff9f83"
+        },
+        "case-003/failure_probabilities.json.gz": {
+          "bytes": 735289,
+          "sha256": "c61cd9b67ceeb6f0bd0f2a9a7263277f83a29eca0402cea10d8ce2d446345813"
+        }
+      },
+      "gurobi": {
+        "constraints": 25,
+        "formulation": "Directed strip states, flow, order, battery propagation, optional single-use stations",
+        "gap": 0.003515803272753126,
+        "license_checked": true,
+        "preflight": {
+          "capacity_check": "actual_delivery_model_optimization",
+          "capacity_checked": true,
+          "general_constraints": 148,
+          "gurobi_version": [
+            13,
+            0,
+            3
+          ],
+          "license_checked": true,
+          "linear_constraints": 25,
+          "variables": 99
+        },
+        "solutions": 2,
+        "status": "optimal",
+        "variables": 99
+      },
+      "sha256": "fd4496217fe84dba625756ab3602fa73bdf94856b47998fb8adb1077cd38ddf1"
+    },
+    "case-004": {
+      "exports": {
+        "case-004/comparison.json.gz": {
+          "bytes": 2882432,
+          "sha256": "27dd016a1a80505d466df6851972dba23ca3fefba46888c69688b45860314b94"
+        },
+        "case-004/failure_probabilities.json.gz": {
+          "bytes": 735948,
+          "sha256": "9b073c2f47138617c81a7199a60cce5301fde11908cb73fb5deb2ec7a4b301c8"
+        }
+      },
+      "gurobi": {
+        "constraints": 30,
+        "formulation": "Directed strip states, flow, order, battery propagation, optional single-use stations",
+        "gap": 0.0,
+        "license_checked": true,
+        "preflight": {
+          "capacity_check": "actual_delivery_model_optimization",
+          "capacity_checked": true,
+          "general_constraints": 222,
+          "gurobi_version": [
+            13,
+            0,
+            3
+          ],
+          "license_checked": true,
+          "linear_constraints": 30,
+          "variables": 141
+        },
+        "solutions": 3,
+        "status": "optimal",
+        "variables": 141
+      },
+      "sha256": "3c57036e70d5df10bb5558eeca8910ad84451e0c4c2f045f6f1166eda8bb34af"
+    },
+    "case-005": {
+      "exports": {
+        "case-005/comparison.json.gz": {
+          "bytes": 2893278,
+          "sha256": "d1322baa5ee14a8816bf6208bda7c83cdbaf503a068fcb96070763c1e4b66e85"
+        },
+        "case-005/failure_probabilities.json.gz": {
+          "bytes": 736205,
+          "sha256": "2a9c82bffe4714d376ea92a283abe23adcb427e748acde9fad0e7d3674e5d7b4"
+        }
+      },
+      "gurobi": {
+        "constraints": 30,
+        "formulation": "Directed strip states, flow, order, battery propagation, optional single-use stations",
+        "gap": 0.004977598222698448,
+        "license_checked": true,
+        "preflight": {
+          "capacity_check": "actual_delivery_model_optimization",
+          "capacity_checked": true,
+          "general_constraints": 222,
+          "gurobi_version": [
+            13,
+            0,
+            3
+          ],
+          "license_checked": true,
+          "linear_constraints": 30,
+          "variables": 141
+        },
+        "solutions": 3,
+        "status": "optimal",
+        "variables": 141
+      },
+      "sha256": "fb528d019b64e6f227cc601f78331bb14acea44e61496e301d7ecd62bb8f37f7"
+    },
+    "case-006": {
+      "exports": {
+        "case-006/comparison.json.gz": {
+          "bytes": 2896661,
+          "sha256": "20d6c79bb8d6d7fd1fdacd023e187593efed332494140da214647ed072d92d1f"
+        },
+        "case-006/failure_probabilities.json.gz": {
+          "bytes": 736219,
+          "sha256": "158a9314e3032ff65b53e09c491d138b683fcf6e34723469dfd6c0d737d4a288"
+        }
+      },
+      "gurobi": {
+        "constraints": 30,
+        "formulation": "Directed strip states, flow, order, battery propagation, optional single-use stations",
+        "gap": 0.0022292320902288876,
+        "license_checked": true,
+        "preflight": {
+          "capacity_check": "actual_delivery_model_optimization",
+          "capacity_checked": true,
+          "general_constraints": 222,
+          "gurobi_version": [
+            13,
+            0,
+            3
+          ],
+          "license_checked": true,
+          "linear_constraints": 30,
+          "variables": 141
+        },
+        "solutions": 6,
+        "status": "optimal",
+        "variables": 141
+      },
+      "sha256": "ff07291614d3aa31c691984fc4fd9d734dff7e5c13dc94df5cf3163957900d3e"
+    }
+  },
+  "directory": "datos/runs/patrullaje_cierre/batch_556f8f9384e869f2"
+}

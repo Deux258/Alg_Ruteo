@@ -1,5 +1,6 @@
 """Acceptance of real local geographic layers and WebGL rendering; no video."""
 import argparse
+from urllib.parse import urlsplit
 import hashlib
 import json
 from pathlib import Path
@@ -19,7 +20,7 @@ def main():
         browser=p.chromium.launch(executable_path=args.chrome,headless=True,args=['--enable-webgl','--use-angle=swiftshader','--enable-unsafe-swiftshader'])
         context=browser.new_context(viewport={'width':1500,'height':1000},accept_downloads=True)
         page=context.new_page();page.on('pageerror',lambda error:errors.append(str(error)))
-        with page.expect_response(lambda r:r.url.endswith('/patrullaje/mapa'),timeout=240000) as pending:page.goto(args.url)
+        with page.expect_response(lambda r:urlsplit(r.url).path.endswith('/patrullaje/mapa'),timeout=240000) as pending:page.goto(args.url)
         response=pending.value
         if response.status!=200:raise AssertionError(response.text())
         page.wait_for_selector('#geo-buildings',timeout=120000);page.wait_for_load_state('networkidle',timeout=120000)
@@ -53,7 +54,7 @@ def main():
         page.locator('#terrain-reset').click()
         if args.mission:
             page.locator('#demo').click()
-            with page.expect_response(lambda r:r.url.endswith('/api/aereo/patrullaje') and r.request.method=='POST',timeout=300000) as computed:page.locator('#calculate').click()
+            with page.expect_response(lambda r:urlsplit(r.url).path.endswith('/api/aereo/patrullaje') and r.request.method=='POST',timeout=300000) as computed:page.locator('#calculate').click()
             if computed.value.status!=200:raise AssertionError(computed.value.text())
             page.wait_for_selector('.route-card',timeout=30000)
             with page.expect_download() as mission:page.locator('#export').click()

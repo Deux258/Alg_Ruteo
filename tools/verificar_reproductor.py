@@ -1,5 +1,6 @@
 """Actual-browser acceptance for distinct corridors, playback and drone perspective. No video."""
 import argparse
+from urllib.parse import urlsplit
 import itertools
 import json
 from pathlib import Path
@@ -24,7 +25,7 @@ def main():
         page.goto(args.url);page.wait_for_selector('#geo-buildings',timeout=120000);page.wait_for_load_state('networkidle')
         page.locator('#demo').click();page.locator('#focus-target').click()
         checks['target_focus_2d']=page.locator('#focus-target').get_attribute('data-view')=='2d'
-        with page.expect_response(lambda r:r.url.endswith('/api/aereo/patrullaje') and r.request.method=='POST',timeout=360000) as response:page.locator('#calculate').click()
+        with page.expect_response(lambda r:urlsplit(r.url).path.endswith('/api/aereo/patrullaje') and r.request.method=='POST',timeout=360000) as response:page.locator('#calculate').click()
         if response.value.status!=200:raise AssertionError(response.value.text())
         page.wait_for_selector('.route-card',timeout=30000)
         with page.expect_download() as exported:page.locator('#export').click()
@@ -42,7 +43,7 @@ def main():
         page.locator('#route-mode').select_option('alternatives');page.locator('#chosen').select_option('alt_2')
         page.locator('#show-selected').click();checks['isolate_selected']=page.locator('#results input:checked').count()==1
         page.locator('#speed').select_option('1')
-        with page.expect_response(lambda r:r.url.endswith('/simular'),timeout=120000) as response:page.locator('#play').click()
+        with page.expect_response(lambda r:urlsplit(r.url).path.endswith('/simular'),timeout=120000) as response:page.locator('#play').click()
         simulation=response.value.json();(folder/'simulation.json').write_text(json.dumps(simulation,ensure_ascii=False),encoding='utf-8')
         checks['nominal_start_and_land']=simulation['scenario']=='nominal' and not simulation['active_threat_ids'] and simulation['timeline'][0]['time_s']==0 and simulation['timeline'][-1]['phase']=='landed'
         page.wait_for_function("Number(document.querySelector('#player').dataset.time)>0.5",timeout=20000);page.locator('#pause').click()
@@ -65,7 +66,12 @@ def main():
         page.locator('#view-toggle').click();page.locator('#focus-target').click()
         checks['target_focus_after_switch']=page.locator('#focus-target').get_attribute('data-view')=='2d'
         page.locator('#draw').click();bounds=page.locator('#map').bounding_box()
-        for dx,dy in [(-50,-50),(50,-50),(0,50)]:page.mouse.click(bounds['x']+bounds['width']/2+dx,bounds['y']+bounds['height']/2+dy)
+        draw_trace=[]
+        for dx,dy in [(-50,-50),(50,-50),(0,50)]:
+            x,y=bounds['x']+bounds['width']/2+dx,bounds['y']+bounds['height']/2+dy
+            hit=page.evaluate('([x,y])=>{const e=document.elementFromPoint(x,y);return {tag:e?.tagName,classes:e?.getAttribute("class")};}',[x,y])
+            page.mouse.click(x,y);draw_trace.append(dict(hit=hit,vertices=page.locator('#draw-tools').get_attribute('data-vertices')))
+        page.screenshot(path=str(folder/'edicion_poligono.png'))
         checks['draw_vertices_count']=page.locator('#draw-tools').get_attribute('data-vertices')=='3'
         page.locator('#undo-vertex').click();checks['undo_vertex']=page.locator('#draw-tools').get_attribute('data-vertices')=='2' and page.locator('#finish').is_disabled()
         page.locator('#cancel-draw').click();checks['cancel_restores_target']=page.locator('#draw-tools').is_hidden() and page.locator('#focus-target').is_enabled()
@@ -74,7 +80,7 @@ def main():
         page.locator('#demo').click();checks['new_target_invalidates_old_flight']=page.locator('#play').is_disabled() and page.locator('.route-card').count()==0
         context.close();browser.close()
     report=dict(checks=checks,errors=errors,successful=all(checks.values()) and not errors,video=None,
-        diversity=result['diversity'],scene_sha256=result['geographic_scene']['sha256'],result_sha256=result['sha256'])
+        diversity=result['diversity'],scene_sha256=result['geographic_scene']['sha256'],result_sha256=result['sha256'],draw_trace=draw_trace)
     (folder/'checks.json').write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding='utf-8')
     print(json.dumps(report));raise SystemExit(not report['successful'])
 

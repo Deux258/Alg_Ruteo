@@ -8,11 +8,11 @@ from core.contracts import ROOT,canonical,sha256
 
 def software_manifest():
     files={}
-    for folder in ['core','Infraestructura','Metadata','Amenazas','config','BD','tests','Sitio Web']:
+    for folder in ['core','Infraestructura','Metadata','Amenazas','config','BD','tests','Sitio Web','tools','.github','docker']:
         for p in sorted((ROOT/folder).rglob('*')):
-            if p.is_file() and p.suffix in ['.py','.sql','.json','.html','.js','.css'] and 'vendor' not in p.parts:
+            if p.is_file() and (p.suffix in ['.py','.sql','.json','.html','.js','.mjs','.css','.yaml','.yml'] or p.name.startswith('Dockerfile')) and 'vendor' not in p.parts:
                 files[p.relative_to(ROOT).as_posix()]=sha256(p)
-    for name in ['main','compose.yaml','compose.test.yaml','compose.gurobi.yaml','docker/Dockerfile.app','requirements.in','requirements.lock','requirements.aerial.lock','requirements.patrol.lock','.gitlab-ci.yml']:
+    for name in ['main','compose.yaml','compose.test.yaml','compose.gurobi.yaml','docker/Dockerfile.app','requirements.in','requirements.lock','requirements.aerial.lock','requirements.patrol.lock','requirements.test.lock','.gitlab-ci.yml']:
         files[name]=sha256(ROOT/name)
     installed={};mismatches=[]
     for name in ['requirements.lock','requirements.aerial.lock','requirements.patrol.lock']:

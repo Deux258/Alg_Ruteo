@@ -1,0 +1,424 @@
+{
+  "blocked_cases": 0,
+  "cases": [
+    {
+      "actual_budgets": {
+        "battery_budget_s": 1200,
+        "mission_budget_s": 3600
+      },
+      "case": 1,
+      "compute_s": 131.18203469000036,
+      "methods": {
+        "annealing": {
+          "compute_s": 3.622282678999909,
+          "confidence_interval": {
+            "high": 0.8141110806263744,
+            "level": 0.95,
+            "low": 0.7636693994520037,
+            "method": "wilson"
+          },
+          "resilience": 0.79,
+          "status": "ready",
+          "time_s": 146.44608755702353
+        },
+        "dijkstra_distance": {
+          "compute_s": 3.53045953200035,
+          "confidence_interval": {
+            "high": 0.8141110806263744,
+            "level": 0.95,
+            "low": 0.7636693994520037,
+            "method": "wilson"
+          },
+          "resilience": 0.79,
+          "status": "ready",
+          "time_s": 146.44608755702353
+        },
+        "dijkstra_weighted": {
+          "compute_s": 3.416247258000112,
+          "confidence_interval": {
+            "high": 0.8141110806263744,
+            "level": 0.95,
+            "low": 0.7636693994520037,
+            "method": "wilson"
+          },
+          "resilience": 0.79,
+          "status": "ready",
+          "time_s": 146.44608755702353
+        },
+        "gurobi": {
+          "compute_s": 3.5141948289992797,
+          "confidence_interval": {
+            "high": 0.8141110806263744,
+            "level": 0.95,
+            "low": 0.7636693994520037,
+            "method": "wilson"
+          },
+          "resilience": 0.79,
+          "status": "ready",
+          "time_s": 147.2507348419035
+        }
+      },
+      "planning_budgets": {
+        "battery_budget_s": 1140.0,
+        "mission_budget_s": 3540.0
+      },
+      "recommended": [
+        "dijkstra_weighted",
+        "gurobi",
+        "dijkstra_distance"
+      ],
+      "sha256": "5aab54526c80fc5e449c2de8ba2964e34e9242dfdc0b6ad0ed7192846c3414e7",
+      "status": "ready"
+    },
+    {
+      "actual_budgets": {
+        "battery_budget_s": 1200,
+        "mission_budget_s": 3600
+      },
+      "case": 2,
+      "compute_s": 31.086188031999882,
+      "methods": {
+        "annealing": {
+          "compute_s": 3.6836245980002786,
+          "confidence_interval": {
+            "high": 0.5845435338344905,
+            "level": 0.95,
+            "low": 0.5230431762490696,
+            "method": "wilson"
+          },
+          "resilience": 0.554,
+          "status": "ready",
+          "time_s": 146.44608755702353
+        },
+        "dijkstra_distance": {
+          "compute_s": 3.312572327000453,
+          "confidence_interval": {
+            "high": 0.5845435338344905,
+            "level": 0.95,
+            "low": 0.5230431762490696,
+            "method": "wilson"
+          },
+          "resilience": 0.554,
+          "status": "ready",
+          "time_s": 146.44608755702353
+        },
+        "dijkstra_weighted": {
+          "compute_s": 3.272998149999694,
+          "confidence_interval": {
+            "high": 0.5845435338344905,
+            "level": 0.95,
+            "low": 0.5230431762490696,
+            "method": "wilson"
+          },
+          "resilience": 0.554,
+          "status": "ready",
+          "time_s": 146.44608755702353
+        },
+        "gurobi": {
+          "compute_s": 3.281213287000355,
+          "confidence_interval": {
+            "high": 0.5845435338344905,
+            "level": 0.95,
+            "low": 0.5230431762490696,
+            "method": "wilson"
+          },
+          "resilience": 0.554,
+          "status": "ready",
+          "time_s": 147.2507348419035
+        }
+      },
+      "planning_budgets": {
+        "battery_budget_s": 1140.0,
+        "mission_budget_s": 3540.0
+      },
+      "recommended": [
+        "dijkstra_weighted",
+        "gurobi",
+        "dijkstra_distance"
+      ],
+      "sha256": "d7bc3f655588e5899140e8d77a637873d3fa88a4243bd8ffb74b167a53d333ea",
+      "status": "ready"
+    },
+    {
+      "actual_budgets": {
+        "battery_budget_s": 1200,
+        "mission_budget_s": 3600
+      },
+      "case": 3,
+      "compute_s": 32.36102982400007,
+      "methods": {
+        "annealing": {
+          "compute_s": 3.8606658109993077,
+          "confidence_interval": {
+            "high": 0.17769185969750323,
+            "level": 0.95,
+            "low": 0.13295625717450094,
+            "method": "wilson"
+          },
+          "resilience": 0.154,
+          "status": "ready",
+          "time_s": 149.20565059748952
+        },
+        "dijkstra_distance": {
+          "compute_s": 3.694348816999991,
+          "confidence_interval": {
+            "high": 0.17769185969750323,
+            "level": 0.95,
+            "low": 0.13295625717450094,
+            "method": "wilson"
+          },
+          "resilience": 0.154,
+          "status": "ready",
+          "time_s": 146.44608755702353
+        },
+        "dijkstra_weighted": {
+          "compute_s": 3.6465800630003287,
+          "confidence_interval": {
+            "high": 0.17769185969750323,
+            "level": 0.95,
+            "low": 0.13295625717450094,
+            "method": "wilson"
+          },
+          "resilience": 0.154,
+          "status": "ready",
+          "time_s": 149.20565059748952
+        },
+        "gurobi": {
+          "compute_s": 3.5327849359991887,
+          "confidence_interval": {
+            "high": 0.17769185969750323,
+            "level": 0.95,
+            "low": 0.13295625717450094,
+            "method": "wilson"
+          },
+          "resilience": 0.154,
+          "status": "ready",
+          "time_s": 150.05218556719063
+        }
+      },
+      "planning_budgets": {
+        "battery_budget_s": 1140.0,
+        "mission_budget_s": 3540.0
+      },
+      "recommended": [
+        "gurobi",
+        "dijkstra_weighted",
+        "dijkstra_distance"
+      ],
+      "sha256": "fd4496217fe84dba625756ab3602fa73bdf94856b47998fb8adb1077cd38ddf1",
+      "status": "ready"
+    },
+    {
+      "actual_budgets": {
+        "battery_budget_s": 1200,
+        "mission_budget_s": 3600
+      },
+      "case": 4,
+      "compute_s": 53.271124338000845,
+      "methods": {
+        "annealing": {
+          "compute_s": 9.69680018500003,
+          "confidence_interval": {
+            "high": 0.8141110806263744,
+            "level": 0.95,
+            "low": 0.7636693994520037,
+            "method": "wilson"
+          },
+          "resilience": 0.79,
+          "status": "ready",
+          "time_s": 269.54757909941907
+        },
+        "dijkstra_distance": {
+          "compute_s": 5.531692818999545,
+          "confidence_interval": {
+            "high": 0.8141110806263744,
+            "level": 0.95,
+            "low": 0.7636693994520037,
+            "method": "wilson"
+          },
+          "resilience": 0.79,
+          "status": "ready",
+          "time_s": 285.0921513626974
+        },
+        "dijkstra_weighted": {
+          "compute_s": 5.842081606000647,
+          "confidence_interval": {
+            "high": 0.8141110806263744,
+            "level": 0.95,
+            "low": 0.7636693994520037,
+            "method": "wilson"
+          },
+          "resilience": 0.79,
+          "status": "ready",
+          "time_s": 284.82263570822454
+        },
+        "gurobi": {
+          "compute_s": 5.60600524199981,
+          "confidence_interval": {
+            "high": 0.8141110806263744,
+            "level": 0.95,
+            "low": 0.7636693994520037,
+            "method": "wilson"
+          },
+          "resilience": 0.79,
+          "status": "ready",
+          "time_s": 269.54757909941907
+        }
+      },
+      "planning_budgets": {
+        "battery_budget_s": 1140.0,
+        "mission_budget_s": 3540.0
+      },
+      "recommended": [
+        "dijkstra_distance",
+        "gurobi",
+        "dijkstra_weighted"
+      ],
+      "sha256": "3c57036e70d5df10bb5558eeca8910ad84451e0c4c2f045f6f1166eda8bb34af",
+      "status": "ready"
+    },
+    {
+      "actual_budgets": {
+        "battery_budget_s": 1200,
+        "mission_budget_s": 3600
+      },
+      "case": 5,
+      "compute_s": 51.1093453630001,
+      "methods": {
+        "annealing": {
+          "compute_s": 8.975450734998958,
+          "confidence_interval": {
+            "high": 0.5845435338344905,
+            "level": 0.95,
+            "low": 0.5230431762490696,
+            "method": "wilson"
+          },
+          "resilience": 0.554,
+          "status": "ready",
+          "time_s": 269.54757909941907
+        },
+        "dijkstra_distance": {
+          "compute_s": 5.285330630000317,
+          "confidence_interval": {
+            "high": 0.5845435338344905,
+            "level": 0.95,
+            "low": 0.5230431762490696,
+            "method": "wilson"
+          },
+          "resilience": 0.554,
+          "status": "ready",
+          "time_s": 285.0921513626974
+        },
+        "dijkstra_weighted": {
+          "compute_s": 5.312283065999509,
+          "confidence_interval": {
+            "high": 0.5845435338344905,
+            "level": 0.95,
+            "low": 0.5230431762490696,
+            "method": "wilson"
+          },
+          "resilience": 0.554,
+          "status": "ready",
+          "time_s": 284.82263570822454
+        },
+        "gurobi": {
+          "compute_s": 5.316849099001047,
+          "confidence_interval": {
+            "high": 0.5845435338344905,
+            "level": 0.95,
+            "low": 0.5230431762490696,
+            "method": "wilson"
+          },
+          "resilience": 0.554,
+          "status": "ready",
+          "time_s": 269.54757909941907
+        }
+      },
+      "planning_budgets": {
+        "battery_budget_s": 1140.0,
+        "mission_budget_s": 3540.0
+      },
+      "recommended": [
+        "dijkstra_distance",
+        "dijkstra_weighted",
+        "gurobi"
+      ],
+      "sha256": "fb528d019b64e6f227cc601f78331bb14acea44e61496e301d7ecd62bb8f37f7",
+      "status": "ready"
+    },
+    {
+      "actual_budgets": {
+        "battery_budget_s": 1200,
+        "mission_budget_s": 3600
+      },
+      "case": 6,
+      "compute_s": 51.22413461099859,
+      "methods": {
+        "annealing": {
+          "compute_s": 8.634164152999801,
+          "confidence_interval": {
+            "high": 0.17769185969750323,
+            "level": 0.95,
+            "low": 0.13295625717450094,
+            "method": "wilson"
+          },
+          "resilience": 0.154,
+          "status": "ready",
+          "time_s": 269.54757909941907
+        },
+        "dijkstra_distance": {
+          "compute_s": 5.468128128999524,
+          "confidence_interval": {
+            "high": 0.17769185969750323,
+            "level": 0.95,
+            "low": 0.13295625717450094,
+            "method": "wilson"
+          },
+          "resilience": 0.154,
+          "status": "ready",
+          "time_s": 285.0921513626974
+        },
+        "dijkstra_weighted": {
+          "compute_s": 5.326449621999927,
+          "confidence_interval": {
+            "high": 0.17769185969750323,
+            "level": 0.95,
+            "low": 0.13295625717450094,
+            "method": "wilson"
+          },
+          "resilience": 0.154,
+          "status": "ready",
+          "time_s": 289.22742011082755
+        },
+        "gurobi": {
+          "compute_s": 5.566572358000485,
+          "confidence_interval": {
+            "high": 0.17769185969750323,
+            "level": 0.95,
+            "low": 0.13295625717450094,
+            "method": "wilson"
+          },
+          "resilience": 0.154,
+          "status": "ready",
+          "time_s": 269.54757909941907
+        }
+      },
+      "planning_budgets": {
+        "battery_budget_s": 1140.0,
+        "mission_budget_s": 3540.0
+      },
+      "recommended": [
+        "dijkstra_weighted",
+        "dijkstra_distance",
+        "gurobi"
+      ],
+      "sha256": "ff07291614d3aa31c691984fc4fd9d734dff7e5c13dc94df5cf3163957900d3e",
+      "status": "ready"
+    }
+  ],
+  "invalid_cases": 0,
+  "output": "datos/runs/patrullaje_cierre/batch_556f8f9384e869f2",
+  "plan_sha256": "556f8f9384e869f26587f7302561da5f4055e03f0b53709048abb9a37e44f5f5",
+  "protocol": "patrol-batch-3",
+  "total_cases": 6
+}

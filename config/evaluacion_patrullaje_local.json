@@ -1,0 +1,13 @@
+{
+  "protocol": "patrol-batch-3",
+  "description": "Predeclared local threats; freeze this plan before routing and retain every result, including ties and infeasibility.",
+  "polygon_scales": [1, 1.5],
+  "historical_multipliers": [1],
+  "seed": 20261106,
+  "scenarios": 1000,
+  "local_threat_cases": [
+    {"id": "baseline"},
+    {"id": "local-centre-30", "probability_pct": 30, "radius_m": 50, "offset_east_m": 0, "offset_north_m": 0},
+    {"id": "local-west-80", "probability_pct": 80, "radius_m": 50, "offset_east_m": -150, "offset_north_m": 0}
+  ]
+}

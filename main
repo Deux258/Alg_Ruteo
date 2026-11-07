@@ -5,12 +5,14 @@ cd -- "$(dirname -- "${BASH_SOURCE[0]}")"
 
 help() {
   cat <<'TXT'
-Uso: ./main [iniciar|probar|estado|detener|logs|adquirir|diagnosticar-fuentes|evaluar|patrullar] [opciones]
+Uso: ./main [iniciar|probar|estado|detener|logs|adquirir|adquirir-escena|preparar-escena|diagnosticar-fuentes|evaluar|patrullar] [opciones]
   iniciar (predeterminado)   Construye, aplica SQL, carga, valida y habilita web.
   probar                    Ejecuta pruebas unitarias y BD desechable separada.
   estado                    Muestra contenedores y salud del servicio.
   detener                   Detiene servicios; conserva volúmenes.
   logs                      Muestra logs recientes sin imprimir credenciales.
+  adquirir-escena           Descarga OSM y límites comunales versionados.
+  preparar-escena           Prepara escena desde la publicación existente.
   adquirir --sources IDS --reuse IDS  Actualiza fuentes seleccionadas y conserva originales explícitos.
   diagnosticar-fuentes --source S6  Comprueba DNS, HTTPS, índice y PDF sin publicar datos.
   evaluar --request RUTA    Compara una misión y conserva la evaluación en datos/runs/evaluaciones.
@@ -26,7 +28,7 @@ TXT
 if [[ "${1:-}" == '-h' || "${1:-}" == '--help' ]]; then help; exit 0; fi
 action="${1:-iniciar}"
 if (($#)); then shift; fi
-case "$action" in iniciar|probar|estado|detener|logs|adquirir|diagnosticar-fuentes|evaluar|patrullar) ;; *) help >&2; exit 2;; esac
+case "$action" in iniciar|probar|estado|detener|logs|adquirir|adquirir-escena|preparar-escena|diagnosticar-fuentes|evaluar|patrullar) ;; *) help >&2; exit 2;; esac
 scope=completo;mode=snapshot;run_id='';sources='';reuse='';request='';experiment='';source=''
 while (($#)); do
   case "$1" in
@@ -70,6 +72,15 @@ case "$action" in
     "${compose[@]}" build etl
     "${compose[@]}" run --rm --no-deps etl python -m core.aip_acquisition --source "$source"
     ;;
+  adquirir-escena)
+    "${compose[@]}" build etl
+    "${compose[@]}" run --rm --no-deps etl python -m Infraestructura.descargar_escena
+    "${compose[@]}" run --rm --no-deps etl python -m Infraestructura.descargar_comunas
+    ;;
+  preparar-escena)
+    "${compose[@]}" build etl
+    "${compose[@]}" run --rm --no-deps etl python -m tools.preparar_escena
+    ;;
   adquirir)
     "${compose[@]}" build etl
     args=(python -m Infraestructura.descargar_aereo)
@@ -94,7 +105,10 @@ case "$action" in
     [[ -z "$run_id" ]] || args+=(--run-id "$run_id")
     # Una ejecución one-shot real; un fallo detiene main antes de habilitar web.
     "${compose[@]}" run --rm --no-deps etl "${args[@]}"
-    "${compose[@]}" up -d --no-deps --wait web
+    if [[ "$scope" == completo ]]; then
+      "${compose[@]}" run --rm --no-deps etl python -m tools.preparar_escena --if-aerial
+    fi
+    "${compose[@]}" up -d --no-deps --force-recreate --wait web
     "${compose[@]}" exec -T web python -m core.health --scope "$scope"
     printf 'Aplicación de ruteo: http://%s\n' "$("${compose[@]}" port web 8000)"
     ;;

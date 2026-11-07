@@ -1,0 +1,214 @@
+{
+  "cold_preparation_s": 64.86520443200061,
+  "conditions": "Sequential; same snapshot/profile; translated target; fresh Python process; no concurrent solvers",
+  "measurements": [
+    {
+      "methods": {
+        "annealing": {
+          "status": "ready",
+          "timings": {
+            "cache_policy": "independent_per_technique",
+            "connector_queries": 12,
+            "connectors_s": 2.167987942999389,
+            "solve_s": 0.24199412299822143,
+            "total_s": 2.4460651599983976,
+            "validation_s": 0.03608309400078724
+          }
+        },
+        "dijkstra_distance": {
+          "status": "ready",
+          "timings": {
+            "cache_policy": "independent_per_technique",
+            "connector_queries": 12,
+            "connectors_s": 2.185907932000191,
+            "solve_s": 0.03536415900089196,
+            "total_s": 2.3151251210001647,
+            "validation_s": 0.09385302999908163
+          }
+        },
+        "dijkstra_weighted": {
+          "status": "ready",
+          "timings": {
+            "cache_policy": "independent_per_technique",
+            "connector_queries": 12,
+            "connectors_s": 2.1692888269972173,
+            "solve_s": 0.0362548900047841,
+            "total_s": 2.2416801920007856,
+            "validation_s": 0.03613647499878425
+          }
+        },
+        "gurobi": {
+          "status": "ready",
+          "timings": {
+            "cache_policy": "independent_per_technique",
+            "connector_queries": 12,
+            "connectors_s": 2.166769692003072,
+            "solve_s": 0.027201901995795197,
+            "total_s": 2.2297857669982477,
+            "validation_s": 0.03581417299938039
+          }
+        }
+      },
+      "offset_m": 0,
+      "result_sha256": "2fe741ef1cfab16a89ba63831612fe52db9e1c751c3996967123af9f6b3d5cd7",
+      "status": "ready",
+      "timings": {
+        "alternatives_s": 3.540238876999865,
+        "comparison_s": 9.23267081099948,
+        "evaluation_s": 0.1507034369988105,
+        "geometry_cache": {
+          "bytes": 91654408,
+          "cache_bytes": 91654408,
+          "cache_max_bytes": 134217728,
+          "hit": false,
+          "key": "dc8858483eb85f8b7d4c741f633f235894197aa8c8ea04efb61e3346b3a8afaf",
+          "physical_geometry_s": 44.944691321999926,
+          "policy": "immutable_geometry_only_LRU_max2_memory_bounded"
+        },
+        "setup_s": 64.86520443200061,
+        "total_s": 78.32202150800003
+      },
+      "wall_s": 78.73291393399995
+    },
+    {
+      "methods": {
+        "annealing": {
+          "status": "ready",
+          "timings": {
+            "cache_policy": "independent_per_technique",
+            "connector_queries": 12,
+            "connectors_s": 2.156792792999113,
+            "solve_s": 0.25237110600028245,
+            "total_s": 2.4478656359988236,
+            "validation_s": 0.03870173699942825
+          }
+        },
+        "dijkstra_distance": {
+          "status": "ready",
+          "timings": {
+            "cache_policy": "independent_per_technique",
+            "connector_queries": 12,
+            "connectors_s": 2.1460707830010506,
+            "solve_s": 0.037535276997004985,
+            "total_s": 2.2839110959994287,
+            "validation_s": 0.10030503600137308
+          }
+        },
+        "dijkstra_weighted": {
+          "status": "ready",
+          "timings": {
+            "cache_policy": "independent_per_technique",
+            "connector_queries": 12,
+            "connectors_s": 2.165405184001429,
+            "solve_s": 0.03785504099869286,
+            "total_s": 2.241685315999348,
+            "validation_s": 0.038425090999226086
+          }
+        },
+        "gurobi": {
+          "status": "ready",
+          "timings": {
+            "cache_policy": "independent_per_technique",
+            "connector_queries": 12,
+            "connectors_s": 2.188241490002838,
+            "solve_s": 0.019580358997700387,
+            "total_s": 2.2473933700002817,
+            "validation_s": 0.03957152099974337
+          }
+        }
+      },
+      "offset_m": 5,
+      "result_sha256": "a8344a337a6bd86d040908a44356d167ac84191e4fefd320d15e8fecc9a7554b",
+      "status": "ready",
+      "timings": {
+        "alternatives_s": 3.6824357340010465,
+        "comparison_s": 9.22086740800114,
+        "evaluation_s": 0.15469471299911675,
+        "geometry_cache": {
+          "bytes": 91654408,
+          "cache_bytes": 91654408,
+          "cache_max_bytes": 134217728,
+          "hit": true,
+          "key": "dc8858483eb85f8b7d4c741f633f235894197aa8c8ea04efb61e3346b3a8afaf",
+          "physical_geometry_s": 0.00043395499960752204,
+          "policy": "immutable_geometry_only_LRU_max2_memory_bounded"
+        },
+        "setup_s": 5.9902178539996385,
+        "total_s": 20.005416322999736
+      },
+      "wall_s": 20.44717766100075
+    },
+    {
+      "methods": {
+        "annealing": {
+          "status": "ready",
+          "timings": {
+            "cache_policy": "independent_per_technique",
+            "connector_queries": 12,
+            "connectors_s": 2.175774615001501,
+            "solve_s": 0.2695203169987508,
+            "total_s": 2.480580147001092,
+            "validation_s": 0.03528521500084025
+          }
+        },
+        "dijkstra_distance": {
+          "status": "ready",
+          "timings": {
+            "cache_policy": "independent_per_technique",
+            "connector_queries": 12,
+            "connectors_s": 2.185500472000058,
+            "solve_s": 0.041070010000112234,
+            "total_s": 2.3109125230002974,
+            "validation_s": 0.08434204100012721
+          }
+        },
+        "dijkstra_weighted": {
+          "status": "ready",
+          "timings": {
+            "cache_policy": "independent_per_technique",
+            "connector_queries": 12,
+            "connectors_s": 2.156881668999631,
+            "solve_s": 0.040911513000537525,
+            "total_s": 2.231905796999854,
+            "validation_s": 0.03411261499968532
+          }
+        },
+        "gurobi": {
+          "status": "ready",
+          "timings": {
+            "cache_policy": "independent_per_technique",
+            "connector_queries": 12,
+            "connectors_s": 2.2082516079972265,
+            "solve_s": 0.022180897001817357,
+            "total_s": 2.2644283959998575,
+            "validation_s": 0.03399589100081357
+          }
+        }
+      },
+      "offset_m": 10,
+      "result_sha256": "5c730324538091fb62f3397da329e852f16950b635bb3cf2952518157be1e417",
+      "status": "ready",
+      "timings": {
+        "alternatives_s": 3.632062403999953,
+        "comparison_s": 9.287839272999918,
+        "evaluation_s": 0.15019371699963813,
+        "geometry_cache": {
+          "bytes": 91654408,
+          "cache_bytes": 91654408,
+          "cache_max_bytes": 134217728,
+          "hit": true,
+          "key": "dc8858483eb85f8b7d4c741f633f235894197aa8c8ea04efb61e3346b3a8afaf",
+          "physical_geometry_s": 0.00040850400000636,
+          "policy": "immutable_geometry_only_LRU_max2_memory_bounded"
+        },
+        "setup_s": 5.718322774999251,
+        "total_s": 19.73987453100017
+      },
+      "wall_s": 20.18995221499972
+    }
+  ],
+  "median_warm_preparation_s": 5.854270314499445,
+  "preparation_reduction_fraction": 0.9097471384579295,
+  "target": 0.5,
+  "target_met": true
+}

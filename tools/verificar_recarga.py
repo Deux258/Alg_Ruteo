@@ -1,5 +1,6 @@
 """Real-snapshot battery-swap acceptance through the visible browser controls."""
 import argparse
+from urllib.parse import urlsplit
 import json
 from pathlib import Path
 from playwright.sync_api import sync_playwright
@@ -26,11 +27,11 @@ def main():
         page.locator('#route-mode').select_option('comparison')
         page.locator('#demo').click()
         page.get_by_text('Perfil de vuelo · Mavic 3T',exact=True).click()
-        page.locator('#battery').fill('130')
+        page.locator('#battery').fill('190')
         page.get_by_text('Estaciones hipotéticas',exact=True).click()
         for checkbox in page.locator('#stations input').all():
             checkbox.set_checked(checkbox.get_attribute('value')=='104')
-        with page.expect_response(lambda r:r.url.endswith('/api/aereo/patrullaje') and r.request.method=='POST',timeout=300000):page.locator('#calculate').click()
+        with page.expect_response(lambda r:urlsplit(r.url).path.endswith('/api/aereo/patrullaje') and r.request.method=='POST',timeout=300000):page.locator('#calculate').click()
         page.wait_for_function("!document.querySelector('#export').disabled",timeout=300000)
         with page.expect_download() as download:page.locator('#export').click()
         path=out/'recarga_export.json';download.value.save_as(str(path))
@@ -39,7 +40,7 @@ def main():
         if chosen is None:raise AssertionError('La misión de batería restringida no produjo un cambio de batería')
         page.locator('#results').scroll_into_view_if_needed();page.screenshot(path=str(out/'recarga.png'))
         page.locator('#chosen').select_option(chosen);page.locator('#speed').select_option('100')
-        with page.expect_response(lambda r:r.url.endswith('/simular'),timeout=120000) as response:page.locator('#simulate').click()
+        with page.expect_response(lambda r:urlsplit(r.url).path.endswith('/simular'),timeout=120000) as response:page.locator('#simulate').click()
         simulation=response.value.json()
         (out/'recarga_simulation.json').write_text(json.dumps(simulation,ensure_ascii=False),encoding='utf-8')
         page.wait_for_function("document.querySelector('#log').textContent.includes('Fin:')",timeout=120000)
@@ -52,7 +53,7 @@ def main():
         if video:video.save_as(str(video_path))
         browser.close()
     report=dict(checks=checks,browser_errors=errors,successful=all(checks.values()) and not errors,video=str(video_path) if video_path else None,
-                method=chosen,station_ids=result['request']['station_ids'],battery_budget_s=130,stops=result['routes'][chosen]['stops'])
+                method=chosen,station_ids=result['request']['station_ids'],battery_budget_s=190,flight_budget_s=130,report_reserve_s=60,stops=result['routes'][chosen]['stops'])
     (out/'charging_checks.json').write_text(json.dumps(report,indent=2),encoding='utf-8')
     print(json.dumps(report))
     if not report['successful']:raise SystemExit(1)

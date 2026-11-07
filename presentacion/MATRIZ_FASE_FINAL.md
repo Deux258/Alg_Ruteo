@@ -1,5 +1,9 @@
 # Matriz de fase final y guion del video
 
+La matriz vigente y sus criterios de aceptación están en
+[Matriz literal de rúbrica](../docs/MATRIZ_RUBRICA.md). Este guion se conserva como
+material histórico; producir el video permanece pospuesto.
+
 La numeración respeta la rúbrica adjunta, que omite el número 6.
 
 | Criterio | Función y evidencia para mostrar |

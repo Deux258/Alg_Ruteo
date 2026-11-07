@@ -14,6 +14,30 @@ from core.contracts import ROOT
 
 PATROL_LOCK = threading.Lock()
 PATROL_RESULTS = OrderedDict()
+PATROL_RESULT_BYTES = {}
+PATROL_MEMORY_LIMIT = 64*1024*1024
+
+
+def remember_patrol(result):
+    """Keep a bounded hot set; immutable exports survive cache eviction/restart."""
+    from core.geo_transport import publish_result
+    from core.geographic_scene import retained_size
+    refs=publish_result(result);digest=result['sha256']
+    weight=retained_size(result)
+    PATROL_RESULTS[digest]=result;PATROL_RESULTS.move_to_end(digest)
+    PATROL_RESULT_BYTES[digest]=weight
+    while len(PATROL_RESULTS)>3 or sum(PATROL_RESULT_BYTES.values())>PATROL_MEMORY_LIMIT:
+        key,_=PATROL_RESULTS.popitem(last=False);PATROL_RESULT_BYTES.pop(key,None)
+    return refs
+
+
+def previous_patrol(digest):
+    if digest in PATROL_RESULTS:
+        PATROL_RESULTS.move_to_end(digest);return PATROL_RESULTS[digest]
+    from core.geo_transport import result_refs,store
+    refs=result_refs(digest) if isinstance(digest,str) else None
+    if refs:return store().read_json(refs['exportar'])
+    return None
 
 
 def patrol_model(conn=None, current=None):
@@ -64,34 +88,65 @@ def status(conn):
 
 class Handler(BaseHTTPRequestHandler):
     def do_POST(self):
-        path = urlsplit(self.path).path
-        if path not in ['/api/aereo/rutas','/api/aereo/replanificar','/api/aereo/comparar','/api/aereo/patrullaje','/api/aereo/patrullaje/simular']:
+        parsed=urlsplit(self.path);path=parsed.path;params=parse_qs(parsed.query)
+        if path not in ['/api/aereo/rutas','/api/aereo/replanificar','/api/aereo/comparar','/api/aereo/patrullaje','/api/aereo/patrullaje/simular','/api/aereo/patrullaje/validar']:
             return self.reply(404,b'{"error":"not_found"}')
         try:
             length=int(self.headers.get('Content-Length','0'))
             if not 0<length<=262144:raise ValueError('Solicitud vacía o mayor de 256 KiB')
             request=json.loads(self.rfile.read(length))
             if not isinstance(request,dict):raise ValueError('Solicitud JSON debe ser un objeto')
+            if path.endswith('/validar'):
+                from core.mission_constraints import assess_constraints
+                if os.getenv('PATROL_CONTEXT'):assessment=assess_constraints(patrol_model(),request)
+                else:
+                    with connect() as conn:
+                        current=status(conn)
+                        if not current:return self.reply(503,b'{"status":"not_ready"}')
+                        assessment=assess_constraints(patrol_model(conn,current),request)
+                return self.json_reply(dict(valid=assessment['admissible'],violations=assessment['reasons'],constraints=assessment))
             if path.startswith('/api/aereo/patrullaje') or 'target_polygon' in request:
                 if not PATROL_LOCK.acquire(blocking=False):
                     return self.reply(429,b'{"error":"Hay un patrullaje en calculo. Reintentar al finalizar."}')
                 try:
                     from core.patrol import calculate,simulate
                     if path.endswith('/simular'):
-                        previous=PATROL_RESULTS.get(request.get('sha256'))
+                        previous=previous_patrol(request.get('sha256'))
                         if previous is None:raise ValueError('Resultado no disponible: recalcular la misión antes de simular')
+                        if previous.get('geographic_scene'):
+                            # Restore the identical surface after a process/cache restart.
+                            from core.patrol import flight_terrain
+                            model=patrol_model() if os.getenv('PATROL_CONTEXT') else None
+                            if model is None:
+                                with connect() as conn:
+                                    current=status(conn)
+                                    if not current:return self.reply(503,b'{"status":"not_ready"}')
+                                    model=patrol_model(conn,current)
+                            surface=flight_terrain(model)
+                            if surface.source_sha256!=previous['geographic_scene']['surface_sha256']:
+                                raise ValueError('Las fuentes de la escena cambiaron: recalcular antes de simular')
                         result=simulate(previous,request)
-                    elif os.getenv('PATROL_CONTEXT'):
-                        result=calculate(patrol_model(),request)
                     else:
-                        with connect() as conn:
-                            current=status(conn)
-                            if not current:return self.reply(503,b'{"status":"not_ready"}')
-                            result=calculate(patrol_model(conn,current),request,conn)
+                        if 'previous_sha256' in request:
+                            previous=previous_patrol(request['previous_sha256'])
+                            if previous is None:raise ValueError('Misión anterior no disponible para replanificar')
+                            activated=request.get('activated_threat_ids',[])
+                            if not isinstance(activated,list) or any(not isinstance(i,str) for i in activated) or set(activated)-{r['id'] for r in previous['threats']}:
+                                raise ValueError('Amenazas activadas desconocidas en la misión anterior')
+                            request=dict(previous['request'],**{k:v for k,v in request.items() if k!='previous_sha256'})
+                            request['activated_threat_ids']=activated
+                        if os.getenv('PATROL_CONTEXT'):result=calculate(patrol_model(),request)
+                        else:
+                            with connect() as conn:
+                                current=status(conn)
+                                if not current:return self.reply(503,b'{"status":"not_ready"}')
+                                result=calculate(patrol_model(conn,current),request,conn)
                     if 'routes' in result:
-                        PATROL_RESULTS[result['sha256']]=result
-                        while len(PATROL_RESULTS)>3:PATROL_RESULTS.popitem(last=False)
-                    return self.reply(200,json.dumps(safe_numbers(result),ensure_ascii=False,allow_nan=False).encode())
+                        refs=remember_patrol(result)
+                        if params.get('view')==['summary']:
+                            from core.geo_transport import result_summary
+                            result=result_summary(result,refs)
+                    return self.json_reply(result)
                 finally:
                     PATROL_LOCK.release()
             with connect() as conn:
@@ -110,12 +165,28 @@ class Handler(BaseHTTPRequestHandler):
             return self.reply(503,b'{"error":"No se pudo calcular la ruta; revisar servicio y tiempo de consulta"}')
 
     def do_GET(self):
-        parsed=urlsplit(self.path); path=parsed.path
+        parsed=urlsplit(self.path); path=parsed.path;params=parse_qs(parsed.query)
+        if path.startswith('/api/aereo/patrullaje/recursos/'):
+            from core.geo_transport import store
+            resource=store().get(path.rsplit('/',1)[-1])
+            if resource:return self.immutable_reply(resource)
+            return self.reply(404,b'{"error":"resource_not_found"}')
+        if path.startswith('/api/aereo/patrullaje/resultados/'):
+            try:
+                from core.geo_transport import filtered_result_resource
+                parts=path.split('/')
+                if len(parts)!=7:return self.reply(404,b'{"error":"not_found"}')
+                resource=filtered_result_resource(parts[-2],parts[-1],params.get('commune_id',[None])[0])
+                if resource:return self.immutable_reply(resource)
+                return self.reply(404,b'{"error":"result_not_found"}')
+            except (ValueError,KeyError,TypeError) as exc:return self.json_reply({'error':str(exc)},422)
         static={'/':'index.html','/app.js':'app.js','/aerial.js':'aerial.js','/vial.js':'vial.js','/style.css':'style.css',
                 '/vendor/leaflet.js':'vendor/leaflet.js','/vendor/leaflet.css':'vendor/leaflet.css'}
         static.update({f'/vendor/images/{name}':f'vendor/images/{name}' for name in ['layers.png','layers-2x.png','marker-icon.png','marker-icon-2x.png','marker-shadow.png']})
         static.update({'/patrullaje':'patrol.html','/patrol.js':'patrol.js','/patrol.css':'patrol.css','/terrain3d.js':'terrain3d.js','/fase2':'aerial.html'})
         static['/flight-player.js']='flight-player.js'
+        static['/patrol-editing.js']='patrol-editing.js'
+        static['/patrol-presentation.js']='patrol-presentation.js'
         if os.getenv('PATROL_CONTEXT'):static['/']='patrol.html'
         if path in static:
             if path=='/' and not os.getenv('PATROL_CONTEXT'):
@@ -129,16 +200,21 @@ class Handler(BaseHTTPRequestHandler):
         if path in ('/api/aereo/patrullaje/mapa','/api/aereo/patrullaje/escena3d'):
             try:
                 from core.patrol import map_data,scene_data
-                build=scene_data if path.endswith('/escena3d') else map_data
+                from core.geo_transport import map_summary,scene_summary,legacy_filtered_map
+                commune_id=params.get('commune_id',[None])[0] or None
+                summary=params.get('view')==['summary']
+                def build(model,engine):
+                    if path.endswith('/escena3d'):
+                        result=scene_summary(model,commune_id) if summary or commune_id else scene_data(model)
+                        return dict(result,engine=engine)
+                    return map_summary(model,engine,commune_id) if summary else legacy_filtered_map(model,engine,commune_id)
                 if os.getenv('PATROL_CONTEXT'):
-                    result=build(patrol_model())
-                    result['engine']='snapshot local · Dijkstra Python (sin pgRouting)'
+                    result=build(patrol_model(),'snapshot local · Dijkstra Python (sin pgRouting)')
                 else:
                     with connect() as conn:
                         current=status(conn)
                         if not current:return self.reply(503,b'{"status":"not_ready"}')
-                        result=build(patrol_model(conn,current))
-                        result['engine']='PostGIS + pgRouting'
+                        result=build(patrol_model(conn,current),'PostGIS + pgRouting')
                 return self.reply(200,json.dumps(result,ensure_ascii=False,allow_nan=False).encode())
             except (ValueError,KeyError) as exc:
                 return self.reply(422,json.dumps({'error':str(exc)},ensure_ascii=False).encode())
@@ -190,6 +266,24 @@ class Handler(BaseHTTPRequestHandler):
         except Exception:
             logging.exception("Consulta de diagnóstico falló")
             return self.reply(503,b'{"status":"database_unavailable"}')
+
+    def json_reply(self,value,code=200):
+        return self.reply(code,json.dumps(safe_numbers(value),ensure_ascii=False,allow_nan=False).encode())
+
+    def immutable_reply(self,resource):
+        from core.geo_transport import store
+        etag='"'+resource['sha256']+'"'
+        if self.headers.get('If-None-Match')==etag:
+            self.send_response(304);self.send_header('ETag',etag);self.send_header('Cache-Control','public, max-age=31536000, immutable');self.end_headers();return
+        compressed='gzip' in self.headers.get('Accept-Encoding','')
+        path=store().folder/(resource['sha256']+('.gz' if compressed else '.data'))
+        self.send_response(200);self.send_header('Content-Type',resource['content_type']);self.send_header('Content-Length',str(path.stat().st_size))
+        self.send_header('ETag',etag);self.send_header('Cache-Control','public, max-age=31536000, immutable');self.send_header('Vary','Accept-Encoding')
+        self.send_header('X-Content-Type-Options','nosniff')
+        if compressed:self.send_header('Content-Encoding','gzip')
+        self.end_headers()
+        with path.open('rb') as stream:
+            while chunk:=stream.read(131072):self.wfile.write(chunk)
 
     def reply(self,code,body,content_type="application/json; charset=utf-8"):
         compressed=len(body)>1048576 and 'gzip' in self.headers.get('Accept-Encoding','') and content_type.startswith('application/json')

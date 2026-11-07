@@ -58,7 +58,8 @@ class DistinctCircuitTests(unittest.TestCase):
         model,request,*_=fixture();x,y=FWD(*request['origin'])
         model['records']['M1'].append(dict(provider_id='105',name='Swap fixture',candidate=True,
             geometry=dict(type='Point',coordinates=list(INV(x+300,y)))))
-        request['station_ids']=['105'];request['preferences']={'battery_budget_s':80}
+        # 80 s planificables + 60 s de reporte por batería.
+        request['station_ids']=['105'];request['preferences']={'battery_budget_s':140}
         result=self.calculate_fixture(model,request);route=result['routes']['dijkstra_distance']
         self.assertEqual(len(route['stops']),1)
         route['stops'][0]['coordinate_index']+=1000  # Sampling density must not move a swap.

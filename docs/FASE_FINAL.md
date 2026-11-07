@@ -58,14 +58,18 @@ El viento de la fuente a 10 m se aplica uniformemente a la altura de vuelo como
 aproximación académica; no se ha adquirido un perfil meteorológico vertical.
 
 El perfil de planificación usa 10 m/s, 25 min y reserva 20 %: 1.200 s útiles por
-batería. El total de misión predeterminado es 3.600 s. Despegue y aterrizaje consumen
+batería, de los que se apartan 60 s para reporte: 1.140 s planificables por batería.
+El total predeterminado de misión es 3.600 s; se apartan 60 s una sola vez y quedan
+3.540 s planificables. Por ejemplo, 190 s útiles = 130 s de vuelo + 60 s de reporte.
+Despegue y aterrizaje consumen
 tiempo de batería. Las cinco bases candidatas pueden representar estaciones virtuales,
 una batería por estación, un solo uso y 120 s de cambio, más aterrizaje/despegue.
 No se afirma que los cuarteles tengan cargadores ni se simula una curva electroquímica.
 
 La detección usa un foco sintético inicialmente desconocido. Al entrar en alcance
-con línea de vista, consume 60 s de verificación/reporte y busca retorno con la batería
-restante. La posición dentro del enlace se divide en dos arcos residuales, conservando
+con línea de vista, comprueba de nuevo los 60 s de reporte y el retorno con la batería
+restante antes de reportar. Si no alcanzan ambos, prioriza regresar y registra el
+reporte incompleto, con hora final nula. La posición dentro del enlace se divide en dos arcos residuales, conservando
 los tiempos dirigidos por viento. Si no existe retorno, `no_safe_return` conserva el
 hallazgo pero no declara servicio cumplido. Un bloqueo aleatorio conocido durante el
 recorrido inicia retorno desde el nodo anterior; `interrupted_and_returned` no cuenta
@@ -101,9 +105,11 @@ El recocido simulado intercambia pasadas y cambia orientaciones. Evalúa la mism
 función y restricciones, utiliza la búsqueda de estaciones con haz de 16 etiquetas y
 acepta empeoramientos con `exp(-Δ/T)`. T comienza en 100 y desciende linealmente hasta
 0,01. Se detiene en 10.000 iteraciones o 30 s; se registran semilla e iteraciones.
-La memoria de evaluaciones evita recalcular el costo de una misma secuencia. Los
-tiempos por técnica son incrementales y las conexiones ya calculadas se reutilizan;
-la preparación del grafo queda incluida en el tiempo total de la solicitud.
+La memoria de evaluaciones evita recalcular el costo de una misma secuencia. Cada
+técnica usa una caché de conectores independiente. Se registran conexiones,
+resolución y validación por separado; la preparación común figura en `timings.setup_s`.
+La geometría física inmutable se reutiliza entre misiones en una caché limitada a
+128 MiB, manteniendo aislados los conectores y restricciones de cada consulta.
 
 ## Fallas, distribución y resiliencia
 
@@ -120,10 +126,13 @@ combinada es `1 - producto(1-p_h)`, suponiendo independencia entre objetos de am
 Una misma amenaza afecta conjuntamente a todos los nodos y enlaces intersectados.
 Los elementos excluidos se incluyen en el archivo de probabilidades con su causa.
 
-Se sortean valores `Uniforme[0,100)` y ocurre falla si `U < p_h`. Las cuatro rutas se
+Se sortean valores `Uniforme[0,100)` y ocurre falla si `U < p_h`.
+El protocolo SHA-256/53 bits fija cada valor por semilla, índice de escenario e
+identificador de amenaza; otras amenazas no desplazan el sorteo existente. Las cuatro rutas se
 congelan antes de los mismos 1.000 escenarios. R es la fracción de escenarios donde
 la ruta completa es viable, cubre el objetivo y retorna. Un método sin misión viable
-obtiene 0. La replanificación ilustrativa se informa aparte de R. Se exportan todos
+obtiene 0. Se muestran intervalos Wilson al 95 %, ganador o empate explícito y
+desempate por cómputo separado. La replanificación ilustrativa se informa aparte de R. Se exportan todos
 los sorteos, la semilla, hashes, perfil y huella de software. La sensibilidad mantiene
 las rutas congeladas y repite los umbrales A4 con multiplicadores 0,5, 1 y 2.
 
@@ -138,11 +147,19 @@ en ambas vistas. Ver [modelo y reproducción](ALTERNATIVAS_REPRODUCTOR.md).
 - `POST /api/aereo/patrullaje`: polígono y perfil; cuatro rutas y evaluación común.
 - Los endpoints existentes de rutas/comparación también aceptan `target_polygon`.
 - `POST /api/aereo/patrullaje/simular`: `sha256`, `method`, `seed`, `fire` opcional.
-  El SHA debe corresponder a uno de los últimos tres resultados del servidor.
+  El SHA identifica un resultado persistido con exportaciones inmutables.
+- `POST /api/aereo/patrullaje/validar`: evaluación compartida de clima y energía.
+- `?view=summary` en mapa/misión limita la respuesta a 1 MiB y enlaza los recursos
+  completos bajo `/api/aereo/patrullaje/recursos/<sha>`.
+- `GET /api/aereo/patrullaje/resultados/<sha>/{exportar,probabilidades,nodos,amenazas}`.
+- `commune_id=<CUT>` recorta la representación visual; originales y planificación
+  conservan su geometría. Las fronteras provienen del snapshot versionado BCN.
 
 La web utiliza solo lectura de BD; exporta archivos mediante descarga. Solo se admite
-un cálculo pesado simultáneo; otros reciben 429. Un reinicio descarta la caché y exige
-recalcular antes de simular. Se comprimen las respuestas JSON grandes.
+un cálculo pesado simultáneo; otros reciben 429. Las exportaciones persistidas
+sobreviven a un reinicio; para simular se recupera y verifica la escena original.
+Si no está disponible se informa el problema. Los recursos usan ETag y caché
+inmutable; las operaciones dinámicas se sirven sin caché.
 
 Hay controles independientes para las cuatro técnicas y hasta tres candidatas viables
 destacadas. Popups usan texto DOM para evitar interpretar datos como HTML. El checkbox
@@ -171,3 +188,8 @@ Referencias: [DJI](https://enterprise.dji.com/mavic-3-enterprise/specs),
 [instalación y licencia limitada](https://support.gurobi.com/hc/en-us/articles/360044290292-How-do-I-install-Gurobi-for-Python),
 [Maps3D](https://beta.maps3d.io/for-agents). El procedimiento GIS sigue la guía geomaster
 ya citada en `FASE2_METADATA_TRANSITO.md`.
+
+El cierre, la aceptación y la limpieza conservadora se detallan en
+[CIERRE_IMPLEMENTACION.md](CIERRE_IMPLEMENTACION.md) y
+[ARCHIVO_Y_DEPENDENCIAS.md](ARCHIVO_Y_DEPENDENCIAS.md). El protocolo de amenazas locales
+se ejecuta con `./main patrullar --experiment config/evaluacion_patrullaje_local.json`.

@@ -13,6 +13,10 @@ import math
 import os
 import random
 import time
+import threading
+import sys
+from collections import OrderedDict
+from dataclasses import dataclass
 from datetime import timedelta
 from functools import lru_cache
 from pathlib import Path
@@ -28,6 +32,9 @@ from core.contracts import ROOT, canonical, sha256, write_json
 
 METHODS = ('dijkstra_distance', 'dijkstra_weighted', 'gurobi', 'annealing')
 LABELS = dict(zip(METHODS, ('Dijkstra · metros', 'Dijkstra · parámetros', 'Gurobi MILP', 'Recocido simulado')))
+_GEOMETRY_CACHE = OrderedDict()
+_GEOMETRY_LOCK = threading.RLock()
+_GEOMETRY_MAX_BYTES = 128 * 1024 * 1024
 
 
 def defaults():
@@ -65,9 +72,10 @@ def raster_path():
     folder = ROOT / config['aerial_raw_directory']
     source = json.loads((folder / 'manifest.json').read_text(encoding='utf-8'))['sources']['S3']
     path = (folder / source['file']).resolve()
-    if not path.is_relative_to(folder.resolve()) or sha256(path) != source['sha256']:
+    if not path.is_relative_to(folder.resolve()):
         raise ValueError('DSM alterado o fuera del directorio de originales')
-    return path
+    from core.assets import resolve_asset
+    return resolve_asset(path,source['sha256'])
 
 
 class Terrain:
@@ -129,7 +137,7 @@ def segment_fractions(surface,a,b):
 
 
 class Hazards:
-    def __init__(self, model, clock, p, events):
+    def __init__(self, model, clock, p, events, activated_threat_ids=None):
         self.rows = []
         self.unknown = []
         records = model['records']
@@ -162,6 +170,15 @@ class Hazards:
             prob = number(row.get('probability_pct', 80), 'probability_pct', 0, 100)
             self.rows.append(dict(id=f'synthetic:{i}', source='synthetic', probability_pct=prob,
                                   geometry=mapping(g), attributes=dict(synthetic=True)))
+        activated = [] if activated_threat_ids is None else activated_threat_ids
+        if not isinstance(activated,list) or any(not isinstance(v,str) for v in activated):
+            raise ValueError('activated_threat_ids debe contener identificadores de amenaza')
+        if set(activated)-{row['id'] for row in self.rows}:
+            raise ValueError('Amenaza activada desconocida en el escenario original')
+        for row in self.rows:
+            if row['id'] in activated:
+                row['attributes']=dict(row['attributes'],original_probability_pct=row['probability_pct'],activated_for_replanning=True)
+                row['probability_pct']=100.
         self.geoms = [transform(FWD, shape(r['geometry'])) for r in self.rows]
         self.tree = STRtree(self.geoms)
         self.hard = unary_union([g for g, r in zip(self.geoms, self.rows) if r['probability_pct'] == 100])
@@ -173,28 +190,87 @@ class Hazards:
         return 1-math.prod(1-self.rows[i]['probability_pct']/100 for i in ids)
 
 
+@dataclass(frozen=True)
+class BaseGeometry:
+    """Only immutable physical coordinates; never probabilities, wind or path caches."""
+    nodes: tuple
+    segments: tuple
+    unknown_nodes: tuple
+    size_bytes: int
+
+
+def geometry_key(area,surface,profile):
+    return hashlib.sha256(canonical(dict(area_wkb=area.wkb_hex,crs='EPSG:32719',
+        surface_sha256=surface.source_sha256,surface_type=type(surface).__module__+'.'+type(surface).__qualname__,
+        altitude_agl_m=profile['altitude_agl_m'],grid_m=profile['grid_m'],max_link_m=profile['max_link_m'],
+        sampling_m=15,kernel_sha256=sha256(Path(__file__))))).hexdigest()
+
+
+def build_geometry(area,surface,profile):
+    nodes=[];unknown=[];lattice={};segments=[]
+    w,s,e,n=area.bounds;grid=profile['grid_m']
+    for x in range(math.ceil(w/grid)*grid,math.floor(e/grid)*grid+1,grid):
+        for y in range(math.ceil(s/grid)*grid,math.floor(n/grid)*grid+1,grid):
+            if not area.covers(Point(x,y)):continue
+            h=surface.at(x,y)
+            if h is None:unknown.append(tuple(INV(x,y)));continue
+            ident=len(nodes)+1;coords=(float(x),float(y),float(h+profile['altitude_agl_m']))
+            nodes.append((ident,coords));lattice[x,y]=(ident,coords)
+    for (x,y),(a,pa) in lattice.items():
+        for dx,dy in ((grid,0),(0,grid),(grid,grid),(grid,-grid)):
+            value=lattice.get((x+dx,y+dy))
+            if value is None:continue
+            b,pb=value;d=math.dist(pa[:2],pb[:2])
+            if d>profile['max_link_m']+1e-6 or not area.covers(LineString([pa[:2],pb[:2]])):continue
+            points=[]
+            for f in segment_fractions(surface,pa,pb):
+                qx,qy=pa[0]+(pb[0]-pa[0])*f,pa[1]+(pb[1]-pa[1])*f
+                h=surface.at(qx,qy)
+                if h is None:break
+                points.append((float(qx),float(qy),float(h+profile['altitude_agl_m'])))
+            else:segments.append((a,b,tuple(points),float(d)))
+    values=(tuple(nodes),tuple(segments),tuple(unknown))
+    seen=set()
+    def memory(value):
+        ident=id(value)
+        if ident in seen:return 0
+        seen.add(ident)
+        return sys.getsizeof(value)+(sum(memory(v) for v in value) if isinstance(value,tuple) else 0)
+    size=memory(values)
+    return BaseGeometry(*values,size)
+
+
 class Graph:
-    def __init__(self, area, terrain, hazards, weather, profile, conn=None):
+    def __init__(self, area, terrain, hazards, weather, profile, conn=None, cache_geometry=None):
         self.area, self.terrain, self.hazards, self.weather, self.p = area, terrain, hazards, weather, profile
         self.nodes, self.edges, self.adj = {}, {}, {}
         self.point_index,self.linked_pairs={},set()
         self.excluded_nodes, self.excluded_edges = [], []
         self.conn, self.cache = conn, {}
         self.sql_queries = {}
+        self.path_compute_s=0.;self.path_queries=0
         self.routing_targets = None
-        w, s, e, n = area.bounds
-        grid = profile['grid_m']
-        lattice = {}
-        for x in range(math.ceil(w/grid)*grid, math.floor(e/grid)*grid+1, grid):
-            for y in range(math.ceil(s/grid)*grid, math.floor(n/grid)*grid+1, grid):
-                node = self.add_node(x, y)
-                if node is not None:
-                    lattice[x, y] = node
-        for (x, y), a in lattice.items():
-            for dx, dy in [(grid, 0), (0, grid), (grid, grid), (grid, -grid)]:
-                b = lattice.get((x+dx, y+dy))
-                if b is not None:
-                    self.link(a, b)
+        cacheable=(type(terrain).__module__=='core.geographic_scene' or type(terrain) is Terrain) if cache_geometry is None else cache_geometry
+        started=time.monotonic();key=geometry_key(area,terrain,profile) if cacheable else None;hit=False
+        if cacheable:
+            with _GEOMETRY_LOCK:
+                base=_GEOMETRY_CACHE.get(key)
+                if base is None:
+                    base=build_geometry(area,terrain,profile)
+                    if base.size_bytes<=_GEOMETRY_MAX_BYTES:_GEOMETRY_CACHE[key]=base
+                    while len(_GEOMETRY_CACHE)>2 or sum(v.size_bytes for v in _GEOMETRY_CACHE.values())>_GEOMETRY_MAX_BYTES:
+                        _GEOMETRY_CACHE.popitem(last=False)
+                else:hit=True;_GEOMETRY_CACHE.move_to_end(key)
+        else:base=build_geometry(area,terrain,profile)
+        with _GEOMETRY_LOCK:cache_bytes=sum(v.size_bytes for v in _GEOMETRY_CACHE.values())
+        self.geometry_cache=dict(hit=hit,key=key,physical_geometry_s=time.monotonic()-started,
+            bytes=base.size_bytes,cache_max_bytes=_GEOMETRY_MAX_BYTES,
+            cache_bytes=cache_bytes,policy='immutable_geometry_only_LRU_max2_memory_bounded')
+        for ident,coords in base.nodes:
+            self.nodes[ident]=list(coords);self.adj[ident]=[]
+            self.point_index.setdefault((round(coords[0]*1000),round(coords[1]*1000)),[]).append(ident)
+        self.excluded_nodes=[dict(coordinates=list(c),probability_pct=None,reason='unknown_elevation') for c in base.unknown_nodes]
+        for a,b,points,d in base.segments:self._connect(a,b,points,d)
         self.grid_ids = list(self.nodes)
         self.tree = STRtree([Point(self.nodes[i][:2]) for i in self.grid_ids])
 
@@ -255,12 +331,6 @@ class Graph:
         line = LineString([pa[:2], pb[:2]])
         if not self.area.covers(line):
             return
-        if self.hazards.hard.intersects(line):
-            ids=self.hazards.ids(line)
-            for source,target in [(a,b),(b,a)]:
-                self.excluded_edges.append(dict(id=f'excluded:{source}:{target}',source=str(source),target=str(target),
-                    probability_pct=100,by_threat={self.hazards.rows[i]['id']:self.hazards.rows[i]['probability_pct'] for i in ids},reason='hard_restriction'))
-            return
         coords = []
         for f in segment_fractions(self.terrain,pa,pb):
             x, y = pa[0]+(pb[0]-pa[0])*f, pa[1]+(pb[1]-pa[1])*f
@@ -268,6 +338,17 @@ class Graph:
             if h is None:
                 return
             coords.append([float(x), float(y), h+self.p['altitude_agl_m']])
+        self._connect(a,b,tuple(tuple(c) for c in coords),d,already_linked=True)
+
+    def _connect(self,a,b,coords,d,already_linked=False):
+        if not already_linked:self.linked_pairs.add(tuple(sorted((a,b))))
+        line=LineString([self.nodes[a][:2],self.nodes[b][:2]])
+        if self.hazards.hard.intersects(line):
+            ids=self.hazards.ids(line)
+            for source,target in [(a,b),(b,a)]:
+                self.excluded_edges.append(dict(id=f'excluded:{source}:{target}',source=str(source),target=str(target),
+                    probability_pct=100,by_threat={self.hazards.rows[i]['id']:self.hazards.rows[i]['probability_pct'] for i in ids},reason='hard_restriction'))
+            return
         ids = self.hazards.ids(line)
         probability = self.hazards.probability(ids)
         angle = math.radians(self.weather['wind_direction_deg'])
@@ -304,6 +385,7 @@ class Graph:
             return self.check_path(self.cache[key],source,target)
         if source == target:
             return []
+        started=time.monotonic();self.path_queries+=1
         if self.conn is not None:
             from psycopg import sql
             if metric not in self.sql_queries:
@@ -344,7 +426,14 @@ class Graph:
                     node = self.edges[i]['source']
                 result.reverse()
         self.cache[key] = result
+        self.path_compute_s+=time.monotonic()-started
         return self.check_path(result,source,target)
+
+    def routing_session(self):
+        """Independent caches ensure no technique borrows another's connector work."""
+        from copy import copy
+        result=copy(self);result.cache={};result.sql_queries={};result.path_compute_s=0.;result.path_queries=0
+        return result
 
     def check_path(self,path,source,target):
         if path is None:return None
@@ -365,16 +454,24 @@ class Graph:
             result.extend(self.edges[i]['coordinates'][0 if not result else 1:])
         return result
 
-    def export_failures(self):
+    def export_failures(self,weather_probability=0):
+        def combined(base):
+            if weather_probability==100 or base==100:return 100.
+            if weather_probability is None or base is None:return None
+            return 100*(1-(1-base/100)*(1-weather_probability/100))
         def row(ident, ids):
-            return dict(id=str(ident), by_threat={'A1:weather':0,**{self.hazards.rows[i]['id']:self.hazards.rows[i]['probability_pct'] for i in ids}},
-                        probability_pct=100*self.hazards.probability(ids))
+            return dict(id=str(ident), by_threat={'A1:weather':weather_probability,**{self.hazards.rows[i]['id']:self.hazards.rows[i]['probability_pct'] for i in ids}},
+                        probability_pct=combined(100*self.hazards.probability(ids)))
+        def excluded(rows):
+            return [dict(r,by_threat={'A1:weather':weather_probability,**r.get('by_threat',{})},
+                         probability_pct=combined(r.get('probability_pct'))) for r in rows]
         return dict(schema_version='failure-probabilities-1', distribution='Uniform[0,100)',
                     independence='Independent threat objects; shared event across affected nodes and edges',
-                    nodes=[row(i,self.hazards.ids(Point(v[:2]))) for i,v in self.nodes.items()],
+                    nodes=[dict(row(i,self.hazards.ids(Point(v[:2]))),coordinates=[*INV(*v[:2]),v[2]]) for i,v in self.nodes.items()],
                     edges=[dict(row(i,e['hazard_ids']), source=str(e['source']), target=str(e['target'])) for i,e in self.edges.items()],
-                    excluded_nodes=self.excluded_nodes,excluded_edges=self.excluded_edges,
-                    global_threats=[dict(id='A1:weather',probability_pct=0,reason='Selected weather within conservative profile')])
+                    excluded_nodes=excluded(self.excluded_nodes),excluded_edges=excluded(self.excluded_edges),
+                    global_threats=[dict(id='A1:weather',probability_pct=weather_probability,
+                        reason='Selected weather within conservative profile' if weather_probability==0 else 'Weather blocked or unknown; see constraints')])
 
 
 def sweep_tasks(target, graph):
@@ -417,7 +514,8 @@ def fixed_route(order, states, graph, home, stations, metric):
     """Beam labels preserve battery and remaining station inventory; never reset in flight."""
     ascent = graph.p['altitude_agl_m']/graph.p['climb_ms']
     labels = [dict(node=home,energy=ascent,time_s=ascent,cost=ascent if metric=='cost' else 0,path=[],stops=[],mask=0)]
-    actions = [states[i] for i in order]+[dict(start=home,end=home,path=[],time_s=graph.p['altitude_agl_m']/graph.p['descent_ms'],cost=0)]
+    landing = graph.p['altitude_agl_m']/graph.p['descent_ms']
+    actions = [states[i] for i in order]+[dict(start=home,end=home,path=[],time_s=landing,cost=landing)]
     for action in actions:
         candidates = []
         for initial in labels:
@@ -508,6 +606,7 @@ def anneal(states, graph, home, stations, initial):
 
 def gurobi_route(states, graph, home, stations):
     """Generalized asymmetric TSP with directed strip states and resource resets."""
+    preflight=dict(license_checked=False,capacity_checked=False)
     try:
         import gurobipy as gp
     except ImportError:
@@ -566,9 +665,15 @@ def gurobi_route(states, graph, home, stations):
                 model.addConstr(elapsed<=graph.p['mission_budget_s'])
                 model.setObjective(gp.quicksum(x[i,j]*v['cost'] for (i,j),v in links.items())+
                                    gp.quicksum(visit[i]*a['cost'] for i,a in enumerate(actions)),gp.GRB.MINIMIZE)
+                model.update()
+                preflight.update(variables=model.NumVars,linear_constraints=model.NumConstrs,
+                    general_constraints=model.NumGenConstrs,gurobi_version=list(gp.gurobi.version()),
+                    license_checked=True,capacity_check='actual_delivery_model_optimization')
                 model.optimize()
+                preflight['capacity_checked']=True
                 metadata = dict(status='optimal' if model.Status==gp.GRB.OPTIMAL else 'time_limit' if model.Status==gp.GRB.TIME_LIMIT else str(model.Status),
                                 license_checked=True,variables=model.NumVars,constraints=model.NumConstrs,
+                                preflight=preflight,
                                 formulation='Directed strip states, flow, order, battery propagation, optional single-use stations',
                                 gap=float(model.MIPGap) if model.SolCount else None,solutions=model.SolCount)
                 if not model.SolCount:
@@ -593,7 +698,8 @@ def gurobi_route(states, graph, home, stations):
                     node = nxt
                 return dict(path=route,stops=stops,time_s=seconds,cost=float(model.ObjVal)),metadata
     except gp.GurobiError as exc:
-        return None,dict(status='license_or_solver_error',code=exc.errno,reason=str(exc),license_checked=False)
+        return None,dict(status='model_capacity_exceeded' if exc.errno==10010 else 'license_or_solver_error',
+                         code=exc.errno,reason=str(exc),license_checked=preflight['license_checked'],preflight=preflight)
 
 
 def coverage_cells(target, step):
@@ -628,8 +734,21 @@ def coverage(path, graph, target):
                 pending_geometry=mapping(transform(INV,unary_union([c for i,c in enumerate(cells) if i not in set(covered)]))))
 
 
+def threat_uniform(seed,scenario,threat_id):
+    """Counter-based 53-bit U[0,100): stable under catalogue additions/reordering."""
+    digest=hashlib.sha256(canonical(['threat-uniform-v1',int(seed),int(scenario),str(threat_id)])).digest()
+    return (int.from_bytes(digest[:8],'big')>>11)/(2**53)*100
+
+
+def wilson_interval(successes,trials):
+    if trials<=0:return dict(method='wilson',level=.95,low=0.,high=1.)
+    z=1.959963984540054;ratio=successes/trials;denominator=1+z*z/trials
+    center=(ratio+z*z/(2*trials))/denominator
+    radius=z*math.sqrt(ratio*(1-ratio)/trials+z*z/(4*trials*trials))/denominator
+    return dict(method='wilson',level=.95,low=max(0.,center-radius),high=min(1.,center+radius))
+
+
 def evaluate_failures(routes, graph):
-    rng = random.Random(graph.p['seed'])
     survivors = {k:0 for k in routes}
     needed = {k:set(i for e in route.get('edge_ids',[]) for i in graph.edges[int(e)]['hazard_ids']) for k,route in routes.items()}
     # All draws are shared between algorithms; one event affects its whole footprint.
@@ -637,7 +756,7 @@ def evaluate_failures(routes, graph):
     sensitivity={str(f):{k:0 for k in routes} for f in (0.5,1,2)}
     catalogue = hashlib.sha256()
     for scenario in range(graph.p['scenarios']):
-        draws = [rng.random()*100 for _ in graph.hazards.rows]
+        draws = [threat_uniform(graph.p['seed'],scenario,row['id']) for row in graph.hazards.rows]
         active = {i for i,r in enumerate(graph.hazards.rows) if draws[i]<r['probability_pct']}
         row = dict(id=scenario,draws=draws,active_threat_ids=[graph.hazards.rows[i]['id'] for i in sorted(active)])
         catalogue.update(canonical(row))
@@ -659,10 +778,12 @@ def evaluate_failures(routes, graph):
                     sensitivity[str(factor)][method]+=1
     for method,route in routes.items():
         route['resilience'] = dict(value=survivors[method]/graph.p['scenarios'],successes=survivors[method],
-                                   scenarios=graph.p['scenarios'],known=True,definition='Frozen full-coverage mission and safe return under common threat events')
+                                   scenarios=graph.p['scenarios'],known=True,confidence_interval=wilson_interval(survivors[method],graph.p['scenarios']),
+                                   definition='Frozen full-coverage mission and safe return under common threat events')
     return dict(seed=graph.p['seed'],count=graph.p['scenarios'],distribution='Uniform[0,100)',
                 rule='U < probability_pct',scenario_sha256=catalogue.hexdigest(),first_scenario=sample,
                 scenarios=all_scenarios,historical_sensitivity={f:{k:v/graph.p['scenarios'] for k,v in counts.items()} for f,counts in sensitivity.items()},
+                rng_protocol='sha256/53-bit-uniform-v1; keyed by seed, scenario and threat id',
                 sensitivity_protocol='Frozen routes; historical probability multiplier only; shared uniforms',unknown_thermal_ids=graph.hazards.unknown)
 
 
@@ -684,127 +805,153 @@ def validate_polygon(request, study):
 
 
 def selected_weather(model, clock, p):
-    weather = next((w for w in model['records']['M4'] if iso(w['valid_at'])==clock.replace(minute=0,second=0,microsecond=0)),None)
-    if weather is None or any(weather.get(k) is None for k in ('wind_speed_ms','wind_gust_ms','wind_direction_deg','temperature_c')):
-        raise ValueError('Meteorología desconocida para la hora UTC solicitada')
-    if max(weather['wind_speed_ms'],weather['wind_gust_ms'])>=p['wind_limit_ms'] or not p['temperature_min_c']<=weather['temperature_c']<=p['temperature_max_c']:
-        raise ValueError('Meteorología fuera del perfil de vuelo: A1, probabilidad de falla 100 %')
-    return weather
+    from core.mission_constraints import assess_constraints
+    assessment=assess_constraints(model,dict(time=clock.isoformat()),_profile=p)
+    if not assessment['weather_admissible']:
+        raise ValueError('; '.join(row['message'] for row in assessment['reasons'] if row['source']=='A1'))
+    return assessment['weather']
+
+
+def _route_row(method,status='not_feasible',solver=None):
+    return dict(method=method,label=LABELS[method],status=status,solver=solver or {},edge_ids=[],
+                coordinates=[],coordinates_utm=[],coverage=None,stops=[],time_s=None,distance_m=None,
+                compute_s=0.,timings=dict(connectors_s=0.,solve_s=0.,validation_s=0.,total_s=0.,
+                    connector_queries=0,cache_policy='independent_per_technique'))
+
+
+def _scene_provenance(model,result,terrain_override):
+    if terrain_override is not None:return
+    from core.geographic_scene import get_scene
+    scene=get_scene(model,terrain())
+    result['geographic_scene']=dict(sha256=scene.source_hash,surface_sha256=scene.surface.source_sha256,
+        osm_sha256=scene.manifest['sha256'],timestamp_osm_base=scene.manifest.get('timestamp_osm_base'),
+        obstacle_count=len(scene.surface.obstacles),height_model='max(DSM, nearby DSM minimum + tagged/estimated height)')
+
+
+def _finish_result(result,started):
+    from core.provenance import software_manifest
+    result['software']=software_manifest()
+    result['compute_s']=time.monotonic()-started
+    result['timings']['total_s']=result['compute_s']
+    result['sha256']=hashlib.sha256(canonical(result)).hexdigest()
+    return result
 
 
 def calculate(model, request, conn=None, terrain_override=None):
-    if not isinstance(request,dict):
-        raise ValueError('Solicitud JSON debe ser un objeto')
-    p = profile_for(request)
-    clock = iso(request.get('time',model['reference_time']))
-    if clock.tzinfo is None:
-        raise ValueError('Hora requiere zona UTC explícita')
-    study = shape(model['study_geometry'])
-    target = validate_polygon(request,study)
-    weather = selected_weather(model,clock,p)
-    hazards = Hazards(model,clock,p,request.get('events',[]))
-    area = transform(FWD,shape(model['flight_geometry']))
-    started = time.monotonic()
-    graph = Graph(area,terrain_override or flight_terrain(model),hazards,weather,p,conn)
-    candidates = [s for s in model['records']['M1'] if s.get('candidate',True)]
+    from core.mission_constraints import assess_constraints
+    started=time.monotonic()
+    if not isinstance(request,dict):raise ValueError('Solicitud JSON debe ser un objeto')
+    constraints=assess_constraints(model,request)
+    actual=constraints['effective_profile'];p=dict(actual)
+    p['battery_budget_s']=constraints['flight_budget_s']
+    p['mission_budget_s']=constraints['mission_flight_budget_s']
+    clock=iso(constraints['time']);study=shape(model['study_geometry'])
+    target=validate_polygon(request,study)
+    candidates=[s for s in model['records']['M1'] if s.get('candidate',True)]
     if not candidates:raise ValueError('El snapshot no contiene bases candidatas')
     base=next((s for s in candidates if s['provider_id']=='104'),candidates[0])
-    origin = request.get('origin',base['geometry']['coordinates'])
+    origin=request.get('origin',base['geometry']['coordinates'])
+    if not isinstance(origin,(list,tuple)) or len(origin)!=2:raise ValueError('Coordenadas WGS84 [longitud, latitud]')
+    number(origin[0],'longitud',-180,180);number(origin[1],'latitud',-90,90)
     if not study.covers(Point(origin)) and not any(Point(origin).distance(Point(s['geometry']['coordinates']))<1e-9 for s in candidates):
         raise ValueError('Origen exterior debe coincidir con una base candidata')
-    home = graph.point(origin)
-    if hasattr(graph.terrain,'can_land') and not graph.terrain.can_land(*graph.nodes[home][:2]):
-        raise ValueError('La base de salida está sobre agua cartografiada')
-    requested_stations = request.get('station_ids',[s['provider_id'] for s in candidates])
-    if not isinstance(requested_stations,list) or any(not isinstance(i,str) for i in requested_stations):
-        raise ValueError('station_ids debe ser una lista de IDs de bases')
-    if set(requested_stations)-{s['provider_id'] for s in candidates}:
-        raise ValueError('Estación desconocida')
-    stations = []
-    for s in candidates:
-        if s['provider_id'] not in requested_stations:
-            continue
-        try:
-            node = graph.point(s['geometry']['coordinates'])
-        except ValueError:
-            continue
-        if hasattr(graph.terrain,'can_land') and not graph.terrain.can_land(*graph.nodes[node][:2]):
-            continue
-        stations.append(dict(id=s['provider_id'],name=s['name'],node=node,hypothetical=True,position_utm=graph.nodes[node]))
-    tasks = sweep_tasks(target,graph)
+    requested_stations=request.get('station_ids',[s['provider_id'] for s in candidates])
+    if not isinstance(requested_stations,list) or any(not isinstance(i,str) for i in requested_stations):raise ValueError('station_ids debe ser una lista de IDs de bases')
+    if set(requested_stations)-{s['provider_id'] for s in candidates}:raise ValueError('Estación desconocida')
+    hazards=Hazards(model,clock,actual,request.get('events',[]),request.get('activated_threat_ids'))
+    area=transform(FWD,shape(model['flight_geometry']))
+    surface=terrain_override or flight_terrain(model)
+    weather=constraints['weather']
+    # Diagnostic topology does not pretend a blocked/unknown weather field is flyable.
+    graph_weather=weather if constraints['admissible'] else dict(valid_at=clock.isoformat(),wind_speed_ms=0.,wind_gust_ms=0.,wind_direction_deg=0.,temperature_c=20.)
+    graph=Graph(area,surface,hazards,graph_weather,p,conn)
+    result=dict(schema_version='patrol-result-2',request=request,effective_profile=actual,planning_profile=p,
+        constraints=constraints,status='ready' if constraints['admissible'] else 'blocked',time=clock.isoformat(),weather=weather,
+        run_id=model.get('_run_id'),source_context_sha256=hashlib.sha256(canonical({k:v for k,v in model.items() if not k.startswith('_')})).hexdigest(),
+        terrain_sha256=getattr(surface,'source_sha256','fixture'),target_polygon=mapping(transform(INV,target)),origin=origin,
+        stations=[],routes={},route_alternatives={},recommended=[],alternative_recommended=[],resilience_leaders=[],
+        evaluation={},threats=[],graph=dict(nodes=[],edges=[],home=None),coverage_tasks=0,
+        network=dict(nodes=len(graph.nodes),directed_edges=len(graph.edges),max_horizontal_link_m=max((e['horizontal_m'] for e in graph.edges.values()),default=0)),
+        timings=dict(setup_s=0.,comparison_s=0.,alternatives_s=0.,evaluation_s=0.,total_s=0.,geometry_cache=graph.geometry_cache),
+        assumptions=['100 m visual radius and class probabilities are academic assumptions',
+                     'Hypothetical battery-swap stations; one battery each, no in-flight recharge',
+                     'DSM ~30 m EGM2008; modeled clearance, no certified obstacle database',
+                     'Weather is static during the mission; source forecasts are historical snapshots',
+                     'Unmapped historical recurrence: explicitly assumed 20% per mission; separate from observed classes',
+                     'One report reserve per battery and once per mission; actual budgets remain available to simulation'])
+    _scene_provenance(model,result,terrain_override)
+    result['failure_probabilities']=graph.export_failures(constraints['probability_pct'])
+    if not constraints['admissible']:
+        reason='; '.join(row['message'] for row in constraints['reasons'])
+        result['routes']={method:_route_row(method,'blocked',dict(status='blocked',reason=reason)) for method in METHODS}
+        result['diversity']=dict(count=0,requested=4,status='blocked',reason=reason,comparison_unchanged=True,compute_s=0.)
+        result['diagnostic']=dict(kind='mission_constraints',reasons=constraints['reasons'],weather_probability_pct=constraints['probability_pct'],
+                                 routing_attempted=False,probabilities_exportable=True)
+        result['threats']=list(hazards.rows)
+        result['graph']['nodes']=[dict(id=str(i),coordinates=[*INV(*v[:2]),v[2]]) for i,v in graph.nodes.items()]
+        result['timings']['setup_s']=time.monotonic()-started
+        return _finish_result(result,started)
+    home=graph.point(origin)
+    if hasattr(surface,'can_land') and not surface.can_land(*graph.nodes[home][:2]):raise ValueError('La base de salida está sobre agua cartografiada')
+    stations=[]
+    for station in candidates:
+        if station['provider_id'] not in requested_stations:continue
+        try:node=graph.point(station['geometry']['coordinates'])
+        except ValueError:continue
+        if hasattr(surface,'can_land') and not surface.can_land(*graph.nodes[node][:2]):continue
+        stations.append(dict(id=station['provider_id'],name=station['name'],node=node,hypothetical=True,position_utm=graph.nodes[node]))
+    tasks=sweep_tasks(target,graph)
     graph.routing_targets=sorted({home}|{s['node'] for s in stations}|{i for task in tasks for i in task['nodes']})
-    routes = {}
+    result['timings']['setup_s']=time.monotonic()-started
+    routes={};comparison_started=time.monotonic()
     for method in METHODS:
-        begin = time.monotonic()
-        metric = 'distance_m' if method=='dijkstra_distance' else 'cost'
-        states = oriented_tasks(tasks,graph,metric)
-        initial = [next((i for i,s in enumerate(states) if s['group']==g and s['direction']==0),
-                        next((i for i,s in enumerate(states) if s['group']==g),-1)) for g in range(len(tasks))]
-        metadata = {}
-        if -1 in initial:
-            answer = None
-            metadata['reason'] = 'Pasada de vigilancia desconectada'
-        elif method=='gurobi':
-            answer,metadata = gurobi_route(states,graph,home,stations)
-        elif method=='annealing':
-            answer,metadata = anneal(states,graph,home,stations,initial)
+        begin=time.monotonic();method_graph=graph.routing_session()
+        metric='distance_m' if method=='dijkstra_distance' else 'cost'
+        states=oriented_tasks(tasks,method_graph,metric)
+        initial=[next((i for i,s in enumerate(states) if s['group']==g and s['direction']==0),
+                      next((i for i,s in enumerate(states) if s['group']==g),-1)) for g in range(len(tasks))]
+        metadata={}
+        if -1 in initial:answer=None;metadata['reason']='Pasada de vigilancia desconectada'
+        elif method=='gurobi':answer,metadata=gurobi_route(states,method_graph,home,stations)
+        elif method=='annealing':answer,metadata=anneal(states,method_graph,home,stations,initial)
         else:
-            answer = fixed_route(initial,states,graph,home,stations,metric)
-            metadata = dict(engine='pgr_dijkstra' if conn is not None else 'python_dijkstra_offline',
-                            task_order='serpentine',station_search='beam16')
-        if answer is None and 'reason' not in metadata:
-            metadata['reason']='No se encontró circuito con batería y estaciones disponibles; búsqueda limitada'
-        route = dict(method=method,label=LABELS[method],status='not_feasible',solver=metadata,edge_ids=[],
-                     coordinates=[],coverage=None,stops=[],time_s=None,distance_m=None)
+            answer=fixed_route(initial,states,method_graph,home,stations,metric)
+            metadata=dict(engine='pgr_dijkstra' if conn is not None else 'python_dijkstra_offline',task_order='serpentine',station_search='beam16')
+        if answer is None and 'reason' not in metadata:metadata['reason']='No se encontró circuito con batería, reserva de reporte y estaciones disponibles; búsqueda limitada'
+        route=_route_row(method,solver=metadata);validation_started=time.monotonic()
         if answer is not None:
-            cov = coverage(answer['path'],graph,target)
-            coords = graph.coordinates(answer['path'])
+            cov=coverage(answer['path'],graph,target);coords=graph.coordinates(answer['path'])
             route.update(status='ready' if cov['complete'] else 'incomplete_coverage',
-                         edge_ids=[str(i) for i in answer['path']], coordinates=[[*INV(c[0],c[1]),c[2]] for c in coords],
-                         coordinates_utm=coords,
-                         coverage=cov,stops=answer['stops'],time_s=answer['time_s'],cost=answer['cost'],
-                         distance_m=graph.totals(answer['path'])['distance_m'])
-        route['compute_s'] = time.monotonic()-begin
-        routes[method] = route
+                         edge_ids=[str(i) for i in answer['path']],coordinates=[[*INV(c[0],c[1]),c[2]] for c in coords],coordinates_utm=coords,
+                         coverage=cov,stops=answer['stops'],time_s=answer['time_s'],cost=answer['cost'],distance_m=graph.totals(answer['path'])['distance_m'])
+        validation_s=time.monotonic()-validation_started;total=time.monotonic()-begin
+        route['compute_s']=total
+        route['timings']=dict(connectors_s=method_graph.path_compute_s,solve_s=max(0.,total-method_graph.path_compute_s-validation_s),
+            validation_s=validation_s,total_s=total,connector_queries=method_graph.path_queries,cache_policy='independent_per_technique')
+        routes[method]=route
+    result['timings']['comparison_s']=time.monotonic()-comparison_started
     from core.patrol_alternatives import distinct_circuits
-    alternatives,diversity=distinct_circuits(graph,tasks,home,stations,target,routes)
-    evaluation = evaluate_failures({**routes,**alternatives},graph)
-    viable = sorted((r for r in routes.values() if r['status']=='ready'),key=lambda r:(-r['resilience']['value'],round(r['time_s'],3),r['method']))
+    begin=time.monotonic();alternatives,diversity=distinct_circuits(graph,tasks,home,stations,target,routes)
+    result['timings']['alternatives_s']=time.monotonic()-begin
+    begin=time.monotonic();evaluation=evaluate_failures({**routes,**alternatives},graph)
+    result['timings']['evaluation_s']=time.monotonic()-begin
+    viable=sorted((r for r in routes.values() if r['status']=='ready'),key=lambda r:(-r['resilience']['value'],r['compute_s'],r['time_s'],r['method']))
     leaders=[r['method'] for r in viable if r['resilience']['value']==viable[0]['resilience']['value']] if viable else []
-    # Geometry exported for replay and recovery, separate from route candidate generation.
-    graph_rows = [dict(id=str(e['id']),source=str(e['source']),target=str(e['target']),time_s=e['time_s'],cost=e['cost'],
-                       horizontal_m=e['horizontal_m'],hazard_ids=[hazards.rows[i]['id'] for i in e['hazard_ids']]) for e in graph.edges.values()]
-    threat_rows=[]
+    graph_rows=[dict(id=str(e['id']),source=str(e['source']),target=str(e['target']),time_s=e['time_s'],cost=e['cost'],horizontal_m=e['horizontal_m'],
+                     hazard_ids=[hazards.rows[i]['id'] for i in e['hazard_ids']]) for e in graph.edges.values()]
+    threats=[]
     for row,geom in zip(hazards.rows,hazards.geoms):
-        x,y=geom.centroid.x,geom.centroid.y
-        h=graph.terrain.at(x,y)
-        threat_rows.append(dict(row,position_utm=[x,y,h+10] if h is not None else None))
-    result = dict(schema_version='patrol-result-1',request=request,effective_profile=p,time=clock.isoformat(),weather=weather,
-                  run_id=model.get('_run_id'),source_context_sha256=hashlib.sha256(canonical({k:v for k,v in model.items() if not k.startswith('_')})).hexdigest(),
-                  terrain_sha256=getattr(graph.terrain,'source_sha256','fixture'),target_polygon=mapping(transform(INV,target)),
-                  origin=origin,stations=stations,routes=routes,route_alternatives=alternatives,diversity=diversity,
-                  alternative_recommended=[r['method'] for r in sorted(alternatives.values(),key=lambda r:(-r['resilience']['value'],r['time_s']))],
-                  recommended=[r['method'] for r in viable[:3]],resilience_leaders=leaders,evaluation=evaluation,
-                  threats=threat_rows,failure_probabilities=graph.export_failures(),
-                  graph=dict(nodes=[dict(id=str(i),coordinates=[*INV(c[0],c[1]),c[2]]) for i,c in graph.nodes.items()],edges=graph_rows,home=str(home)),
-                  network=dict(nodes=len(graph.nodes),directed_edges=len(graph.edges),max_horizontal_link_m=max((e['horizontal_m'] for e in graph.edges.values()),default=0)),
-                  coverage_tasks=len(tasks),compute_s=time.monotonic()-started,
-                  assumptions=['100 m visual radius and class probabilities are academic assumptions',
-                               'Hypothetical battery-swap stations; one battery each, no in-flight recharge',
-                               'DSM ~30 m EGM2008; modeled clearance, no certified obstacle database',
-                               'Weather is static during the mission; source forecasts are historical snapshots'])
-    result['assumptions'].append('Unmapped historical recurrence: explicitly assumed 20% per mission; separate from observed classes')
-    if terrain_override is None:
-        from core.geographic_scene import get_scene
-        scene=get_scene(model,terrain())
-        result['geographic_scene']=dict(sha256=scene.source_hash,surface_sha256=scene.surface.source_sha256,
-            osm_sha256=scene.manifest['sha256'],timestamp_osm_base=scene.manifest.get('timestamp_osm_base'),
-            obstacle_count=len(scene.surface.obstacles),height_model='max(DSM, nearby DSM minimum + tagged/estimated height)')
-        result['assumptions'].append('Mapped buildings, trees and woodland canopy affect flight height and line of sight; missing heights and ground are estimated, not surveyed')
-    from core.provenance import software_manifest
-    result['software']=software_manifest()
-    result['sha256'] = hashlib.sha256(canonical(result)).hexdigest()
-    return result
+        h=surface.at(geom.centroid.x,geom.centroid.y)
+        threats.append(dict(row,position_utm=[geom.centroid.x,geom.centroid.y,h+10] if h is not None else None))
+    result.update(stations=stations,routes=routes,route_alternatives=alternatives,diversity=diversity,
+        alternative_recommended=[r['method'] for r in sorted(alternatives.values(),key=lambda r:(-r['resilience']['value'],r['time_s']))],
+        recommended=[r['method'] for r in viable[:3]],resilience_leaders=leaders,
+        ranking=dict(primary='estimated_resilience',tie_break='compute_s',then='flight_time_s',
+            message='Empate entre las cuatro técnicas' if len(leaders)==4 else 'Empate en resiliencia estimada' if len(leaders)>1 else 'Mayor resiliencia estimada' if leaders else 'Sin misión viable',
+            leaders=leaders),evaluation=evaluation,threats=threats,
+        failure_probabilities=graph.export_failures(0),graph=dict(nodes=[dict(id=str(i),coordinates=[*INV(c[0],c[1]),c[2]]) for i,c in graph.nodes.items()],edges=graph_rows,home=str(home)),
+        network=dict(nodes=len(graph.nodes),directed_edges=len(graph.edges),max_horizontal_link_m=max((e['horizontal_m'] for e in graph.edges.values()),default=0)),coverage_tasks=len(tasks))
+    return _finish_result(result,started)
 
 
 def map_data(model):
@@ -824,9 +971,16 @@ def map_data(model):
             demo = mapping(transform(INV,g))
             break
     scene=prepared_scene(model,terrain())
+    from core.mission_constraints import assess_constraints
+    hourly=[assess_constraints(model,dict(time=row['valid_at']),_profile=p) for row in model['records']['M4']]
+    admissible=[a for a in hourly if a['admissible']]
+    observed=iso(model.get('weather_fetched_at',model['reference_time']))
+    preferred=next((a for a in admissible if iso(a['time'])>=observed),next(iter(admissible),None))
+    validation=dict(default_time=preferred['time'] if preferred else model['reference_time'],
+        default_constraints=preferred,weather=[dict(time=a['time'],admissible=a['admissible'],reasons=a['reasons'],probability_pct=a['probability_pct']) for a in hourly])
     return dict(schema_version='patrol-map-2',area=model['study_geometry'],flight_area=model['flight_geometry'],
                 bases=bases,base_catalogue=model['records']['M1'],default_origin=home['geometry']['coordinates'],demo_polygon=demo,
-                weather=model['records']['M4'],reference_time=model['reference_time'],profile=p,
+                weather=model['records']['M4'],reference_time=model['reference_time'],profile=p,validation=validation,
                 layers={k:model['records'][k] for k in ('M2','A2','A3','A4')},
                 terrain=scene['terrain'],geography={k:v for k,v in scene['geography'].items() if k!='render'},
                 sources=model.get('raster'),hypothetical_stations=True)
@@ -856,11 +1010,12 @@ def simulate(result, request, terrain_override=None):
         raise ValueError('seed requiere un entero entre 0 y 2147483647')
     scenario=request.get('scenario','sampled')
     if scenario not in ('sampled','nominal'):raise ValueError('scenario debe ser sampled o nominal')
-    rng = random.Random(seed)
+    scenario_index=request.get('scenario_index',0)
+    if type(scenario_index) is not int or not 0<=scenario_index<2**31:raise ValueError('scenario_index requiere entero entre 0 y 2147483647')
     active,draws = set(),[]
     for threat in result['threats']:
-        value = rng.random()*100
-        occurs = scenario=='sampled' and value<threat['probability_pct']
+        value = threat_uniform(seed,scenario_index,threat['id']) if scenario=='sampled' else None
+        occurs = value is not None and value<threat['probability_pct']
         draws.append(dict(id=threat['id'],draw=value,probability_pct=threat['probability_pct'],active=occurs))
         if occurs:
             active.add(threat['id'])
@@ -945,6 +1100,40 @@ def simulate(result, request, terrain_override=None):
         timeline.append(dict(coordinates=ground,time_s=elapsed,battery_pct=100.,phase='takeoff'))
         elapsed+=initial_ascent;remaining-=initial_ascent
         timeline.append(dict(coordinates=last,time_s=elapsed,battery_pct=100*remaining/p['battery_budget_s'],phase='patrol'))
+    landing = p['altitude_agl_m']/p['descent_ms']
+    def find_recovery(battery_remaining,mission_elapsed):
+        # Physical resources; report feasibility is checked BEFORE spending reserve.
+        failed_nodes={r['id'] for r in result['failure_probabilities']['nodes'] if active.intersection(r['by_threat'])}
+        base_targets={home:'origin',**{str(s['node']):s['id'] for s in result['stations']}}
+        base_targets={node:ident for node,ident in base_targets.items() if node not in failed_nodes}
+        station_by_node = {str(s['node']):s for s in result['stations'] if s['id'] not in used_stations and str(s['node']) not in failed_nodes}
+        queue = [(0,0,current,battery_remaining,[],[],frozenset())]
+        serial = 0
+        best = {}
+        recovery = None
+        while queue:
+            cost,_,node,battery,path,stops,mask = heapq.heappop(queue)
+            key = (node,mask)
+            labels=best.setdefault(key,[])
+            if any(c<=cost+1e-9 and b>=battery-1e-9 for c,b in labels):
+                continue
+            best[key]=[(c,b) for c,b in labels if not (cost<=c+1e-9 and battery>=b-1e-9)]+[(cost,battery)]
+            if mission_elapsed+cost+landing>p['mission_budget_s']:
+                continue
+            if node in base_targets and battery>=landing:
+                recovery = (path,stops,node)
+                break
+            if node in station_by_node and node not in mask and battery>=landing:
+                serial += 1
+                duration = landing+p['station_service_s']+initial_ascent
+                heapq.heappush(queue,(cost+duration,serial,node,p['battery_budget_s']-initial_ascent,path,
+                                      stops+[(len(path),duration,station_by_node[node]['id'])],mask|{node}))
+            for i in adjacency.get(node,[]):
+                edge = edges[i]
+                if edge['time_s']<=battery:
+                    serial += 1
+                    heapq.heappush(queue,(cost+edge['time_s'],serial,edge['target'],battery-edge['time_s'],path+[i],stops,mask))
+        return recovery,base_targets
     for completed_edges,ident in enumerate(route['edge_ids'],1):
         e = edges[ident]
         if active.intersection(e['hazard_ids']):
@@ -963,8 +1152,6 @@ def simulate(result, request, terrain_override=None):
             distances = segment_times(points)
             fraction = sum(distances[:hit])/sum(distances) if sum(distances) else 0
             append_points(points[:hit+1],e['time_s']*fraction,'patrol')
-            elapsed += p['verification_s']
-            remaining -= p['verification_s']
             current = 'detection'
             nodes[current] = points[hit]
             adjacency[current] = []
@@ -978,11 +1165,17 @@ def simulate(result, request, terrain_override=None):
                 edge_id = f'split-{name}'
                 edges[edge_id] = dict(source=current,target=target,coordinates=coords,time_s=duration,hazard_ids=[])
                 adjacency[current].append(edge_id)
-            detection = dict(synthetic=True,fire_coordinates=fire,observer_coordinates=nodes[current],detected_at_s=elapsed-p['verification_s'],
-                             reported_at_s=elapsed,verification_s=p['verification_s'],
-                             detected_at_utc=(iso(result['time'])+timedelta(seconds=elapsed-p['verification_s'])).isoformat(),
-                             reported_at_utc=(iso(result['time'])+timedelta(seconds=elapsed)).isoformat())
-            timeline.append(dict(coordinates=nodes[current],time_s=elapsed,battery_pct=max(0,100*remaining/p['battery_budget_s']),phase='report'))
+            detection = dict(synthetic=True,fire_coordinates=fire,observer_coordinates=nodes[current],detected_at_s=elapsed,
+                             reported_at_s=None,verification_s=p['verification_s'],report_status='incomplete',report_completed=False,
+                             detected_at_utc=(iso(result['time'])+timedelta(seconds=elapsed)).isoformat(),reported_at_utc=None)
+            timeline.append(dict(coordinates=nodes[current],time_s=elapsed,battery_pct=max(0,100*remaining/p['battery_budget_s']),phase='detection'))
+            can_report,_=find_recovery(remaining-p['verification_s'],elapsed+p['verification_s'])
+            if can_report is not None:
+                elapsed += p['verification_s'];remaining -= p['verification_s']
+                detection.update(reported_at_s=elapsed,reported_at_utc=(iso(result['time'])+timedelta(seconds=elapsed)).isoformat(),report_status='completed',report_completed=True)
+                timeline.append(dict(coordinates=nodes[current],time_s=elapsed,battery_pct=max(0,100*remaining/p['battery_budget_s']),phase='report'))
+            else:
+                detection['report_incomplete_reason']='Unforeseen threat prevents report plus safe return within physical battery or mission budget; return takes priority'
             break
         append_points(points,e['time_s'],'patrol')
         coordinate_index += len(points)-1
@@ -996,37 +1189,7 @@ def simulate(result, request, terrain_override=None):
     state = 'completed'
     returned_to='origin'
     if detection or interrupted:
-        # Dijkstra labels with remaining battery; optional single-use swap stations.
-        failed_nodes={r['id'] for r in result['failure_probabilities']['nodes'] if active.intersection(r['by_threat'])}
-        base_targets={home:'origin',**{str(s['node']):s['id'] for s in result['stations']}}
-        base_targets={node:ident for node,ident in base_targets.items() if node not in failed_nodes}
-        station_by_node = {str(s['node']):s for s in result['stations'] if s['id'] not in used_stations and str(s['node']) not in failed_nodes}
-        queue = [(0,0,current,remaining,[],[],frozenset())]
-        serial = 0
-        best = {}
-        recovery = None
-        while queue:
-            cost,_,node,battery,path,stops,mask = heapq.heappop(queue)
-            key = (node,mask)
-            labels=best.setdefault(key,[])
-            if any(c<=cost+1e-9 and b>=battery-1e-9 for c,b in labels):
-                continue
-            best[key]=[(c,b) for c,b in labels if not (cost<=c+1e-9 and battery>=b-1e-9)]+[(cost,battery)]
-            if elapsed+cost+landing>p['mission_budget_s']:
-                continue
-            if node in base_targets and battery>=landing:
-                recovery = (path,stops,node)
-                break
-            if node in station_by_node and node not in mask and battery>=landing:
-                serial += 1
-                duration = landing+p['station_service_s']+initial_ascent
-                heapq.heappush(queue,(cost+duration,serial,node,p['battery_budget_s']-initial_ascent,path,
-                                      stops+[(len(path),duration,station_by_node[node]['id'])],mask|{node}))
-            for i in adjacency.get(node,[]):
-                edge = edges[i]
-                if edge['time_s']<=battery:
-                    serial += 1
-                    heapq.heappush(queue,(cost+edge['time_s'],serial,edge['target'],battery-edge['time_s'],path+[i],stops,mask))
+        recovery,base_targets = find_recovery(remaining,elapsed)
         if recovery is None:
             state = 'no_safe_return'
         else:
@@ -1037,7 +1200,7 @@ def simulate(result, request, terrain_override=None):
                 if j in stops:
                     battery_swap(stops[j][0])
                 append_points(sample_edge(edges[i]),edges[i]['time_s'],'return')
-            state = 'detected_and_returned' if detection else 'interrupted_and_returned'
+            state = ('detected_and_returned' if detection['report_status']=='completed' else 'detected_report_incomplete_and_returned') if detection else 'interrupted_and_returned'
     if state!='no_safe_return':
         elapsed += landing
         remaining -= landing
@@ -1046,7 +1209,7 @@ def simulate(result, request, terrain_override=None):
     for frame in timeline:
         frame['position_utm']=[*FWD(*frame['coordinates'][:2]),frame['coordinates'][2]]
     return dict(schema_version='patrol-simulation-2',result_sha256=result['sha256'],method=method,route_set=route_set,scenario=scenario,
-                seed=request.get('seed',p['seed']),draws=draws,active_threat_ids=sorted(active),timeline=timeline,
+                seed=request.get('seed',p['seed']),scenario_index=scenario_index,rng_protocol='sha256/53-bit-uniform-v1',draws=draws,active_threat_ids=sorted(active),timeline=timeline,
                 detection=detection,status=state,time_s=elapsed,mission_completed=state in ('completed','detected_and_returned'),
                 fire_found=detection is not None,patrol_completed=state=='completed',return_base_id=returned_to if state!='no_safe_return' else None,hypothetical=True)
 

@@ -15,3 +15,6 @@ evidencia/reproductor_2026-11-05/** -text
 evidencia/red_vial_2026-10-17/manifest_online.json -text
 "Sitio Web/vendor/*" -text
 "Sitio Web/vendor/images/*" -text
+
+datos/entrada/blobs/* -text
+datos/entrada/comunas/* -text

@@ -9,10 +9,11 @@ from collections import defaultdict
 from shapely.geometry import shape
 from shapely.ops import transform
 from core.aerial_data import FWD
+from core.assets import resolve_asset
 
 
 def map_svg(folder):
-    view = json.loads((folder / "mapa.json").read_text())
+    view = json.loads(resolve_asset(folder / "mapa.json").read_text())
     comparison = json.loads(next(folder.glob("comparison_*.json")).read_text())
     flight = transform(FWD, shape(view["flight_area"]))
     west, south, east, north = flight.bounds

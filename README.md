@@ -41,7 +41,8 @@ La cobertura es una evaluación por celdas
 de 30 m con alcance horizontal supuesto de 100 m y línea de vista.
 
 El perfil Mavic 3T conserva parámetros conservadores del proyecto: 10 m/s, 25 min,
-reserva 20 % y 1.200 s útiles por batería. Las estaciones son escenarios de cambio
+reserva 20 % y 1.200 s útiles por batería: 1.140 s planificables y 60 s reservados
+para reporte. Las estaciones son escenarios de cambio
 de batería, una batería por estación y 120 s de servicio. No se acredita que los
 cuarteles tengan cargadores. Los datos meteorológicos son snapshots históricos.
 
@@ -66,6 +67,10 @@ licencias ni credenciales en Git. Un error de licencia se muestra, sin sustituir
 
 ## Documentación y evidencia
 
+- [Cierre verificable, APIs compactas, comunas y QA/CI](docs/CIERRE_IMPLEMENTACION.md).
+- [Limpieza conservadora, originales y dependencias](docs/ARCHIVO_Y_DEPENDENCIAS.md).
+- [Matriz literal de rúbrica y aceptación](docs/MATRIZ_RUBRICA.md).
+- [Resultados validados, rendimiento y evidencia de esta versión](docs/RESULTADOS_CIERRE.md).
 - [Modelo matemático, API, supuestos y reproducción](docs/FASE_FINAL.md).
 - [Matriz de la nueva rúbrica y guion](presentacion/MATRIZ_FASE_FINAL.md).
 - [Evidencia de la fase final](evidencia/final_2026-11-04/).

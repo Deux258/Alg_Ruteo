@@ -1,0 +1,46 @@
+{
+  "base_commit": "4f0c35f538956a55df305e58bf5448d71cffcce5",
+  "browser_checks": {
+    "cierre": 18,
+    "entorno": 13,
+    "estados_ui": 14,
+    "patrullaje": 16,
+    "recarga": 5,
+    "reproductor": 23
+  },
+  "browser_checks_total": 89,
+  "code_sha256": "e680545237470e577938c664860b18defb1cf741a00581c988852047fb589b13",
+  "database": "disposable:dbtest/ruteo_test",
+  "files_sha256": {
+    "acceptance.json": "c3f78adeaf67df93109cb1aeb47a04edc6c724877fc141dd8305599eaa374933",
+    "alternative_case.json": "abaedee1181e794d21856079eb8de7eb2bcbc65641cccc275ac72d189c648eb5",
+    "benchmark.json": "d856fadd6efbdd7c7aab2f7a2c07ded8bc73bd4bd513e9c0d90ab7ab10979eb2",
+    "browser.json": "14edadc7f8582339239de260efdf3cef616a2067ad740ca28cb7c0b1d437732a",
+    "github_verification.json": "2a7ac69ba8c028aa49e49471ef9c1c6e3539755c57055058bace1870f3290b52",
+    "production_smoke.json": "5d266d870250115eea24eb1254155726b0f82e5f1e40cd4d57f7b6e407d7df86",
+    "protocol_exports.json": "2b56b721eaeffab900932cb7cdf7c23cf9eefdc11053d4a716e314ae4de1e0dd",
+    "protocol_plan.json": "7e0216c14b7f4497b669425b04ff858dc2962615ee0556402ad047ea96fc567d",
+    "protocol_summary.json": "4ad6fe15f56071bf0af9b5821c8ec192f89f6821a2765e640f332d767a02378a",
+    "pruebas.json": "5ef62b2bcb4111b52b55a6b91f9a15ed41e0dfb92993ca3190dde9c0abd799c8"
+  },
+  "github_actions_run_for_implementation": false,
+  "node_tests": 15,
+  "preparation": {
+    "cold_preparation_s": 64.86520443200061,
+    "median_warm_preparation_s": 5.854270314499445,
+    "preparation_reduction_fraction": 0.9097471384579295,
+    "target_met": true
+  },
+  "protocol_cases": 6,
+  "published_run_preserved": "2e6808a3-a8c3-5543-a051-cf5f4ac1c5d0",
+  "python_tests": 175,
+  "recorded_at_utc": "2026-11-07T03:57:37.291570+00:00",
+  "sizes_bytes": {
+    "blocked_summary": 32347,
+    "commune_05101": 350051,
+    "commune_05109": 50837,
+    "map_summary": 51557,
+    "mission_summary": 195316
+  },
+  "video": null
+}

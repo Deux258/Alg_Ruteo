@@ -29,7 +29,7 @@ class A3Aip(unittest.TestCase):
 
     def test_real_pdf_selects_p29_p50_with_original_circle_parameters(self):
         self.assertEqual([row['code'] for row in self.records], ['SC-P29', 'SC-P50'])
-        reference = json.loads((ROOT / 'evidencia/a3_v1.json').read_text(encoding='utf-8'))
+        reference = json.loads((ROOT / 'tests/fixtures/a3_v1.json').read_text(encoding='utf-8'))
         reference_by_code = {row['code']: row for row in reference}
         by_code = {row['code']: row for row in self.records}
         for code in ('SC-P29', 'SC-P50'):
@@ -112,7 +112,7 @@ class A3Aip(unittest.TestCase):
 
     def test_graph_arcs_intersecting_a3_are_unchanged_from_v1(self):
         to_metric = Transformer.from_crs(4326, 32719, always_xy=True).transform
-        old_records = json.loads((ROOT / 'evidencia/a3_v1.json').read_text(encoding='utf-8'))
+        old_records = json.loads((ROOT / 'tests/fixtures/a3_v1.json').read_text(encoding='utf-8'))
         old_zones = [transform(to_metric, shape(row['geometry'])) for row in old_records]
         new_zones = [
             transform(to_metric, shape(row['geometry']))

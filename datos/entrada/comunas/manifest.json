@@ -1,0 +1,34 @@
+{
+  "schema_version": "commune-acquisition-1",
+  "source": "https://obtienearchivo.bcn.cl/obtienearchivo?id=repositorio/10221/10396/5/comunas_final.zip",
+  "catalogue_url": "https://www.bcn.cl/siit/mapas_vectoriales/index_html",
+  "original": {
+    "file": "bcn_comunas_cca97e9c0d8ec28d.zip",
+    "sha256": "cca97e9c0d8ec28dbceb17242489a80a9ffc817f7bb926f9f5cde5b61eb130a6",
+    "bytes": 42225382,
+    "http_status": null
+  },
+  "derived": {
+    "file": "communes_2ee91666373eee05.geojson",
+    "sha256": "2ee91666373eee05f85977c14235b0057b6a674461f5d92d8cebc16ba7cf8f0e",
+    "record_count": 2,
+    "original_count": 346,
+    "crs": "EPSG:4326",
+    "source_crs": "EPSG:3857",
+    "dbf_encoding": "UTF-8",
+    "scope_bbox_wgs84": [
+      -71.68060489517181,
+      -33.1235212124161,
+      -71.53389219792024,
+      -33.027594120296605
+    ],
+    "edition": "comunas_final.zip; metadatos ESRI creados 20191016"
+  },
+  "license": "Uso libre señalando como fuente a la Biblioteca del Congreso Nacional de Chile; cartografía referencial",
+  "attribution": "Biblioteca del Congreso Nacional de Chile",
+  "fetched_at_utc": "2026-11-06T01:45:28.509045+00:00",
+  "producer": {
+    "pyshp": "2.3.1",
+    "pyshp_wheel_sha256": "67024c0ccdc352ba5db777c4e968483782dfa78f8e200672a90d2d30fd8b7b49"
+  }
+}

@@ -15,8 +15,8 @@ services:
       retries: 40
   tests:
     platform: linux/amd64
-    build: {context: ., dockerfile: docker/Dockerfile.app, args: {BUILD_COMMIT: '${BUILD_COMMIT:-unknown}'}}
-    command: [python, -m, core.test_runner]
+    build: {context: ., dockerfile: docker/Dockerfile.app, target: test, args: {BUILD_COMMIT: '${BUILD_COMMIT:-unknown}'}}
+    command: [python, -m, tools.ci_acceptance]
     environment:
       DB_HOST: dbtest
       DB_NAME: ruteo_test

@@ -1,0 +1,28 @@
+name: Regression and rubric acceptance
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+jobs:
+  acceptance:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 75
+    env:
+      POSTGRES_PASSWORD: ci-disposable-database-only
+      WEB_DB_PASSWORD: ci-disposable-reader-only
+      BUILD_COMMIT: ${{ github.sha }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Python, Node and Playwright on isolated database
+        run: docker compose -f compose.test.yaml up --build --abort-on-container-exit --exit-code-from tests
+      - name: Preserve evidence from this source version
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: acceptance-${{ github.sha }}
+          path: evidencia/local/
+          if-no-files-found: error
+          retention-days: 14
+      - name: Dispose test database
+        if: always()
+        run: docker compose -f compose.test.yaml down --volumes --remove-orphans

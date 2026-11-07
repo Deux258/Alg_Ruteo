@@ -10,8 +10,9 @@ import gzip
 import json
 import math
 import re
+import sys
 import threading
-from collections import Counter
+from collections import Counter,OrderedDict
 from functools import lru_cache
 from pathlib import Path
 
@@ -31,9 +32,24 @@ COLORS={'buildings':[.72,.68,.60],'water':[.24,.56,.71],
         'residential':[.69,.68,.62],'industrial':[.63,.64,.64],
         'sand':[.83,.77,.57],'bare_rock':[.65,.64,.59],'trees':[.20,.41,.25],
         'roads':[.86,.83,.73],'contours':[.40,.36,.27]}
-_CACHE={}
+_CACHE=OrderedDict()
 _LOCK=threading.Lock()
 _PAYLOAD={}
+_PAYLOAD_LOCK=threading.RLock()
+SCENE_CACHE_BYTES=256*1024*1024
+
+
+def retained_size(value):
+    """Estimate owned Python buffers, counting shared objects once."""
+    seen=set()
+    def measure(item):
+        ident=id(item)
+        if ident in seen:return 0
+        seen.add(ident);size=sys.getsizeof(item)
+        if isinstance(item,dict):size+=sum(measure(k)+measure(v) for k,v in item.items())
+        elif isinstance(item,(list,tuple)):size+=sum(measure(v) for v in item)
+        return size
+    return measure(value)
 
 
 def scene_config():
@@ -191,12 +207,13 @@ class SceneSurface:
                 self.obstacles.append((geom,bottom,top,props['id'],kind,height))
         self.tree=STRtree([o[0] for o in self.obstacles])
         self.water=STRtree([r['geometry'] for r in groups['water']])
+        # Instance-local cache: expelling a scene releases its sampling memory.
+        self.at=lru_cache(maxsize=150000)(self._sample)
 
     def can_land(self,x,y):
         return not len(self.water.query(Point(x,y),predicate='intersects'))
 
-    @lru_cache(maxsize=400000)
-    def at(self,x,y):
+    def _sample(self,x,y):
         raw=self.base.at(x,y)
         if raw is None:return None
         point=Point(x,y)
@@ -292,6 +309,7 @@ class GeographicScene:
         self.manifest,self.config,self.area,self.base=manifest,config,area,base
         self.source_hash=source_hash
         self._payload=None
+        self.cache_weight=retained_size(self.groups)+sum(len(r['geometry'].wkb)*2 for rows in self.groups.values() for r in rows)+150000*192
 
     def payload(self):
         if self._payload is not None:return self._payload
@@ -403,8 +421,13 @@ def get_scene(model,base):
     key,manifest,config=scene_identity(model,base)
     with _LOCK:
         if key not in _CACHE:
-            _CACHE[key]=GeographicScene(model,base,manifest,config,key)
-            while len(_CACHE)>2:_CACHE.pop(next(iter(_CACHE)))
+            scene=GeographicScene(model,base,manifest,config,key)
+            if scene.cache_weight>SCENE_CACHE_BYTES:raise ValueError('La escena supera el presupuesto de memoria del servidor')
+            _CACHE[key]=scene
+            while len(_CACHE)>2 or (len(_CACHE)>1 and sum(s.cache_weight for s in _CACHE.values())>SCENE_CACHE_BYTES):
+                _,removed=_CACHE.popitem(last=False)
+                removed.surface.at.cache_clear();removed._payload=None
+        _CACHE.move_to_end(key)
         return _CACHE[key]
 
 
@@ -416,6 +439,11 @@ def surface_by_hash(key):
 
 
 def prepared_scene(model,base):
+    # Loading/preparing one large scene is single-flight, not one copy per HTTP request.
+    with _PAYLOAD_LOCK:return _prepared_scene(model,base)
+
+
+def _prepared_scene(model,base):
     key,_,config=scene_identity(model,base)
     if key in _PAYLOAD:return _PAYLOAD[key]
     folder=ROOT/config['directory'];meta=folder/f'scene_{key[:16]}.manifest.json'
@@ -429,7 +457,11 @@ def prepared_scene(model,base):
     else:
         scene=get_scene(model,base)
         payload=dict(terrain=base.mesh(scene.area,step=config['mesh_step_m']),geography=scene.payload())
-    _PAYLOAD.clear();_PAYLOAD[key]=payload
+    _PAYLOAD.clear()
+    # The render lists are retained in exactly one place and only within the budget.
+    with _LOCK:
+        for cached in _CACHE.values():cached._payload=None
+    if retained_size(payload)<=SCENE_CACHE_BYTES:_PAYLOAD[key]=payload
     return payload
 
 

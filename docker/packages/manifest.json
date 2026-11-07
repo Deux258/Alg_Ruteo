@@ -1,0 +1,15 @@
+{
+  "architecture": "amd64",
+  "distribution": "Debian 12 bookworm-security",
+  "packages": [
+    {
+      "file": "libexpat1_2.5.0-1+deb12u5_amd64.deb",
+      "package": "libexpat1",
+      "version": "2.5.0-1+deb12u5",
+      "sha256": "cae5ded666d8573dd33060bc66fbac21eea8b101a6b56e2af8bd590fcfa65d79",
+      "source": "http://deb.debian.org/debian-security/pool/updates/main/e/expat/libexpat1_2.5.0-1+deb12u5_amd64.deb",
+      "acquisition": "apt-get download with authenticated Debian security index",
+      "license": "MIT; copyright and license are preserved inside the Debian package"
+    }
+  ]
+}

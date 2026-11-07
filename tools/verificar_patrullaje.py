@@ -1,5 +1,6 @@
 """Browser acceptance and silent demonstration video; uses the actual HTTP API."""
 import argparse
+from urllib.parse import urlsplit
 import json
 from pathlib import Path
 from playwright.sync_api import sync_playwright
@@ -28,7 +29,7 @@ def main():
         page.locator('#route-mode').select_option('comparison')
         page.get_by_role('button',name='Cargar ejemplo').click()
         checks.append(('example_polygon',page.locator('#calculate').is_enabled()))
-        with page.expect_response(lambda r:r.url.endswith('/api/aereo/patrullaje') and r.request.method=='POST',timeout=300000) as pending:
+        with page.expect_response(lambda r:urlsplit(r.url).path.endswith('/api/aereo/patrullaje') and r.request.method=='POST',timeout=300000) as pending:
             page.locator('#calculate').click()
         response=pending.value
         if response.status!=200:raise AssertionError(response.text())
@@ -59,7 +60,7 @@ def main():
         if not bounds:raise AssertionError('Polígono seleccionado no visible')
         page.mouse.click(bounds['x']+bounds['width']/2,bounds['y']+bounds['height']/2)
         page.locator('#speed').select_option('100')
-        with page.expect_response(lambda r:r.url.endswith('/simular'),timeout=120000) as pending:
+        with page.expect_response(lambda r:urlsplit(r.url).path.endswith('/simular'),timeout=120000) as pending:
             page.locator('#simulate').click()
         simulation=pending.value.json()
         checks.append(('fire_report_return',simulation.get('status')=='detected_and_returned'))
@@ -73,7 +74,7 @@ def main():
         from shapely.geometry import Point,shape
         from shapely.ops import transform
         from core.aerial_data import FWD
-        import random
+        from core.patrol import threat_uniform
         edges={e['id']:e for e in result['graph']['edges']}
         nodes={n['id']:n['coordinates'] for n in result['graph']['nodes']}
         target=transform(FWD,shape(result['target_polygon']))
@@ -88,27 +89,26 @@ def main():
         if candidate is None:raise AssertionError('Sin conector apto para ilustrar desvío')
         seed=20261104
         while True:
-            rng=random.Random(seed)
-            for _ in range(len(result['threats'])):rng.random()
-            if rng.random()*100<80:break
+            if threat_uniform(seed,0,'synthetic:0')<80:break
             seed+=1
         page.locator('#clear-fire').click()
         page.get_by_text('Amenaza por coordenadas',exact=True).click()
         page.locator('#hazard-coordinates').fill(', '.join(map(str,candidate)))
         page.locator('#radius').fill('15');page.locator('#probability').fill('80')
         page.locator('#seed').fill(str(seed));page.locator('#hazard-coordinate-add').click()
-        with page.expect_response(lambda r:r.url.endswith('/api/aereo/patrullaje') and r.request.method=='POST',timeout=300000):page.locator('#calculate').click()
+        with page.expect_response(lambda r:urlsplit(r.url).path.endswith('/api/aereo/patrullaje') and r.request.method=='POST',timeout=300000):page.locator('#calculate').click()
         page.wait_for_function("!document.querySelector('#simulate').disabled",timeout=300000)
         page.locator('#chosen').select_option('dijkstra_distance')
-        with page.expect_response(lambda r:r.url.endswith('/simular'),timeout=120000) as pending:page.locator('#simulate').click()
+        with page.expect_response(lambda r:urlsplit(r.url).path.endswith('/simular'),timeout=120000) as pending:page.locator('#simulate').click()
         interrupted=pending.value.json()
         checks.append(('random_closure_activated','synthetic:0' in interrupted['active_threat_ids']))
         checks.append(('interrupted_patrol_not_completed',not interrupted['mission_completed']))
-        with page.expect_response(lambda r:r.url.endswith('/api/aereo/patrullaje') and r.request.method=='POST',timeout=300000):page.locator('#replan').click()
+        with page.expect_response(lambda r:urlsplit(r.url).path.endswith('/api/aereo/patrullaje') and r.request.method=='POST',timeout=300000):page.locator('#replan').click()
         page.wait_for_function("!document.querySelector('#export').disabled",timeout=300000)
         with page.expect_download() as alternative:page.locator('#export').click()
         alternative.value.save_as(str(folder/'alternative_export.json'))
         new_result=json.loads((folder/'alternative_export.json').read_text(encoding='utf-8'))['result']
+        if not new_result['request'].get('events'):raise AssertionError('La replanificación perdió la amenaza sintética')
         checks.append(('alternative_after_failure',bool(new_result['recommended'])))
         from shapely.geometry import LineString
         closure=transform(FWD,shape(new_result['request']['events'][0]['geometry']))

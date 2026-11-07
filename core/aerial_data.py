@@ -40,9 +40,10 @@ def load_sources(config):
     if manifest['bbox_wgs84']!=config['bbox_wgs84'] or set(manifest['sources'])!=required or manifest.get('errors'):
         raise ValueError('Manifiesto aéreo incompleto o de otra área')
     def path(entry):
-        p=(folder/entry['file']).resolve()
-        if not p.is_relative_to(folder.resolve()) or sha256(p)!=entry['sha256']:raise ValueError('Original alterado '+entry['file'])
-        return p
+        from core.assets import resolve_asset
+        logical=(folder/entry['file']).resolve()
+        if not logical.is_relative_to(folder.resolve()):raise ValueError('Original fuera del directorio')
+        return resolve_asset(logical,entry['sha256'])
     data={}
     for key,entry in manifest['sources'].items():
         if 'catalogue' in entry:path(entry['catalogue'])
