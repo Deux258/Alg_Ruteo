@@ -1,0 +1,63 @@
+{
+  "export_module": {
+    "bytes": 10497,
+    "sha256": "bf302be2b7f7655ac4bf833058c1697af4bd0b851c6bb41a3866ae9cb7df675a",
+    "status": 200
+  },
+  "health": {
+    "body": {
+      "application": "aerial_simulator",
+      "clearance_verified": false,
+      "etl_complete": true,
+      "mission_feasibility": "requires_specific_request",
+      "mission_ready": true,
+      "mode": "snapshot",
+      "network": {
+        "directed_edges": 78158,
+        "nodes": 9781,
+        "strong_count": 1,
+        "weak_count": 1
+      },
+      "phase2_complete": false,
+      "routing_ready": true,
+      "run_id": "2e6808a3-a8c3-5543-a051-cf5f4ac1c5d0",
+      "scope": "completo",
+      "status": "ready",
+      "study_area": {
+        "candidate_bases": 5,
+        "file": "datos/entrada/aoi/Zona_Delimitada_Valpo.geojson",
+        "sha256": "7d3a0472f2e7fdde88d6316f89c31d6da50914e06cabb6bf8bd270ce54c905b7"
+      },
+      "warnings": [
+        "Simulador académico; despeje vertical no verificado"
+      ]
+    },
+    "bytes": 654,
+    "status": 200
+  },
+  "legacy": {
+    "bytes": 10126,
+    "status": 200
+  },
+  "map": {
+    "bytes": 51673,
+    "status": 200
+  },
+  "target": {
+    "body": {
+      "target_display": {
+        "level_m_egm2008": 205.1961212158203,
+        "maximum_surface_m_egm2008": 175.1961212158203,
+        "offset_m": 30.0,
+        "polygon_sha256": "9c432b2531ee8a3d76b2223d1116ecdc96e1527fbaffba200fa7d5be61d90d81",
+        "sample_count": 70,
+        "sampling": "all touched DSM pixels and intersecting display triangles",
+        "status": "known",
+        "terrain_sha256": "41d64133c16b5704183212363bf0d2e735f36d1003491e5c28c3a52bd00dbc89",
+        "vertical_datum": "EGM2008",
+        "visual_only": true
+      }
+    },
+    "status": 200
+  }
+}

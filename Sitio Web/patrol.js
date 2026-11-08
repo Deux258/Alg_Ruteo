@@ -6,6 +6,10 @@ import {
   createRequestCoordinator,
   detectionProgress,
   resilienceSummary,
+  smoothFollow,
+  mapPaneOffset,
+  flightTelemetry,
+  targetPlaneRings,
 } from "./flight-player.js";
 import { normalizeTarget, circlePolygon } from "./patrol-editing.js";
 import {
@@ -80,6 +84,7 @@ let calculating = false,
   configurationRevision = 0,
   lastRender = 0,
   lastFollow = 0,
+  followCenter = null,
   lastLog = "";
 let displayModel,
   constraintAssessment = null,
@@ -90,6 +95,9 @@ let displayModel,
   visibleThreats = [],
   viewDesired = false,
   sceneKey = "";
+let targetDisplay = null,
+  targetDisplayFor = "";
+let followSession = null;
 const candidateBasesLayer = L.layerGroup().addTo(map);
 const requests = createRequestCoordinator();
 const displayedRoutes = () =>
@@ -137,8 +145,9 @@ function filteredUrl(url) {
   return target.pathname + target.search;
 }
 function cancelSimulation() {
+  finishMapFollow();
   simulationRevision++;
-  requests.cancel("simulation", "fpv");
+  requests.cancel("simulation", "fpv", "export");
   simulationLoading = false;
   playing = false;
   simulation = null;
@@ -147,11 +156,15 @@ function cancelSimulation() {
   clock = 0;
   lastFrame = 0;
   lastLog = "";
+  lastFollow = 0;
+  followCenter = null;
   exitDroneView();
   terrainView?.setMarker(null);
   $("log").replaceChildren();
   $("progress").value = 0;
   $("replan").disabled = true;
+  $("drone-coordinates").textContent = "Lat — · Lon — · Cota —";
+  $("fpv-propellers").hidden = true;
   refreshPlaybackControls();
 }
 function simulationChanged() {
@@ -461,15 +474,64 @@ $("export-geography").onclick = async () => {
   }
 };
 $("terrain-reset").onclick = () => {
+  finishMapFollow();
   exitDroneView();
   $("follow-drone").checked = false;
   terrainView?.reset();
 };
 $("terrain-mission").onclick = () => {
+  finishMapFollow();
   exitDroneView();
   $("follow-drone").checked = false;
   terrainView?.focusRoutes();
 };
+$("terrain-zoom-in").onclick = () => terrainView?.zoomBy(1.25);
+$("terrain-zoom-out").onclick = () => terrainView?.zoomBy(1 / 1.25);
+function targetDisplayKey() {
+  return target
+    ? `${model?.geography?.sha256 || ""}:${JSON.stringify(target)}`
+    : "";
+}
+function showTargetLevel() {
+  const known = targetDisplay?.status === "known" &&
+    Number.isFinite(targetDisplay.level_m_egm2008);
+  $("target-height").textContent = !target
+    ? "El objetivo 3D se mostrará sobre un plano horizontal."
+    : known
+      ? `Plano objetivo: ${targetDisplay.level_m_egm2008.toFixed(1)} m EGM2008 · mínimo 30 m sobre el terreno modelado.`
+      : requests.pending("target-display")
+        ? "Comprobando la altura del objetivo…"
+        : "Altura del objetivo no verificable: faltan elevaciones completas.";
+  $("target-height").dataset.status = known ? "known" : "unknown_elevation";
+}
+async function refreshTargetDisplay() {
+  requests.cancel("target-display");
+  const previous = target, key = targetDisplayKey();
+  if (!previous) return;
+  if (targetDisplayFor === key && targetDisplay) return;
+  targetDisplay = null;
+  targetDisplayFor = "";
+  const token = requests.start("target-display", key);
+  showTargetLevel();
+  update3d();
+  try {
+    const answer = await api("/api/aereo/patrullaje/objetivo", {
+      target_polygon: previous,
+    }, { signal: token.signal });
+    if (!requests.current(token) || target !== previous || key !== targetDisplayKey()) return;
+    targetDisplay = answer.target_display;
+    targetDisplayFor = key;
+    update3d();
+    if (view3d && !fresh) terrainView?.focusPoints(targetPoints(), "target");
+  } catch (error) {
+    if (!aborted(error) && requests.current(token)) {
+      targetDisplay = { status: "unknown_elevation" };
+      $("target-height").textContent = "No se pudo comprobar la altura del objetivo. Vuelve a seleccionar el objetivo para reintentar.";
+    }
+  } finally {
+    if (requests.finish(token)) showTargetLevel();
+  }
+}
 function invalidate() {
   configurationRevision++;
   constraintAssessment = null;
@@ -508,6 +570,9 @@ function invalidate() {
 function setTarget(geo) {
   const g = normalizeTarget(geo);
   target = g;
+  requests.cancel("target-display");
+  targetDisplay = null;
+  targetDisplayFor = "";
   mode = "";
   $("finish").disabled = true;
   $("draw-tools").hidden = true;
@@ -527,6 +592,7 @@ function setTarget(geo) {
   $("area-status").textContent =
     "Objetivo poligonal listo · barrido completo con radio de 100 m.";
   invalidate();
+  refreshTargetDisplay();
   focusTarget();
 }
 $("draw").onclick = () => {
@@ -836,6 +902,12 @@ async function calculate(overrides = null) {
       return;
     }
     result = answer;
+    if (answer.target_display) {
+      requests.cancel("target-display");
+      targetDisplay = answer.target_display;
+      targetDisplayFor = targetDisplayKey();
+      showTargetLevel();
+    }
     fresh = true;
     activeIds.clear();
     if (result.status === "blocked") $("route-mode").value = "comparison";
@@ -1054,82 +1126,70 @@ function meshHeight(x, y) {
 }
 function targetPoints() {
   if (!target) return [];
-  return target.coordinates[0]
+  const level = targetDisplay?.status === "known" && Number.isFinite(targetDisplay.level_m_egm2008)
+    ? targetDisplay.level_m_egm2008 : null;
+  if (level !== null) return targetPlaneRings(target, level).flat();
+  return target.coordinates.flat()
     .map((c) => {
       const [x, y] = projectUTM(c);
-      return [x, y, meshHeight(x, y)];
+      return [x, y, level ?? meshHeight(x, y)];
     })
     .filter((p) => p[2] !== null);
 }
 function update3d() {
   if (!terrainView) return;
-  const lines = [];
+  const lines = [], annotations = [];
+  const selectedBase = model?.bases?.[Number($("base").value)];
+  for (const base of (displayModel || model)?.bases || []) {
+    const coordinate = base.geometry?.coordinates;
+    if (!coordinate || base.candidate === false) continue;
+    const [x, y] = projectUTM(coordinate), z = meshHeight(x, y);
+    if (z === null) continue;
+    annotations.push({
+      id: `base:${base.provider_id}`, kind: "base", position_utm: [x, y, z + 5],
+      label: base.name || `Base ${base.provider_id}`,
+      selected: String(base.provider_id) === String(selectedBase?.provider_id),
+    });
+  }
   if (fresh && result) {
     for (const [key, r] of Object.entries(displayedRoutes()))
       if (visible[key] && r.coordinates_utm?.length)
         lines.push({
           points: r.coordinates_utm,
           color: rgb(colors[key]),
-          width: key === $("chosen").value ? 4 : 2,
+          key,
+          selected: key === $("chosen").value,
+          width: key === $("chosen").value ? 6 : 3,
         });
     for (const station of result.stations || []) {
       const p = station.position_utm;
       if (
         p &&
         stationVisibleInCommune(station, displayModel?.bases, communeId())
-      )
-        lines.push({ points: [p], color: [0.9, 0.65, 0.1], point: true });
+      ) {
+        const ground = Number.isFinite(station.surface_m_egm2008)
+          ? station.surface_m_egm2008 : meshHeight(p[0], p[1]);
+        if (ground !== null) annotations.push({ id: `station:${station.id}`, kind: "station", position_utm: [p[0], p[1], ground + 8],
+          label: station.name || `Recarga ${station.provider_id || station.id}` });
+      }
     }
     for (const threat of visibleThreats) {
       const p = threatDisplayPosition(threat, projectUTM, meshHeight);
       if (p && (!$("active-only").checked || activeIds.has(threat.id)))
-        lines.push({ points: [p], color: [0.8, 0.25, 0.15], point: true });
+        annotations.push({ id: `threat:${threat.id}`, kind: "threat", position_utm: p,
+          label: threat.name || threat.label || `Amenaza ${threat.id}` });
     }
   }
-  if (target) {
-    const ring = target.coordinates[0].map(projectUTM);
-    let outline = [];
-    const flush = () => {
-      if (outline.length > 1)
-        lines.push({
-          points: outline,
-          color: [0.85, 0.35, 0.08],
-          width: 3,
-          target: true,
-        });
-      outline = [];
-    };
-    for (let i = 1; i < ring.length; i++) {
-      const a = ring[i - 1],
-        b = ring[i],
-        count = Math.max(
-          1,
-          Math.ceil(Math.hypot(b[0] - a[0], b[1] - a[1]) / 15),
-        );
-      for (let j = 0; j <= count; j++) {
-        const t = j / count,
-          x = a[0] + (b[0] - a[0]) * t,
-          y = a[1] + (b[1] - a[1]) * t,
-          z = meshHeight(x, y);
-        if (z === null) {
-          flush();
-          continue;
-        }
-        outline.push([x, y, z + 3]);
-      }
-    }
-    flush();
-  }
+  if (target && targetDisplay?.status === "known")
+    for (const ring of targetPlaneRings(target, targetDisplay.level_m_egm2008))
+      lines.push({ points: ring, color: [0.85, 0.35, 0.08], width: 3, target: true });
   if (fire) {
     const [x, y] = projectUTM(fire),
       z = meshHeight(x, y);
     if (z !== null)
-      lines.push({
-        points: [[x, y, z + 8]],
-        color: [1, 0.2, 0.05],
-        point: true,
-      });
+      annotations.push({ id: "fire", kind: "fire", position_utm: [x, y, z + 8], label: "Foco de incendio" });
   }
+  terrainView.setAnnotations?.(annotations);
   terrainView.setRoutes(lines);
 }
 async function refreshThreats() {
@@ -1199,9 +1259,11 @@ async function loadNodes() {
           popup("Superficie · DSM y obstáculos", {
             node_id: n.id,
             modeled_surface_elevation_m:
-              n.coordinates[2] - previous.effective_profile.altitude_agl_m,
+              n.surface_m_egm2008 ?? null,
             flight_height_egm2008_m: n.coordinates[2],
-            altitude_agl_m: previous.effective_profile.altitude_agl_m,
+            minimum_clearance_m: previous.effective_profile.altitude_agl_m,
+            actual_clearance_m: Number.isFinite(n.surface_m_egm2008)
+              ? n.coordinates[2] - n.surface_m_egm2008 : null,
           }),
         )
         .addTo(metadataNodes);
@@ -1223,9 +1285,11 @@ function exitDroneView() {
   terrainView?.setFirstPerson(false);
   $("drone-view").setAttribute("aria-pressed", "false");
   $("fpv-hud").hidden = true;
+  $("fpv-propellers").hidden = true;
 }
 function focusTarget() {
   if (!target) return;
+  finishMapFollow();
   exitDroneView();
   $("follow-drone").checked = false;
   if (view3d && terrainView) terrainView.focusPoints(targetPoints(), "target");
@@ -1237,6 +1301,77 @@ function focusTarget() {
   $("focus-target").dataset.view = view3d ? "3d" : "2d";
 }
 $("focus-target").onclick = focusTarget;
+function finishMapFollow() {
+  if (!followSession) return;
+  const session = followSession;
+  followSession = null;
+  const center = map.getCenter(), zoom = map.getZoom();
+  session.renderer.options.padding = session.padding;
+  map.getContainer().setAttribute("aria-busy", "false");
+  // Reset through the public API once per interaction, rather than reprojecting
+  // every geographic path on each animation frame.
+  map.setView(center, zoom, { reset: true, animate: false });
+  refreshPlaybackControls();
+}
+function prepareMapFollow() {
+  if (followSession || view3d || !$("follow-drone").checked) return;
+  const renderer = map.getRenderer(L.polyline([]));
+  followSession = { renderer, padding: renderer.options.padding,
+    checkpoint: null, needsCoverage: true };
+  renderer.options.padding = Math.max(0.5, renderer.options.padding);
+  map.fire("movestart");
+}
+function followCoveragePainted(session) {
+  if (!session) return;
+  session.preparing = true;
+  const revision = session.paintRevision = (session.paintRevision || 0) + 1;
+  map.getContainer().setAttribute("aria-busy", "true");
+  refreshPlaybackControls();
+  // Canvas queued its draw during moveend. Let that draw and the browser paint
+  // finish before a paused user starts playback; no timer or artificial delay.
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    if (followSession !== session || session.paintRevision !== revision) return;
+    session.preparing = false;
+    map.getContainer().setAttribute("aria-busy", "false");
+    refreshPlaybackControls();
+  }));
+}
+function stopMapFollow() {
+  finishMapFollow();
+  $("follow-drone").checked = false;
+  followCenter = null;
+  lastFollow = 0;
+}
+map.on("dragstart zoomstart", stopMapFollow);
+// Finish before Leaflet's draggable/zoom handlers capture their start offsets.
+for (const event of ["pointerdown", "mousedown", "touchstart", "wheel"])
+  map.getContainer().addEventListener(event, stopMapFollow, { capture: true, passive: true });
+map.getContainer().addEventListener("keydown", (event) => {
+  if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "+", "-", "="].includes(event.key)) stopMapFollow();
+}, { capture: true });
+
+function moveMapFollow(center, force) {
+  prepareMapFollow();
+  if (!followSession) return;
+  const origin = map.getPixelOrigin(), size = map.getSize();
+  const position = mapPaneOffset(center, [origin.x, origin.y], [size.x, size.y]);
+  const pane = map.getPane("mapPane"), old = L.DomUtil.getPosition(pane);
+  const moved = !old || Math.hypot(position[0] - old.x, position[1] - old.y) >= 0.5;
+  if (moved) {
+    L.DomUtil.setPosition(pane, L.point(position[0], position[1]));
+    map.fire("move");
+  }
+  // A padded Canvas can be composited for many frames. Repaint only to refresh
+  // its geographic coverage, before the viewport reaches that padded boundary.
+  if (followSession.needsCoverage || (force && moved) || !followSession.checkpoint ||
+      Math.hypot(center[0] - followSession.checkpoint[0], center[1] - followSession.checkpoint[1]) >
+        0.4 * Math.min(size.x, size.y)) {
+    followSession.checkpoint = [...center];
+    followSession.needsCoverage = false;
+    map.fire("moveend");
+    followCoveragePainted(followSession);
+  }
+}
 function markSelection() {
   for (const card of document.querySelectorAll(".route-card"))
     card.classList.toggle("selected", card.dataset.route === $("chosen").value);
@@ -1372,6 +1507,7 @@ $("commune").onchange = () => {
   refreshThreats();
 };
 async function setView3d(enabled, force = false) {
+  finishMapFollow();
   viewDesired = !!enabled;
   if (!enabled) {
     requests.cancel("view", "fpv");
@@ -1385,6 +1521,7 @@ async function setView3d(enabled, force = false) {
     map.invalidateSize();
     $("view-label").textContent = "MAPA 2D · OPENSTREETMAP + CAPAS LOCALES";
     $("view-toggle").textContent = "Ver terreno 3D";
+    if (simulation && $("follow-drone").checked) renderFlight(true);
     return true;
   }
   if (!model) return false;
@@ -1495,7 +1632,7 @@ function refreshPlaybackControls() {
       constraintAssessment?.valid === false
         ? "Obtener diagnóstico y probabilidades"
         : "Comparar las cuatro técnicas";
-  $("play").disabled = !ready;
+  $("play").disabled = !ready || !!followSession?.preparing;
   $("simulate").disabled = !ready;
   $("replay-nominal").disabled = !ready;
   for (const id of ["restart", "finish-playback", "seek", "drone-view"])
@@ -1506,6 +1643,7 @@ function refreshPlaybackControls() {
   $("show-selected").disabled = !ready;
   $("show-all").disabled = !ready;
   $("export").disabled = !fresh || busy || requests.pending("export");
+  $("export-format").disabled = $("export").disabled;
   $("failures").disabled = !fresh || busy || requests.pending("probabilities");
   $("replan").disabled =
     !simulation ||
@@ -1561,7 +1699,7 @@ function renderFlight(force = false, now = performance.now()) {
   const sample = sampleFlight(simulation.timeline, clock);
   if (!sample) return;
   drone?.setLatLng([sample.coordinates[1], sample.coordinates[0]]);
-  if (view3d && (force || now - lastRender >= 70)) {
+  if (view3d && (force || now - lastRender >= 1000 / 30)) {
     terrainView?.setFlightPose(
       sample.position_utm,
       sample.look_ahead,
@@ -1571,12 +1709,16 @@ function renderFlight(force = false, now = performance.now()) {
   }
   if (
     !view3d &&
-    $("follow-drone").checked &&
-    (force || now - lastFollow > 250)
+    $("follow-drone").checked
   ) {
-    map.panTo([sample.coordinates[1], sample.coordinates[0]], {
-      animate: false,
-    });
+    const destination = map.project([sample.coordinates[1], sample.coordinates[0]], map.getZoom());
+    const current = map.project(map.getCenter(), map.getZoom());
+    followCenter = force ? [destination.x, destination.y] : smoothFollow(
+      followCenter || [current.x, current.y], [destination.x, destination.y],
+      Math.min(100, lastFollow ? now - lastFollow : 1000 / 30),
+    );
+    if (force || Math.hypot(current.x - followCenter[0], current.y - followCenter[1]) >= 0.5)
+      moveMapFollow(followCenter, force);
     lastFollow = now;
   }
   $("flight").textContent =
@@ -1593,9 +1735,18 @@ function renderFlight(force = false, now = performance.now()) {
     `Rumbo ${(((Math.atan2(dx, dy) * 180) / Math.PI + 360) % 360).toFixed(0)}°`;
   $("fpv-height").textContent = `Cota ${sample.coordinates[2].toFixed(0)} m`;
   $("fpv-battery").textContent = `Batería ${sample.battery_pct.toFixed(0)} %`;
+  $("drone-coordinates").textContent = flightTelemetry(sample);
+  $("drone-coordinates").dataset.latitude = sample.coordinates[1];
+  $("drone-coordinates").dataset.longitude = sample.coordinates[0];
+  $("drone-coordinates").dataset.altitude = sample.coordinates[2];
+  $("fpv-coordinates").textContent = flightTelemetry(sample);
   $("fpv-hud").hidden =
     !view3d || $("drone-view").getAttribute("aria-pressed") !== "true";
+  const propellers = $("fpv-propellers");
+  propellers.hidden = $("fpv-hud").hidden;
+  propellers.dataset.spinning = String(playing && !["landed", "battery_swap"].includes(sample.phase));
   updateFlightLog(sample);
+  if (sample.ended && !playing) finishMapFollow();
   $("player").dataset.time = sample.time_s.toFixed(2);
   $("player").dataset.phase = sample.phase;
   $("player").dataset.playing = String(playing);
@@ -1690,6 +1841,7 @@ $("replay-nominal").onclick = () => preparePlayback("nominal", false);
 $("play").onclick = async () => {
   if (!simulation) return preparePlayback("nominal");
   if (clock >= simulation.time_s) clock = 0;
+  prepareMapFollow();
   playing = true;
   lastFrame = 0;
   refreshPlaybackControls();
@@ -1712,7 +1864,13 @@ function seekFlight(seconds) {
 $("restart").onclick = () => seekFlight(0);
 $("finish-playback").onclick = () => seekFlight(simulation?.time_s || 0);
 $("seek").oninput = () => seekFlight(Number($("seek").value));
-$("follow-drone").onchange = () => renderFlight(true);
+$("follow-drone").onchange = () => {
+  if (!$("follow-drone").checked) finishMapFollow();
+  else prepareMapFollow();
+  followCenter = null;
+  lastFollow = 0;
+  renderFlight(true);
+};
 async function toggleDroneView() {
   if (!simulation) return;
   if ($("drone-view").getAttribute("aria-pressed") === "true") {
@@ -1836,9 +1994,9 @@ $("replan").onclick = async () => {
     activated_threat_ids: activated,
   });
 };
-function download(name, value) {
+function download(name, value, contentType = "application/json") {
   const url = URL.createObjectURL(
-    new Blob([JSON.stringify(value, null, 2)], { type: "application/json" }),
+    new Blob([JSON.stringify(value, null, 2)], { type: contentType }),
   );
   const a = document.createElement("a");
   a.href = url;
@@ -1849,6 +2007,9 @@ function download(name, value) {
 async function exportResult(kind) {
   if (!result || !fresh) return;
   const previous = result,
+    flight = simulation,
+    flightRevision = simulationRevision,
+    format = $("export-format").value,
     token = requests.start(kind, previous.sha256);
   refreshPlaybackControls();
   try {
@@ -1860,14 +2021,21 @@ async function exportResult(kind) {
       : kind === "export"
         ? previous
         : previous.failure_probabilities;
-    if (!requests.current(token) || result !== previous || !fresh) return;
-    if (kind === "export")
-      download("patrullaje.json", {
+    if (!requests.current(token) || result !== previous || !fresh ||
+        (kind === "export" && (simulation !== flight || simulationRevision !== flightRevision))) return;
+    if (kind === "export") {
+      const bundle = {
         result: value,
-        simulation,
-        comparison_history: comparisonHistory,
-      });
-    else download("failure_probabilities.json", value);
+        simulation: flight,
+        comparison_history: [...comparisonHistory],
+      };
+      if (format === "geojson") {
+        const { buildMissionGeoJSON } = await import("./mission-export.js");
+        if (!requests.current(token) || result !== previous || simulation !== flight ||
+            simulationRevision !== flightRevision || !fresh) return;
+        download("patrullaje.geojson", buildMissionGeoJSON(bundle), "application/geo+json");
+      } else download("patrullaje.json", bundle);
+    } else download("failure_probabilities.json", value);
   } catch (error) {
     if (!aborted(error) && requests.current(token)) {
       if (error.status === 410) {

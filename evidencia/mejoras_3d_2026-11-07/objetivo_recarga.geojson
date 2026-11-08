@@ -1,0 +1,41 @@
+{
+  "geometry": {
+    "coordinates": [
+      [
+        [
+          -71.65330522661404,
+          -33.10288718233735
+        ],
+        [
+          -71.65325103732816,
+          -33.10108507664877
+        ],
+        [
+          -71.65582036200063,
+          -33.10103032123091
+        ],
+        [
+          -71.65587460361134,
+          -33.102832423176075
+        ],
+        [
+          -71.65330522661404,
+          -33.10288718233735
+        ]
+      ]
+    ],
+    "type": "Polygon"
+  },
+  "properties": {
+    "battery_budget_s": 190,
+    "flight_budget_s": 130,
+    "name": "Objetivo de recarga de 190 segundos útiles",
+    "origin_base_id": "104",
+    "report_reserve_s": 60,
+    "target_shift_utm_m": [
+      -50,
+      0
+    ]
+  },
+  "type": "Feature"
+}

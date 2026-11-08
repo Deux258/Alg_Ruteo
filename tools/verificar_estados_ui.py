@@ -17,6 +17,12 @@ POLYGON={'type':'Polygon','coordinates':[[[-71.65,-33.10],[-71.649,-33.10],[-71.
 PROFILE=dict(battery_budget_s=1200,mission_budget_s=3600,verification_s=60,altitude_agl_m=60)
 
 
+def target_preview(level=30):
+    return dict(target_display=dict(status='known',level_m_egm2008=level,
+        maximum_surface_m_egm2008=level-30,offset_m=30,polygon_sha256=SHA,
+        terrain_sha256=SHA,visual_only=True,vertical_datum='EGM2008'))
+
+
 def manifest(cut=None):
     geometry=dict(type='Point',coordinates=[-71.65,-33.10])
     result=dict(area=POLYGON,flight_area=POLYGON,demo_polygon=POLYGON,profile=PROFILE,
@@ -74,6 +80,8 @@ class Fixtures:
         if path=='/api/aereo/patrullaje/mapa':
             cut=parse_qs(url.query).get('commune_id',[None])[0];value=manifest(cut)
             kind='old-commune' if cut=='05101' else 'map'
+        elif path=='/api/aereo/patrullaje/objetivo':
+            kind='target-preview';value=target_preview()
         elif path=='/api/aereo/patrullaje/validar':
             body=request.post_data_json;blocked=body.get('time')==BLOCKED_TIME
             value=dict(valid=not blocked,violations=[dict(message='Viento fuera del perfil')] if blocked else [],constraints=dict(
@@ -169,6 +177,20 @@ def main():
         no_gl.add_init_script("const original=HTMLCanvasElement.prototype.getContext;HTMLCanvasElement.prototype.getContext=function(kind,...args){return kind==='webgl'?null:original.call(this,kind,...args)}")
         no_gl.goto(ORIGIN);no_gl.wait_for_load_state('networkidle');no_gl.locator('#view-toggle').click();no_gl.wait_for_timeout(300)
         checks['webgl_failure_preserves_2d']=no_gl.locator('#map').is_visible() and no_gl.locator('#terrain').is_hidden() and 'WebGL' in no_gl.locator('#message').inner_text()
+
+        # A previous target's delayed DSM preview must not replace a newer one.
+        preview=context.new_page();preview.on('pageerror',lambda error:errors.append(str(error)))
+        preview.goto(ORIGIN);preview.wait_for_load_state('networkidle')
+        fixtures.delays.add('target-preview');preview.locator('#demo').click()
+        for _ in range(200):
+            if 'target-preview' in fixtures.pending:break
+            preview.wait_for_timeout(20)
+        if 'target-preview' not in fixtures.pending:raise AssertionError('No llegó la vista previa retrasada del objetivo')
+        obsolete=fixtures.pending.pop('target-preview');fixtures.delays.remove('target-preview')
+        preview.locator('#demo').click()
+        preview.wait_for_function("document.querySelector('#target-height').dataset.status==='known'")
+        fixtures.reply(obsolete,target_preview(999));preview.wait_for_timeout(150)
+        checks['late_target_preview_cannot_replace_new_target']='30.0 m' in preview.locator('#target-height').inner_text() and '999' not in preview.locator('#target-height').inner_text()
         context.close();browser.close()
     report=dict(checks=checks,browser_errors=errors,successful=all(checks.values()) and not errors,api='controlled HTTP fixtures; live API acceptance is separate',video=None)
     (folder/'checks.json').write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding='utf-8');print(json.dumps(report,ensure_ascii=False))

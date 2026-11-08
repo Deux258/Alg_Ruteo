@@ -5,6 +5,7 @@ import itertools
 import json
 from pathlib import Path
 from playwright.sync_api import sync_playwright
+from tools.browser_ready import wait_patrol_ready
 from shapely.geometry import shape,LineString,Point
 from shapely.ops import transform,unary_union
 from core.aerial_data import FWD
@@ -22,7 +23,7 @@ def main():
         browser=p.chromium.launch(executable_path=args.chrome,headless=True,args=['--enable-webgl','--use-angle=swiftshader','--enable-unsafe-swiftshader'])
         context=browser.new_context(viewport={'width':1500,'height':1000},accept_downloads=True)
         page=context.new_page();page.on('pageerror',lambda e:errors.append(str(e)))
-        page.goto(args.url);page.wait_for_selector('#geo-buildings',timeout=120000);page.wait_for_load_state('networkidle')
+        page.goto(args.url,wait_until='domcontentloaded');wait_patrol_ready(page)
         page.locator('#demo').click();page.locator('#focus-target').click()
         checks['target_focus_2d']=page.locator('#focus-target').get_attribute('data-view')=='2d'
         with page.expect_response(lambda r:urlsplit(r.url).path.endswith('/api/aereo/patrullaje') and r.request.method=='POST',timeout=360000) as response:page.locator('#calculate').click()

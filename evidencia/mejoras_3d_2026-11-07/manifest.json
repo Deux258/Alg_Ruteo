@@ -1,0 +1,60 @@
+{
+  "base_commit": "301c676fe957ea2a94f13ead965c8d0aa1c12bc8",
+  "browser_checks": {
+    "charging": 6,
+    "closure": 18,
+    "environment": 13,
+    "improvements": 30,
+    "patrol": 16,
+    "player": 23,
+    "states": 15
+  },
+  "browser_checks_total": 121,
+  "code_sha256": "c93cdd7230d8d91e8342ce508c6f3dc4a62f676af901d703e5e530582af40139",
+  "database": "disposable:dbtest/ruteo_test",
+  "files_sha256": {
+    "acceptance.json": "a173721581dc60f3d30a5b1ba2ae68a19cf9d5c40d84545d867953782f7a8c91",
+    "benchmark.json": "2fc73df9fc1ca5e2cafd949361bb13dac0352ebaa5d533d56edee4b692199ea4",
+    "browser.json": "24557223e4ca7f1bfbb4dafc1325593b43f63cd161dc20b2ecfcb0e1d619e653",
+    "github_verification.json": "52e906d76a5959fd1ea0c974813e8a85475d6bae77786e35db79a7bdd47c92ab",
+    "local_exports.json": "02f5ec46828f2e6c49533984de03332280ca5864db5e9bb14a7f6c94f3982b77",
+    "movil_instrumentos.png": "ad1a74e8eceb090eb5324978d2df5f9e7e190e9356ce95138d7c0a04a80335b1",
+    "node.json": "8c926e686d97afe1f1ce63df83608f8d50b159c09d617d14cf8a812cb8a12639",
+    "objetivo_recarga.geojson": "1de3f9be34c3686623820057247f92f9acfe38acf18a4764303822be011f662d",
+    "objetivo_rutas_bases_3d.png": "c0c1eeabb958e3b1b0af1e6dd19625735c91745bc96b7f26d0f549b91422d75a",
+    "pov_helices_coordenadas.png": "143895ba95624728fea2d0b9e6a8e9443e4811522cb6d0098dc69003087b39a4",
+    "production_smoke.json": "f34c546e5ed244c64f12375567b9ddeac0df717f058757304a073dd5f1fc5462",
+    "python.json": "8a9a529caf02931692f9cee66c2fac33f56815e27a318daf710683a18bfef42b"
+  },
+  "implementation_pushed": false,
+  "local_application": {
+    "code_sha256": "c93cdd7230d8d91e8342ce508c6f3dc4a62f676af901d703e5e530582af40139",
+    "published_run_preserved": "2e6808a3-a8c3-5543-a051-cf5f4ac1c5d0",
+    "url": "http://127.0.0.1:18083"
+  },
+  "node_tests": 30,
+  "observations": {
+    "follow_updates_in_1_2s": 64,
+    "fpv_pixels": {
+      "different_fraction": 0.6282657657657658,
+      "height": 912,
+      "width": 1110
+    }
+  },
+  "preparation": {
+    "cold_preparation_s": 65.99401815400051,
+    "median_warm_preparation_s": 6.353515049499947,
+    "preparation_reduction_fraction": 0.9037258947519503,
+    "target_met": true
+  },
+  "python_tests": 188,
+  "recorded_at_utc": "2026-11-07T23:39:33.796072+00:00",
+  "sizes_bytes": {
+    "blocked_summary": 34442,
+    "commune_05101": 350167,
+    "commune_05109": 50953,
+    "map_summary": 51673,
+    "mission_summary": 187086
+  },
+  "video": null
+}

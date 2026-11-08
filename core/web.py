@@ -89,13 +89,27 @@ def status(conn):
 class Handler(BaseHTTPRequestHandler):
     def do_POST(self):
         parsed=urlsplit(self.path);path=parsed.path;params=parse_qs(parsed.query)
-        if path not in ['/api/aereo/rutas','/api/aereo/replanificar','/api/aereo/comparar','/api/aereo/patrullaje','/api/aereo/patrullaje/simular','/api/aereo/patrullaje/validar']:
+        if path not in ['/api/aereo/rutas','/api/aereo/replanificar','/api/aereo/comparar','/api/aereo/patrullaje','/api/aereo/patrullaje/simular','/api/aereo/patrullaje/validar','/api/aereo/patrullaje/objetivo']:
             return self.reply(404,b'{"error":"not_found"}')
         try:
             length=int(self.headers.get('Content-Length','0'))
             if not 0<length<=262144:raise ValueError('Solicitud vacía o mayor de 256 KiB')
             request=json.loads(self.rfile.read(length))
             if not isinstance(request,dict):raise ValueError('Solicitud JSON debe ser un objeto')
+            if path.endswith('/objetivo'):
+                from core.patrol import validate_polygon
+                from core.vertical_profile import target_display_summary
+                from shapely.geometry import shape,mapping
+                from shapely.ops import transform
+                from core.aerial_data import INV
+                if os.getenv('PATROL_CONTEXT'):model=patrol_model()
+                else:
+                    with connect() as conn:
+                        current=status(conn)
+                        if not current:return self.reply(503,b'{"status":"not_ready"}')
+                        model=patrol_model(conn,current)
+                target=validate_polygon(request,shape(model['study_geometry']))
+                return self.json_reply(dict(target_display=target_display_summary(model,mapping(transform(INV,target)))))
             if path.endswith('/validar'):
                 from core.mission_constraints import assess_constraints
                 if os.getenv('PATROL_CONTEXT'):assessment=assess_constraints(patrol_model(),request)
@@ -187,6 +201,7 @@ class Handler(BaseHTTPRequestHandler):
         static['/flight-player.js']='flight-player.js'
         static['/patrol-editing.js']='patrol-editing.js'
         static['/patrol-presentation.js']='patrol-presentation.js'
+        static['/mission-export.js']='mission-export.js'
         if os.getenv('PATROL_CONTEXT'):static['/']='patrol.html'
         if path in static:
             if path=='/' and not os.getenv('PATROL_CONTEXT'):

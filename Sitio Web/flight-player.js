@@ -1,4 +1,34 @@
 // Pure interpolation and local WGS84 / UTM 19S projection helpers.
+// Follow in projected map pixels: the damping is independent of frame frequency.
+export function smoothFollow(current, destination, elapsedMs, durationMs = 180) {
+  if (!destination?.every(Number.isFinite)) return current;
+  if (!current?.every(Number.isFinite)) return [...destination];
+  const alpha = 1 - Math.exp(-Math.max(0, elapsedMs) / durationMs);
+  return current.map((value, i) => value + (destination[i] - value) * alpha);
+}
+
+// A translated Leaflet map pane keeps the same world-pixel origin until the
+// next view reset. Markers, tiles and getCenter therefore share one transform.
+export function mapPaneOffset(center, pixelOrigin, viewportSize) {
+  return [
+    viewportSize[0] / 2 - (center[0] - pixelOrigin[0]),
+    viewportSize[1] / 2 - (center[1] - pixelOrigin[1]),
+  ];
+}
+
+export function flightTelemetry(sample) {
+  const c = sample?.coordinates;
+  if (!c || c.length < 3 || !c.every(Number.isFinite)) return "Lat — · Lon — · Cota —";
+  return `Lat ${c[1].toFixed(6)}° · Lon ${c[0].toFixed(6)}° · Cota ${c[2].toFixed(1)} m EGM2008`;
+}
+
+export function targetPlaneRings(target, level) {
+  if (target?.type !== "Polygon" || !Number.isFinite(level)) return [];
+  return target.coordinates.map((ring) => ring.map((coordinate) => [
+    ...projectUTM(coordinate), level,
+  ]));
+}
+
 export function sampleFlight(timeline, seconds) {
   if (!timeline?.length) return null;
   const time = Math.max(

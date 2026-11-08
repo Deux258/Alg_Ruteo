@@ -4,6 +4,11 @@ from urllib.parse import urlsplit
 import json
 from pathlib import Path
 from playwright.sync_api import sync_playwright
+from shapely.affinity import translate
+from shapely.geometry import shape,mapping
+from shapely.ops import transform
+from core.aerial_data import FWD,INV
+from tools.browser_ready import wait_patrol_ready
 
 
 def main():
@@ -23,9 +28,17 @@ def main():
         recording={} if args.no_video else dict(record_video_dir=str(out/'video_raw'),record_video_size={'width':1440,'height':1000})
         context=browser.new_context(viewport={'width':1440,'height':1000},**recording)
         page=context.new_page();page.on('pageerror',lambda e:errors.append(str(e)))
-        page.goto(args.url);page.wait_for_load_state('networkidle')
+        page.goto(args.url,wait_until='domcontentloaded');wait_patrol_ready(page)
         page.locator('#route-mode').select_option('comparison')
         page.locator('#demo').click()
+        # The real ramped profile makes the former objective infeasible at 190 s.
+        # Fix a nearer geometric fixture, keeping the actual battery, report
+        # reserve and station inventory unchanged (no solver/result filtering).
+        overview=page.request.get(args.url+'/api/aereo/patrullaje/mapa?view=summary',timeout=120000).json()
+        objective=json.loads(json.dumps(mapping(transform(INV,translate(transform(FWD,shape(overview['demo_polygon'])),xoff=-50)))))
+        with page.expect_response(lambda response:urlsplit(response.url).path.endswith('/objetivo') and response.request.post_data_json.get('target_polygon')==objective,timeout=120000):
+            page.locator('#import').set_input_files(dict(name='objetivo_recarga.geojson',mimeType='application/geo+json',buffer=json.dumps(objective).encode()))
+        page.wait_for_function("document.querySelector('#target-height').dataset.status==='known'",timeout=120000)
         page.get_by_text('Perfil de vuelo · Mavic 3T',exact=True).click()
         page.locator('#battery').fill('190')
         page.get_by_text('Estaciones hipotéticas',exact=True).click()
@@ -46,6 +59,7 @@ def main():
         page.wait_for_function("document.querySelector('#log').textContent.includes('Fin:')",timeout=120000)
         page.locator('#flight').scroll_into_view_if_needed();page.wait_for_timeout(1000)
         checks=dict(real_station_budget=True,one_swap=len(result['routes'][chosen]['stops'])==1,
+                    flight_report_split=result['effective_profile']['battery_budget_s']==190 and result['planning_profile']['battery_budget_s']==130,
                     completed=simulation['mission_completed'],reset_only_at_station=any(f['phase']=='battery_swap' for f in simulation['timeline']),
                     nonnegative_battery=all(f['battery_pct']>=0 for f in simulation['timeline']))
         video=page.video if not args.no_video else None
@@ -53,7 +67,8 @@ def main():
         if video:video.save_as(str(video_path))
         browser.close()
     report=dict(checks=checks,browser_errors=errors,successful=all(checks.values()) and not errors,video=str(video_path) if video_path else None,
-                method=chosen,station_ids=result['request']['station_ids'],battery_budget_s=190,flight_budget_s=130,report_reserve_s=60,stops=result['routes'][chosen]['stops'])
+                method=chosen,station_ids=result['request']['station_ids'],battery_budget_s=190,flight_budget_s=130,report_reserve_s=60,
+                target_shift_utm_m=[-50,0],stops=result['routes'][chosen]['stops'])
     (out/'charging_checks.json').write_text(json.dumps(report,indent=2),encoding='utf-8')
     print(json.dumps(report))
     if not report['successful']:raise SystemExit(1)

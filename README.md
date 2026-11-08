@@ -70,7 +70,9 @@ licencias ni credenciales en Git. Un error de licencia se muestra, sin sustituir
 - [Cierre verificable, APIs compactas, comunas y QA/CI](docs/CIERRE_IMPLEMENTACION.md).
 - [Limpieza conservadora, originales y dependencias](docs/ARCHIVO_Y_DEPENDENCIAS.md).
 - [Matriz literal de rúbrica y aceptación](docs/MATRIZ_RUBRICA.md).
-- [Resultados validados, rendimiento y evidencia de esta versión](docs/RESULTADOS_CIERRE.md).
+- [Mejoras 3D, perfil vertical, instrumentos y exportaciones](docs/MEJORAS_3D.md).
+- [Resultados verificados de las mejoras 3D y capturas](docs/RESULTADOS_MEJORAS_3D.md).
+- [Resultados del cierre previo y su huella de código](docs/RESULTADOS_CIERRE.md).
 - [Modelo matemático, API, supuestos y reproducción](docs/FASE_FINAL.md).
 - [Matriz de la nueva rúbrica y guion](presentacion/MATRIZ_FASE_FINAL.md).
 - [Evidencia de la fase final](evidencia/final_2026-11-04/).

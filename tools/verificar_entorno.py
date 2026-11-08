@@ -6,6 +6,7 @@ import json
 from pathlib import Path
 
 from playwright.sync_api import sync_playwright
+from tools.browser_ready import wait_patrol_ready
 
 
 def main():
@@ -20,10 +21,10 @@ def main():
         browser=p.chromium.launch(executable_path=args.chrome,headless=True,args=['--enable-webgl','--use-angle=swiftshader','--enable-unsafe-swiftshader'])
         context=browser.new_context(viewport={'width':1500,'height':1000},accept_downloads=True)
         page=context.new_page();page.on('pageerror',lambda error:errors.append(str(error)))
-        with page.expect_response(lambda r:urlsplit(r.url).path.endswith('/patrullaje/mapa'),timeout=240000) as pending:page.goto(args.url)
+        with page.expect_response(lambda r:urlsplit(r.url).path.endswith('/patrullaje/mapa'),timeout=240000) as pending:page.goto(args.url,wait_until='domcontentloaded')
         response=pending.value
         if response.status!=200:raise AssertionError(response.text())
-        page.wait_for_selector('#geo-buildings',timeout=120000);page.wait_for_load_state('networkidle',timeout=120000)
+        wait_patrol_ready(page)
         # APIRequestContext bypasses Chrome's small DevTools response-body cache.
         model=context.request.get(args.url+'/api/aereo/patrullaje/mapa',timeout=120000).json();geo=model['geography']
         checks['six_real_geographic_layers']=all(geo['counts'].get(k,0)>0 for k in ('buildings','water','landcover','trees','roads','contours'))

@@ -1,4 +1,93 @@
 // Metric DSM + local OSM/CONAF geometry. No remote 3D service or token.
+export function terrainLighting(mesh) {
+  const { width, height, x, y, elevations } = mesh;
+  const normals = Array.from({ length: width * height }, () => [0, 0, 0]);
+  const point = (i) => [x[i % width], y[Math.floor(i / width)], elevations[i]];
+  for (let j = 0; j < height - 1; j++)
+    for (let i = 0; i < width - 1; i++) {
+      const a = j * width + i, b = a + 1, c = a + width, d = c + 1;
+      for (const face of [[a, b, c], [b, d, c]]) {
+        if (face.some((k) => !Number.isFinite(elevations[k]))) continue;
+        const [p, q, r] = face.map(point), u = q.map((v, k) => v - p[k]), v = r.map((w, k) => w - p[k]);
+        const n = [u[1] * v[2] - u[2] * v[1], u[2] * v[0] - u[0] * v[2], u[0] * v[1] - u[1] * v[0]];
+        for (const k of face) for (let axis = 0; axis < 3; axis++) normals[k][axis] += n[axis];
+      }
+    }
+  const lighting = normals.map((n) => .68 + .32 * Math.abs((-.35 * n[0] - .35 * n[1] + .87 * n[2]) / (Math.hypot(...n) || 1)));
+  const colorsAt = (position, baseColor = null) => {
+    let shade = .68 + .32 * .87;
+    if (width > 1 && height > 1) {
+      const fx = Math.max(0, Math.min(width - 1, (position[0] - x[0]) / (x[1] - x[0]))), fy = Math.max(0, Math.min(height - 1, (position[1] - y[0]) / (y[1] - y[0])));
+      const ix = Math.min(Math.floor(fx), width - 2), iy = Math.min(Math.floor(fy), height - 2), tx = fx - ix, ty = fy - iy;
+      const a = iy * width + ix, b = a + 1, c = a + width, d = c + 1;
+      shade = tx + ty <= 1 ? (1 - tx - ty) * lighting[a] + tx * lighting[b] + ty * lighting[c] : (1 - ty) * lighting[b] + (tx + ty - 1) * lighting[d] + (1 - tx) * lighting[c];
+    }
+    const h = position[2], palette = baseColor || [.59 + h / 10000, .63 + h / 12000, .48];
+    return palette.map((v) => Math.max(0, Math.min(255, Math.round(v * shade * 255))) / 255);
+  };
+  const gridColors = elevations.map((h, i) => Number.isFinite(h) ? colorsAt(point(i)) : null);
+  return { colorsAt, gridColors };
+}
+
+export function terrainGridColors(mesh) { return terrainLighting(mesh).gridColors; }
+
+export function routeArrowAnchors(points, spacing = 100) {
+  const segments = []; let length = 0;
+  for (let i = 1; i < points.length; i++) {
+    const a = points[i - 1], b = points[i];
+    if (!a.every(Number.isFinite) || !b.every(Number.isFinite)) continue;
+    const distance = Math.hypot(b[0] - a[0], b[1] - a[1]);
+    if (distance <= .001) continue;
+    segments.push({ a, b, start: length, distance }); length += distance;
+  }
+  if (!segments.length) return [];
+  const distances = [Math.min(25, length / 2)];
+  for (let s = spacing; s < length - 5; s += spacing) distances.push(s);
+  let index = 0;
+  return distances.map((s) => {
+    while (index < segments.length - 1 && s > segments[index].start + segments[index].distance) index++;
+    const { a, b, start, distance } = segments[index], f = (s - start) / distance;
+    const position = a.map((v, k) => v + (b[k] - v) * f);
+    const ahead = [position[0] + (b[0] - a[0]) / distance * 10, position[1] + (b[1] - a[1]) / distance * 10, position[2] + (b[2] - a[2]) / distance * 10];
+    return { position, ahead, distance_m: s };
+  });
+}
+
+export function projectTerrainPoint(position, camera) {
+  const p = [position[0] - camera.origin[0], position[1] - camera.origin[1], position[2]];
+  let x, y, depth;
+  if (camera.fpv) {
+    const v = p.map((n, i) => n - camera.eye[i]);
+    const dot = (a, b) => a.reduce((s, n, i) => s + n * b[i], 0);
+    const z = dot(v, camera.forward);
+    if (z < 1) return { visible: false };
+    x = dot(v, camera.right) * camera.focal / camera.aspect / z;
+    y = dot(v, camera.up) * camera.focal / z;
+    depth = 1.000100005 - 2.000100005 / z;
+  } else {
+    const v = p.map((n, i) => n - camera.center[i]);
+    const rx = Math.cos(camera.yaw) * v[0] - Math.sin(camera.yaw) * v[1];
+    const ry = Math.sin(camera.yaw) * v[0] + Math.cos(camera.yaw) * v[1];
+    x = rx * camera.scale;
+    y = (ry * Math.sin(camera.pitch) + v[2] * Math.cos(camera.pitch)) * camera.scale * camera.aspect;
+    depth = (ry * Math.cos(camera.pitch) - v[2] * Math.sin(camera.pitch)) * camera.scale * .15;
+  }
+  return { x: (x + 1) * camera.width / 2, y: (1 - y) * camera.height / 2,
+    depth, visible: Number.isFinite(x + y + depth) && Math.abs(x) <= 1 && Math.abs(y) <= 1 && Math.abs(depth) <= 1 };
+}
+
+// Shared verbatim by scene and route programs; CPU annotation projection mirrors it.
+const cameraProjection = `uniform vec3 center;uniform vec4 camera;uniform float aspect;uniform bool firstPerson;uniform vec3 eye;uniform vec3 forward;uniform vec3 right;uniform vec3 up;uniform float focal;
+vec4 project(vec3 position){if(firstPerson){vec3 p=position-eye;float z=dot(p,forward);return vec4(dot(p,right)*focal/aspect,dot(p,up)*focal,1.000100005*z-2.000100005,z);}vec3 p=position-center;float x=cos(camera.x)*p.x-sin(camera.x)*p.y;float y=sin(camera.x)*p.x+cos(camera.x)*p.y;return vec4(x*camera.z,(y*sin(camera.y)+p.z*cos(camera.y))*camera.z*aspect,(y*cos(camera.y)-p.z*sin(camera.y))*camera.z*.15,1.);}`;
+
+const annotationPaths = {
+  drone: '<path d="M5 5l14 14M5 19 19 5" stroke-width="2.8"/><circle cx="5" cy="5" r="4" fill="#fff"/><circle cx="19" cy="5" r="4" fill="#fff"/><circle cx="5" cy="19" r="4" fill="#fff"/><circle cx="19" cy="19" r="4" fill="#fff"/><rect x="9" y="7" width="6" height="10" rx="2" fill="currentColor"/><path d="m12 1-2 4h4Z" fill="currentColor"/>',
+  base: '<path d="M3 11 12 3l9 8v10H3Z"/><path d="M9 21v-8h6v8M5 8h14"/>',
+  station: '<path d="M5 21V4h12v17M3 21h16M17 8h3l1 3v7h-4"/><path d="m12 6-4 6h4l-1 5 5-7h-4Z" fill="currentColor"/>',
+  fire: '<path d="M13 2c2 6-3 6 1 10 2-1 3-3 3-5 7 8 3 15-5 15C3 22 1 14 8 7c-1 5 2 5 3 7 3-5-2-7 2-12Z"/>',
+  threat: '<path d="m12 3 10 18H2Z"/><path d="M12 9v5M12 17v1"/>',
+};
+
 export class TerrainView {
   static async create(canvas, mesh, scene, options = {}) {
     const view = new TerrainView(
@@ -33,6 +122,8 @@ export class TerrainView {
     this.fpvYaw = 0;
     this.fpvPitch = -0.18;
     this.fov = 70;
+    this.annotations = [];
+    this.annotationNodes = new Map();
     const gl = (this.gl = canvas.getContext("webgl", {
       antialias: true,
       preserveDrawingBuffer: true,
@@ -48,7 +139,7 @@ export class TerrainView {
     };
     const vs = shader(
       gl.VERTEX_SHADER,
-      `attribute vec3 position;attribute vec3 color;varying vec3 tint;uniform vec3 center;uniform vec4 camera;uniform float aspect;uniform bool firstPerson;uniform vec3 eye;uniform vec3 forward;uniform vec3 right;uniform vec3 up;uniform float focal;void main(){if(firstPerson){vec3 p=position-eye;float z=dot(p,forward);gl_Position=vec4(dot(p,right)*focal/aspect,dot(p,up)*focal,1.000100005*z-2.000100005,z);}else{vec3 p=position-center;float x=cos(camera.x)*p.x-sin(camera.x)*p.y;float y=sin(camera.x)*p.x+cos(camera.x)*p.y;gl_Position=vec4(x*camera.z,(y*sin(camera.y)+p.z*cos(camera.y))*camera.z*aspect,(y*cos(camera.y)-p.z*sin(camera.y))*camera.z*.15,1.);}gl_PointSize=13.;tint=color;}`,
+      `attribute vec3 position;attribute vec3 color;varying vec3 tint;${cameraProjection}void main(){gl_Position=project(position);gl_PointSize=13.;tint=color;}`,
     );
     const fs = shader(
       gl.FRAGMENT_SHADER,
@@ -75,13 +166,23 @@ export class TerrainView {
       up: gl.getUniformLocation(program, "up"),
       focal: gl.getUniformLocation(program, "focal"),
     };
+    const routeVs = shader(gl.VERTEX_SHADER, `attribute vec3 routeStart;attribute vec3 routeEnd;attribute vec2 corner;uniform vec2 viewport;uniform float routeWidth;uniform bool symbol;${cameraProjection}
+void main(){vec4 a=project(routeStart),b=project(routeEnd);if(firstPerson){if(a.w<1.&&b.w<1.){gl_Position=vec4(2.,2.,2.,1.);return;}if(a.w<1.)a=mix(a,b,(1.-a.w)/(b.w-a.w));if(b.w<1.)b=mix(b,a,(1.-b.w)/(a.w-b.w));}vec2 delta=(b.xy/b.w-a.xy/a.w)*viewport;float size=length(delta);vec2 direction=size>.0001?delta/size:vec2(1.,0.);vec2 normal=vec2(-direction.y,direction.x);vec4 p=symbol?a:mix(a,b,corner.x);vec2 shift=symbol?(direction*corner.x+normal*corner.y)*routeWidth:(normal*corner.y*routeWidth*.5);p.xy+=shift*2./viewport*p.w;gl_Position=p;}`);
+    const routeFs = shader(gl.FRAGMENT_SHADER, 'precision mediump float;uniform vec3 routeColor;void main(){gl_FragColor=vec4(routeColor,1.);}');
+    this.routeProgram = gl.createProgram();
+    gl.attachShader(this.routeProgram, routeVs); gl.attachShader(this.routeProgram, routeFs); gl.linkProgram(this.routeProgram);
+    gl.deleteShader(routeVs); gl.deleteShader(routeFs);
+    if (!gl.getProgramParameter(this.routeProgram, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(this.routeProgram));
+    this.routeLocations = Object.fromEntries(['center', 'camera', 'aspect', 'firstPerson', 'eye', 'forward', 'right', 'up', 'focal', 'viewport', 'routeWidth', 'symbol', 'routeColor'].map((name) => [name, gl.getUniformLocation(this.routeProgram, name)]));
+    for (const name of ['routeStart', 'routeEnd', 'corner']) this.routeLocations[name] = gl.getAttribLocation(this.routeProgram, name);
     const vertices = [];
     const { width, height, x, y, elevations } = mesh;
-    const hs = elevations.filter((v) => v !== null);
+    this.lighting = terrainLighting(mesh);
+    const hs = elevations.filter(Number.isFinite), terrainColors = this.lighting.gridColors;
     this.mean = hs.length ? hs.reduce((a, b) => a + b, 0) / hs.length : 0;
     const vertex = (i, j) => {
       const h = elevations[j * width + i];
-      return !Number.isFinite(h) ? null : [x[i], y[j], h];
+      return !Number.isFinite(h) ? null : [x[i], y[j], h, ...terrainColors[j * width + i]];
     };
     for (let j = 0; j < height - 1; j++)
       for (let i = 0; i < width - 1; i++)
@@ -90,14 +191,7 @@ export class TerrainView {
           [vertex(i + 1, j), vertex(i + 1, j + 1), vertex(i, j + 1)],
         ]) {
           if (tri.some((v) => !v)) continue;
-          const z = tri.reduce((s, v) => s + v[2], 0) / 3;
-          const shade = this.shade(tri);
-          const c = [
-            (0.59 + z / 10000) * shade,
-            (0.63 + z / 12000) * shade,
-            0.48 * shade,
-          ];
-          for (const v of tri) vertices.push(...v, ...c);
+          for (const v of tri) vertices.push(...v);
         }
     this.terrain = this.makeBuffer(vertices, gl.TRIANGLES);
     for (const [key, batches] of Object.entries(scene?.render || {})) {
@@ -120,11 +214,13 @@ export class TerrainView {
                   positions.slice(i + 6, i + 9),
                 ]);
           const count = batch.mode === "lines" ? 2 : 3;
-          for (let k = 0; k < count; k++)
+          for (let k = 0; k < count; k++) {
+            const p = positions.slice(i + k * 3, i + k * 3 + 3);
             target.push(
-              ...positions.slice(i + k * 3, i + k * 3 + 3),
-              ...batch.color.map((c) => c * shade),
+              ...p,
+              ...(key === 'landcover' && batch.mode !== 'lines' ? this.lighting.colorsAt(p, batch.color) : batch.color.map((c) => c * shade)),
             );
+          }
         }
       }
       this.groups[key] = [
@@ -134,6 +230,13 @@ export class TerrainView {
       this.visibility[key] = true;
     }
     this.dynamic = gl.createBuffer();
+    if (typeof document !== 'undefined' && canvas.parentElement) {
+      this.annotationLayer = document.createElement('div');
+      this.annotationLayer.className = 'terrain-annotations';
+      this.annotationLayer.setAttribute('aria-hidden', 'true');
+      Object.assign(this.annotationLayer.style, { position: 'absolute', inset: '0', pointerEvents: 'none', overflow: 'hidden', zIndex: '410' });
+      canvas.parentElement.append(this.annotationLayer);
+    }
     const listen = (event, handler, options = {}) =>
       canvas.addEventListener(event, handler, {
         ...options,
@@ -176,16 +279,7 @@ export class TerrainView {
       "wheel",
       (e) => {
         e.preventDefault();
-        if (this.firstPerson) {
-          this.fov = Math.max(40, Math.min(100, this.fov + e.deltaY * 0.025));
-          this.draw();
-          return;
-        }
-        this.zoom = Math.max(
-          0.3,
-          Math.min(60, this.zoom * Math.exp(-e.deltaY * 0.001)),
-        );
-        this.draw();
+        this.zoomBy(Math.exp(-e.deltaY * 0.001));
       },
       { passive: false },
     );
@@ -340,6 +434,9 @@ export class TerrainView {
       this.deleteBuffers(buffers);
     this.gl.deleteBuffer(this.dynamic);
     this.gl.deleteProgram(this.program);
+    this.gl.deleteProgram(this.routeProgram);
+    this.annotationLayer?.remove();
+    this.annotationNodes.clear();
     this.groups = {};
     this.routeBuffers = [];
     this.lines = [];
@@ -388,7 +485,7 @@ export class TerrainView {
     this.deleteBuffers(this.routeBuffers);
     const m = this.mesh,
       gl = this.gl;
-    this.routeBuffers = lines.map((line) => {
+    this.routeBuffers = lines.flatMap((line) => {
       const data = [];
       const add = (p) => {
         if (p.every(Number.isFinite))
@@ -399,28 +496,35 @@ export class TerrainView {
             ...line.color,
           );
       };
-      if (line.point) line.points.forEach(add);
-      else
-        for (let i = 1; i < line.points.length; i++) {
-          const a = line.points[i - 1],
-            b = line.points[i];
-          if (!a.every(Number.isFinite) || !b.every(Number.isFinite)) continue;
-          const d = Math.hypot(b[0] - a[0], b[1] - a[1]);
-          if (!d) continue;
-          const dx = (-(b[1] - a[1]) / d) * (line.width || 1.5),
-            dy = ((b[0] - a[0]) / d) * (line.width || 1.5);
-          const v = [a[0] + dx, a[1] + dy, a[2]],
-            w = [a[0] - dx, a[1] - dy, a[2]],
-            x = [b[0] + dx, b[1] + dy, b[2]],
-            y = [b[0] - dx, b[1] - dy, b[2]];
-          [v, w, x, x, w, y].forEach(add);
-        }
-      return {
-        ...this.makeBuffer(data, line.point ? gl.POINTS : gl.TRIANGLES),
-        target: line.target,
-        point: line.point,
+      if (line.point) {
+        line.points.forEach(add);
+        return [{ ...this.makeBuffer(data, gl.POINTS), target: line.target, point: true }];
+      }
+      const local = (p) => [p[0] - m.origin_utm[0], p[1] - m.origin_utm[1], p[2]];
+      const push = (a, b, corners, target) => {
+        for (const corner of corners) target.push(...local(a), ...local(b), ...corner);
       };
+      for (let i = 1; i < line.points.length; i++) {
+        const a = line.points[i - 1], b = line.points[i];
+        if (a.every(Number.isFinite) && b.every(Number.isFinite) && Math.hypot(...b.map((n, k) => n - a[k])) > .001)
+          push(a, b, [[0, -1], [0, 1], [1, -1], [1, -1], [0, 1], [1, 1]], data);
+      }
+      const make = (values, symbol = false) => {
+        const buffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, buffer); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(values), gl.STATIC_DRAW);
+        return { buffer, count: values.length / 8, mode: gl.TRIANGLES, screenRoute: true, symbol,
+          color: line.color, widthPx: line.width_px || (line.target ? 3 : (line.selected ?? line.width >= 4) ? 6 : 3), target: line.target, key: line.key };
+      };
+      const items = [make(data)];
+      if (!line.target && line.arrows !== false) {
+        const arrows = [];
+        for (const { position, ahead } of routeArrowAnchors(line.points))
+          push(position, ahead, [[7, 0], [-5, -4], [-5, 4]], arrows);
+        if (arrows.length) items.push(make(arrows, true));
+      }
+      return items;
     });
+    this.canvas.dataset.routeArrows = String(this.routeBuffers.filter((item) => item.symbol).reduce((n, item) => n + item.count / 3, 0));
     this.lines = lines;
     if (!this.focused && lines.some((l) => !l.point)) this.focusRoutes();
     else this.draw();
@@ -432,7 +536,115 @@ export class TerrainView {
   }
   setMarker(position) {
     this.marker = position;
+    if (!position) this.flightPose = null;
+    this.reconcileAnnotations();
     this.draw();
+  }
+  zoomBy(factor) {
+    if (this.disposed || !Number.isFinite(factor) || factor <= 0) return;
+    if (this.firstPerson) this.fov = Math.max(40, Math.min(100, this.fov / factor));
+    else this.zoom = Math.max(.3, Math.min(60, this.zoom * factor));
+    this.draw();
+  }
+  setAnnotations(items) {
+    if (this.disposed) return;
+    this.annotations = (items || []).filter((item) => annotationPaths[item.kind] && item.position_utm?.length === 3 && item.position_utm.every(Number.isFinite))
+      .map((item, index) => ({ ...item, id: String(item.id ?? `${item.kind}:${index}`), label: String(item.label ?? ''), position_utm: [...item.position_utm] }));
+    this.reconcileAnnotations();
+    this.draw();
+  }
+  annotationItems() {
+    const items = this.annotations;
+    if (!this.marker) return items;
+    return [...items.filter((item) => item.kind !== 'drone'), { id: '__flight_drone', kind: 'drone', position_utm: this.marker, label: 'Dron', selected: true }];
+  }
+  reconcileAnnotations() {
+    if (!this.annotationLayer) return;
+    const wanted = new Set();
+    for (const item of this.annotationItems()) {
+      wanted.add(item.id);
+      let node = this.annotationNodes.get(item.id);
+      if (!node) {
+        const element = document.createElement('div'), icon = document.createElement('span'), label = document.createElement('span');
+        element.className = 'terrain-annotation'; icon.className = 'terrain-annotation-icon'; label.className = 'terrain-annotation-label';
+        Object.assign(element.style, { position: 'absolute', top: '0', left: '0', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '3px', pointerEvents: 'none', willChange: 'transform' });
+        Object.assign(icon.style, { display: 'block', width: item.kind === 'drone' ? '36px' : '28px', height: item.kind === 'drone' ? '36px' : '28px', filter: 'drop-shadow(0 1px 2px #ffffff) drop-shadow(0 0 2px #ffffff)' });
+        Object.assign(label.style, { maxWidth: '230px', background: '#ffffffeb', color: '#173d33', borderRadius: '3px', padding: '2px 5px', font: '600 11px system-ui,sans-serif', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' });
+        element.append(icon, label); this.annotationLayer.append(element);
+        node = { element, icon, label }; this.annotationNodes.set(item.id, node);
+      }
+      const color = item.kind === 'fire' || item.kind === 'threat' ? '#b74720' : item.kind === 'station' ? '#80560f' : item.kind === 'drone' ? '#a73d18' : '#1a5941';
+      node.element.dataset.kind = item.kind; node.element.dataset.selected = String(!!item.selected);
+      node.icon.style.color = color;
+      if (node.kind !== item.kind) {
+        node.icon.innerHTML = `<svg viewBox="0 0 24 24" width="100%" height="100%" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${annotationPaths[item.kind]}</svg>`;
+        node.kind = item.kind;
+      }
+      if (node.label.textContent !== (item.label || '')) node.label.textContent = item.label || '';
+      node.label.hidden = !item.label;
+      node.element.title = item.label || item.kind;
+    }
+    for (const [id, node] of this.annotationNodes) if (!wanted.has(id)) { node.element.remove(); this.annotationNodes.delete(id); }
+  }
+  updateAnnotations(camera) {
+    if (!this.annotationLayer) return;
+    this.annotationLayer.hidden = this.canvas.hidden;
+    let visible = 0;
+    const rectangles = [], baseIcons = [], canvasRect = this.canvas.getBoundingClientRect?.() || { left: 0, top: 0 };
+    const priority = (item) => item.kind === 'drone' ? 3 : item.kind === 'base' && item.selected ? 2 : item.kind === 'base' ? 1 : 0;
+    const overlap = (a, b) => a.left < b.right + 5 && a.right + 5 > b.left && a.top < b.bottom + 4 && a.bottom + 4 > b.top;
+    const items = [...this.annotationItems()].sort((a, b) => priority(b) - priority(a));
+    for (const item of items) {
+      const node = this.annotationNodes.get(item.id);
+      if (!node) continue;
+      const point = projectTerrainPoint(item.position_utm, camera);
+      node.element.hidden = !point.visible || !!(camera.fpv && item.kind === 'drone');
+      // The inline display must not override the HTML hidden attribute.
+      node.element.style.display = node.element.hidden ? 'none' : 'flex';
+      if (node.element.hidden) continue;
+      visible++;
+      const matchingBase = item.kind === 'station' && baseIcons.find((base) => Math.hypot(base.x - point.x, base.y - point.y) < 18);
+      if (matchingBase) { point.x = Math.max(12, Math.min(camera.width - 12, matchingBase.x + 19)); point.y = Math.max(12, Math.min(camera.height - 12, matchingBase.y - 13)); }
+      if (item.kind === 'base') baseIcons.push({ x: point.x, y: point.y });
+      const iconSize = item.kind === 'drone' ? 36 : matchingBase ? 20 : 28, selectedBase = item.kind === 'base' && item.selected;
+      node.element.dataset.badge = String(!!matchingBase);
+      node.icon.style.width = node.icon.style.height = `${iconSize}px`;
+      node.element.style.transform = `translate(${point.x.toFixed(2)}px,${point.y.toFixed(2)}px) translate(-50%,-${iconSize / 2}px)`;
+      if (item.kind === 'drone') {
+        let ahead = this.flightPose?.ahead;
+        if (!ahead && Number.isFinite(item.heading_deg)) { const a = item.heading_deg * Math.PI / 180; ahead = [item.position_utm[0] + Math.sin(a) * 10, item.position_utm[1] + Math.cos(a) * 10, item.position_utm[2]]; }
+        const next = ahead && projectTerrainPoint(ahead, camera);
+        const angle = next && Number.isFinite(next.x + next.y) ? Math.atan2(next.x - point.x, point.y - next.y) * 180 / Math.PI : 0;
+        node.icon.style.transform = `rotate(${angle.toFixed(2)}deg)`;
+      }
+      node.label.hidden = !item.label;
+      node.label.style.transform = '';
+      const maxWidth = Math.max(80, Math.min(selectedBase ? 280 : 230, camera.width - 24));
+      Object.assign(node.label.style, { maxWidth: `${maxWidth}px`, whiteSpace: selectedBase ? 'normal' : 'nowrap',
+        textOverflow: selectedBase ? 'clip' : 'ellipsis', overflowWrap: selectedBase ? 'anywhere' : 'normal' });
+      if (item.label) {
+        const measured = node.label.getBoundingClientRect?.();
+        const textWidth = Math.min(maxWidth, item.label.length * 6.8 + 10), textHeight = selectedBase ? Math.ceil((item.label.length * 6.8 + 10) / maxWidth) * 15 + 4 : 19;
+        const rect = measured?.width ? { left: measured.left - canvasRect.left, top: measured.top - canvasRect.top, width: measured.width, height: measured.height }
+          : { left: point.x - textWidth / 2, top: point.y + iconSize / 2 + 3, width: textWidth, height: textHeight };
+        const shifts = priority(item) >= 2 ? [[0, 0], [0, -rect.height - iconSize - 8], [rect.width / 2 + 22, 0], [-rect.width / 2 - 22, 0], [0, rect.height + 8]] : [[0, 0]];
+        let chosen = null;
+        for (const [x, y] of shifts) {
+          const left = Math.max(8, Math.min(camera.width - rect.width - 8, rect.left + x));
+          const top = Math.max(8, Math.min(camera.height - rect.height - 8, rect.top + y));
+          const candidate = { left, top, right: left + rect.width, bottom: top + rect.height };
+          if (!rectangles.some((other) => overlap(candidate, other))) { chosen = candidate; break; }
+        }
+        if (!chosen && priority(item) < 2) node.label.hidden = true;
+        else {
+          chosen ||= { left: rect.left, top: rect.top, right: rect.left + rect.width, bottom: rect.top + rect.height };
+          node.label.style.transform = `translate(${(chosen.left - rect.left).toFixed(2)}px,${(chosen.top - rect.top).toFixed(2)}px)`;
+          rectangles.push(chosen);
+        }
+      }
+      node.element.dataset.labelVisible = String(!node.label.hidden);
+    }
+    this.canvas.dataset.annotationCount = String(visible);
   }
   focusPoints(points, kind = "target") {
     if (!points.length) return;
@@ -465,6 +677,7 @@ export class TerrainView {
   setFlightPose(position, ahead, follow = false) {
     this.marker = position;
     this.flightPose = { position, ahead };
+    if (!this.annotationNodes.has('__flight_drone')) this.reconcileAnnotations();
     if (follow && !this.firstPerson)
       this.center = [
         position[0] - this.mesh.origin_utm[0],
@@ -475,6 +688,10 @@ export class TerrainView {
   }
   bind(buffer) {
     const gl = this.gl;
+    for (const name of ['routeStart', 'routeEnd', 'corner']) {
+      const i = this.routeLocations[name];
+      if (i !== this.locations.position && i !== this.locations.color) gl.disableVertexAttribArray(i);
+    }
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
     for (const [name, offset] of [
       ["position", 0],
@@ -491,6 +708,10 @@ export class TerrainView {
       return;
     }
     const gl = this.gl;
+    for (const name of ['routeStart', 'routeEnd', 'corner']) {
+      const i = this.routeLocations[name];
+      if (i !== this.locations.position && i !== this.locations.color) gl.disableVertexAttribArray(i);
+    }
     gl.bindBuffer(gl.ARRAY_BUFFER, item.buffer);
     gl.enableVertexAttribArray(this.locations.position);
     gl.vertexAttribPointer(this.locations.position, 3, gl.FLOAT, false, 0, 0);
@@ -504,6 +725,30 @@ export class TerrainView {
       0,
       0,
     );
+  }
+  cameraState(width, height, aspect = width / height) {
+    const state = { width, height, aspect, origin: this.mesh.origin_utm, center: this.center,
+      yaw: this.yaw, pitch: this.pitch, scale: this.zoom / this.extent,
+      fpv: !!(this.firstPerson && this.flightPose), focal: 1 / Math.tan(this.fov * Math.PI / 360) };
+    if (state.fpv) {
+      const { position: p, ahead: a } = this.flightPose, heading = Math.atan2(a[1] - p[1], a[0] - p[0]) + this.fpvYaw;
+      state.eye = [p[0] - state.origin[0], p[1] - state.origin[1], p[2] + 1.2];
+      state.forward = [Math.cos(heading) * Math.cos(this.fpvPitch), Math.sin(heading) * Math.cos(this.fpvPitch), Math.sin(this.fpvPitch)];
+      state.right = [Math.sin(heading), -Math.cos(heading), 0];
+      state.up = [state.right[1] * state.forward[2], -state.right[0] * state.forward[2], state.right[0] * state.forward[1] - state.right[1] * state.forward[0]];
+    }
+    return state;
+  }
+  applyCamera(locations, camera) {
+    const gl = this.gl;
+    gl.uniform3f(locations.center, ...camera.center);
+    gl.uniform4f(locations.camera, camera.yaw, camera.pitch, camera.scale, 0);
+    gl.uniform1f(locations.aspect, camera.aspect);
+    gl.uniform1i(locations.firstPerson, camera.fpv ? 1 : 0);
+    if (camera.fpv) {
+      for (const key of ['eye', 'forward', 'right', 'up']) gl.uniform3f(locations[key], ...camera[key]);
+      gl.uniform1f(locations.focal, camera.focal);
+    }
   }
   draw() {
     if (this.disposed) return;
@@ -523,47 +768,10 @@ export class TerrainView {
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     gl.enable(gl.DEPTH_TEST);
     gl.depthFunc(gl.LEQUAL);
+    const camera = this.cameraState(c.clientWidth, c.clientHeight, width / height), fpv = camera.fpv;
     gl.useProgram(this.program);
-    gl.uniform3f(this.locations.center, ...this.center);
-    gl.uniform4f(
-      this.locations.camera,
-      this.yaw,
-      this.pitch,
-      this.zoom / this.extent,
-      0,
-    );
-    gl.uniform1f(this.locations.aspect, width / height);
-    const fpv = this.firstPerson && this.flightPose;
-    gl.uniform1i(this.locations.firstPerson, fpv ? 1 : 0);
+    this.applyCamera(this.locations, camera);
     c.dataset.camera = fpv ? "drone" : "orbit";
-    if (fpv) {
-      const { position: p, ahead: a } = this.flightPose,
-        heading = Math.atan2(a[1] - p[1], a[0] - p[0]) + this.fpvYaw;
-      const forward = [
-          Math.cos(heading) * Math.cos(this.fpvPitch),
-          Math.sin(heading) * Math.cos(this.fpvPitch),
-          Math.sin(this.fpvPitch),
-        ],
-        right = [Math.sin(heading), -Math.cos(heading), 0],
-        up = [
-          right[1] * forward[2],
-          -right[0] * forward[2],
-          right[0] * forward[1] - right[1] * forward[0],
-        ];
-      gl.uniform3f(
-        this.locations.eye,
-        p[0] - m.origin_utm[0],
-        p[1] - m.origin_utm[1],
-        p[2] + 1.2,
-      );
-      gl.uniform3f(this.locations.forward, ...forward);
-      gl.uniform3f(this.locations.right, ...right);
-      gl.uniform3f(this.locations.up, ...up);
-      gl.uniform1f(
-        this.locations.focal,
-        1 / Math.tan((this.fov * Math.PI) / 360),
-      );
-    }
     // A commune-specific typed terrain replaces only its visual representation.
     // The original mesh remains available for coordinates and unknown-elevation checks.
     if (!Object.hasOwn(this.groups, "terrain")) {
@@ -584,11 +792,33 @@ export class TerrainView {
       .join(",");
     for (const item of this.routeBuffers) {
       if (fpv && !item.target && !item.point) continue;
-      this.bindItem(item);
+      if (item.screenRoute) {
+        const locations = this.routeLocations;
+        gl.useProgram(this.routeProgram); this.applyCamera(locations, camera);
+        gl.uniform2f(locations.viewport, width, height);
+        gl.uniform1f(locations.routeWidth, (item.symbol ? 1 : item.widthPx) * ratio);
+        gl.uniform1i(locations.symbol, item.symbol ? 1 : 0);
+        gl.uniform3f(locations.routeColor, ...item.color);
+        gl.bindBuffer(gl.ARRAY_BUFFER, item.buffer);
+        for (const [name, components, offset] of [['routeStart', 3, 0], ['routeEnd', 3, 12], ['corner', 2, 24]]) {
+          gl.enableVertexAttribArray(locations[name]); gl.vertexAttribPointer(locations[name], components, gl.FLOAT, false, 32, offset);
+        }
+        if (item.symbol) {
+          // Route-colored outline plus ivory head makes direction legible even
+          // where a route runs over a similarly colored land-cover surface.
+          gl.uniform1f(locations.routeWidth, 1.4 * ratio);
+          gl.drawArrays(item.mode, 0, item.count);
+          gl.uniform1f(locations.routeWidth, ratio);
+          gl.uniform3f(locations.routeColor, 1, .99, .90);
+        }
+      } else {
+        gl.useProgram(this.program); this.applyCamera(this.locations, camera); this.bindItem(item);
+      }
       gl.drawArrays(item.mode, 0, item.count);
     }
-    if (this.marker && !fpv) {
+    if (this.marker && !fpv && !this.annotationLayer) {
       const p = this.marker;
+      gl.useProgram(this.program); this.applyCamera(this.locations, camera);
       this.bind(this.dynamic);
       gl.bufferData(
         gl.ARRAY_BUFFER,
@@ -604,5 +834,10 @@ export class TerrainView {
       );
       gl.drawArrays(gl.POINTS, 0, 1);
     }
+    this.updateAnnotations(camera);
+    c.dataset.zoom = this.zoom.toFixed(6);
+    c.dataset.fov = this.fov.toFixed(3);
+    c.dataset.routeScreenWidths = JSON.stringify(this.routeBuffers.filter((item) => item.screenRoute && !item.symbol).map((item) => item.widthPx));
+    c.dataset.terrainStyle = 'vertex-normal-lighting-v1';
   }
 }

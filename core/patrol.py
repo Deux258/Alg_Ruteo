@@ -29,6 +29,7 @@ from shapely.strtree import STRtree
 
 from core.aerial_data import FWD, INV, iso
 from core.contracts import ROOT, canonical, sha256, write_json
+from core.vertical_profile import level, ramp_profile, profile_metadata, target_display, target_display_summary
 
 METHODS = ('dijkstra_distance', 'dijkstra_weighted', 'gurobi', 'annealing')
 LABELS = dict(zip(METHODS, ('Dijkstra · metros', 'Dijkstra · parámetros', 'Gurobi MILP', 'Recocido simulado')))
@@ -203,7 +204,7 @@ def geometry_key(area,surface,profile):
     return hashlib.sha256(canonical(dict(area_wkb=area.wkb_hex,crs='EPSG:32719',
         surface_sha256=surface.source_sha256,surface_type=type(surface).__module__+'.'+type(surface).__qualname__,
         altitude_agl_m=profile['altitude_agl_m'],grid_m=profile['grid_m'],max_link_m=profile['max_link_m'],
-        sampling_m=15,kernel_sha256=sha256(Path(__file__))))).hexdigest()
+        sampling_m=15,vertical_profile=profile_metadata(),vertical_kernel_sha256=sha256(ROOT/'core/vertical_profile.py'),kernel_sha256=sha256(Path(__file__))))).hexdigest()
 
 
 def build_geometry(area,surface,profile):
@@ -214,7 +215,7 @@ def build_geometry(area,surface,profile):
             if not area.covers(Point(x,y)):continue
             h=surface.at(x,y)
             if h is None:unknown.append(tuple(INV(x,y)));continue
-            ident=len(nodes)+1;coords=(float(x),float(y),float(h+profile['altitude_agl_m']))
+            ident=len(nodes)+1;coords=(float(x),float(y),level(h,profile['altitude_agl_m']))
             nodes.append((ident,coords));lattice[x,y]=(ident,coords)
     for (x,y),(a,pa) in lattice.items():
         for dx,dy in ((grid,0),(0,grid),(grid,grid),(grid,-grid)):
@@ -227,8 +228,10 @@ def build_geometry(area,surface,profile):
                 qx,qy=pa[0]+(pb[0]-pa[0])*f,pa[1]+(pb[1]-pa[1])*f
                 h=surface.at(qx,qy)
                 if h is None:break
-                points.append((float(qx),float(qy),float(h+profile['altitude_agl_m'])))
-            else:segments.append((a,b,tuple(points),float(d)))
+                points.append((float(qx),float(qy),float(h)))
+            else:
+                profile_points=ramp_profile(pa,pb,points,profile['altitude_agl_m'])
+                if profile_points is not None:segments.append((a,b,profile_points,float(d)))
     values=(tuple(nodes),tuple(segments),tuple(unknown))
     seen=set()
     def memory(value):
@@ -285,7 +288,7 @@ class Graph:
         existing=self.find_point(x,y)
         if existing is not None:return existing
         i = len(self.nodes)+1
-        self.nodes[i] = [float(x), float(y), z+self.p['altitude_agl_m']]
+        self.nodes[i] = [float(x), float(y), level(z,self.p['altitude_agl_m'])]
         self.adj[i] = []
         self.point_index.setdefault((round(x*1000),round(y*1000)),[]).append(i)
         return i
@@ -337,8 +340,18 @@ class Graph:
             h = self.terrain.at(x, y)
             if h is None:
                 return
-            coords.append([float(x), float(y), h+self.p['altitude_agl_m']])
-        self._connect(a,b,tuple(tuple(c) for c in coords),d,already_linked=True)
+            coords.append([float(x), float(y), h])
+        profile_points=ramp_profile(pa,pb,coords,self.p['altitude_agl_m'])
+        if profile_points is not None:self._connect(a,b,profile_points,d,already_linked=True)
+
+    def access_height(self,node):
+        p=self.nodes[node];height=self.terrain.at(p[0],p[1])
+        if height is None:raise ValueError('Base o estación sin elevación conocida')
+        return max(0.,p[2]-height)
+
+    def ascent(self,node):return self.access_height(node)/self.p['climb_ms']
+
+    def landing(self,node):return self.access_height(node)/self.p['descent_ms']
 
     def _connect(self,a,b,coords,d,already_linked=False):
         if not already_linked:self.linked_pairs.add(tuple(sorted((a,b))))
@@ -512,9 +525,9 @@ def oriented_tasks(tasks, graph, metric):
 
 def fixed_route(order, states, graph, home, stations, metric):
     """Beam labels preserve battery and remaining station inventory; never reset in flight."""
-    ascent = graph.p['altitude_agl_m']/graph.p['climb_ms']
+    ascent = graph.ascent(home)
     labels = [dict(node=home,energy=ascent,time_s=ascent,cost=ascent if metric=='cost' else 0,path=[],stops=[],mask=0)]
-    landing = graph.p['altitude_agl_m']/graph.p['descent_ms']
+    landing = graph.landing(home)
     actions = [states[i] for i in order]+[dict(start=home,end=home,path=[],time_s=landing,cost=landing)]
     for action in actions:
         candidates = []
@@ -534,17 +547,17 @@ def fixed_route(order, states, graph, home, stations, metric):
                                 cost=label['cost']+t[metric]+(action['distance_m'] if metric=='distance_m' and 'distance_m' in action else action['cost'] if metric=='cost' else 0),
                                 path=label['path']+leg+action['path'],stops=label['stops'],mask=label['mask']))
                     for k, station in enumerate(stations):
-                        if label['mask'] & (1<<k) or (station['node']==label['node'] and label['energy']<=graph.p['altitude_agl_m']/graph.p['climb_ms']+1e-8):
+                        if label['mask'] & (1<<k) or (station['node']==label['node'] and label['energy']<=graph.ascent(station['node'])+1e-8):
                             continue
                         leg = graph.path(label['node'],station['node'],metric)
                         if leg is None:
                             continue
                         t = graph.totals(leg)
-                        landing = graph.p['altitude_agl_m']/graph.p['descent_ms']
-                        takeoff = graph.p['altitude_agl_m']/graph.p['climb_ms']
-                        if label['energy']+t['time_s']+landing > graph.p['battery_budget_s']:
+                        station_landing = graph.landing(station['node'])
+                        takeoff = graph.ascent(station['node'])
+                        if label['energy']+t['time_s']+station_landing > graph.p['battery_budget_s']:
                             continue
-                        duration = t['time_s']+landing+graph.p['station_service_s']+takeoff
+                        duration = t['time_s']+station_landing+graph.p['station_service_s']+takeoff
                         if label['time_s']+duration > graph.p['mission_budget_s']:
                             continue
                         stop = dict(station_id=station['id'],coordinate_index=max(0,len(graph.coordinates(label['path']+leg))-1),
@@ -611,13 +624,15 @@ def gurobi_route(states, graph, home, stations):
         import gurobipy as gp
     except ImportError:
         return None, dict(status='unavailable',reason='gurobipy no instalado; instalar requirements.patrol.lock')
-    ascent = graph.p['altitude_agl_m']/graph.p['climb_ms']
-    landing = graph.p['altitude_agl_m']/graph.p['descent_ms']
+    ascent = graph.ascent(home)
+    landing = graph.landing(home)
     actions = [dict(start=home,end=home,path=[],time_s=ascent,cost=ascent,kind='start')]
     actions += [dict(s,kind='task') for s in states]
     for s in stations:
-        actions.append(dict(start=s['node'],end=s['node'],path=[],time_s=landing+graph.p['station_service_s']+ascent,
-                            cost=landing+graph.p['station_service_s']+ascent,kind='station',station=s))
+        station_landing,station_ascent=graph.landing(s['node']),graph.ascent(s['node'])
+        actions.append(dict(start=s['node'],end=s['node'],path=[],time_s=station_landing+graph.p['station_service_s']+station_ascent,
+                            cost=station_landing+graph.p['station_service_s']+station_ascent,kind='station',station=s,
+                            landing_s=station_landing,ascent_s=station_ascent))
     actions.append(dict(start=home,end=home,path=[],time_s=landing,cost=landing,kind='end'))
     end = len(actions)-1
     links = {}
@@ -655,11 +670,11 @@ def gurobi_route(states, graph, home, stations):
                 for group in sorted({s['group'] for s in states}):
                     model.addConstr(gp.quicksum(visit[i] for i,a in enumerate(actions) if a.get('group')==group)==1)
                 for i,a in enumerate(actions):
-                    flight_service = landing if a['kind'] in ('station','end') else a['time_s']
+                    flight_service = a['landing_s'] if a['kind']=='station' else a['time_s']
                     model.addConstr((visit[i]==1) >> (energy[i]+flight_service <= graph.p['battery_budget_s']))
                 for (i,j),link in links.items():
                     model.addConstr((x[i,j]==1) >> (order[j]>=order[i]+1))
-                    used = ascent if actions[i]['kind']=='station' else energy[i]+actions[i]['time_s']
+                    used = actions[i]['ascent_s'] if actions[i]['kind']=='station' else energy[i]+actions[i]['time_s']
                     model.addConstr((x[i,j]==1) >> (energy[j]>=used+link['time_s']))
                 elapsed = gp.quicksum(x[i,j]*v['time_s'] for (i,j),v in links.items()) + gp.quicksum(visit[i]*a['time_s'] for i,a in enumerate(actions))
                 model.addConstr(elapsed<=graph.p['mission_budget_s'])
@@ -841,7 +856,7 @@ def calculate(model, request, conn=None, terrain_override=None):
     from core.mission_constraints import assess_constraints
     started=time.monotonic()
     if not isinstance(request,dict):raise ValueError('Solicitud JSON debe ser un objeto')
-    constraints=assess_constraints(model,request)
+    constraints=assess_constraints(model,request,_surface=terrain_override)
     actual=constraints['effective_profile'];p=dict(actual)
     p['battery_budget_s']=constraints['flight_budget_s']
     p['mission_budget_s']=constraints['mission_flight_budget_s']
@@ -855,20 +870,29 @@ def calculate(model, request, conn=None, terrain_override=None):
     number(origin[0],'longitud',-180,180);number(origin[1],'latitud',-90,90)
     if not study.covers(Point(origin)) and not any(Point(origin).distance(Point(s['geometry']['coordinates']))<1e-9 for s in candidates):
         raise ValueError('Origen exterior debe coincidir con una base candidata')
+    origin_base=next((s for s in candidates if Point(origin).distance(Point(s['geometry']['coordinates']))<1e-9),None)
+    origin_info=dict(id=origin_base['provider_id'],provider_id=origin_base['provider_id'],name=origin_base.get('name'),coordinates=list(origin)) if origin_base else dict(
+        id='origin:'+hashlib.sha256(canonical(list(origin))).hexdigest()[:16],provider_id=None,name=None,coordinates=list(origin))
     requested_stations=request.get('station_ids',[s['provider_id'] for s in candidates])
     if not isinstance(requested_stations,list) or any(not isinstance(i,str) for i in requested_stations):raise ValueError('station_ids debe ser una lista de IDs de bases')
     if set(requested_stations)-{s['provider_id'] for s in candidates}:raise ValueError('Estación desconocida')
     hazards=Hazards(model,clock,actual,request.get('events',[]),request.get('activated_threat_ids'))
     area=transform(FWD,shape(model['flight_geometry']))
     surface=terrain_override or flight_terrain(model)
+    # Resolve the default origin too; explicit UI origins use this same assessment.
+    origin_surface=surface.at(*FWD(*origin))
+    if origin_surface is not None:
+        access_height=level(origin_surface,actual['altitude_agl_m'])-origin_surface
+        constraints=assess_constraints(model,request,_profile=actual,_access_height=access_height)
     weather=constraints['weather']
     # Diagnostic topology does not pretend a blocked/unknown weather field is flyable.
     graph_weather=weather if constraints['admissible'] else dict(valid_at=clock.isoformat(),wind_speed_ms=0.,wind_gust_ms=0.,wind_direction_deg=0.,temperature_c=20.)
     graph=Graph(area,surface,hazards,graph_weather,p,conn)
-    result=dict(schema_version='patrol-result-2',request=request,effective_profile=actual,planning_profile=p,
+    result=dict(schema_version='patrol-result-3',request=request,effective_profile=actual,planning_profile=p,vertical_profile=profile_metadata(),
         constraints=constraints,status='ready' if constraints['admissible'] else 'blocked',time=clock.isoformat(),weather=weather,
         run_id=model.get('_run_id'),source_context_sha256=hashlib.sha256(canonical({k:v for k,v in model.items() if not k.startswith('_')})).hexdigest(),
-        terrain_sha256=getattr(surface,'source_sha256','fixture'),target_polygon=mapping(transform(INV,target)),origin=origin,
+        terrain_sha256=getattr(surface,'source_sha256','fixture'),target_polygon=mapping(transform(INV,target)),origin=origin,origin_base=origin_info,
+        target_display=(target_display(model,request['target_polygon'],terrain_override) if terrain_override is not None else target_display_summary(model,request['target_polygon'])),
         stations=[],routes={},route_alternatives={},recommended=[],alternative_recommended=[],resilience_leaders=[],
         evaluation={},threats=[],graph=dict(nodes=[],edges=[],home=None),coverage_tasks=0,
         network=dict(nodes=len(graph.nodes),directed_edges=len(graph.edges),max_horizontal_link_m=max((e['horizontal_m'] for e in graph.edges.values()),default=0)),
@@ -888,7 +912,7 @@ def calculate(model, request, conn=None, terrain_override=None):
         result['diagnostic']=dict(kind='mission_constraints',reasons=constraints['reasons'],weather_probability_pct=constraints['probability_pct'],
                                  routing_attempted=False,probabilities_exportable=True)
         result['threats']=list(hazards.rows)
-        result['graph']['nodes']=[dict(id=str(i),coordinates=[*INV(*v[:2]),v[2]]) for i,v in graph.nodes.items()]
+        result['graph']['nodes']=[dict(id=str(i),coordinates=[*INV(*v[:2]),v[2]],surface_m_egm2008=surface.at(*v[:2])) for i,v in graph.nodes.items()]
         result['timings']['setup_s']=time.monotonic()-started
         return _finish_result(result,started)
     home=graph.point(origin)
@@ -899,7 +923,8 @@ def calculate(model, request, conn=None, terrain_override=None):
         try:node=graph.point(station['geometry']['coordinates'])
         except ValueError:continue
         if hasattr(surface,'can_land') and not surface.can_land(*graph.nodes[node][:2]):continue
-        stations.append(dict(id=station['provider_id'],name=station['name'],node=node,hypothetical=True,position_utm=graph.nodes[node]))
+        stations.append(dict(id=station['provider_id'],name=station['name'],node=node,hypothetical=True,position_utm=graph.nodes[node],
+                             surface_m_egm2008=surface.at(*graph.nodes[node][:2]),access_height_m=graph.access_height(node)))
     tasks=sweep_tasks(target,graph)
     graph.routing_targets=sorted({home}|{s['node'] for s in stations}|{i for task in tasks for i in task['nodes']})
     result['timings']['setup_s']=time.monotonic()-started
@@ -937,7 +962,14 @@ def calculate(model, request, conn=None, terrain_override=None):
     result['timings']['evaluation_s']=time.monotonic()-begin
     viable=sorted((r for r in routes.values() if r['status']=='ready'),key=lambda r:(-r['resilience']['value'],r['compute_s'],r['time_s'],r['method']))
     leaders=[r['method'] for r in viable if r['resilience']['value']==viable[0]['resilience']['value']] if viable else []
+    geometries={}
+    for e in graph.edges.values():
+        key=f"{min(e['source'],e['target'])}:{max(e['source'],e['target'])}"
+        if key not in geometries:
+            points=e['coordinates'] if e['source']<e['target'] else list(reversed(e['coordinates']))
+            geometries[key]=[[*INV(c[0],c[1]),c[2]] for c in points]
     graph_rows=[dict(id=str(e['id']),source=str(e['source']),target=str(e['target']),time_s=e['time_s'],cost=e['cost'],horizontal_m=e['horizontal_m'],
+                     geometry_id=f"{min(e['source'],e['target'])}:{max(e['source'],e['target'])}",geometry_reversed=e['source']>e['target'],
                      hazard_ids=[hazards.rows[i]['id'] for i in e['hazard_ids']]) for e in graph.edges.values()]
     threats=[]
     for row,geom in zip(hazards.rows,hazards.geoms):
@@ -949,7 +981,8 @@ def calculate(model, request, conn=None, terrain_override=None):
         ranking=dict(primary='estimated_resilience',tie_break='compute_s',then='flight_time_s',
             message='Empate entre las cuatro técnicas' if len(leaders)==4 else 'Empate en resiliencia estimada' if len(leaders)>1 else 'Mayor resiliencia estimada' if leaders else 'Sin misión viable',
             leaders=leaders),evaluation=evaluation,threats=threats,
-        failure_probabilities=graph.export_failures(0),graph=dict(nodes=[dict(id=str(i),coordinates=[*INV(c[0],c[1]),c[2]]) for i,c in graph.nodes.items()],edges=graph_rows,home=str(home)),
+        failure_probabilities=graph.export_failures(0),graph=dict(nodes=[dict(id=str(i),coordinates=[*INV(c[0],c[1]),c[2]],
+            surface_m_egm2008=surface.at(*c[:2])) for i,c in graph.nodes.items()],edges=graph_rows,geometry=geometries,home=str(home)),
         network=dict(nodes=len(graph.nodes),directed_edges=len(graph.edges),max_horizontal_link_m=max((e['horizontal_m'] for e in graph.edges.values()),default=0)),coverage_tasks=len(tasks))
     return _finish_result(result,started)
 
@@ -1038,8 +1071,22 @@ def simulate(result, request, terrain_override=None):
     route = available[method]
     edges = {e['id']:dict(e) for e in result['graph']['edges']}
     nodes = {n['id']:n['coordinates'] for n in result['graph']['nodes']}
+    canonical_vertical=bool(result.get('vertical_profile'))
+    support={n['id']:n.get('surface_m_egm2008') for n in result['graph']['nodes']}
+    station_nodes={s['id']:str(s['node']) for s in result['stations']}
+    def ground_at(node):
+        if not canonical_vertical:return nodes[node][2]-p['altitude_agl_m']
+        height=support.get(node)
+        if height is None:raise ValueError('Geometría vertical canónica sin cota de apoyo')
+        return height
+    def ascent_at(node):return (nodes[node][2]-ground_at(node))/p['climb_ms']
+    def landing_at(node):return (nodes[node][2]-ground_at(node))/p['descent_ms']
     def sample_edge(edge):
         if 'coordinates' in edge:return edge['coordinates']
+        if edge.get('geometry_id') in result['graph'].get('geometry',{}):
+            points=result['graph']['geometry'][edge['geometry_id']]
+            return list(reversed(points)) if edge.get('geometry_reversed') else points
+        if canonical_vertical:raise ValueError('Arista sin geometría vertical canónica; recalcular la misión')
         a,b=nodes[edge['source']],nodes[edge['target']]
         ax,ay=FWD(*a[:2]);bx,by=FWD(*b[:2])
         points=[]
@@ -1055,10 +1102,10 @@ def simulate(result, request, terrain_override=None):
     for i,e in edges.items():
         if not active.intersection(e['hazard_ids']):
             adjacency[e['source']].append(i)
-    initial_ascent = p['altitude_agl_m']/p['climb_ms']
+    initial_ascent = ascent_at(home)
     elapsed = initial_ascent
     remaining = p['battery_budget_s']-initial_ascent
-    ground=[*nodes[home][:2],nodes[home][2]-p['altitude_agl_m']]
+    ground=[*nodes[home][:2],ground_at(home)]
     timeline = [dict(coordinates=ground,time_s=0.,battery_pct=100.,phase='takeoff'),
                 dict(coordinates=nodes[home],time_s=elapsed,battery_pct=100*remaining/p['battery_budget_s'],phase='patrol')]
     current = home
@@ -1090,22 +1137,23 @@ def simulate(result, request, terrain_override=None):
             elapsed += dt
             remaining -= dt
             timeline.append(dict(coordinates=c,time_s=elapsed,battery_pct=max(0,100*remaining/p['battery_budget_s']),phase=phase))
-    def battery_swap(duration):
+    def battery_swap(duration,station_id):
         nonlocal elapsed,remaining
-        last=timeline[-1]['coordinates'];ground=[last[0],last[1],last[2]-p['altitude_agl_m']]
-        landing=p['altitude_agl_m']/p['descent_ms'];elapsed+=landing;remaining-=landing
+        node=station_nodes[station_id];takeoff=ascent_at(node)
+        last=timeline[-1]['coordinates'];ground=[last[0],last[1],ground_at(node)]
+        landing=landing_at(node);elapsed+=landing;remaining-=landing
         timeline.append(dict(coordinates=ground,time_s=elapsed,battery_pct=max(0,100*remaining/p['battery_budget_s']),phase='battery_swap'))
-        elapsed+=max(0,duration-landing-initial_ascent)
+        elapsed+=max(0,duration-landing-takeoff)
         remaining=p['battery_budget_s']
         timeline.append(dict(coordinates=ground,time_s=elapsed,battery_pct=100.,phase='takeoff'))
-        elapsed+=initial_ascent;remaining-=initial_ascent
+        elapsed+=takeoff;remaining-=takeoff
         timeline.append(dict(coordinates=last,time_s=elapsed,battery_pct=100*remaining/p['battery_budget_s'],phase='patrol'))
-    landing = p['altitude_agl_m']/p['descent_ms']
     def find_recovery(battery_remaining,mission_elapsed):
         # Physical resources; report feasibility is checked BEFORE spending reserve.
         failed_nodes={r['id'] for r in result['failure_probabilities']['nodes'] if active.intersection(r['by_threat'])}
         base_targets={home:'origin',**{str(s['node']):s['id'] for s in result['stations']}}
         base_targets={node:ident for node,ident in base_targets.items() if node not in failed_nodes}
+        minimum_landing=min((landing_at(node) for node in base_targets),default=math.inf)
         station_by_node = {str(s['node']):s for s in result['stations'] if s['id'] not in used_stations and str(s['node']) not in failed_nodes}
         queue = [(0,0,current,battery_remaining,[],[],frozenset())]
         serial = 0
@@ -1118,15 +1166,15 @@ def simulate(result, request, terrain_override=None):
             if any(c<=cost+1e-9 and b>=battery-1e-9 for c,b in labels):
                 continue
             best[key]=[(c,b) for c,b in labels if not (cost<=c+1e-9 and battery>=b-1e-9)]+[(cost,battery)]
-            if mission_elapsed+cost+landing>p['mission_budget_s']:
+            if mission_elapsed+cost+minimum_landing>p['mission_budget_s']:
                 continue
-            if node in base_targets and battery>=landing:
+            if node in base_targets and battery>=landing_at(node) and mission_elapsed+cost+landing_at(node)<=p['mission_budget_s']:
                 recovery = (path,stops,node)
                 break
-            if node in station_by_node and node not in mask and battery>=landing:
+            if node in station_by_node and node not in mask and battery>=landing_at(node):
                 serial += 1
-                duration = landing+p['station_service_s']+initial_ascent
-                heapq.heappush(queue,(cost+duration,serial,node,p['battery_budget_s']-initial_ascent,path,
+                takeoff=ascent_at(node);duration = landing_at(node)+p['station_service_s']+takeoff
+                heapq.heappush(queue,(cost+duration,serial,node,p['battery_budget_s']-takeoff,path,
                                       stops+[(len(path),duration,station_by_node[node]['id'])],mask|{node}))
             for i in adjacency.get(node,[]):
                 edge = edges[i]
@@ -1183,9 +1231,9 @@ def simulate(result, request, terrain_override=None):
         stop=edge_stops.get(completed_edges)
         if stop is None and not edge_stops:stop=station_stops.get(coordinate_index)
         if stop is not None:
-            battery_swap(stop['service_s'])
+            battery_swap(stop['service_s'],stop['station_id'])
             used_stations.add(stop['station_id'])
-    landing = p['altitude_agl_m']/p['descent_ms']
+    landing_node=home
     state = 'completed'
     returned_to='origin'
     if detection or interrupted:
@@ -1198,14 +1246,15 @@ def simulate(result, request, terrain_override=None):
             stops = {i:(duration,ident) for i,duration,ident in stops}
             for j,i in enumerate(path):
                 if j in stops:
-                    battery_swap(stops[j][0])
+                    battery_swap(stops[j][0],stops[j][1])
                 append_points(sample_edge(edges[i]),edges[i]['time_s'],'return')
             state = ('detected_and_returned' if detection['report_status']=='completed' else 'detected_report_incomplete_and_returned') if detection else 'interrupted_and_returned'
     if state!='no_safe_return':
+        landing=landing_at(landing_node)
         elapsed += landing
         remaining -= landing
         last=timeline[-1]['coordinates']
-        timeline.append(dict(coordinates=[last[0],last[1],last[2]-p['altitude_agl_m']],time_s=elapsed,battery_pct=max(0,100*remaining/p['battery_budget_s']),phase='landed'))
+        timeline.append(dict(coordinates=[last[0],last[1],ground_at(landing_node)],time_s=elapsed,battery_pct=max(0,100*remaining/p['battery_budget_s']),phase='landed'))
     for frame in timeline:
         frame['position_utm']=[*FWD(*frame['coordinates'][:2]),frame['coordinates'][2]]
     return dict(schema_version='patrol-simulation-2',result_sha256=result['sha256'],method=method,route_set=route_set,scenario=scenario,

@@ -169,6 +169,8 @@ def _clip_vertices(vertices,mode,polygon):
 
 
 def typed_assets(scene,commune_id=None,mesh=None):
+    from core.terrain_style import TerrainLighting
+    lighting=TerrainLighting(mesh) if mesh is not None else None
     index=commune_index();origin=scene['origin_utm'];clip=None
     if commune_id:
         metric=index.metric(commune_id)
@@ -183,7 +185,9 @@ def typed_assets(scene,commune_id=None,mesh=None):
             positions=_clip_vertices(positions,mode,clip)
             if not len(positions):continue
             color=np.asarray(batch['color'],dtype=np.float32)
-            if mode=='triangles':
+            if mode=='triangles' and key=='landcover' and mesh is not None:
+                rgb=lighting.colors(positions,base_color=color)
+            elif mode=='triangles':
                 triangles=positions.reshape((-1,3,3));normal=np.cross(triangles[:,1]-triangles[:,0],triangles[:,2]-triangles[:,0]);length=np.linalg.norm(normal,axis=1)
                 light=.68+.32*np.abs((normal@np.array([-.35,-.35,.87]))/np.where(length==0,1,length))
                 rgb=np.repeat(np.clip(np.rint(light[:,None]*color*255),0,255).astype(np.uint8),3,axis=0)
@@ -204,10 +208,7 @@ def typed_assets(scene,commune_id=None,mesh=None):
         positions=_clip_vertices(triangles.reshape((-1,3)).astype(np.float32),'triangles',clip)
         groups['terrain']=[]
         if len(positions):
-            triangles=positions.reshape((-1,3,3));normal=np.cross(triangles[:,1]-triangles[:,0],triangles[:,2]-triangles[:,0]);length=np.linalg.norm(normal,axis=1)
-            shade=.68+.32*np.abs((normal@np.array([-.35,-.35,.87]))/np.where(length==0,1,length))
-            z=triangles[:,:,2].mean(axis=1);color=np.column_stack((.59+z/10000,.63+z/12000,np.full(len(z),.48)))
-            rgb=np.repeat(np.clip(np.rint(color*shade[:,None]*255),0,255).astype(np.uint8),3,axis=0)
+            rgb=lighting.colors(positions)
             p=store().put(positions.astype('<f4',copy=False).tobytes(),'application/octet-stream');c=store().put(rgb.tobytes(),'application/octet-stream')
             groups['terrain']=[dict(mode='triangles',count=len(positions),positions=dict(p,dtype='float32-le',components=3),colors=dict(c,dtype='uint8',components=3,normalized=True))]
     return dict(schema_version='typed-scene-1',origin_utm=origin,crs='EPSG:32719',groups=groups)
@@ -228,7 +229,7 @@ def _map_key(model,commune_id):
     # Hash the entire public source context and effective defaults as well.
     identity=dict(scene=key,communes=index.identity_sha256,commune_id=commune_id,
         model={k:v for k,v in model.items() if not k.startswith('_')},profile=defaults(),
-        code={name:sha256(ROOT/name) for name in ('core/patrol.py','core/mission_constraints.py','core/communes.py','core/aerial_data.py','core/geo_transport.py')},
+        code={name:sha256(ROOT/name) for name in ('core/patrol.py','core/mission_constraints.py','core/communes.py','core/aerial_data.py','core/geo_transport.py','core/terrain_style.py','core/vertical_profile.py')},
         profile_config_sha256=sha256(ROOT/'config/patrullaje.json'))
     return 'map-summary-v3:'+hashlib.sha256(canonical(identity)).hexdigest()
 

@@ -56,7 +56,8 @@ def main():
             rendered=request.get(root+summary['resources']['render']['url'],timeout=120000).json()
             checks['terrain_and_objects_filtered_'+cut]='terrain' in rendered['typed_assets']['groups'] and rendered['commune_id']==cut
         page=context.new_page();page.on('pageerror',lambda e:errors.append(str(e)))
-        page.goto(root);page.wait_for_selector('#geo-buildings',timeout=300000);page.wait_for_load_state('networkidle')
+        from tools.browser_ready import wait_patrol_ready
+        page.goto(root,wait_until='domcontentloaded');wait_patrol_ready(page)
         page.wait_for_function("document.querySelector('#geography-status').getAttribute('aria-busy')==='false'",timeout=300000)
         page.locator('#demo').click()
         with page.expect_response(lambda r:urlsplit(r.url).path.endswith('/patrullaje') and r.request.method=='POST',timeout=360000) as pending:page.locator('#calculate').click()

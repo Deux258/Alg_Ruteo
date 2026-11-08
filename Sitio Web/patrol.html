@@ -41,13 +41,14 @@
           <p id="area-status" class="muted">
             Dibuja un polígono dentro de vigilancia.
           </p>
+          <p id="target-height" class="muted target-height">El objetivo 3D se mostrará sobre un plano horizontal.</p>
           <label for="weather">Hora del snapshot · UTC</label
           ><select id="weather"></select>
           <details>
             <summary>Perfil de vuelo · Mavic 3T</summary>
             <div class="fields">
               <label
-                >Altura AGL (m)<input
+                >Despeje mínimo (m)<input
                   id="altitude"
                   type="number"
                   min="20"
@@ -240,6 +241,8 @@
           <p class="muted">El filtro de comuna solo cambia las capas visibles. El objetivo, las bases elegidas y el área de planificación se conservan. El clima corresponde a toda el área de vuelo. Las exportaciones conservan las geometrías originales, sin recortarlas.</p>
           <p id="wind-label" class="muted"></p>
           <p id="engine" class="muted"></p>
+          <label for="export-format">Formato de misión</label>
+          <select id="export-format" disabled><option value="json">JSON · datos 3D completos</option><option value="geojson">GeoJSON · mapa 2D con cotas y tiempos</option></select>
           <div class="buttons">
             <button id="export" disabled>Exportar misión</button
             ><button id="failures" disabled>Probabilidades JSON</button>
@@ -261,8 +264,13 @@
         <div id="player" class="player" aria-label="Reproductor de vuelo">
           <div class="player-buttons"><button id="restart" disabled title="Ir al inicio">⏮ Inicio</button><button id="play" disabled>▶ Reproducir</button><button id="pause" disabled>⏸ Pausar</button><button id="finish-playback" disabled title="Ir al aterrizaje final">Fin ⏭</button><button id="drone-view" disabled aria-pressed="false">Vista del dron</button><label class="check"><input id="follow-drone" type="checkbox"> Seguir dron</label></div>
           <div class="player-track"><output id="playback-time">00:00 / 00:00</output><input id="seek" aria-label="Posición de reproducción" type="range" min="0" max="1" step="0.1" value="0" disabled><span id="playback-state">Selecciona una ruta</span></div>
+          <output id="drone-coordinates" class="drone-coordinates" aria-label="Coordenadas del dron">Lat — · Lon — · Cota —</output>
         </div>
-        <div id="fpv-hud" hidden><span id="fpv-heading">Rumbo —</span><span id="fpv-height">Cota —</span><span id="fpv-battery">Batería —</span></div>
+        <div id="fpv-hud" hidden><span id="fpv-heading">Rumbo —</span><span id="fpv-height">Cota —</span><span id="fpv-battery">Batería —</span><span id="fpv-coordinates">Lat — · Lon — · Cota —</span></div>
+        <div id="fpv-propellers" aria-hidden="true" hidden data-spinning="false">
+          <div class="propeller propeller-left"><svg viewBox="0 0 160 160"><circle class="rotor-disc" cx="80" cy="80" r="72"/><g class="rotor"><ellipse cx="80" cy="80" rx="76" ry="10"/><ellipse cx="80" cy="80" rx="10" ry="76"/></g><circle class="rotor-hub" cx="80" cy="80" r="12"/></svg></div>
+          <div class="propeller propeller-right"><svg viewBox="0 0 160 160"><circle class="rotor-disc" cx="80" cy="80" r="72"/><g class="rotor"><ellipse cx="80" cy="80" rx="76" ry="10"/><ellipse cx="80" cy="80" rx="10" ry="76"/></g><circle class="rotor-hub" cx="80" cy="80" r="12"/></svg></div>
+        </div>
         <div class="map-label">
           <span class="dot"></span
           ><span id="view-label">MAPA 2D · OPENSTREETMAP</span>
@@ -273,6 +281,7 @@
             zoom</span
           >
           <div class="terrain-buttons">
+            <button id="terrain-zoom-in" aria-label="Acercar vista 3D" title="Acercar vista 3D">+</button><button id="terrain-zoom-out" aria-label="Alejar vista 3D" title="Alejar vista 3D">−</button>
             <button id="terrain-reset">Ver toda el área</button
             ><button id="terrain-mission">Centrar misión</button>
           </div>

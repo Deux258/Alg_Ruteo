@@ -8,8 +8,9 @@ import math
 from core.aerial_data import iso
 
 
-def assess_constraints(model, request, _profile=None):
-    from core.patrol import profile_for
+def assess_constraints(model, request, _profile=None, _surface=None, _access_height=None):
+    from core.patrol import profile_for, flight_terrain, number
+    from core.vertical_profile import level
     if not isinstance(request, dict):
         raise ValueError('Solicitud JSON debe ser un objeto')
     profile = profile_for(request) if _profile is None else dict(_profile)
@@ -43,7 +44,23 @@ def assess_constraints(model, request, _profile=None):
     mission = float(profile['mission_budget_s'])
     flight = battery - reserve
     mission_flight = mission - reserve
-    vertical = profile['altitude_agl_m'] / profile['climb_ms'] + profile['altitude_agl_m'] / profile['descent_ms']
+    access_height = _access_height
+    access_basis = 'exact_banded_origin' if access_height is not None else 'minimum_clearance_bound'
+    origin=request.get('origin')
+    if 'origin' in request:
+        if not isinstance(origin,(list,tuple)) or len(origin)!=2:raise ValueError('Coordenadas WGS84 [longitud, latitud]')
+        number(origin[0],'longitud',-180,180);number(origin[1],'latitud',-90,90)
+    if access_height is None and isinstance(origin,(list,tuple)) and len(origin)==2 and (_surface is not None or model.get('raster')):
+        from core.aerial_data import FWD
+        if all(type(v) in (int,float) and math.isfinite(v) for v in origin):
+            surface=_surface if _surface is not None else flight_terrain(model)
+            height=surface.at(*FWD(*origin))
+            if height is not None:
+                access_height=level(height,profile['altitude_agl_m'])-height
+                access_basis='exact_banded_origin'
+            else:access_basis='unknown_origin_elevation_bound'
+    if access_height is None:access_height=profile['altitude_agl_m']
+    vertical = access_height / profile['climb_ms'] + access_height / profile['descent_ms']
     if flight <= vertical:
         reasons.append(dict(code='battery_report_reserve', source='energy',
             message=f'La batería útil de {battery:g} s no permite despegue, aterrizaje y reserva de reporte de {reserve:g} s'))
@@ -55,4 +72,5 @@ def assess_constraints(model, request, _profile=None):
                 battery_budget_s=battery, flight_budget_s=max(0.0, flight), report_reserve_s=reserve,
                 verification_reserve_s=reserve, mission_budget_s=mission,
                 mission_flight_budget_s=max(0.0, mission_flight), time=clock.isoformat(),
+                origin_access_height_m=access_height,origin_vertical_flight_s=vertical,vertical_access_basis=access_basis,
                 effective_profile=profile)

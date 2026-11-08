@@ -4,6 +4,7 @@ from urllib.parse import urlsplit
 import json
 from pathlib import Path
 from playwright.sync_api import sync_playwright
+from tools.browser_ready import wait_patrol_ready
 
 
 def main():
@@ -25,7 +26,7 @@ def main():
         context=browser.new_context(viewport={'width':1440,'height':1000},accept_downloads=True,**recording)
         page=context.new_page()
         page.on('pageerror',lambda e:errors.append(str(e)))
-        page.goto(args.url);page.wait_for_load_state('networkidle')
+        page.goto(args.url,wait_until='domcontentloaded');wait_patrol_ready(page)
         page.locator('#route-mode').select_option('comparison')
         page.get_by_role('button',name='Cargar ejemplo').click()
         checks.append(('example_polygon',page.locator('#calculate').is_enabled()))

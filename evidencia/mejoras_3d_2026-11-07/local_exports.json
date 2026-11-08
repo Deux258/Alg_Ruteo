@@ -1,0 +1,14 @@
+{
+  "verificar_mejoras_3d/mission.geojson": {
+    "bytes": 704228,
+    "sha256": "1655fd9109c9b4a45f93e6e2fe025d0ade934d9c6506b8ca1b504d6efbf6a6ac"
+  },
+  "verificar_mejoras_3d/mission.json": {
+    "bytes": 113027502,
+    "sha256": "91038d3d535bb4988babecaf8b77a721c3bdce7958d9e7dedd6071133e4cc262"
+  },
+  "verificar_mejoras_3d/mission_with_simulation.json": {
+    "bytes": 113084947,
+    "sha256": "06d018af2b20998e15bb7ac5bebbe30c60a2b2b5e80a52fcd61ec07f2eefe022"
+  }
+}

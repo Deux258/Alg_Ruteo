@@ -4,6 +4,11 @@ La rúbrica suministrada omite el número 6. Esta matriz conserva su numeración
 El video está pospuesto por instrucción del usuario. La implementación y sus pruebas
 no equivalen a una garantía de calificación ni acreditan una publicación en GitHub.
 
+La ampliación de [objetivo horizontal, perfil vertical, instrumentos y
+exportaciones](MEJORAS_3D.md) añade verificaciones específicas del modelo y del
+visor. Las evidencias del cierre previo identifican su propia huella de código;
+la aceptación debe repetirse para acreditar estas modificaciones.
+
 | Criterio literal | Implementación | Comprobación reproducible |
 |---|---|---|
 | 1. «La infraestructura a utilizar deberá permitir generar rutas realistas, es decir, no debe generar líneas rectas entre dos puntos que no se puedan sobrevolar ya sea por altitud o por bloqueos.» | Malla métrica, enlaces ≤200 m, muestras DSM/obstáculos, exclusiones, batería y retorno. | `test_patrol`, `test_geographic_scene`, `test_patrol_closure`; aceptación real de vuelo y recarga. |
@@ -23,7 +28,14 @@ no equivalen a una garantía de calificación ni acreditan una publicación en G
 
 ## Evidencia de la versión
 
-La aceptación local del cierre pasó **175 pruebas Python, 15 Node y 89
+La aceptación actual de las mejoras 3D pasó **188 pruebas Python, 30 Node y 121
+comprobaciones de navegador**, sin errores ni omisiones, sobre una base
+desechable. El [informe actual](RESULTADOS_MEJORAS_3D.md) y el
+[manifiesto de esta versión](../evidencia/mejoras_3d_2026-11-07/manifest.json)
+conservan su huella, sus capturas y el benchmark. La aplicación local utiliza
+esa misma huella y preserva la publicación original.
+
+La aceptación conservada del cierre previo pasó **175 pruebas Python, 15 Node y 89
 comprobaciones Playwright**, sin errores ni omisiones. El
 [informe de resultados](RESULTADOS_CIERRE.md) y el
 [manifiesto versionado](../evidencia/cierre_validado/manifest.json) identifican

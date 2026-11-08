@@ -1,0 +1,214 @@
+{
+  "cold_preparation_s": 65.99401815400051,
+  "conditions": "Sequential; same snapshot/profile; translated target; fresh Python process; no concurrent solvers",
+  "measurements": [
+    {
+      "methods": {
+        "annealing": {
+          "status": "ready",
+          "timings": {
+            "cache_policy": "independent_per_technique",
+            "connector_queries": 12,
+            "connectors_s": 2.1946768149982745,
+            "solve_s": 0.2687604810016637,
+            "total_s": 2.4987590179998733,
+            "validation_s": 0.03532172199993511
+          }
+        },
+        "dijkstra_distance": {
+          "status": "ready",
+          "timings": {
+            "cache_policy": "independent_per_technique",
+            "connector_queries": 12,
+            "connectors_s": 2.2217992319992845,
+            "solve_s": 0.03970916500020394,
+            "total_s": 2.3528729620002196,
+            "validation_s": 0.09136456500073109
+          }
+        },
+        "dijkstra_weighted": {
+          "status": "ready",
+          "timings": {
+            "cache_policy": "independent_per_technique",
+            "connector_queries": 12,
+            "connectors_s": 2.1938744929975655,
+            "solve_s": 0.039587759002643,
+            "total_s": 2.269039505999899,
+            "validation_s": 0.03557725399969058
+          }
+        },
+        "gurobi": {
+          "status": "ready",
+          "timings": {
+            "cache_policy": "independent_per_technique",
+            "connector_queries": 12,
+            "connectors_s": 2.1972621279983287,
+            "solve_s": 0.03831723700113798,
+            "total_s": 2.271084764999614,
+            "validation_s": 0.03550540000014735
+          }
+        }
+      },
+      "offset_m": 0,
+      "result_sha256": "0dc26e4972e631f199b38a9689d9c317087222df84a1bd7804b0420429ba2c41",
+      "status": "ready",
+      "timings": {
+        "alternatives_s": 3.625016725999558,
+        "comparison_s": 9.391770662999988,
+        "evaluation_s": 0.15438886800075124,
+        "geometry_cache": {
+          "bytes": 80355112,
+          "cache_bytes": 80355112,
+          "cache_max_bytes": 134217728,
+          "hit": false,
+          "key": "ba6e9a6c8c724402221f186ed513e0886ab3962370f9ee06c9cd7a037f1f7780",
+          "physical_geometry_s": 45.022808437000094,
+          "policy": "immutable_geometry_only_LRU_max2_memory_bounded"
+        },
+        "setup_s": 65.99401815400051,
+        "total_s": 81.50546377800038
+      },
+      "wall_s": 82.70518709899989
+    },
+    {
+      "methods": {
+        "annealing": {
+          "status": "ready",
+          "timings": {
+            "cache_policy": "independent_per_technique",
+            "connector_queries": 12,
+            "connectors_s": 2.1593016749993694,
+            "solve_s": 0.2806959409999763,
+            "total_s": 2.4771951679995254,
+            "validation_s": 0.03719755200017971
+          }
+        },
+        "dijkstra_distance": {
+          "status": "ready",
+          "timings": {
+            "cache_policy": "independent_per_technique",
+            "connector_queries": 12,
+            "connectors_s": 2.1735478950013203,
+            "solve_s": 0.04148923299908347,
+            "total_s": 2.3115310590001172,
+            "validation_s": 0.09649393099971348
+          }
+        },
+        "dijkstra_weighted": {
+          "status": "ready",
+          "timings": {
+            "cache_policy": "independent_per_technique",
+            "connector_queries": 12,
+            "connectors_s": 2.183169269001155,
+            "solve_s": 0.04127636499924847,
+            "total_s": 2.2621711550000327,
+            "validation_s": 0.037725520999629225
+          }
+        },
+        "gurobi": {
+          "status": "ready",
+          "timings": {
+            "cache_policy": "independent_per_technique",
+            "connector_queries": 12,
+            "connectors_s": 2.1606114870000965,
+            "solve_s": 0.01957298199977231,
+            "total_s": 2.221526903999802,
+            "validation_s": 0.041342434999933175
+          }
+        }
+      },
+      "offset_m": 5,
+      "result_sha256": "282f779bf10b0cb271c7210476d5e4ea4a99f97300c38137692a6c7d2ed4c960",
+      "status": "ready",
+      "timings": {
+        "alternatives_s": 3.746463252000467,
+        "comparison_s": 9.272436879000452,
+        "evaluation_s": 0.16222205300073256,
+        "geometry_cache": {
+          "bytes": 80355112,
+          "cache_bytes": 80355112,
+          "cache_max_bytes": 134217728,
+          "hit": true,
+          "key": "ba6e9a6c8c724402221f186ed513e0886ab3962370f9ee06c9cd7a037f1f7780",
+          "physical_geometry_s": 0.00044928100032848306,
+          "policy": "immutable_geometry_only_LRU_max2_memory_bounded"
+        },
+        "setup_s": 6.129991871000129,
+        "total_s": 21.068862797999827
+      },
+      "wall_s": 22.351013315999808
+    },
+    {
+      "methods": {
+        "annealing": {
+          "status": "ready",
+          "timings": {
+            "cache_policy": "independent_per_technique",
+            "connector_queries": 12,
+            "connectors_s": 2.166563986001165,
+            "solve_s": 0.293967785998575,
+            "total_s": 2.4949512760003927,
+            "validation_s": 0.03441950400065252
+          }
+        },
+        "dijkstra_distance": {
+          "status": "ready",
+          "timings": {
+            "cache_policy": "independent_per_technique",
+            "connector_queries": 12,
+            "connectors_s": 2.133275339998363,
+            "solve_s": 0.04268438900180627,
+            "total_s": 2.25715824100007,
+            "validation_s": 0.0811985119999008
+          }
+        },
+        "dijkstra_weighted": {
+          "status": "ready",
+          "timings": {
+            "cache_policy": "independent_per_technique",
+            "connector_queries": 12,
+            "connectors_s": 2.1909449099994163,
+            "solve_s": 0.04267882800013467,
+            "total_s": 2.2798421229999803,
+            "validation_s": 0.04621838500042941
+          }
+        },
+        "gurobi": {
+          "status": "ready",
+          "timings": {
+            "cache_policy": "independent_per_technique",
+            "connector_queries": 12,
+            "connectors_s": 2.1593169509988,
+            "solve_s": 0.02118425800199475,
+            "total_s": 2.214866739000172,
+            "validation_s": 0.03436552999937703
+          }
+        }
+      },
+      "offset_m": 10,
+      "result_sha256": "25a6e335bb68963d8dea64f3edb5b4ff26e23f095240dfa63d41fb1d7c4e8a97",
+      "status": "ready",
+      "timings": {
+        "alternatives_s": 3.7170709620004345,
+        "comparison_s": 9.246830779000447,
+        "evaluation_s": 0.15588930800004164,
+        "geometry_cache": {
+          "bytes": 80355112,
+          "cache_bytes": 80355112,
+          "cache_max_bytes": 134217728,
+          "hit": true,
+          "key": "ba6e9a6c8c724402221f186ed513e0886ab3962370f9ee06c9cd7a037f1f7780",
+          "physical_geometry_s": 0.0004654100002881023,
+          "policy": "immutable_geometry_only_LRU_max2_memory_bounded"
+        },
+        "setup_s": 6.577038227999765,
+        "total_s": 21.464371164999648
+      },
+      "wall_s": 22.755645361999996
+    }
+  ],
+  "median_warm_preparation_s": 6.353515049499947,
+  "preparation_reduction_fraction": 0.9037258947519503,
+  "target": 0.5,
+  "target_met": true
+}
