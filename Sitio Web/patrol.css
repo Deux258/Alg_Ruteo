@@ -1,352 +1,1421 @@
 :root {
+  --bg-app: #eef2ec;
+  --bg-panel: #eef2ec;
+  --bg-card: #ffffff;
+  --bg-card-subtle: #f4f7f2;
+  --bg-card-selected: #ebf3e7;
+  --bg-header: #112b26;
+  --bg-header-accent: #183b34;
+  --bg-hud: rgba(15, 37, 32, 0.86);
+  --bg-glass: rgba(252, 253, 250, 0.92);
+  --bg-glass-strong: rgba(253, 254, 251, 0.96);
+
+  --ink-primary: #142824;
+  --ink-secondary: #3b534c;
+  --ink-muted: #5e7269;
+  --ink-on-dark: #f4f8f2;
+  --ink-on-dark-muted: #abc2b7;
+
+  --border-subtle: #e1e8dd;
+  --border-default: #cbd6c6;
+  --border-strong: #aebfa8;
+
+  --brand-primary: #1f6349;
+  --brand-primary-hover: #174d38;
+  --brand-accent: #d9ead2;
+  --danger: #b42318;
+  --danger-bg: #fef3f2;
+  --danger-border: rgba(180, 35, 24, 0.34);
+
+  --radius-xs: 6px;
+  --radius-sm: 9px;
+  --radius-md: 12px;
+  --radius-lg: 14px;
+  --radius-pill: 999px;
+
+  --shadow-xs: 0 1px 2px rgba(16, 42, 37, 0.04);
+  --shadow-sm: 0 2px 7px rgba(16, 42, 37, 0.06), 0 1px 2px rgba(16, 42, 37, 0.04);
+  --shadow-md: 0 8px 22px rgba(16, 42, 37, 0.12), 0 2px 6px rgba(16, 42, 37, 0.05);
+  --shadow-lg: 0 14px 34px rgba(12, 32, 28, 0.18), 0 3px 9px rgba(12, 32, 28, 0.08);
+  --specular-inset: inset 0 1px 0 rgba(255, 255, 255, 0.78);
+
+  --spring-ease: cubic-bezier(0.22, 1, 0.36, 1);
+
   font-family:
-    Inter,
-    Segoe UI,
-    Arial,
+    -apple-system,
+    BlinkMacSystemFont,
+    "SF Pro Text",
+    "SF Pro Display",
+    "Inter",
+    "Segoe UI",
+    system-ui,
     sans-serif;
-  color: #233e3b;
-  background: #f4f5f0;
-  font-size: 14px;
+  color: var(--ink-primary);
+  background: var(--bg-app);
+  font-size: 13.5px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
+
 * {
   box-sizing: border-box;
 }
+
 body {
   margin: 0;
+  background: var(--bg-app);
+  color: var(--ink-primary);
 }
+
+:focus-visible {
+  outline: 2px solid var(--brand-primary);
+  outline-offset: 2px;
+}
+
+/* HIG Top Navigation Bar */
 header {
-  height: 88px;
-  background: #183b35;
-  color: #f5f6ed;
-  padding: 18px 28px;
+  height: 60px;
+  background: linear-gradient(180deg, #163731 0%, var(--bg-header) 100%);
+  color: var(--ink-on-dark);
+  padding: 0 22px;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 1px 8px rgba(10, 26, 22, 0.14);
+  position: relative;
+  z-index: 700;
 }
+
 h1 {
-  font-size: 25px;
-  font-weight: 550;
-  letter-spacing: -0.6px;
-  margin: 6px 0;
+  font-size: 18.5px;
+  font-weight: 650;
+  letter-spacing: -0.025em;
+  margin: 2px 0 0;
+  display: flex;
+  align-items: center;
+  gap: 9px;
 }
+
 h1 span {
-  font-size: 11px;
-  font-weight: 400;
-  border: 1px solid #73978a;
-  padding: 4px 8px;
-  border-radius: 3px;
-  vertical-align: middle;
-  margin-left: 10px;
-}
-.eyebrow {
   font-size: 10px;
-  letter-spacing: 2px;
-  color: #b4c9bd;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  background: rgba(225, 237, 193, 0.14);
+  color: #dff0c8;
+  border: 1px solid rgba(190, 219, 170, 0.3);
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+  vertical-align: middle;
 }
+
+.eyebrow {
+  display: block;
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-on-dark-muted);
+}
+
 nav {
   display: flex;
   align-items: center;
-  gap: 20px;
-}
-nav a {
-  color: #d2e0d5;
-  font-size: 12px;
-}
-nav button {
-  background: #e1edc1;
-  color: #233e3b;
-  border: 0;
-}
-main {
-  display: flex;
-  height: calc(100vh - 88px);
-}
-aside {
-  width: 390px;
-  min-width: 340px;
-  overflow: auto;
-  background: #fbfcf7;
-  border-right: 1px solid #d7dfd5;
-}
-section {
-  padding: 21px 24px;
-  border-bottom: 1px solid #dce2d8;
-}
-h2 {
-  font-size: 12px;
-  letter-spacing: 0.8px;
-  text-transform: uppercase;
-  margin: 0 0 16px;
-  font-weight: 700;
-}
-.section-heading {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
   gap: 10px;
 }
+
+nav a {
+  color: #d2e3d8;
+  font-size: 12.5px;
+  font-weight: 500;
+  text-decoration: none;
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+  transition: background-color 140ms var(--spring-ease), color 140ms var(--spring-ease);
+}
+
+nav a:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+nav button {
+  background: #e2efc4;
+  color: #15312a;
+  border: 1px solid rgba(255, 255, 255, 0.38);
+  font-weight: 600;
+  padding: 6.5px 13px;
+  border-radius: var(--radius-pill);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.75);
+}
+
+nav button:hover:not(:disabled) {
+  background: #ecf6d4;
+}
+
+/* Main Workspace Layout */
+main {
+  display: flex;
+  height: calc(100vh - 60px);
+}
+
+/* ==========================================================================
+   VERTICAL ACCORDION STEPPER (HIG Inset Grouped Stepper)
+   ========================================================================== */
+aside.stepper {
+  width: 396px;
+  min-width: 348px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: var(--bg-panel);
+  border-right: 1px solid var(--border-default);
+  padding: 8px 10px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  scrollbar-width: thin;
+  scrollbar-color: #b8c6b4 transparent;
+}
+
+.step-card {
+  margin: 0;
+  padding: 0;
+  background: var(--bg-card);
+  border: 1px solid rgba(203, 214, 198, 0.9);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-xs);
+  transition: border-color 160ms var(--spring-ease), box-shadow 160ms var(--spring-ease);
+}
+
+.step-card.is-open {
+  border-color: rgba(31, 99, 73, 0.42);
+  box-shadow: var(--shadow-sm);
+}
+
+.step-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 12px 14px;
+  cursor: pointer;
+  user-select: none;
+  border-radius: var(--radius-md);
+  transition: background-color 140ms ease;
+}
+
+.step-header:hover {
+  background: rgba(244, 247, 242, 0.75);
+}
+
+.step-header-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.step-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.step-badge {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #e6eee2;
+  color: var(--ink-secondary);
+  font-size: 10.5px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  border: 1px solid #cad8c4;
+  transition: background-color 160ms ease, color 160ms ease;
+}
+
+.step-card.is-open .step-badge {
+  background: var(--brand-primary);
+  color: #ffffff;
+  border-color: var(--brand-primary);
+}
+
+.step-card.is-done:not(.is-open) .step-badge {
+  background: #dcf0d5;
+  color: #185a3b;
+  border-color: #a9d49d;
+}
+
+.step-title-row h2 {
+  font-size: 12.5px;
+  letter-spacing: -0.01em;
+  text-transform: none;
+  margin: 0;
+  font-weight: 650;
+  color: var(--ink-primary);
+}
+
+.step-summary {
+  margin: 3px 0 0 30px;
+  font-size: 11px;
+  color: var(--ink-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-variant-numeric: tabular-nums;
+}
+
+.step-card.is-done:not(.is-open) .step-summary {
+  color: #1f5c41;
+  font-weight: 550;
+}
+
+.step-chevron {
+  width: 16px;
+  height: 16px;
+  flex: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 12 12' fill='none' stroke='%235e7269' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 4.5L6 7.5L9 4.5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  transition: transform 180ms var(--spring-ease);
+}
+
+.step-card.is-open .step-chevron {
+  transform: rotate(180deg);
+}
+
+.step-body {
+  display: none;
+  padding: 2px 14px 14px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.step-card.is-open .step-body {
+  display: block;
+}
+
+/* ==========================================================================
+   PROGRESSIVE DISCLOSURE TOOLTIPS (? / i badges)
+   ========================================================================== */
+.label-with-tip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.info-tip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #e5ede1;
+  color: #2c5445;
+  border: 1px solid #c5d4bf;
+  font-size: 10px;
+  font-weight: 700;
+  cursor: help;
+  flex: none;
+  user-select: none;
+}
+
+.info-tip:hover,
+.info-tip:focus-visible {
+  background: var(--brand-primary);
+  color: #ffffff;
+  border-color: var(--brand-primary);
+  outline: none;
+}
+
+.info-tip::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 7px);
+  width: 245px;
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  background: rgba(17, 43, 38, 0.96);
+  color: #f2f7f0;
+  font-size: 11px;
+  font-weight: 450;
+  line-height: 1.42;
+  text-transform: none;
+  letter-spacing: normal;
+  box-shadow: var(--shadow-md);
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 140ms ease, transform 140ms ease;
+  z-index: 900;
+  white-space: normal;
+}
+
+.info-tip:hover::after,
+.info-tip:focus-visible::after {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ==========================================================================
+   FORM CONTROLS & 3-TIER BUTTON HIERARCHY
+   ========================================================================== */
 label {
   display: block;
-  font-size: 11px;
-  color: #4a625b;
-  margin: 13px 0 6px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--ink-secondary);
+  margin: 10px 0 4px;
 }
+
 select,
 input[type="number"],
 input:not([type]) {
   font: inherit;
-  font-size: 12px;
-  border: 1px solid #cbd5c7;
-  background: white;
+  font-size: 12.5px;
+  font-variant-numeric: tabular-nums;
+  border: 1px solid var(--border-default);
+  background-color: var(--bg-card);
   width: 100%;
-  border-radius: 4px;
-  padding: 9px;
-  color: #243f38;
+  border-radius: var(--radius-sm);
+  padding: 7.5px 10px;
+  color: var(--ink-primary);
+  box-shadow: var(--shadow-xs);
+  transition: border-color 140ms var(--spring-ease), box-shadow 140ms var(--spring-ease);
 }
+
 select {
-  margin-top: 5px;
+  margin-top: 3px;
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 30px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12' fill='none' stroke='%233b534c' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 4.5L6 7.5L9 4.5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 12px 12px;
+  cursor: pointer;
 }
+
+select:hover:not(:disabled),
+input[type="number"]:hover:not(:disabled),
+input:not([type]):hover:not(:disabled) {
+  border-color: var(--border-strong);
+}
+
+select:focus,
+input[type="number"]:focus,
+input:not([type]):focus {
+  border-color: var(--brand-primary);
+  box-shadow: 0 0 0 3px rgba(31, 99, 73, 0.14);
+  outline: none;
+}
+
+/* Base Button */
 button {
   font: inherit;
   font-size: 12px;
-  border: 1px solid #b4c4b3;
-  background: #f5f8ee;
-  color: #254b3e;
-  border-radius: 4px;
-  padding: 9px 11px;
+  font-weight: 550;
+  border: 1px solid var(--border-default);
+  background: linear-gradient(180deg, #ffffff 0%, #f4f7f1 100%);
+  color: var(--ink-primary);
+  border-radius: var(--radius-sm);
+  padding: 7.5px 10px;
   cursor: pointer;
+  box-shadow: var(--shadow-xs), var(--specular-inset);
+  transition:
+    transform 150ms var(--spring-ease),
+    background-color 140ms var(--spring-ease),
+    border-color 140ms var(--spring-ease);
 }
-button:hover {
-  background: #e7eedb;
+
+button:hover:not(:disabled) {
+  background: #ebf2e6;
+  border-color: var(--border-strong);
 }
+
+button:active:not(:disabled) {
+  transform: scale(0.985);
+  transition-duration: 45ms;
+}
+
 button:disabled {
-  opacity: 0.45;
+  opacity: 0.42;
   cursor: default;
+  box-shadow: none;
 }
-.primary {
-  background: #24664d;
-  color: white;
-  border: 0;
+
+/* 1. Botón Primario (Avance de paso / Acción principal) */
+.primary,
+.btn-primary {
+  background: linear-gradient(180deg, #267355 0%, var(--brand-primary) 100%);
+  color: #ffffff;
+  border: 1px solid #19523c;
+  font-weight: 600;
+  letter-spacing: -0.01em;
   width: 100%;
-  margin-top: 16px;
-  padding: 13px;
+  margin-top: 12px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  box-shadow: 0 2px 8px rgba(31, 99, 73, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.22);
 }
-.primary:hover {
-  background: #194d3a;
+
+.primary:hover:not(:disabled),
+.btn-primary:hover:not(:disabled) {
+  background: linear-gradient(180deg, #1f6349 0%, var(--brand-primary-hover) 100%);
+  border-color: #123e2d;
 }
+
+/* 2. Botón Secundario (Outline limpio para acciones alternativas) */
+.btn-secondary {
+  background: #ffffff;
+  color: var(--brand-primary);
+  border: 1.5px solid rgba(31, 99, 73, 0.36);
+  font-weight: 600;
+  box-shadow: none;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: rgba(31, 99, 73, 0.06);
+  border-color: var(--brand-primary);
+}
+
+/* 3. Botón Destructivo / Peligro (Quitar foco, Limpiar amenazas, Cancelar) */
+.btn-danger {
+  background: var(--danger-bg);
+  color: var(--danger);
+  border: 1.5px solid var(--danger-border);
+  font-weight: 600;
+  box-shadow: none;
+}
+
+.btn-danger:hover:not(:disabled) {
+  background: #fee4e2;
+  border-color: var(--danger);
+}
+
+/* Botón Cápsula ("Cargar ejemplo") */
 .text {
-  border: 0;
-  padding: 0;
-  background: transparent;
-  text-decoration: underline;
+  border: 1px solid rgba(31, 99, 73, 0.26);
+  padding: 4px 10px;
+  background: rgba(31, 99, 73, 0.08);
+  box-shadow: none;
+  color: var(--brand-primary);
+  font-weight: 600;
+  text-decoration: none;
   font-size: 11px;
+  border-radius: var(--radius-pill);
+  flex: none;
 }
+
+.text:hover:not(:disabled) {
+  background: rgba(31, 99, 73, 0.15);
+  border-color: rgba(31, 99, 73, 0.4);
+}
+
 .buttons {
   display: flex;
   gap: 7px;
-  margin: 12px 0;
+  margin: 8px 0;
 }
+
 .buttons > * {
   flex: 1;
 }
+
 .fields {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 0 12px;
+  gap: 2px 10px;
 }
+
+/* Disclosure Groups (details / summary) */
+details {
+  border-top: 1px solid var(--border-subtle);
+  margin-top: 9px;
+}
+
 summary {
   cursor: pointer;
   font-size: 12px;
   font-weight: 600;
-  padding: 10px 0;
+  color: var(--ink-primary);
+  padding: 8px 24px 8px 4px;
+  border-radius: var(--radius-xs);
+  list-style: none;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12' fill='none' stroke='%235e7269' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4.5 2.5L8 6L4.5 9.5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 6px center;
+  background-size: 12px 12px;
+  transition: background-color 140ms ease, color 140ms ease;
 }
-details {
-  border-top: 1px solid #e0e5dc;
-  margin-top: 12px;
+
+summary::-webkit-details-marker {
+  display: none;
 }
+
+summary:hover {
+  color: var(--brand-primary);
+  background-color: var(--bg-card-subtle);
+}
+
+details[open] > summary {
+  color: var(--brand-primary);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12' fill='none' stroke='%231f6349' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2.5 4.5L6 8L9.5 4.5'/%3E%3C/svg%3E");
+}
+
+/* Compact status notes */
 .muted {
   font-size: 11px;
-  line-height: 1.6;
-  color: #6b7d72;
+  line-height: 1.4;
+  color: var(--ink-muted);
+  margin: 4px 0;
+  font-variant-numeric: tabular-nums;
 }
+
+.status-compact {
+  font-size: 10.5px;
+  line-height: 1.35;
+  margin: 4px 0;
+}
+
+.sr-compact {
+  font-size: 10.5px;
+  margin: 3px 0;
+}
+
 .badge {
   font-size: 10px;
-  padding: 4px;
-  background: #edf0e4;
-  border-radius: 3px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  padding: 2.5px 8px;
+  background: #e8efe2;
+  color: #214a3b;
+  border: 1px solid #cddbc6;
+  border-radius: var(--radius-pill);
+  flex: none;
 }
+
 .file {
-  border: 1px dashed #bccbb8;
-  padding: 9px;
+  display: block;
+  border: 1.5px dashed rgba(31, 99, 73, 0.42);
+  border-radius: var(--radius-sm);
+  background: var(--bg-card-subtle);
+  padding: 7px 10px;
+  margin-top: 6px;
   text-align: center;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--brand-primary);
   cursor: pointer;
+  transition: background-color 140ms ease, border-color 140ms ease;
 }
+
+.file:hover {
+  background: rgba(31, 99, 73, 0.08);
+  border-color: var(--brand-primary);
+}
+
 .file input {
   display: none;
 }
+
 #message {
-  font-size: 12px;
-  line-height: 1.6;
-  margin: 12px 0 0;
-  color: #28644e;
+  font-size: 11.5px;
+  font-weight: 500;
+  line-height: 1.42;
+  margin: 8px 0 0;
+  padding: 7px 10px;
+  border-radius: var(--radius-sm);
+  background: rgba(31, 99, 73, 0.07);
+  border-left: 3px solid var(--brand-primary);
+  color: #1c543e;
 }
+
 #message.error {
-  color: #a04529;
+  background: var(--danger-bg);
+  border-left-color: var(--danger);
+  color: var(--danger);
 }
+
+/* Route Comparison Cards */
 .route-card {
-  border-left: 3px solid var(--route);
-  padding: 12px 10px;
-  margin: 9px 0;
-  background: #f1f4ec;
+  contain: content;
+  border: 1px solid var(--border-subtle);
+  border-left: 4px solid var(--route);
+  border-radius: var(--radius-sm);
+  padding: 10px 11px;
+  margin: 7px 0;
+  background: var(--bg-card);
+  box-shadow: var(--shadow-xs);
+  transition: background-color 140ms var(--spring-ease), box-shadow 140ms var(--spring-ease);
 }
+
+.route-card:hover {
+  box-shadow: var(--shadow-sm);
+}
+
+.route-card.selected {
+  outline: 1.5px solid var(--route);
+  background: var(--bg-card-selected);
+  box-shadow: var(--shadow-sm);
+}
+
 .route-title {
   display: flex;
   align-items: center;
-  gap: 7px;
-  font-size: 12px;
-  font-weight: 600;
+  gap: 8px;
+  font-size: 12.5px;
+  font-weight: 650;
 }
+
 .route-title label {
   margin: 0;
   flex: 1;
 }
-.route-card p {
-  font-size: 11px;
-  line-height: 1.6;
-  margin: 7px 0 0;
+
+.route-choice {
+  border: 0;
+  background: none;
+  box-shadow: none;
+  text-align: left;
+  padding: 2px 0;
+  font-size: 12.5px;
+  font-weight: 650;
+  color: var(--ink-primary);
+  flex: 1;
 }
+
+.route-choice:hover:not(:disabled) {
+  background: none;
+  color: var(--brand-primary);
+}
+
+.route-card .route-title label {
+  flex: 0;
+}
+
+.route-card p {
+  font-size: 10.5px;
+  line-height: 1.42;
+  margin: 5px 0 0;
+  font-variant-numeric: tabular-nums;
+}
+
 .metrics {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 8px;
-  margin-top: 11px;
+  gap: 5px;
+  margin-top: 7px;
 }
+
+.metrics > div {
+  background: var(--bg-card-subtle);
+  border: 1px solid rgba(202, 213, 197, 0.55);
+  border-radius: var(--radius-xs);
+  padding: 5px 7px;
+}
+
+.route-card.selected .metrics > div {
+  background: rgba(255, 255, 255, 0.8);
+}
+
 .metrics b {
   display: block;
-  font-size: 18px;
-  font-weight: 500;
-  letter-spacing: -0.4px;
+  font-size: 15px;
+  font-weight: 650;
+  letter-spacing: -0.025em;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-primary);
 }
+
 .metrics span {
-  font-size: 10px;
-  color: #61786b;
+  display: block;
+  font-size: 9.5px;
+  color: var(--ink-muted);
+  margin-top: 1px;
 }
+
 .rank {
   font-size: 9px;
-  background: #dce9ba;
-  padding: 4px 5px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  background: #dcebc2;
+  color: #1f4732;
+  padding: 2px 6px;
+  border-radius: var(--radius-pill);
+  font-variant-numeric: tabular-nums;
 }
+
 .check {
   display: flex;
   align-items: center;
   gap: 7px;
-  font-size: 12px;
+  font-size: 11.5px;
   line-height: 1.4;
+  cursor: pointer;
 }
+
+.check input[type="checkbox"],
+.route-title input[type="checkbox"] {
+  accent-color: var(--brand-primary);
+  width: 15px;
+  height: 15px;
+  cursor: pointer;
+}
+
+/* Avionics Telemetry Display */
 .flight {
-  font-family: Consolas, monospace;
-  font-size: 12px;
-  background: #173c35;
-  color: #d6edce;
-  padding: 13px;
-  line-height: 1.7;
-  border-radius: 4px;
-  margin-top: 12px;
-}
-progress {
-  accent-color: #548452;
-  width: 100%;
-  height: 5px;
-}
-#log {
+  font-family: "SF Mono", "JetBrains Mono", Consolas, monospace;
   font-size: 11px;
-  line-height: 1.7;
-  padding-left: 18px;
-  max-height: 160px;
-  overflow: auto;
+  font-variant-numeric: tabular-nums;
+  background: linear-gradient(180deg, #163a33 0%, #112e28 100%);
+  color: #daf2d4;
+  padding: 9px 11px;
+  line-height: 1.55;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(120, 175, 145, 0.25);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.28);
+  margin-top: 9px;
+  white-space: pre-line;
 }
+
+progress {
+  accent-color: #3f8f65;
+  width: 100%;
+  height: 6px;
+  border-radius: var(--radius-pill);
+  margin-top: 6px;
+}
+
+#log {
+  font-size: 10.5px;
+  line-height: 1.5;
+  padding-left: 18px;
+  max-height: 120px;
+  overflow: auto;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-secondary);
+  margin: 6px 0 0;
+}
+
+/* ==========================================================================
+   MAP & 3D VIEWPORT + FLOATING GLOBAL LAYER CONTROL (Google Maps / QGIS style)
+   ========================================================================== */
 .viewport {
   position: relative;
   flex: 1;
   min-width: 0;
 }
+
 #map,
 #terrain {
   width: 100%;
   height: 100%;
-  background: #e6ede0;
+  background: #e4ece0;
 }
+
 #terrain {
   display: block;
   touch-action: none;
+  cursor: grab;
 }
+
+#terrain:active {
+  cursor: grabbing;
+}
+
 #terrain[hidden],
 #map[hidden] {
   display: none;
 }
+
+/* Floating Global Cartography & Layers Switcher */
+.map-layers-floating {
+  position: absolute;
+  top: 12px;
+  right: 58px;
+  z-index: 620;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.map-layers-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7.5px 13px;
+  border-radius: var(--radius-pill);
+  background: var(--bg-glass-strong);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(194, 209, 188, 0.95);
+  box-shadow: var(--shadow-sm), var(--specular-inset);
+  color: var(--ink-primary);
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.map-layers-trigger:hover:not(:disabled) {
+  background: #ffffff;
+  border-color: var(--brand-primary);
+  color: var(--brand-primary);
+}
+
+.map-layers-floating[data-open="true"] .map-layers-trigger {
+  background: var(--brand-primary);
+  color: #ffffff;
+  border-color: var(--brand-primary);
+}
+
+.map-layers-popover {
+  display: none;
+  margin-top: 8px;
+  width: 292px;
+  max-height: calc(100vh - 210px);
+  overflow-y: auto;
+  padding: 13px 14px;
+  background: var(--bg-glass-strong);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(194, 209, 188, 0.95);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg), var(--specular-inset);
+}
+
+.map-layers-floating[data-open="true"] .map-layers-popover {
+  display: block;
+}
+
+.popover-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.popover-header strong {
+  font-size: 11.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ink-secondary);
+}
+
+.geography-controls {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2px;
+  margin: 8px 0;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 6px 9px;
+}
+
+.geography-check {
+  margin: 3px 0;
+}
+
+.geography-check i {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  flex: none;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12);
+}
+
+.geography-check span {
+  flex: 1;
+}
+
+.geography-check small {
+  color: var(--ink-muted);
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+}
+
 .map-label {
   pointer-events: none;
   position: absolute;
-  bottom: 23px;
-  left: 23px;
+  bottom: 18px;
+  left: 18px;
   z-index: 500;
-  background: #fffef6ed;
-  padding: 12px 16px;
-  box-shadow: 0 2px 10px #183b3518;
+  background: var(--bg-glass);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(202, 213, 197, 0.85);
+  border-radius: var(--radius-pill);
+  padding: 7px 13px;
+  box-shadow: var(--shadow-sm), var(--specular-inset);
   font-size: 10px;
-  letter-spacing: 1px;
+  font-weight: 650;
+  letter-spacing: 0.07em;
+  color: var(--ink-primary);
   display: flex;
-  gap: 9px;
+  gap: 8px;
   align-items: center;
 }
+
 .dot {
-  height: 6px;
-  width: 6px;
-  background: #508953;
+  height: 7px;
+  width: 7px;
+  background: #2f855a;
+  box-shadow: 0 0 0 3px rgba(47, 133, 90, 0.2);
   border-radius: 100%;
 }
-#terrain-help {
-  position: absolute;
-  top: 18px;
-  left: 18px;
-  color: #264936;
-  background: #ffffffce;
-  padding: 10px;
-  font-size: 11px;
+
+.leaflet-popup-content-wrapper {
+  border-radius: var(--radius-md) !important;
+  box-shadow: var(--shadow-md) !important;
+  border: 1px solid var(--border-subtle);
 }
+
 .leaflet-popup-content {
   max-height: 250px;
   overflow: auto;
-  font-size: 11px;
+  font-size: 11.5px;
   line-height: 1.5;
+  font-variant-numeric: tabular-nums;
 }
+
 .popup-row {
-  padding: 3px 0;
+  padding: 4px 0;
   border-bottom: 1px solid #e7eadf;
   overflow-wrap: anywhere;
 }
+
 .drone-icon {
   font-size: 24px;
   color: #9d3c20;
   text-shadow: 0 1px 4px white;
 }
+
 .wind-icon {
   font-size: 24px;
   color: #214e79;
 }
+
 .leaflet-control-layers {
-  font-size: 11px;
+  font-size: 11.5px;
+  border-radius: var(--radius-md) !important;
+  border: 1px solid rgba(202, 213, 197, 0.85) !important;
+  box-shadow: var(--shadow-sm) !important;
+  background: var(--bg-glass-strong) !important;
+  backdrop-filter: blur(10px);
+  max-height: 65vh;
+  overflow: auto;
 }
+
+.leaflet-bar {
+  border-radius: var(--radius-sm) !important;
+  border: 1px solid rgba(202, 213, 197, 0.85) !important;
+  box-shadow: var(--shadow-sm) !important;
+  overflow: hidden;
+}
+
 .leaflet-control-attribution {
   font-size: 9px !important;
 }
+
+/* 3D Controls & Legend Overlays */
+#terrain-help {
+  position: absolute;
+  left: 18px;
+  top: 56px;
+  max-width: calc(100% - 240px);
+  z-index: 500;
+  color: var(--ink-primary);
+  background: var(--bg-glass);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(202, 213, 197, 0.88);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md), var(--specular-inset);
+  padding: 9px 12px;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.terrain-buttons {
+  display: flex;
+  gap: 6px;
+  margin-top: 7px;
+  flex-wrap: wrap;
+}
+
+.terrain-buttons button {
+  padding: 5.5px 9px;
+  font-size: 10.5px;
+  border-radius: var(--radius-xs);
+}
+
+#terrain-legend {
+  position: absolute;
+  right: 18px;
+  top: 56px;
+  z-index: 500;
+  background: var(--bg-glass);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(202, 213, 197, 0.88);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md), var(--specular-inset);
+  padding: 11px 13px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 11px;
+  min-width: 170px;
+  color: var(--ink-primary);
+}
+
+#terrain-legend b {
+  font-size: 9.5px;
+  letter-spacing: 0.14em;
+  color: var(--ink-secondary);
+  margin-bottom: 2px;
+}
+
+#terrain-legend span {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+}
+
+#terrain-legend i {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12);
+}
+
+#terrain-legend small {
+  font-size: 9.5px;
+  color: var(--ink-muted);
+  margin-top: 2px;
+  border-top: 1px solid var(--border-subtle);
+  padding-top: 5px;
+}
+
+#terrain-credit {
+  position: absolute;
+  bottom: 4px;
+  right: 6px;
+  font-size: 9px;
+  background: rgba(255, 255, 255, 0.86);
+  color: var(--ink-secondary);
+  padding: 3px 7px;
+  border-radius: var(--radius-xs);
+  z-index: 501;
+}
+
+#terrain-credit a {
+  color: inherit;
+}
+
+#terrain-help[hidden],
+#terrain-legend[hidden],
+#terrain-credit[hidden] {
+  display: none;
+}
+
+.map-actions {
+  position: absolute;
+  top: 12px;
+  left: 58px;
+  z-index: 600;
+}
+
+.map-actions button {
+  background: var(--bg-glass-strong);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(202, 213, 197, 0.9);
+  border-radius: var(--radius-pill);
+  padding: 7.5px 13px;
+  box-shadow: var(--shadow-sm), var(--specular-inset);
+  font-weight: 600;
+}
+
+/* Floating Flight Player Deck */
+.player {
+  position: absolute;
+  bottom: 54px;
+  left: 16px;
+  right: 16px;
+  z-index: 600;
+  background: var(--bg-glass-strong);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(194, 209, 188, 0.92);
+  border-radius: var(--radius-lg);
+  padding: 10px 14px;
+  box-shadow: var(--shadow-lg), var(--specular-inset);
+}
+
+.player-buttons {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.player-buttons button {
+  padding: 6.5px 11px;
+  border-radius: var(--radius-sm);
+}
+
+.player-buttons .check {
+  margin: 0 0 0 auto;
+  font-size: 11.5px;
+  font-weight: 550;
+}
+
+.player-track {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 7px;
+  font-size: 10.5px;
+  color: var(--ink-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.player-track input {
+  flex: 1;
+  min-width: 70px;
+  accent-color: var(--brand-primary);
+  cursor: pointer;
+}
+
+.player-track output {
+  font-family: "SF Mono", "JetBrains Mono", Consolas, monospace;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+#playback-state {
+  max-width: 195px;
+  text-align: right;
+  font-weight: 600;
+  color: var(--ink-primary);
+}
+
+#play {
+  background: linear-gradient(180deg, #267355 0%, var(--brand-primary) 100%);
+  color: white;
+  border-color: #19523c;
+  box-shadow: 0 2px 6px rgba(31, 99, 73, 0.25);
+}
+
+#play:hover:not(:disabled) {
+  background: var(--brand-primary-hover);
+}
+
+#drone-view[aria-pressed="true"] {
+  background: var(--bg-header);
+  color: #e4f2ce;
+  border-color: #0e2420;
+}
+
+/* First-Person Drone Avionics HUD */
+#fpv-hud {
+  position: absolute;
+  top: 132px;
+  left: 22px;
+  right: 22px;
+  z-index: 550;
+  display: flex;
+  justify-content: center;
+  gap: 12px 26px;
+  flex-wrap: wrap;
+  color: #ebffe2;
+  text-shadow: 0 1px 3px rgba(10, 26, 22, 0.9);
+  background: var(--bg-hud);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(180, 225, 195, 0.25);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  padding: 10px 14px;
+  font: 600 12px "SF Mono", "JetBrains Mono", Consolas, monospace;
+  font-variant-numeric: tabular-nums;
+  pointer-events: none;
+}
+
+#fpv-hud[hidden],
+.draw-tools[hidden] {
+  display: none;
+}
+
+.draw-tools button {
+  font-size: 10.5px;
+}
+
+#seek:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.resilience-leader {
+  display: inline-block;
+  font-weight: 650;
+  color: #19543a;
+  background: #e2f0d9;
+  border: 1px solid #bfd9b0;
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+}
+
+.error {
+  color: var(--danger) !important;
+}
+
+.drone-coordinates {
+  display: block;
+  margin-top: 6px;
+  padding-top: 5px;
+  border-top: 1px solid rgba(202, 213, 197, 0.55);
+  color: #294c40;
+  font: 550 10.5px "SF Mono", "JetBrains Mono", Consolas, monospace;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+#fpv-coordinates {
+  flex-basis: 100%;
+  text-align: center;
+  font-size: 10.5px;
+  color: #c6e6ce;
+}
+
+#terrain-zoom-in,
+#terrain-zoom-out {
+  font-size: 15px;
+  font-weight: 650;
+  min-width: 32px;
+  padding: 4px 9px;
+}
+
+.viewport:has(#terrain[hidden]) .terrain-annotations {
+  display: none !important;
+}
+
+.viewport:has(#fpv-hud:not([hidden])) #terrain-legend {
+  display: none;
+}
+
+.terrain-annotation-label {
+  max-width: 220px;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  box-shadow: 0 2px 6px rgba(18, 46, 41, 0.16);
+  border: 1px solid rgba(25, 65, 53, 0.14);
+}
+
+#fpv-propellers {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 520;
+}
+
+#fpv-propellers[hidden] {
+  display: none;
+}
+
+.propeller {
+  position: absolute;
+  top: -78px;
+  width: 190px;
+  height: 150px;
+  transform: perspective(220px) rotateX(58deg);
+}
+
+.propeller-left {
+  left: -85px;
+}
+
+.propeller-right {
+  right: -85px;
+}
+
+.propeller svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.rotor-disc {
+  fill: #233e3b;
+  opacity: 0.09;
+  stroke: #29443c;
+  stroke-width: 1;
+}
+
+.rotor {
+  fill: #294039;
+  opacity: 0.55;
+  transform-origin: 80px 80px;
+  animation: rotor-spin 0.12s linear infinite;
+  animation-play-state: paused;
+}
+
+.propeller-right .rotor {
+  animation-direction: reverse;
+}
+
+.rotor-hub {
+  fill: #263b34;
+  stroke: #b3bda9;
+  stroke-width: 3;
+}
+
+#fpv-propellers[data-spinning="true"] .rotor {
+  animation-play-state: running;
+}
+
+@keyframes rotor-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #fpv-propellers .rotor {
+    animation: none;
+  }
+  button {
+    transition: none;
+  }
+}
+
+/* Mobile Responsive Hardening (390x844 verified) */
 @media (max-width: 850px) {
   header {
-    height: 98px;
-    padding: 13px 16px;
+    height: auto;
+    min-height: 58px;
+    padding: 10px 14px;
   }
   h1 {
-    font-size: 20px;
+    font-size: 18px;
+  }
+  h1 span {
+    display: none;
   }
   nav a {
     display: none;
@@ -362,128 +1431,75 @@ progress {
     height: 55vh;
     min-height: 350px;
   }
-  aside {
+  aside.stepper {
     width: 100%;
     min-width: 0;
     height: auto;
+    padding: 8px;
   }
-  section {
-    padding: 20px;
+  .map-layers-floating {
+    top: 10px;
+    right: 50px;
+  }
+  .map-layers-trigger {
+    font-size: 10px;
+    padding: 6px 10px;
+  }
+  .map-layers-popover {
+    width: 250px;
+    max-height: 42vh;
   }
   .map-label {
-    bottom: 15px;
-    left: 15px;
+    bottom: 12px;
+    left: 12px;
+    font-size: 8px;
+    padding: 6px 10px;
   }
-  h1 span {
+  .player {
+    left: 8px;
+    right: 8px;
+    bottom: 38px;
+    padding: 7px 9px;
+    border-radius: var(--radius-md);
+  }
+  .player-buttons {
+    gap: 4px;
+  }
+  .player-buttons button {
+    font-size: 10px;
+    padding: 6px 7px;
+  }
+  .player-buttons .check {
+    font-size: 10px;
+    margin-left: 0;
+  }
+  .player-track {
+    gap: 6px;
+  }
+  .player-track #playback-state {
     display: none;
   }
-}
-
-.geography-controls {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 2px;
-  margin: 14px 0;
-}
-.geography-check {
-  margin: 7px 0;
-}
-.geography-check i {
-  width: 10px;
-  height: 10px;
-  border-radius: 2px;
-  flex: none;
-}
-.geography-check span {
-  flex: 1;
-}
-.geography-check small {
-  color: #748274;
-  font-variant-numeric: tabular-nums;
-}
-.terrain-buttons {
-  display: flex;
-  gap: 6px;
-  margin-top: 8px;
-}
-.terrain-buttons button {
-  padding: 6px 9px;
-  font-size: 10px;
-}
-#terrain-help {
-  max-width: calc(100% - 225px);
-  z-index: 500;
-}
-#terrain-legend {
-  position: absolute;
-  right: 18px;
-  top: 18px;
-  z-index: 500;
-  background: #fffef3ed;
-  border: 1px solid #d7dfcd;
-  padding: 14px 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 9px;
-  font-size: 11px;
-  min-width: 170px;
-  color: #304b3b;
-}
-#terrain-legend b {
-  font-size: 9px;
-  letter-spacing: 1.5px;
-  margin-bottom: 3px;
-}
-#terrain-legend span {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-}
-#terrain-legend i {
-  width: 9px;
-  height: 9px;
-  border-radius: 1px;
-}
-#terrain-legend small {
-  font-size: 9px;
-  color: #64745f;
-  margin-top: 3px;
-}
-#terrain-credit {
-  position: absolute;
-  bottom: 3px;
-  right: 5px;
-  font-size: 9px;
-  background: #ffffffcf;
-  color: #475d51;
-  padding: 3px 5px;
-  z-index: 501;
-}
-#terrain-credit a {
-  color: inherit;
-}
-#terrain-help[hidden],
-#terrain-legend[hidden],
-#terrain-credit[hidden] {
-  display: none;
-}
-.leaflet-control-layers {
-  max-height: 65vh;
-  overflow: auto;
-}
-@media (max-width: 850px) {
-  #terrain-help {
+  .map-actions {
+    left: 50px;
     top: 10px;
+  }
+  .map-actions button {
+    font-size: 10px;
+    padding: 6px 9px;
+  }
+  #terrain-help {
+    top: 48px;
     left: 10px;
     max-width: calc(100% - 20px);
     font-size: 9px;
+    padding: 8px 10px;
   }
   #terrain-legend {
     top: auto;
-    bottom: 42px;
+    bottom: 158px;
     right: 10px;
     min-width: 0;
-    padding: 9px;
+    padding: 9px 11px;
     gap: 5px;
     font-size: 9px;
   }
@@ -497,251 +1513,35 @@ progress {
     font-size: 8px;
     max-width: 90%;
   }
-  .map-label {
-    font-size: 8px;
-    padding: 8px;
-  }
-}
-
-.map-actions {
-  position: absolute;
-  top: 14px;
-  left: 60px;
-  z-index: 600;
-}
-.map-actions button {
-  background: #fffef5ef;
-  box-shadow: 0 1px 5px #183b3520;
-}
-.player {
-  position: absolute;
-  bottom: 54px;
-  left: 16px;
-  right: 16px;
-  z-index: 600;
-  background: #fffef6f5;
-  border: 1px solid #ccd7c6;
-  border-radius: 6px;
-  padding: 10px 12px;
-  box-shadow: 0 3px 18px #173c3524;
-}
-.player-buttons {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  flex-wrap: wrap;
-}
-.player-buttons button {
-  padding: 7px 10px;
-}
-.player-buttons .check {
-  margin: 0 0 0 auto;
-  font-size: 11px;
-}
-.player-track {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-top: 8px;
-  font-size: 10px;
-  color: #53695d;
-}
-.player-track input {
-  flex: 1;
-  min-width: 70px;
-  accent-color: #376c50;
-}
-.player-track output {
-  font-family: Consolas, monospace;
-  white-space: nowrap;
-}
-#playback-state {
-  max-width: 190px;
-  text-align: right;
-}
-#play {
-  background: #24664d;
-  color: white;
-  border-color: #24664d;
-}
-#drone-view[aria-pressed="true"] {
-  background: #183b35;
-  color: #e2edc9;
-}
-.route-card.selected {
-  outline: 1px solid var(--route);
-  background: #e9efe1;
-}
-.route-choice {
-  border: 0;
-  background: none;
-  text-align: left;
-  padding: 0;
-  font-size: 12px;
-  font-weight: 600;
-  flex: 1;
-}
-.route-card .route-title label {
-  flex: 0;
-}
-#fpv-hud {
-  position: absolute;
-  top: 112px;
-  left: 22px;
-  right: 22px;
-  z-index: 550;
-  display: flex;
-  justify-content: center;
-  gap: 32px;
-  color: #f1ffe5;
-  text-shadow: 0 1px 4px #183b35;
-  background: #183b35bb;
-  padding: 9px;
-  font:
-    12px Consolas,
-    monospace;
-  pointer-events: none;
-}
-#fpv-hud[hidden],
-.draw-tools[hidden] {
-  display: none;
-}
-#terrain-help {
-  left: 18px;
-  top: 58px;
-}
-.draw-tools button {
-  font-size: 10px;
-}
-#seek:disabled {
-  opacity: 0.4;
-}
-@media (max-width: 850px) {
-  .player {
-    left: 8px;
-    right: 8px;
-    bottom: 38px;
-    padding: 7px;
-  }
-  .player-buttons {
-    gap: 4px;
-  }
-  .player-buttons button {
-    font-size: 10px;
-    padding: 6px;
-  }
-  .player-buttons .check {
-    font-size: 10px;
-    margin-left: 0;
-  }
-  .player-track {
-    gap: 6px;
-  }
-  .player-track #playback-state {
-    display: none;
-  }
-  .map-actions {
-    left: 51px;
-    top: 11px;
-  }
-  .map-actions button {
-    font-size: 10px;
-    padding: 7px;
-  }
-  #terrain-help {
-    top: 52px;
-    left: 10px;
-  }
-  #terrain-legend {
-    bottom: 158px;
+  .drone-coordinates {
+    font-size: 9px;
+    margin-top: 5px;
+    padding-top: 4px;
   }
   #fpv-hud {
     top: 151px;
-    gap: 12px;
+    gap: 10px;
+    font-size: 10px;
+    padding: 7px 10px;
+  }
+  #fpv-coordinates {
+    display: none;
+  }
+  #terrain-zoom-in,
+  #terrain-zoom-out {
+    min-width: 27px;
+    font-size: 13px;
+  }
+  .terrain-annotation-label {
+    max-width: 140px;
     font-size: 10px;
   }
 }
 
-.resilience-leader {
-  font-weight: 650;
-  color: #245b41;
-}
-.error {
-  color: #a04529 !important;
-}
-
-/* Flight instruments remain separate from the terrain and geographic data. */
-.drone-coordinates {
-  display: block;
-  margin-top: 7px;
-  color: #34574b;
-  font: 11px Consolas, monospace;
-  overflow-wrap: anywhere;
-}
-#fpv-hud {
-  top: 132px;
-  gap: 12px 25px;
-  flex-wrap: wrap;
-}
-#fpv-coordinates {
-  flex-basis: 100%;
-  text-align: center;
-  font-size: 10px;
-}
-#terrain-zoom-in, #terrain-zoom-out {
-  font-size: 16px;
-  font-weight: 650;
-  min-width: 32px;
-  padding: 4px 9px;
-}
-.viewport:has(#terrain[hidden]) .terrain-annotations {
-  display: none !important;
-}
-.viewport:has(#fpv-hud:not([hidden])) #terrain-legend {
-  display: none;
-}
-.terrain-annotation-label {
-  max-width: 220px;
-  white-space: normal;
-  overflow-wrap: anywhere;
-}
-#fpv-propellers {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-  pointer-events: none;
-  z-index: 520;
-}
-#fpv-propellers[hidden] { display: none; }
-.propeller {
-  position: absolute;
-  top: -78px;
-  width: 190px;
-  height: 150px;
-  transform: perspective(220px) rotateX(58deg);
-}
-.propeller-left { left: -85px; }
-.propeller-right { right: -85px; }
-.propeller svg { width: 100%; height: 100%; overflow: visible; }
-.rotor-disc { fill: #233e3b; opacity: .09; stroke: #29443c; stroke-width: 1; }
-.rotor { fill: #294039; opacity: .55; transform-origin: 80px 80px; animation: rotor-spin .12s linear infinite; animation-play-state: paused; }
-.propeller-right .rotor { animation-direction: reverse; }
-.rotor-hub { fill: #263b34; stroke: #b3bda9; stroke-width: 3; }
-#fpv-propellers[data-spinning="true"] .rotor { animation-play-state: running; }
-@keyframes rotor-spin { to { transform: rotate(360deg); } }
-@media (prefers-reduced-motion: reduce) {
-  #fpv-propellers .rotor { animation: none; }
-}
-@media (max-width: 850px) {
-  .drone-coordinates { font-size: 9px; margin-top: 5px; }
-  #fpv-hud { top: 151px; gap: 10px; font-size: 10px; padding: 7px; }
-  #fpv-coordinates { display: none; }
-  #terrain-zoom-in, #terrain-zoom-out { min-width: 27px; font-size: 13px; }
-  .terrain-annotation-label { max-width: 140px; font-size: 10px; }
-}
 #constraint-status:empty {
   display: none;
 }
+
 #geography-status[aria-busy="true"]::after {
   content: " · cargando capas…";
 }

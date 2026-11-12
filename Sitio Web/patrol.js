@@ -826,8 +826,8 @@ function request() {
 function busy(value) {
   calculating = value;
   $("calculate").textContent = value
-    ? "Calculando técnicas y corredores diferentes…"
-    : "Comparar las cuatro técnicas";
+    ? "Calculando rutas y alternativas…"
+    : "Generar rutas";
   refreshPlaybackControls();
 }
 async function resolveRouteGeometry(answer, signal) {
@@ -913,6 +913,7 @@ async function calculate(overrides = null) {
     if (result.status === "blocked") $("route-mode").value = "comparison";
     renderResults();
     refreshPlaybackControls();
+    openStep(2);
     message(
       result.status === "blocked"
         ? "Misión bloqueada: " +
@@ -1631,7 +1632,9 @@ function refreshPlaybackControls() {
     $("calculate").textContent =
       constraintAssessment?.valid === false
         ? "Obtener diagnóstico y probabilidades"
-        : "Comparar las cuatro técnicas";
+        : "Generar rutas";
+  if ($("go-to-step-3")) $("go-to-step-3").disabled = !ready;
+  if ($("go-to-step-4")) $("go-to-step-4").disabled = !fresh || busy;
   $("play").disabled = !ready || !!followSession?.preparing;
   $("simulate").disabled = !ready;
   $("replay-nominal").disabled = !ready;
@@ -1661,7 +1664,112 @@ function refreshPlaybackControls() {
     $("player").dataset.phase = "idle";
     $("player").dataset.playing = "false";
   }
+  updateStepSummaries();
 }
+function openStep(stepNumber) {
+  for (let i = 1; i <= 4; i++) {
+    const card = $(`step-${i}`);
+    if (!card) continue;
+    const isTarget = i === stepNumber;
+    card.classList.toggle("is-open", isTarget);
+    const header = card.querySelector(".step-header");
+    if (header) header.setAttribute("aria-expanded", String(isTarget));
+  }
+  updateStepSummaries();
+}
+function toggleStep(stepNumber) {
+  const card = $(`step-${stepNumber}`);
+  if (!card) return;
+  const willOpen = !card.classList.contains("is-open");
+  if (willOpen) {
+    openStep(stepNumber);
+  } else {
+    card.classList.remove("is-open");
+    card.querySelector(".step-header")?.setAttribute("aria-expanded", "false");
+    updateStepSummaries();
+  }
+}
+function updateStepSummaries() {
+  const baseSelect = $("base");
+  const baseName =
+    baseSelect?.options?.[baseSelect.selectedIndex]?.text || "Valparaíso";
+  const shortBase = baseName.replace(/^Decima Sexta de\s*/i, "");
+  const step1Done = Boolean(target && fresh);
+  if ($("step-summary-1")) {
+    $("step-summary-1").textContent = `${step1Done ? "✓ " : ""}Base: ${shortBase} | Dron: Mavic 3T${target ? " | Polígono listo" : ""}`;
+  }
+  if ($("step-badge-1")) $("step-badge-1").textContent = step1Done ? "✓" : "01";
+  $("step-1")?.classList.toggle("is-done", step1Done);
+
+  const chosenSelect = $("chosen");
+  const chosenLabel =
+    chosenSelect?.options?.[chosenSelect.selectedIndex]?.text || "Sin selección";
+  const step2Done = Boolean(fresh && result);
+  if ($("step-summary-2")) {
+    $("step-summary-2").textContent = step2Done
+      ? `✓ Activa: ${chosenLabel} | ${result?.diversity?.count ?? 4} circuitos`
+      : "Genera las rutas en el Paso 1 para comparar";
+  }
+  if ($("step-badge-2")) $("step-badge-2").textContent = step2Done ? "✓" : "02";
+  $("step-2")?.classList.toggle("is-done", step2Done);
+
+  const speedSelect = $("speed");
+  const speedText =
+    speedSelect?.options?.[speedSelect.selectedIndex]?.text || "20×";
+  const threatCount = (events?.length || 0) + (fire ? 1 : 0);
+  const step3Done = Boolean(simulation);
+  if ($("step-summary-3")) {
+    $("step-summary-3").textContent = `${step3Done ? "✓ " : ""}Velocidad: ${speedText} | ${threatCount ? `${threatCount} amenaza(s)` : "Sin amenazas extra"}`;
+  }
+  if ($("step-badge-3")) $("step-badge-3").textContent = step3Done ? "✓" : "03";
+  $("step-3")?.classList.toggle("is-done", step3Done);
+
+  const fmtSelect = $("export-format");
+  const fmtText = fmtSelect?.value === "geojson" ? "GeoJSON 2D" : "JSON 3D";
+  if ($("step-summary-4")) {
+    $("step-summary-4").textContent = `${fresh ? "✓ Listo" : "Pendiente"} | Formato: ${fmtText}`;
+  }
+  if ($("step-badge-4")) $("step-badge-4").textContent = fresh ? "✓" : "04";
+  $("step-4")?.classList.toggle("is-done", Boolean(fresh));
+}
+document.querySelectorAll("[data-step-toggle]").forEach((header) => {
+  const num = Number(header.getAttribute("data-step-toggle"));
+  header.addEventListener("click", (e) => {
+    if (e.target.closest("button, a, input, select")) return;
+    toggleStep(num);
+  });
+  header.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      toggleStep(num);
+    }
+  });
+});
+if ($("go-to-step-3")) {
+  $("go-to-step-3").onclick = () => openStep(3);
+}
+if ($("go-to-step-4")) {
+  $("go-to-step-4").onclick = () => openStep(4);
+}
+if ($("map-layers-trigger") && $("map-layers-floating")) {
+  $("map-layers-trigger").onclick = (e) => {
+    e.stopPropagation();
+    const wrap = $("map-layers-floating");
+    const nextOpen = wrap.dataset.open !== "true";
+    wrap.dataset.open = String(nextOpen);
+    $("map-layers-trigger").setAttribute("aria-expanded", String(nextOpen));
+  };
+  document.addEventListener("click", (e) => {
+    const wrap = $("map-layers-floating");
+    if (wrap?.dataset.open === "true" && !wrap.contains(e.target)) {
+      wrap.dataset.open = "false";
+      $("map-layers-trigger")?.setAttribute("aria-expanded", "false");
+    }
+  });
+}
+["base", "weather", "chosen", "speed", "export-format"].forEach((id) => {
+  $(id)?.addEventListener("change", updateStepSummaries);
+});
 function updateFlightLog(sample) {
   const progress = detectionProgress(simulation.detection, sample.time_s);
   const signature = `${progress.detected}:${progress.reported}:${sample.ended}`;
@@ -2133,6 +2241,12 @@ for (const id of [
     for (const commune of model.communes || [])
       $("commune").append(new Option(commune.name, String(commune.id)));
     refreshMapVisuals();
+    if (
+      new URLSearchParams(location.search).get("view") === "3d" ||
+      location.hash === "#3d"
+    ) {
+      setView3d(true);
+    }
     refreshSources();
     wind();
     updateBudgetNote();

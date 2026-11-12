@@ -78,6 +78,7 @@ function invalidate() {
   ++requestNumber;
   lastResult = null;
   $("export").disabled = true;
+  $("export").hidden = true;
   if (routeLayer) {
     map.removeLayer(routeLayer);
     routeLayer = null;
@@ -86,6 +87,7 @@ function invalidate() {
   $("calculate").disabled = !$("origin").value || !$("destination").value;
   $("replan").disabled = false;
   message("Puntos o escenario modificados: vuelve a calcular.");
+  updateAerialSummaries();
 }
 for (const id of ["origin", "destination"])
   $(id).addEventListener("change", () => {
@@ -134,9 +136,12 @@ $("reset").onclick = () => {
     map.removeLayer(destinationMarker);
     destinationMarker = null;
   }
+  const defaultBaseIdx = data?.bases?.findIndex((b) => b.provider_id === "104") ?? -1;
+  if (defaultBaseIdx >= 0) $("bases").value = String(defaultBaseIdx);
   invalidate();
   marker("origin");
   $("events-status").textContent = "Sin eventos simulados.";
+  openAerialStep(1);
 };
 $("bases").onchange = () => {
   if ($("bases").value === "") return;
@@ -151,6 +156,7 @@ $("examples").onchange = () => {
     data.examples[Number($("examples").value)].coordinates.join(", ");
   invalidate();
   marker("destination");
+  openAerialStep(2);
 };
 for (const id of [
   "mode",
@@ -270,22 +276,35 @@ const reasons = {
   historical_class_unknown:
     "La política preventiva excluye un tramo o extremo sin información histórica.",
   endpoint_blocked: "Un extremo está dentro de una restricción o bloqueo.",
+  aip_endpoint_restriction:
+    "Un punto de la misión se encuentra en una zona aérea restringida (DGAC/AIP).",
+  aip_restriction: "Zona aérea restringida (DGAC/AIP).",
+  firms_hotspot: "Foco térmico o anomalía satelital (NASA FIRMS).",
+  synthetic_event: "Bloqueo simulado por el usuario.",
+  endpoint_in_blocked_event:
+    "El punto de inicio o destino cae dentro de un bloqueo activo.",
+  no_outbound_on_admitted_graph:
+    "No existe una ruta de ida segura con las restricciones actuales.",
+  no_return_on_admitted_graph:
+    "No existe una ruta de regreso segura a la base con las restricciones actuales.",
   no_outbound_or_return: "No existe ida o retorno permitido en este escenario.",
   insufficient_return_budget:
-    "El recorrido excede el presupuesto de tiempo con reserva.",
-  budget_exhausted: "El presupuesto utilizable ya está agotado.",
-  weather_outside_profile: "La meteorología queda fuera del perfil académico.",
-  missing_weather_time: "No hay pronóstico para la hora elegida.",
+    "El recorrido excede el presupuesto de batería disponible (incluyendo reserva).",
+  budget_exhausted: "El presupuesto de tiempo utilizable ya está agotado.",
+  weather_outside_profile:
+    "La meteorología (viento o temperatura) supera el límite seguro de vuelo.",
+  missing_weather_time: "No hay pronóstico meteorológico para la hora elegida.",
   unknown_weather: "Faltan datos meteorológicos requeridos.",
   stale_weather_acquisition: "El pronóstico online necesita actualizarse.",
   online_time_must_be_current: "En modo online debes usar la hora UTC actual.",
   closure_during_segment_no_escape_modelled:
-    "Misión interrumpida durante un segmento; no se modela una maniobra de escape.",
-  disconnected: "Los puntos están desconectados en la red candidata.",
+    "Misión interrumpida en pleno tramo; no se modela maniobra de escape fuera de nodos.",
+  disconnected: "Los puntos están desconectados en la red de corredores.",
 };
 function render(d) {
   lastResult = d;
   $("export").disabled = false;
+  $("export").hidden = false;
   $("alternatives").replaceChildren();
   if (routeLayer) map.removeLayer(routeLayer);
   routeLayer = L.featureGroup().addTo(map);
@@ -437,6 +456,7 @@ async function calculate(replan = false, comparison = false) {
   renderDiagnostics(null);
   lastResult = null;
   $("export").disabled = true;
+  $("export").hidden = true;
   $("calculate").disabled = true;
   $("replan").disabled = true;
   $("compare").disabled = true;
@@ -775,6 +795,45 @@ function refreshWeatherHours() {
 }
 $("wind-limit").addEventListener("change", refreshWeatherHours);
 
+const endpointLabels = {
+  home: "la base de despegue",
+  origin: "el punto de inicio",
+  current: "la posición actual",
+  destination: "el punto de destino",
+};
+function formatCauseFriendly(cause) {
+  if (cause.code === "aip_endpoint_restriction" && cause.zones?.length) {
+    return cause.zones
+      .map((z) => {
+        const eps = z.endpoints || [];
+        let targetText = "Un extremo de la misión";
+        if (eps.includes("home") || eps.includes("origin"))
+          targetText = "La base de despegue";
+        else if (eps.includes("destination"))
+          targetText = "El punto de destino";
+        else if (eps.includes("current"))
+          targetText = "La posición actual del dron";
+        return `Error: ${targetText} está en una zona restringida (${z.id}).`;
+      })
+      .join(" ");
+  }
+  let text = reasons[cause.code] || cause.code;
+  if (cause.zones?.length) {
+    text +=
+      " (" +
+      cause.zones
+        .map(
+          (z) =>
+            `${z.id}: ${(z.endpoints || []).map((e) => endpointLabels[e] || e).join(", ")}`,
+        )
+        .join("; ") +
+      ")";
+  }
+  if (cause.endpoint) {
+    text += ` (${endpointLabels[cause.endpoint] || cause.endpoint})`;
+  }
+  return `Error: ${text}`;
+}
 function renderDiagnostics(d) {
   const box = $("diagnostics");
   box.replaceChildren();
@@ -791,65 +850,161 @@ function renderDiagnostics(d) {
           ? "propuesto"
           : "de misión");
     box.append(title);
-    const add = (text) => {
-      const p = document.createElement("p");
-      p.className = "small";
-      p.textContent = text;
-      box.append(p);
+
+    const list = document.createElement("ul");
+    list.className = "diag-list";
+    const addBullet = (icon, text, kind = "info") => {
+      const li = document.createElement("li");
+      li.className = `diag-item diag-${kind}`;
+      const badge = document.createElement("span");
+      badge.className = "diag-icon";
+      badge.textContent = icon;
+      const body = document.createElement("span");
+      body.textContent = text;
+      li.append(badge, body);
+      list.append(li);
     };
-    add(
-      "Motivo principal: " +
-        (reasons[item.primary_reason] ||
-          item.primary_reason ||
-          "sin rechazo en la generación. Revisar admisibilidad de la referencia."),
-    );
-    for (const cause of item.causes) {
-      let text = reasons[cause.code] || cause.code;
-      if (cause.zones)
-        text +=
-          " · " +
-          cause.zones
-            .map((z) => z.id + " (" + z.endpoints.join(", ") + ")")
-            .join("; ");
-      if (cause.endpoint) text += " · " + cause.endpoint;
-      add("Causa comprobada: " + text);
+
+    if (item.primary_reason) {
+      addBullet(
+        "❌",
+        "Motivo principal: " +
+          (reasons[item.primary_reason] || item.primary_reason),
+        "error",
+      );
+    } else {
+      addBullet(
+        "✓",
+        "Recorrido viable: sin rechazos en la generación de la ruta.",
+        "ok",
+      );
     }
-    for (const check of item.not_tested)
-      add(
-        "Sin comprobar " +
+
+    for (const cause of item.causes || []) {
+      addBullet("❌", formatCauseFriendly(cause), "error");
+    }
+    for (const check of item.not_tested || []) {
+      addBullet(
+        "⚠️",
+        "Sin comprobar (" +
           check.check +
-          ": " +
+          "): " +
           (reasons[check.reason] || check.reason),
+        "warn",
       );
-    for (const [code, count] of Object.entries(
-      item.excluded_edges_by_cause || {},
-    ))
-      add(
-        "Arcos excluidos por " + (reasons[code] || code) + ": " + count + ".",
-      );
-    for (const [zone, count] of Object.entries(
-      item.aip_edge_intersections || {},
-    ))
-      add("Zona AIP " + zone + ": " + count + " arcos intersectados.");
+    }
     const oracle = item.independent_oracle;
-    if (oracle.state === "computed")
-      add(
+    if (oracle && oracle.state === "computed") {
+      addBullet(
+        "ℹ️",
         "Dijkstra independiente: " +
           (oracle.minimum_remaining_s === null
-            ? "sin ida o regreso en el grafo admitido"
+            ? "sin ida o regreso admisible en la red"
             : oracle.minimum_remaining_s.toFixed(1) +
-              " s mínimos, incluida observación " +
+              " s mínimos (incluida observación de " +
               oracle.observation_s +
-              " s") +
-          " · restante " +
+              " s)") +
+          " · autonomía disponible " +
           oracle.remaining_s.toFixed(1) +
           " s." +
           (oracle.proposed_rejection_contradiction
             ? " Discrepancia detectada: requiere revisión."
             : ""),
+        "info",
       );
-    add(
-      "Las causas pueden coincidir en una misión. La salud del servicio no garantiza factibilidad. El contraste se limita a esta malla y hora.",
-    );
+    }
+    box.append(list);
+
+    const excludedEntries = Object.entries(item.excluded_edges_by_cause || {});
+    const aipEntries = Object.entries(item.aip_edge_intersections || {});
+    if (excludedEntries.length || aipEntries.length) {
+      const tech = document.createElement("details");
+      tech.className = "diag-tech";
+      const sum = document.createElement("summary");
+      sum.textContent = "Ver detalle técnico de tramos y zonas afectadas";
+      tech.append(sum);
+      for (const [code, count] of excludedEntries) {
+        const p = document.createElement("p");
+        p.className = "small";
+        p.textContent =
+          "Tramos excluidos por " + (reasons[code] || code) + ": " + count + ".";
+        tech.append(p);
+      }
+      for (const [zone, count] of aipEntries) {
+        const p = document.createElement("p");
+        p.className = "small";
+        p.textContent = "Zona restringida " + zone + ": " + count + " tramos intersectados.";
+        tech.append(p);
+      }
+      box.append(tech);
+    }
   }
 }
+function openAerialStep(stepNum) {
+  for (let i = 1; i <= 3; i++) {
+    const step = $(`aerial-step-${i}`);
+    if (!step) continue;
+    const isOpen = i === stepNum;
+    step.classList.toggle("is-open", isOpen);
+    step.querySelector(".aerial-step-header")?.setAttribute("aria-expanded", String(isOpen));
+  }
+  updateAerialSummaries();
+}
+function toggleAerialStep(stepNum) {
+  const step = $(`aerial-step-${stepNum}`);
+  if (!step) return;
+  if (!step.classList.contains("is-open")) openAerialStep(stepNum);
+  else {
+    step.classList.remove("is-open");
+    step.querySelector(".aerial-step-header")?.setAttribute("aria-expanded", "false");
+    updateAerialSummaries();
+  }
+}
+function updateAerialSummaries() {
+  const baseSel = $("bases");
+  const baseRaw =
+    baseSel?.options?.[baseSel.selectedIndex]?.text || "Inicio libre";
+  const shortBase = baseRaw.split(" · ")[0].replace(/^Decima\s+/i, "Décima ");
+  const exSel = $("examples");
+  const destText =
+    exSel?.value !== "" && exSel?.options?.[exSel.selectedIndex]
+      ? exSel.options[exSel.selectedIndex].text.split(" · ")[0]
+      : $("destination")?.value
+        ? "Coordenadas fijadas"
+        : "Sin destino";
+  const step1Done = Boolean($("origin")?.value && $("destination")?.value);
+  if ($("aerial-summary-1")) {
+    $("aerial-summary-1").textContent = `${step1Done ? "✓ " : ""}Base: ${shortBase} | Destino: ${destText}`;
+  }
+  if ($("aerial-badge-1")) $("aerial-badge-1").textContent = step1Done ? "✓" : "1";
+  $("aerial-step-1")?.classList.toggle("is-done", step1Done);
+
+  const modeSel = $("mode");
+  const modeText = modeSel?.value === "trip" ? "Solo ida" : "Misión (ida y regreso)";
+  const methodText = $("method")?.value === "reference" ? "Dijkstra" : "Propuesto";
+  if ($("aerial-summary-2")) {
+    $("aerial-summary-2").textContent = `✓ ${modeText} | Método: ${methodText}`;
+  }
+
+  const activeEvents = events.filter((e) => e.state !== "resolved").length;
+  if ($("aerial-summary-3")) {
+    $("aerial-summary-3").textContent = activeEvents
+      ? `⚠️ ${activeEvents} bloqueo(s) simulado(s) activo(s)`
+      : "Sin eventos simulados";
+  }
+}
+document.querySelectorAll("[data-aerial-toggle]").forEach((header) => {
+  const num = Number(header.getAttribute("data-aerial-toggle"));
+  header.addEventListener("click", (e) => {
+    if (e.target.closest("button")) return;
+    toggleAerialStep(num);
+  });
+  header.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      toggleAerialStep(num);
+    }
+  });
+});
+if ($("next-to-step-2")) $("next-to-step-2").onclick = () => openAerialStep(2);
+if ($("next-to-step-3")) $("next-to-step-3").onclick = () => openAerialStep(3);
