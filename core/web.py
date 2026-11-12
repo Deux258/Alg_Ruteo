@@ -89,7 +89,7 @@ def status(conn):
 class Handler(BaseHTTPRequestHandler):
     def do_POST(self):
         parsed=urlsplit(self.path);path=parsed.path;params=parse_qs(parsed.query)
-        if path not in ['/api/aereo/rutas','/api/aereo/replanificar','/api/aereo/comparar','/api/aereo/patrullaje','/api/aereo/patrullaje/simular','/api/aereo/patrullaje/validar','/api/aereo/patrullaje/objetivo']:
+        if path not in ['/api/aereo/rutas','/api/aereo/replanificar','/api/aereo/comparar','/api/aereo/patrullaje','/api/aereo/patrullaje/simular','/api/aereo/patrullaje/validar','/api/aereo/patrullaje/objetivo','/api/aereo/patrullaje/jornada']:
             return self.reply(404,b'{"error":"not_found"}')
         try:
             length=int(self.headers.get('Content-Length','0'))
@@ -124,7 +124,15 @@ class Handler(BaseHTTPRequestHandler):
                     return self.reply(429,b'{"error":"Hay un patrullaje en calculo. Reintentar al finalizar."}')
                 try:
                     from core.patrol import calculate,simulate
-                    if path.endswith('/simular'):
+                    if path.endswith('/jornada'):
+                        from core.patrol_day import daily
+                        if os.getenv('PATROL_CONTEXT'):result=daily(patrol_model(),request,on_result=remember_patrol)
+                        else:
+                            with connect() as conn:
+                                current=status(conn)
+                                if not current:return self.reply(503,b'{"status":"not_ready"}')
+                                result=daily(patrol_model(conn,current),request,conn,remember_patrol)
+                    elif path.endswith('/simular'):
                         previous=previous_patrol(request.get('sha256'))
                         if previous is None:raise ValueError('Resultado no disponible: recalcular la misión antes de simular')
                         if previous.get('geographic_scene'):
@@ -224,7 +232,9 @@ class Handler(BaseHTTPRequestHandler):
                 def build(model,engine):
                     if path.endswith('/monitoreo'):
                         from core.patrol_monitoring import catalogue
-                        return catalogue(model)
+                        from core.patrol_day import programmes
+                        catalog=catalogue(model);catalog['programmes']=programmes(catalog,model)
+                        return catalog
                     if path.endswith('/escena3d'):
                         result=scene_summary(model,commune_id) if summary or commune_id else scene_data(model)
                         return dict(result,engine=engine)

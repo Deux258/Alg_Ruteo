@@ -25,11 +25,20 @@
             <h2>01 · Misión</h2>
             <button id="demo" class="text">Cargar ejemplo</button>
           </div>
+          <label for="daily-programme">Ruta principal de monitoreo</label>
+          <select id="daily-programme"></select>
+          <label for="daily-date">Jornada simulada</label><input id="daily-date" type="date">
+          <div class="buttons"><button id="prepare-day">Ver rutas del día</button><button id="play-day" disabled>Simular jornada</button></div>
+          <button id="stop-day" disabled>Detener jornada</button>
+          <p id="daily-status" class="muted" role="status">Cargando programas de monitoreo…</p>
+          <div id="daily-flights"></div>
+          <details><summary>Planificación individual por sector</summary>
           <label for="patrol-catalogue">Monitoreo de toda la zona</label>
           <select id="patrol-catalogue"><option value="">Zona personalizada</option></select>
           <label class="check"><input id="show-sectors" type="checkbox" checked> Mostrar todos los sectores</label>
           <p id="monitoring-status" class="muted" role="status">Cargando cobertura de la zona…</p>
           <div class="buttons"><button id="start-monitoring">Planificar e iniciar sector</button><button id="next-sector">Siguiente sector</button></div>
+          </details>
           <label for="base">Base de salida</label
           ><select id="base"></select>
           <div class="buttons">

@@ -19,7 +19,7 @@ identificados por su run; no se reemplaza una publicación hasta terminar las ca
 
 ## Flujo principal
 
-1. Elegir un sector en **Monitoreo de toda la zona** y pulsar **Planificar e iniciar sector**. El catálogo cubre toda el área de estudio; cada vuelo se valida antes de despegar. También se conserva el objetivo personalizado dibujado o importado.
+1. Elegir una **Ruta principal de monitoreo** por base y fecha. **Ver rutas del día** prepara y guarda sus vuelos completos; **Simular jornada** los reproduce en secuencia, con cambio de batería en la base. La jornada inicial ya preparada aparece directamente sobre el mapa. La fecha rota los sectores asignados y las zonas inviables permanecen pendientes. El modo **Planificación individual por sector** conserva el dibujo y la importación de objetivos.
 2. Ajustar altura AGL, viento, batería, presupuesto, riesgo y estaciones virtuales.
 3. Comparar Dijkstra por metros, Dijkstra con parámetros, Gurobi y recocido.
 4. Elegir circuitos distintos o comparar los resultados originales de las cuatro técnicas.

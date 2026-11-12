@@ -4,6 +4,8 @@
 
 `GET /api/aereo/patrullaje/monitoreo` devuelve el catálogo y el progreso actual, sin reutilizar el progreso congelado del resumen cartográfico.
 
+Incluye `programmes`, los programas principales por base. `POST /api/aereo/patrullaje/jornada` acepta `operation=plan|prepare`, `programme_id`, `date` ISO y el perfil habitual. Devuelve los vuelos completos ordenados con geometría, tiempos, referencias de misión, cambio de batería entre vuelos y sectores pendientes. `plan` reutiliza las jornadas guardadas; `prepare` las calcula y valida. Si un sector no permite cobertura completa, conserva su diagnóstico e intenta los siguientes sectores de la rotación hasta completar los dos vuelos o agotar las alternativas previstas. La reproducción encadena solo vuelos viables de la misma base y se detiene ante incidentes.
+
 `POST /api/aereo/patrullaje` acepta `patrol_id` del catálogo vigente. El servidor resuelve objetivo y base, y calcula las cuatro técnicas existentes sobre la infraestructura vigente. Sin ID se conserva el objetivo personalizado. Ningún cliente puede configurar la tasa de incendios.
 
 `POST /api/aereo/patrullaje/simular` conserva sha256, method, route_set, seed, scenario_index y scenario. `fire_mode=automatic` es el valor predeterminado; `fire_mode=manual` con `fire=[lon,lat]` solo sirve para diagnóstico. `scenario=nominal` desactiva fallas de infraestructura, pero mantiene el proceso de incendios. `recovery_method` permite elegir una técnica y `return_destination=auto|origin|station` fija la política de aterrizaje. Parámetros de probabilidad/ventana aportados por el cliente se rechazan.

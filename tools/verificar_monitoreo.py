@@ -41,6 +41,7 @@ def main():
         checks['viewport_no_horizontal_clipping']=page.evaluate('document.documentElement.scrollWidth<=innerWidth')
         page.locator('#show-sectors').uncheck();page.locator('#show-sectors').check()
         sector=min((s for s in catalog['sectors'] if s['area_m2']>20000),key=lambda s:transform(FWD,shape(s['target_polygon'])).representative_point().distance(Point(FWD(*s['origin']))))
+        page.get_by_text('Planificación individual por sector',exact=True).click()
         page.locator('#patrol-catalogue').select_option(sector['id'])
         checks['selection_has_target']=not page.locator('#calculate').is_disabled()
         page.screenshot(path=str(folder/'01_catalogo.png'))

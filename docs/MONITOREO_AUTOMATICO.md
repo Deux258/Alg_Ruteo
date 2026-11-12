@@ -1,5 +1,11 @@
 # Monitoreo automático de incendios
 
+## Rutas principales y jornada
+
+El panel inicial ofrece un programa por base y una fecha. **Ver rutas del día** prepara automáticamente dos vuelos completos con Dijkstra ponderado, verifica terreno/cobertura y guarda sus trayectorias. Las jornadas ya preparadas aparecen dibujadas al abrir la página. Se puede pulsar un vuelo para inspeccionarlo o **Simular jornada** para reproducir ambos en orden, con 120 s simulados de cambio de batería en la misma base. El reproductor permite pausar y cambiar perspectiva; **Detener jornada** cancela la secuencia. Una detección o un regreso interrumpido detiene la jornada para revisar el incidente. No se traslada el dron entre bases por teletransporte.
+
+La fecha organiza una rotación determinista por todos los sectores asignados a esa base; dos vuelos no se presentan como vigilancia diaria del territorio completo. El clima sigue siendo el del snapshot seleccionado. La planificación individual queda en un panel desplegable. Las cuatro técnicas de recuperación siguen disponibles al detectar un foco. La API es `POST /api/aereo/patrullaje/jornada` con `operation=plan|prepare`, `programme_id`, `date` y el perfil habitual; las rutas se guardan en `datos/runs/monitoreo/daily/` y se invalidan al cambiar datos, perfil o código del planificador.
+
 Seleccionar un sector en **Monitoreo de toda la zona** y pulsar **Planificar e iniciar sector**. El servidor resuelve su base y polígono, calcula las técnicas, comprueba recursos/cobertura y reproduce el vuelo. **Siguiente sector** omite los sectores ya observados completamente en la campaña simulada. Los objetivos dibujados/importados siguen disponibles.
 
 ## Base empírica y significado de la probabilidad

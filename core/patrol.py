@@ -858,7 +858,7 @@ def _finish_result(result,started):
     return result
 
 
-def calculate(model, request, conn=None, terrain_override=None):
+def calculate(model, request, conn=None, terrain_override=None, primary_only=False):
     from core.mission_constraints import assess_constraints
     started=time.monotonic()
     if not isinstance(request,dict):raise ValueError('Solicitud JSON debe ser un objeto')
@@ -937,7 +937,7 @@ def calculate(model, request, conn=None, terrain_override=None):
     graph.routing_targets=sorted({home}|{s['node'] for s in stations}|{i for task in tasks for i in task['nodes']})
     result['timings']['setup_s']=time.monotonic()-started
     routes={};comparison_started=time.monotonic()
-    for method in METHODS:
+    for method in (('dijkstra_weighted',) if primary_only else METHODS):
         begin=time.monotonic();method_graph=graph.routing_session()
         metric='distance_m' if method=='dijkstra_distance' else 'cost'
         states=oriented_tasks(tasks,method_graph,metric)
@@ -964,7 +964,10 @@ def calculate(model, request, conn=None, terrain_override=None):
         routes[method]=route
     result['timings']['comparison_s']=time.monotonic()-comparison_started
     from core.patrol_alternatives import distinct_circuits
-    begin=time.monotonic();alternatives,diversity=distinct_circuits(graph,tasks,home,stations,target,routes)
+    begin=time.monotonic()
+    if primary_only:
+        alternatives={};diversity=dict(count=0,requested=0,status='not_requested',reason='Recorrido principal de la jornada')
+    else:alternatives,diversity=distinct_circuits(graph,tasks,home,stations,target,routes)
     result['timings']['alternatives_s']=time.monotonic()-begin
     begin=time.monotonic();evaluation=evaluate_failures({**routes,**alternatives},graph)
     result['timings']['evaluation_s']=time.monotonic()-begin

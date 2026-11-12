@@ -104,6 +104,94 @@ const sectorsLayer = L.layerGroup().addTo(map);
 const recoveryLayer = L.layerGroup().addTo(map);
 const recoveryVisibility = new Map();
 let monitoring = null;
+const dailyLayer=L.layerGroup().addTo(map);
+let dayPlan=null,dayRevision=0,dayBusy=false;
+const dayRunner={active:false,index:0,transition:false,timer:null,token:0};
+function stopDay() {
+  dayRunner.active=false;dayRunner.token++;clearTimeout(dayRunner.timer);
+  dayRunner.timer=null;
+  $("stop-day").disabled=true;
+}
+function dailyRequest(operation) {
+  return {operation,programme_id:$("daily-programme").value,date:$("daily-date").value,
+    time:$("weather").value,seed:Number($("seed").value),
+    preferences:{altitude_agl_m:Number($("altitude").value),wind_limit_ms:Number($("wind").value),
+      battery_budget_s:Number($("battery").value),mission_budget_s:Number($("budget").value),
+      risk_weight:Number($("risk").value),historical_multiplier:Number($("history").value)}};
+}
+function renderDay() {
+  dailyLayer.clearLayers();$("daily-flights").replaceChildren();
+  const ready=dayPlan?.flights.filter(f=>f.status==='ready') || [];
+  $("play-day").disabled=dayBusy || !ready.length;
+  if (!dayPlan) return;
+  $("daily-status").textContent=`${dayPlan.name} · ${dayPlan.date} · ${ready.length} vuelos listos · ${(dayPlan.total_time_s/60).toFixed(1)} min con cambio de batería en base. ${dayPlan.pending_sectors?.length || 0} sectores pendientes por restricciones o cobertura. Clima de la hora del snapshot elegida.`;
+  dayPlan.flights.forEach((flight,index)=>{
+    const button=document.createElement("button");button.type="button";button.disabled=flight.status!=='ready';
+    button.textContent=`${flight.name} · ${flight.status==='ready'?`${(flight.time_s/60).toFixed(1)} min`:flight.reason || flight.status}`;
+    button.onclick=()=>{stopDay();useDayFlight(flight,false).catch(e=>message(e.message,true));};
+    $("daily-flights").append(button);
+    if (flight.coordinates.length) L.polyline(flight.coordinates.map(c=>[c[1],c[0]]),{
+      color:["#326b99","#b17724","#90508d","#237c55"][index%4],weight:4,
+    }).bindTooltip(`${flight.name} · base ${dayPlan.base_id}`).on("click",()=>button.click()).addTo(dailyLayer);
+  });
+  if (dailyLayer.getLayers().length)map.fitBounds(L.featureGroup(dailyLayer.getLayers()).getBounds().pad(.15));
+}
+async function loadDay(prepare=false) {
+  if (!model || !$("daily-programme").value || calculating || simulationLoading) return;
+  stopDay();playing=false;dayPlan=null;dailyLayer.clearLayers();$("daily-flights").replaceChildren();
+  const revision=++dayRevision;dayBusy=true;
+  $("prepare-day").disabled=true;$("play-day").disabled=true;
+  $("daily-status").textContent=prepare?"Preparando los recorridos completos del día sobre el terreno. Se guardan para reutilizarlos…":"Consultando la jornada…";
+  try {
+    const plan=await api("/api/aereo/patrullaje/jornada",dailyRequest(prepare?"prepare":"plan"));
+    if (revision!==dayRevision)return;
+    dayPlan=plan;dayBusy=false;renderDay();
+    if (plan.status==='requires_preparation')$("daily-status").textContent=`${plan.name}: ${plan.flights.length} vuelos asignados automáticamente. Pulsa «Ver rutas del día» para prepararlos una vez; después quedan listos para seleccionar.`;
+  } catch(e){if(revision===dayRevision)$("daily-status").textContent=e.message;}
+  finally{if(revision===dayRevision){dayBusy=false;$("prepare-day").disabled=false;$("play-day").disabled=!dayPlan?.flights.some(f=>f.status==='ready');}}
+}
+async function useDayFlight(flight,autoplay) {
+  const planId=dayPlan?.id,token=dayRunner.token;
+  dayRunner.transition=true;
+  try {
+    const answer=await api(`/api/aereo/patrullaje/resultados/${flight.result_sha256}/exportar`);
+    if (dayPlan?.id!==planId || token!==dayRunner.token || (autoplay && !dayRunner.active))return;
+    const base=model.bases.findIndex(b=>b.provider_id===dayPlan.base_id);
+    if (base>=0)$("base").value=String(base);
+    setTarget(answer.target_polygon);result=answer;fresh=true;
+    targetDisplay=answer.target_display;targetDisplayFor=targetDisplayKey();
+    $("route-mode").value="comparison";renderResults();$("chosen").value=flight.method;
+    refreshPlaybackControls();refreshThreats();update3d();
+    if (autoplay)$("daily-status").textContent=`${dayPlan.date} · ${flight.name} · vuelo ${dayRunner.index+1} de ${dayPlan.flights.filter(f=>f.status==='ready').length}.`;
+    if (autoplay)await preparePlayback("nominal");
+    if (autoplay && !simulation)throw new Error('No se pudo iniciar el vuelo de la jornada');
+  } finally{dayRunner.transition=false;}
+}
+async function nextDayFlight() {
+  if (!dayRunner.active || dayRunner.transition)return;
+  if (!simulation?.patrol_completed || simulation.return_base_id!=='origin') {
+    stopDay();$("daily-status").textContent="Jornada detenida tras una detección o interrupción. Revisa el regreso y el área pendiente.";return;
+  }
+  const rows=dayPlan.flights.filter(f=>f.status==='ready');
+  if (++dayRunner.index>=rows.length){stopDay();$("daily-status").textContent=`Jornada terminada · ${rows.length} vuelos completados. Las zonas sin observación siguen pendientes.`;return;}
+  const token=dayRunner.token;
+  $("daily-status").textContent=`Cambio de batería en base · ${dayPlan.service_between_flights_s} s simulados. Siguiente: ${rows[dayRunner.index].name}.`;
+  dayRunner.timer=setTimeout(async()=>{
+    if (!dayRunner.active || token!==dayRunner.token)return;
+    dayRunner.timer=null;
+    try{await useDayFlight(rows[dayRunner.index],true);}
+    catch(e){stopDay();message(e.message,true);}
+  },1000*dayPlan.service_between_flights_s/Number($("speed").value));
+}
+$("prepare-day").onclick=()=>loadDay(true);
+for (const id of ["daily-programme","daily-date"])$(id).onchange=()=>loadDay(false);
+$("stop-day").onclick=()=>{stopDay();playing=false;refreshPlaybackControls();$("daily-status").textContent="Jornada detenida.";};
+$("play-day").onclick=async()=>{
+  if (!dayPlan || dayBusy || calculating || simulationLoading)return;
+  stopDay();dayRunner.active=true;dayRunner.index=0;$("stop-day").disabled=false;
+  try{await useDayFlight(dayPlan.flights.find(f=>f.status==='ready'),true);}
+  catch(e){stopDay();message(e.message,true);}
+};
 function monitoringStatus() {
   if (!monitoring) return;
   const p = monitoring.progress;
@@ -232,6 +320,7 @@ function cancelSimulation() {
   refreshPlaybackControls();
 }
 function simulationChanged() {
+  if(!dayRunner.transition)stopDay();
   cancelSimulation();
 }
 function updateBudgetNote(assessment = constraintAssessment?.constraints) {
@@ -597,6 +686,10 @@ async function refreshTargetDisplay() {
   }
 }
 function invalidate() {
+  if (!dayRunner.transition) {
+    stopDay();dayRevision++;dayPlan=null;dailyLayer.clearLayers();$("play-day").disabled=true;
+    $("daily-flights").replaceChildren();
+  }
   configurationRevision++;
   constraintAssessment = null;
   clearTimeout(validationTimer);
@@ -1705,7 +1798,7 @@ function refreshPlaybackControls() {
       constraintAssessment?.valid === false
         ? "Obtener diagnóstico y probabilidades"
         : "Comparar las cuatro técnicas";
-  $("play").disabled = !ready || !!followSession?.preparing;
+  $("play").disabled = !ready || !!followSession?.preparing || (dayRunner.active && dayRunner.timer!==null);
   $("simulate").disabled = !ready;
   $("replay-nominal").disabled = !ready;
   for (const id of ["restart", "finish-playback", "seek", "drone-view"])
@@ -2045,6 +2138,7 @@ function animate(now) {
     playing = false;
     refreshPlaybackControls();
     renderFlight(true, now);
+    if(dayRunner.active)nextDayFlight();
   } else renderFlight(false, now);
 }
 requestAnimationFrame(animate);
@@ -2247,6 +2341,10 @@ for (const id of [
         ),
       );
     $("weather").value = model.validation?.default_time || model.reference_time;
+    for (const p of monitoring.programmes || [])$("daily-programme").append(new Option(p.name,p.id));
+    if ([...$("daily-programme").options].some(o=>o.value==='104'))$("daily-programme").value='104';
+    const today=new Date();$("daily-date").value=new Date(today.getTime()-today.getTimezoneOffset()*60000).toISOString().slice(0,10);
+    loadDay(false);
     for (const key of ["M2", "A2", "A3", "A4"])
       sourceLayers[key] = L.layerGroup();
     sourceLayers.A3.addTo(map);
