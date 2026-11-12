@@ -1,0 +1,26 @@
+{
+  "duration_seconds": 60,
+  "video": {
+    "codec": "h264",
+    "width": 1920,
+    "height": 1080,
+    "fps": 30,
+    "frames": 1800
+  },
+  "audio": {
+    "codec": "aac",
+    "sample_rate": 48000,
+    "channels": 2,
+    "source_loudness_lufs": -16.3,
+    "source_peak_dbfs": -2.2
+  },
+  "full_decode": "passed: ffmpeg reported no errors",
+  "arbitrary_seek_repeatability": true,
+  "local_media_paths": "all exist",
+  "timeline_contiguous": true,
+  "source_scene_count": 9,
+  "visual_review": "storyboard and decoded video contact sheet inspected; corrected screenshot/title overlap",
+  "hyperframes_native_check": "NOT RUN: CLI unavailable, terminal network restricted, Chrome blocked by sandbox",
+  "export_engine": "Pillow + FFmpeg",
+  "published_to_youtube": false
+}

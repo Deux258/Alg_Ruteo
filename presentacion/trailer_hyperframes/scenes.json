@@ -1,0 +1,65 @@
+[
+  {
+    "start": 0,
+    "end": 4,
+    "title": "CADA SEGUNDO",
+    "subtitle": "DEFINE UNA MISIÓN.",
+    "label": "01 / EL DESAFÍO"
+  },
+  {
+    "start": 4,
+    "end": 10,
+    "title": "VALPARAÍSO.",
+    "subtitle": "DESDE OTRA ALTURA.",
+    "label": "02 / EL TERRITORIO"
+  },
+  {
+    "start": 10,
+    "end": 16,
+    "title": "TRAZA EL OBJETIVO.",
+    "subtitle": "DEFINE LOS LÍMITES.",
+    "label": "03 / PLANIFICAR"
+  },
+  {
+    "start": 16,
+    "end": 24,
+    "title": "4 TÉCNICAS.",
+    "subtitle": "UNA MISIÓN.",
+    "label": "04 / COMPARAR"
+  },
+  {
+    "start": 24,
+    "end": 32,
+    "title": "EL TERRENO",
+    "subtitle": "CAMBIA LAS REGLAS.",
+    "label": "05 / EXPLORAR EN 3D"
+  },
+  {
+    "start": 32,
+    "end": 40,
+    "title": "EL RIESGO APARECE.",
+    "subtitle": "LA RUTA RESPONDE.",
+    "label": "06 / SIMULAR Y REPLANIFICAR"
+  },
+  {
+    "start": 40,
+    "end": 46,
+    "title": "DETECTAR. REPORTAR.",
+    "subtitle": "REGRESAR.",
+    "label": "07 / CERRAR EL CIRCUITO"
+  },
+  {
+    "start": 46,
+    "end": 52,
+    "title": "NO SOLO SE VE.",
+    "subtitle": "SE PUEDE REPRODUCIR.",
+    "label": "08 / EVIDENCIA"
+  },
+  {
+    "start": 52,
+    "end": 60,
+    "title": "ALG_RUTEO",
+    "subtitle": "CADA RUTA ES UNA DECISIÓN.",
+    "label": "09 / EXPLORA EL PROYECTO"
+  }
+]

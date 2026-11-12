@@ -1,0 +1,22 @@
+{
+  "nota": "Extracto de registros reales; archivo completo en evidencia de origen",
+  "distribution": "Uniform[0,100)",
+  "node": {
+    "id": "1",
+    "by_threat": {
+      "A1:weather": 0,
+      "A4:unknown": 20
+    },
+    "probability_pct": 19.999999999999996
+  },
+  "edge": {
+    "id": "1",
+    "by_threat": {
+      "A1:weather": 0,
+      "A4:unknown": 20
+    },
+    "probability_pct": 19.999999999999996,
+    "source": "1",
+    "target": "11"
+  }
+}

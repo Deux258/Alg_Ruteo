@@ -1,0 +1,68 @@
+<template>
+<style>
+@font-face{font-family:TrailerTitle;src:url('assets/fonts/titles.ttf') format('truetype');font-weight:700}
+@font-face{font-family:TrailerMono;src:url('assets/fonts/mono.ttf') format('truetype')}
+#root{position:absolute;inset:0;color:#edf4f0;font-family:TrailerTitle;background:#060d17}
+.native-ground{position:absolute;inset:0;background:radial-gradient(ellipse at 75% 40%,#102c36,#060d17 76%)}
+.native-grid{position:absolute;inset:0;background-image:linear-gradient(#56e7d509 1px,transparent 1px),linear-gradient(90deg,#56e7d509 1px,transparent 1px);background-size:80px 80px}
+.native-frame{position:absolute;left:110px;right:110px;top:65px;display:flex;justify-content:space-between;border-bottom:1px solid #28464e;padding-bottom:30px;font:21px TrailerMono;color:#8ba3ac}
+.native-frame b{color:#56e7d5}.native-footer{position:absolute;left:110px;right:110px;bottom:65px;border-top:1px solid #28464e;padding-top:22px;display:flex;justify-content:space-between;font:19px TrailerMono;color:#8ba3ac}
+.native-copy{position:absolute;left:195px;top:230px;width:750px;z-index:3}
+.native-eyebrow{font:23px TrailerMono;color:#ff9a4d;margin:0 0 38px}
+.native-title{font-size:83px;line-height:1.04;margin:0 0 24px;letter-spacing:-2px}
+.native-subtitle{font-size:49px;line-height:1.16;margin:0;color:#56e7d5}
+.native-desc{font-size:28px;line-height:1.65;color:#a6bac2;margin-top:58px}
+.native-art{position:absolute;left:1020px;top:220px;width:740px;height:650px;overflow:hidden}
+.native-art svg{width:100%;height:100%;overflow:visible}.native-shot{width:100%;height:100%;object-fit:cover;object-position:75% 50%}
+.native-shutter{position:absolute;inset:0;background:#102e38;z-index:10;border-right:10px solid #ff9a4d}
+.native-label{position:absolute;left:1020px;top:900px;color:#8ba3ac;font:17px TrailerMono}
+.native-algos{list-style:none;padding:0;margin-top:48px;font-size:32px;line-height:1.85}
+.native-algos li{border-left:7px solid var(--c);padding-left:23px;margin-bottom:8px}
+.native-metrics{display:grid;grid-template-columns:1fr 1fr;gap:24px;height:100%}.native-metric{padding:25px;border:1px solid #285b61;background:#0d222c}
+.native-metric b{display:block;color:#56e7d5;font-size:90px}.native-metric span{font:19px TrailerMono;color:#a6bac2}
+.native-cta{display:inline-block;padding:25px 28px;background:#56e7d5;color:#060d17;font-size:31px;margin-top:60px;white-space:nowrap}
+.native-phase{font:25px TrailerMono;color:#56e7d5;margin-top:30px}.native-status{color:#ff9a4d;font:22px TrailerMono;margin-top:30px}
+</style>
+<div id="root" data-composition-id="desafio" data-width="1920" data-height="1080" data-duration="4">
+ <div class="native-ground"></div><div class="native-grid"></div>
+ <div class="native-frame"><b>A / R</b><span>ALG_RUTEO / VALPARAÍSO</span><span>TRÁILER DEL PROYECTO</span></div>
+ <div class="native-copy">
+  <p id="desafio-eyebrow" class="native-eyebrow">01 / EL DESAFÍO</p>
+  <h1 id="desafio-title" class="native-title" style="font-size:83px">CADA SEGUNDO</h1>
+  <h2 id="desafio-subtitle" class="native-subtitle">DEFINE UNA MISIÓN.</h2>
+  <p id="desafio-description" class="native-desc">Patrullaje aéreo. Decisiones bajo presión.</p>
+ </div>
+ <div id="desafio-art" class="native-art" data-layout-allow-overflow="true"><svg viewBox="0 0 740 650" role="img" aria-label="Animación ilustrativa de la misión"><circle class="radar-ring" cx="370" cy="320" r="110" stroke="#285b61" fill="none" stroke-width="2"/><circle class="radar-ring" cx="370" cy="320" r="180" stroke="#285b61" fill="none" stroke-width="2"/><circle class="radar-ring" cx="370" cy="320" r="250" stroke="#285b61" fill="none" stroke-width="2"/><g class="radar-sweep"><path d="M370 60 A260 260 0 0 1 630 320" fill="none" stroke="#ff9a4d" stroke-width="7"/></g><g transform="translate(370 320) scale(1.5)"><g class="flying-drone"><path d="M0 0 L-65 -37" stroke="#edf4f0" stroke-width="6"/><g transform="translate(-65 -37)"><ellipse rx="34" ry="14" fill="#102e38" stroke="#56e7d5" stroke-width="2"/><g class="rotor"><path d="M-29 0 H29" stroke="#edf4f0" stroke-width="3"/></g></g><path d="M0 0 L65 -37" stroke="#edf4f0" stroke-width="6"/><g transform="translate(65 -37)"><ellipse rx="34" ry="14" fill="#102e38" stroke="#56e7d5" stroke-width="2"/><g class="rotor"><path d="M-29 0 H29" stroke="#edf4f0" stroke-width="3"/></g></g><path d="M0 0 L-65 37" stroke="#edf4f0" stroke-width="6"/><g transform="translate(-65 37)"><ellipse rx="34" ry="14" fill="#102e38" stroke="#56e7d5" stroke-width="2"/><g class="rotor"><path d="M-29 0 H29" stroke="#edf4f0" stroke-width="3"/></g></g><path d="M0 0 L65 37" stroke="#edf4f0" stroke-width="6"/><g transform="translate(65 37)"><ellipse rx="34" ry="14" fill="#102e38" stroke="#56e7d5" stroke-width="2"/><g class="rotor"><path d="M-29 0 H29" stroke="#edf4f0" stroke-width="3"/></g></g><path d="M-26-18 L20-20 33 0 20 20 -26 18Z" fill="#183a48" stroke="#edf4f0" stroke-width="3"/><circle cx="14" r="7" fill="#ff9a4d"/></g></g></svg></div>
+ <div class="native-label">GRÁFICA ILUSTRATIVA · NO ES UNA RUTA CALCULADA</div>
+ <div class="native-footer"><span>SIMULACIÓN ACADÉMICA · ESCENARIOS ILUSTRATIVOS</span><span>01 / 09</span></div>
+ <div class="native-shutter" data-layout-ignore="true"></div>
+</div>
+<script>
+(() => {
+ const root = document.querySelector('[data-composition-id="desafio"]:not([data-composition-src])');
+ if (!root) throw new Error('Scene root missing: desafio');
+ const q = (sel) => root.querySelectorAll(sel);
+ const tl = gsap.timeline({ paused:true });
+ tl.fromTo(q('.native-copy'),{y:80,opacity:0},{y:0,opacity:1,duration:.65,ease:'power3.out'},.08);
+ tl.fromTo(q('.native-subtitle'),{y:35,opacity:0},{y:0,opacity:1,duration:.55,ease:'power3.out'},.28);
+ tl.fromTo(q('.native-shutter'),{x:0},{x:1940,duration:.42,ease:'power3.inOut'},0);
+ tl.fromTo(q('.native-art'),{scale:.92,opacity:0},{scale:1,opacity:1,duration:.8,ease:'power3.out'},.22);
+ if(q('.radar-sweep').length)tl.fromTo(q('.radar-sweep'),{rotation:0,svgOrigin:'370 320'},{rotation:720,svgOrigin:'370 320',duration:3.8,ease:'none'},.1);
+ if(q('.rotor').length)tl.fromTo(q('.rotor'),{rotation:0,transformOrigin:'50% 50%'},{rotation:2880,transformOrigin:'50% 50%',duration:3.8,ease:'none'},.1);
+ if(q('.native-route').length)tl.fromTo(q('.native-route'),{attr:{'stroke-dashoffset':6000}},{attr:{'stroke-dashoffset':0},duration:3.5,stagger:.22,ease:'power1.inOut'},.8);
+ if(q('.reroute').length)tl.fromTo(q('.reroute'),{attr:{'stroke-dashoffset':1500}},{attr:{'stroke-dashoffset':0},duration:1.2,ease:'power2.inOut'},3.4);
+ if(q('.threat-pulse').length)tl.fromTo(q('.threat-pulse'),{scale:.6,opacity:1,svgOrigin:'430 255'},{scale:2.1,opacity:0,svgOrigin:'430 255',duration:.8,repeat:7,ease:'power1.out'},.7);
+ if(q('.native-shot').length)tl.fromTo(q('.native-shot'),{scale:1},{scale:1.08,duration:3.6,ease:'none'},.2);
+ if(q('.native-algos li').length)tl.fromTo(q('.native-algos li'),{x:-45,opacity:0},{x:0,opacity:1,duration:.4,stagger:.25},.7);
+ if(q('.native-metric').length)tl.fromTo(q('.native-metric'),{y:35,opacity:0},{y:0,opacity:1,duration:.5,stagger:.2},.5);
+ if(q('.flying-drone').length && 0!==0 && 0!==8) {
+   const pts=[{x:90,y:475},{x:140,y:420},{x:590,y:394},{x:140,y:368},{x:590,y:342},{x:140,y:316},{x:590,y:290},{x:140,y:264},{x:590,y:238},{x:140,y:212},{x:590,y:186},{x:90,y:475}];
+   tl.set(q('.flying-drone'),pts[0],0);
+   pts.slice(1).forEach((p,k)=>tl.to(q('.flying-drone'),{...p,duration:0.2727272727272727,ease:'none'},.5+k*0.2727272727272727));
+ }
+ tl.to({},{duration:.01},3.98);
+ window.__timelines=window.__timelines||{};
+ window.__timelines['desafio']=tl;
+})();
+</script>
+</template>

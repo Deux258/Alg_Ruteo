@@ -1,0 +1,900 @@
+{
+  "ok": false,
+  "strict": false,
+  "browserSkipped": false,
+  "lint": {
+    "ok": false,
+    "errorCount": 1,
+    "warningCount": 0,
+    "infoCount": 0,
+    "findings": [
+      {
+        "code": "multiple_root_compositions",
+        "severity": "error",
+        "message": "Multiple root-level HTML files with data-composition-id: assembly-previous.html, index.html. The runtime may discover both as entry points, causing duplicate audio playback.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0
+        },
+        "time": 0,
+        "fixHint": "A project should have exactly one root index.html with data-composition-id. Remove or rename extra files."
+      }
+    ],
+    "filesScanned": 10
+  },
+  "runtime": {
+    "ok": true,
+    "errorCount": 0,
+    "warningCount": 0,
+    "infoCount": 0,
+    "findings": []
+  },
+  "layout": {
+    "ok": true,
+    "errorCount": 0,
+    "warningCount": 0,
+    "infoCount": 0,
+    "findings": [],
+    "duration": 60,
+    "samples": [
+      3.333,
+      10,
+      16.667,
+      23.333,
+      30,
+      36.667,
+      43.333,
+      50,
+      56.667
+    ],
+    "transitionSamples": [],
+    "transitionSamplesDropped": 0,
+    "tolerance": 2,
+    "totalIssueCount": 0,
+    "truncated": false
+  },
+  "motion": {
+    "ok": true,
+    "errorCount": 0,
+    "warningCount": 0,
+    "infoCount": 0,
+    "findings": [],
+    "enabled": false,
+    "samples": 0
+  },
+  "contrast": {
+    "ok": true,
+    "errorCount": 0,
+    "warningCount": 0,
+    "infoCount": 0,
+    "findings": [],
+    "enabled": true,
+    "samples": [
+      3.333,
+      16.667,
+      30,
+      43.333,
+      56.667
+    ],
+    "checked": 51,
+    "passed": 51
+  },
+  "craft": {
+    "ok": true,
+    "errorCount": 0,
+    "warningCount": 10,
+    "infoCount": 0,
+    "findings": [
+      {
+        "code": "text_below_floor",
+        "severity": "warning",
+        "message": "Type floor is 28 px (2.6% of the 1080 px short side, what a phone can read) and 7 text elements stay under it for 0.5 s or more, the smallest \"GRÁFICA ILUSTRATIVA · NO ES UNA RUTA ...\" at 17 px: set reading text to at least 28 px, or put data-layout-ignore on text that is texture rather than reading; see references/look.md.",
+        "text": "GRÁFICA ILUSTRATIVA · NO ES UNA RUTA CALCULADA",
+        "selector": "#desafio > div:nth-of-type(1) > div:nth-of-type(6)",
+        "dataAttributes": {},
+        "sourceFile": "compositions/desafio.html",
+        "bbox": {
+          "x": 1020,
+          "y": 900,
+          "width": 469.2,
+          "height": 23
+        },
+        "time": 0,
+        "times": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0.25
+        ],
+        "fontPx": 17,
+        "floorPx": 28,
+        "seconds": 4,
+        "elements": [
+          {
+            "selector": "#desafio > div:nth-of-type(1) > div:nth-of-type(6)",
+            "text": "GRÁFICA ILUSTRATIVA · NO ES UNA RUTA CALCULADA",
+            "fontPx": 17,
+            "time": 0,
+            "seconds": 4
+          },
+          {
+            "selector": "#desafio > div:nth-of-type(1) > div:nth-of-type(7) > span:nth-of-type(1)",
+            "text": "SIMULACIÓN ACADÉMICA · ESCENARIOS ILUSTRATIVOS",
+            "fontPx": 19,
+            "time": 0,
+            "seconds": 4
+          },
+          {
+            "selector": "#desafio > div:nth-of-type(1) > div:nth-of-type(7) > span:nth-of-type(2)",
+            "text": "01 / 09",
+            "fontPx": 19,
+            "time": 0,
+            "seconds": 4
+          },
+          {
+            "selector": "#desafio > div:nth-of-type(1) > div:nth-of-type(3) > b:nth-of-type(1)",
+            "text": "A / R",
+            "fontPx": 21,
+            "time": 0,
+            "seconds": 4
+          },
+          {
+            "selector": "#desafio > div:nth-of-type(1) > div:nth-of-type(3) > span:nth-of-type(1)",
+            "text": "ALG_RUTEO / VALPARAÍSO",
+            "fontPx": 21,
+            "time": 0,
+            "seconds": 4
+          },
+          {
+            "selector": "#desafio > div:nth-of-type(1) > div:nth-of-type(3) > span:nth-of-type(2)",
+            "text": "TRÁILER DEL PROYECTO",
+            "fontPx": 21,
+            "time": 0,
+            "seconds": 4
+          },
+          {
+            "selector": "#desafio-eyebrow",
+            "text": "01 / EL DESAFÍO",
+            "fontPx": 23,
+            "time": 0.25,
+            "seconds": 3.75
+          }
+        ]
+      },
+      {
+        "code": "text_below_floor",
+        "severity": "warning",
+        "message": "Type floor is 28 px (2.6% of the 1080 px short side, what a phone can read) and 7 text elements stay under it for 0.5 s or more, the smallest \"GRÁFICA ILUSTRATIVA · NO ES UNA RUTA ...\" at 17 px: set reading text to at least 28 px, or put data-layout-ignore on text that is texture rather than reading; see references/look.md.",
+        "text": "GRÁFICA ILUSTRATIVA · NO ES UNA RUTA CALCULADA",
+        "selector": "#territorio > div:nth-of-type(1) > div:nth-of-type(6)",
+        "dataAttributes": {},
+        "sourceFile": "compositions/territorio.html",
+        "bbox": {
+          "x": 1020,
+          "y": 900,
+          "width": 469.2,
+          "height": 23
+        },
+        "time": 4,
+        "times": [
+          4,
+          4,
+          4,
+          4,
+          4,
+          4,
+          4.25
+        ],
+        "fontPx": 17,
+        "floorPx": 28,
+        "seconds": 6,
+        "elements": [
+          {
+            "selector": "#territorio > div:nth-of-type(1) > div:nth-of-type(6)",
+            "text": "GRÁFICA ILUSTRATIVA · NO ES UNA RUTA CALCULADA",
+            "fontPx": 17,
+            "time": 4,
+            "seconds": 6
+          },
+          {
+            "selector": "#territorio > div:nth-of-type(1) > div:nth-of-type(7) > span:nth-of-type(1)",
+            "text": "SIMULACIÓN ACADÉMICA · ESCENARIOS ILUSTRATIVOS",
+            "fontPx": 19,
+            "time": 4,
+            "seconds": 6
+          },
+          {
+            "selector": "#territorio > div:nth-of-type(1) > div:nth-of-type(7) > span:nth-of-type(2)",
+            "text": "02 / 09",
+            "fontPx": 19,
+            "time": 4,
+            "seconds": 6
+          },
+          {
+            "selector": "#territorio > div:nth-of-type(1) > div:nth-of-type(3) > b:nth-of-type(1)",
+            "text": "A / R",
+            "fontPx": 21,
+            "time": 4,
+            "seconds": 6
+          },
+          {
+            "selector": "#territorio > div:nth-of-type(1) > div:nth-of-type(3) > span:nth-of-type(1)",
+            "text": "ALG_RUTEO / VALPARAÍSO",
+            "fontPx": 21,
+            "time": 4,
+            "seconds": 6
+          },
+          {
+            "selector": "#territorio > div:nth-of-type(1) > div:nth-of-type(3) > span:nth-of-type(2)",
+            "text": "TRÁILER DEL PROYECTO",
+            "fontPx": 21,
+            "time": 4,
+            "seconds": 6
+          },
+          {
+            "selector": "#territorio-eyebrow",
+            "text": "02 / EL TERRITORIO",
+            "fontPx": 23,
+            "time": 4.25,
+            "seconds": 5.75
+          }
+        ]
+      },
+      {
+        "code": "text_below_floor",
+        "severity": "warning",
+        "message": "Type floor is 28 px (2.6% of the 1080 px short side, what a phone can read) and 8 text elements stay under it for 0.5 s or more, the smallest \"GRÁFICA ILUSTRATIVA · NO ES UNA RUTA ...\" at 17 px: set reading text to at least 28 px, or put data-layout-ignore on text that is texture rather than reading; see references/look.md.",
+        "text": "GRÁFICA ILUSTRATIVA · NO ES UNA RUTA CALCULADA",
+        "selector": "#planificar > div:nth-of-type(1) > div:nth-of-type(6)",
+        "dataAttributes": {},
+        "sourceFile": "compositions/planificar.html",
+        "bbox": {
+          "x": 1020,
+          "y": 900,
+          "width": 469.2,
+          "height": 23
+        },
+        "time": 10,
+        "times": [
+          10,
+          10,
+          10,
+          10,
+          10,
+          10,
+          10.25,
+          10.25
+        ],
+        "fontPx": 17,
+        "floorPx": 28,
+        "seconds": 6,
+        "elements": [
+          {
+            "selector": "#planificar > div:nth-of-type(1) > div:nth-of-type(6)",
+            "text": "GRÁFICA ILUSTRATIVA · NO ES UNA RUTA CALCULADA",
+            "fontPx": 17,
+            "time": 10,
+            "seconds": 6
+          },
+          {
+            "selector": "#planificar > div:nth-of-type(1) > div:nth-of-type(7) > span:nth-of-type(1)",
+            "text": "SIMULACIÓN ACADÉMICA · ESCENARIOS ILUSTRATIVOS",
+            "fontPx": 19,
+            "time": 10,
+            "seconds": 6
+          },
+          {
+            "selector": "#planificar > div:nth-of-type(1) > div:nth-of-type(7) > span:nth-of-type(2)",
+            "text": "03 / 09",
+            "fontPx": 19,
+            "time": 10,
+            "seconds": 6
+          },
+          {
+            "selector": "#planificar > div:nth-of-type(1) > div:nth-of-type(3) > b:nth-of-type(1)",
+            "text": "A / R",
+            "fontPx": 21,
+            "time": 10,
+            "seconds": 6
+          },
+          {
+            "selector": "#planificar > div:nth-of-type(1) > div:nth-of-type(3) > span:nth-of-type(1)",
+            "text": "ALG_RUTEO / VALPARAÍSO",
+            "fontPx": 21,
+            "time": 10,
+            "seconds": 6
+          },
+          {
+            "selector": "#planificar > div:nth-of-type(1) > div:nth-of-type(3) > span:nth-of-type(2)",
+            "text": "TRÁILER DEL PROYECTO",
+            "fontPx": 21,
+            "time": 10,
+            "seconds": 6
+          },
+          {
+            "selector": "#planificar-eyebrow",
+            "text": "03 / PLANIFICAR",
+            "fontPx": 23,
+            "time": 10.25,
+            "seconds": 5.75
+          },
+          {
+            "selector": "#planificar > div:nth-of-type(1) > div:nth-of-type(4) > p:nth-of-type(3)",
+            "text": "60 m INICIALES / 20 % RESERVA",
+            "fontPx": 25,
+            "time": 10.25,
+            "seconds": 5.75
+          }
+        ]
+      },
+      {
+        "code": "text_below_floor",
+        "severity": "warning",
+        "message": "Type floor is 28 px (2.6% of the 1080 px short side, what a phone can read) and 7 text elements stay under it for 0.5 s or more, the smallest \"GRÁFICA ILUSTRATIVA · NO ES UNA RUTA ...\" at 17 px: set reading text to at least 28 px, or put data-layout-ignore on text that is texture rather than reading; see references/look.md.",
+        "text": "GRÁFICA ILUSTRATIVA · NO ES UNA RUTA CALCULADA",
+        "selector": "#comparar > div:nth-of-type(1) > div:nth-of-type(6)",
+        "dataAttributes": {},
+        "sourceFile": "compositions/comparar.html",
+        "bbox": {
+          "x": 1020,
+          "y": 900,
+          "width": 469.2,
+          "height": 23
+        },
+        "time": 16,
+        "times": [
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16.25
+        ],
+        "fontPx": 17,
+        "floorPx": 28,
+        "seconds": 8,
+        "elements": [
+          {
+            "selector": "#comparar > div:nth-of-type(1) > div:nth-of-type(6)",
+            "text": "GRÁFICA ILUSTRATIVA · NO ES UNA RUTA CALCULADA",
+            "fontPx": 17,
+            "time": 16,
+            "seconds": 8
+          },
+          {
+            "selector": "#comparar > div:nth-of-type(1) > div:nth-of-type(7) > span:nth-of-type(1)",
+            "text": "SIMULACIÓN ACADÉMICA · ESCENARIOS ILUSTRATIVOS",
+            "fontPx": 19,
+            "time": 16,
+            "seconds": 8
+          },
+          {
+            "selector": "#comparar > div:nth-of-type(1) > div:nth-of-type(7) > span:nth-of-type(2)",
+            "text": "04 / 09",
+            "fontPx": 19,
+            "time": 16,
+            "seconds": 8
+          },
+          {
+            "selector": "#comparar > div:nth-of-type(1) > div:nth-of-type(3) > b:nth-of-type(1)",
+            "text": "A / R",
+            "fontPx": 21,
+            "time": 16,
+            "seconds": 8
+          },
+          {
+            "selector": "#comparar > div:nth-of-type(1) > div:nth-of-type(3) > span:nth-of-type(1)",
+            "text": "ALG_RUTEO / VALPARAÍSO",
+            "fontPx": 21,
+            "time": 16,
+            "seconds": 8
+          },
+          {
+            "selector": "#comparar > div:nth-of-type(1) > div:nth-of-type(3) > span:nth-of-type(2)",
+            "text": "TRÁILER DEL PROYECTO",
+            "fontPx": 21,
+            "time": 16,
+            "seconds": 8
+          },
+          {
+            "selector": "#comparar-eyebrow",
+            "text": "04 / COMPARAR",
+            "fontPx": 23,
+            "time": 16.25,
+            "seconds": 7.75
+          }
+        ]
+      },
+      {
+        "code": "text_below_floor",
+        "severity": "warning",
+        "message": "Type floor is 28 px (2.6% of the 1080 px short side, what a phone can read) and 7 text elements stay under it for 0.5 s or more, the smallest \"CAPTURA REAL DEL SIMULADOR · EVIDENCI...\" at 17 px: set reading text to at least 28 px, or put data-layout-ignore on text that is texture rather than reading; see references/look.md.",
+        "text": "CAPTURA REAL DEL SIMULADOR · EVIDENCIA LOCAL",
+        "selector": "#terreno > div:nth-of-type(1) > div:nth-of-type(6)",
+        "dataAttributes": {},
+        "sourceFile": "compositions/terreno.html",
+        "bbox": {
+          "x": 1020,
+          "y": 900,
+          "width": 448.81,
+          "height": 23
+        },
+        "time": 24,
+        "times": [
+          24,
+          24,
+          24,
+          24,
+          24,
+          24,
+          24.25
+        ],
+        "fontPx": 17,
+        "floorPx": 28,
+        "seconds": 8,
+        "elements": [
+          {
+            "selector": "#terreno > div:nth-of-type(1) > div:nth-of-type(6)",
+            "text": "CAPTURA REAL DEL SIMULADOR · EVIDENCIA LOCAL",
+            "fontPx": 17,
+            "time": 24,
+            "seconds": 8
+          },
+          {
+            "selector": "#terreno > div:nth-of-type(1) > div:nth-of-type(7) > span:nth-of-type(1)",
+            "text": "SIMULACIÓN ACADÉMICA · ESCENARIOS ILUSTRATIVOS",
+            "fontPx": 19,
+            "time": 24,
+            "seconds": 8
+          },
+          {
+            "selector": "#terreno > div:nth-of-type(1) > div:nth-of-type(7) > span:nth-of-type(2)",
+            "text": "05 / 09",
+            "fontPx": 19,
+            "time": 24,
+            "seconds": 8
+          },
+          {
+            "selector": "#terreno > div:nth-of-type(1) > div:nth-of-type(3) > b:nth-of-type(1)",
+            "text": "A / R",
+            "fontPx": 21,
+            "time": 24,
+            "seconds": 8
+          },
+          {
+            "selector": "#terreno > div:nth-of-type(1) > div:nth-of-type(3) > span:nth-of-type(1)",
+            "text": "ALG_RUTEO / VALPARAÍSO",
+            "fontPx": 21,
+            "time": 24,
+            "seconds": 8
+          },
+          {
+            "selector": "#terreno > div:nth-of-type(1) > div:nth-of-type(3) > span:nth-of-type(2)",
+            "text": "TRÁILER DEL PROYECTO",
+            "fontPx": 21,
+            "time": 24,
+            "seconds": 8
+          },
+          {
+            "selector": "#terreno-eyebrow",
+            "text": "05 / EXPLORAR EN 3D",
+            "fontPx": 23,
+            "time": 24.25,
+            "seconds": 7.75
+          }
+        ]
+      },
+      {
+        "code": "text_below_floor",
+        "severity": "warning",
+        "message": "Type floor is 28 px (2.6% of the 1080 px short side, what a phone can read) and 8 text elements stay under it for 0.5 s or more, the smallest \"GRÁFICA ILUSTRATIVA · NO ES UNA RUTA ...\" at 17 px: set reading text to at least 28 px, or put data-layout-ignore on text that is texture rather than reading; see references/look.md.",
+        "text": "GRÁFICA ILUSTRATIVA · NO ES UNA RUTA CALCULADA",
+        "selector": "#amenazas > div:nth-of-type(1) > div:nth-of-type(6)",
+        "dataAttributes": {},
+        "sourceFile": "compositions/amenazas.html",
+        "bbox": {
+          "x": 1020,
+          "y": 900,
+          "width": 469.2,
+          "height": 23
+        },
+        "time": 32,
+        "times": [
+          32,
+          32,
+          32,
+          32,
+          32,
+          32,
+          32.25,
+          32.25
+        ],
+        "fontPx": 17,
+        "floorPx": 28,
+        "seconds": 8,
+        "elements": [
+          {
+            "selector": "#amenazas > div:nth-of-type(1) > div:nth-of-type(6)",
+            "text": "GRÁFICA ILUSTRATIVA · NO ES UNA RUTA CALCULADA",
+            "fontPx": 17,
+            "time": 32,
+            "seconds": 8
+          },
+          {
+            "selector": "#amenazas > div:nth-of-type(1) > div:nth-of-type(7) > span:nth-of-type(1)",
+            "text": "SIMULACIÓN ACADÉMICA · ESCENARIOS ILUSTRATIVOS",
+            "fontPx": 19,
+            "time": 32,
+            "seconds": 8
+          },
+          {
+            "selector": "#amenazas > div:nth-of-type(1) > div:nth-of-type(7) > span:nth-of-type(2)",
+            "text": "06 / 09",
+            "fontPx": 19,
+            "time": 32,
+            "seconds": 8
+          },
+          {
+            "selector": "#amenazas > div:nth-of-type(1) > div:nth-of-type(3) > b:nth-of-type(1)",
+            "text": "A / R",
+            "fontPx": 21,
+            "time": 32,
+            "seconds": 8
+          },
+          {
+            "selector": "#amenazas > div:nth-of-type(1) > div:nth-of-type(3) > span:nth-of-type(1)",
+            "text": "ALG_RUTEO / VALPARAÍSO",
+            "fontPx": 21,
+            "time": 32,
+            "seconds": 8
+          },
+          {
+            "selector": "#amenazas > div:nth-of-type(1) > div:nth-of-type(3) > span:nth-of-type(2)",
+            "text": "TRÁILER DEL PROYECTO",
+            "fontPx": 21,
+            "time": 32,
+            "seconds": 8
+          },
+          {
+            "selector": "p.native-status",
+            "text": "AMENAZAS SINTÉTICAS / REPLANIFICAR",
+            "fontPx": 22,
+            "time": 32.25,
+            "seconds": 7.75
+          },
+          {
+            "selector": "#amenazas-eyebrow",
+            "text": "06 / SIMULAR Y REPLANIFICAR",
+            "fontPx": 23,
+            "time": 32.25,
+            "seconds": 7.75
+          }
+        ]
+      },
+      {
+        "code": "text_below_floor",
+        "severity": "warning",
+        "message": "Type floor is 28 px (2.6% of the 1080 px short side, what a phone can read) and 8 text elements stay under it for 0.5 s or more, the smallest \"CAPTURA REAL DEL SIMULADOR · EVIDENCI...\" at 17 px: set reading text to at least 28 px, or put data-layout-ignore on text that is texture rather than reading; see references/look.md.",
+        "text": "CAPTURA REAL DEL SIMULADOR · EVIDENCIA LOCAL",
+        "selector": "#retorno > div:nth-of-type(1) > div:nth-of-type(6)",
+        "dataAttributes": {},
+        "sourceFile": "compositions/retorno.html",
+        "bbox": {
+          "x": 1020,
+          "y": 900,
+          "width": 448.81,
+          "height": 23
+        },
+        "time": 40,
+        "times": [
+          40,
+          40,
+          40,
+          40,
+          40,
+          40,
+          40.25,
+          40.25
+        ],
+        "fontPx": 17,
+        "floorPx": 28,
+        "seconds": 6,
+        "elements": [
+          {
+            "selector": "#retorno > div:nth-of-type(1) > div:nth-of-type(6)",
+            "text": "CAPTURA REAL DEL SIMULADOR · EVIDENCIA LOCAL",
+            "fontPx": 17,
+            "time": 40,
+            "seconds": 6
+          },
+          {
+            "selector": "#retorno > div:nth-of-type(1) > div:nth-of-type(7) > span:nth-of-type(1)",
+            "text": "SIMULACIÓN ACADÉMICA · ESCENARIOS ILUSTRATIVOS",
+            "fontPx": 19,
+            "time": 40,
+            "seconds": 6
+          },
+          {
+            "selector": "#retorno > div:nth-of-type(1) > div:nth-of-type(7) > span:nth-of-type(2)",
+            "text": "07 / 09",
+            "fontPx": 19,
+            "time": 40,
+            "seconds": 6
+          },
+          {
+            "selector": "#retorno > div:nth-of-type(1) > div:nth-of-type(3) > b:nth-of-type(1)",
+            "text": "A / R",
+            "fontPx": 21,
+            "time": 40,
+            "seconds": 6
+          },
+          {
+            "selector": "#retorno > div:nth-of-type(1) > div:nth-of-type(3) > span:nth-of-type(1)",
+            "text": "ALG_RUTEO / VALPARAÍSO",
+            "fontPx": 21,
+            "time": 40,
+            "seconds": 6
+          },
+          {
+            "selector": "#retorno > div:nth-of-type(1) > div:nth-of-type(3) > span:nth-of-type(2)",
+            "text": "TRÁILER DEL PROYECTO",
+            "fontPx": 21,
+            "time": 40,
+            "seconds": 6
+          },
+          {
+            "selector": "#retorno-eyebrow",
+            "text": "07 / CERRAR EL CIRCUITO",
+            "fontPx": 23,
+            "time": 40.25,
+            "seconds": 5.75
+          },
+          {
+            "selector": "#retorno > div:nth-of-type(1) > div:nth-of-type(4) > p:nth-of-type(3)",
+            "text": "01 DETECTAR02 REPORTAR03 REGRESAR",
+            "fontPx": 25,
+            "time": 40.25,
+            "seconds": 5.75
+          }
+        ]
+      },
+      {
+        "code": "text_below_floor",
+        "severity": "warning",
+        "message": "Type floor is 28 px (2.6% of the 1080 px short side, what a phone can read) and 11 text elements stay under it for 0.5 s or more, the smallest \"PROTOCOLO EXPERIMENTAL DOCUMENTADO\" at 17 px: set reading text to at least 28 px, or put data-layout-ignore on text that is texture rather than reading; see references/look.md.",
+        "text": "PROTOCOLO EXPERIMENTAL DOCUMENTADO",
+        "selector": "#evidencia > div:nth-of-type(1) > div:nth-of-type(6)",
+        "dataAttributes": {},
+        "sourceFile": "compositions/evidencia.html",
+        "bbox": {
+          "x": 1020,
+          "y": 900,
+          "width": 346.81,
+          "height": 23
+        },
+        "time": 46,
+        "times": [
+          46,
+          46,
+          46,
+          46,
+          46,
+          46,
+          46.25,
+          46.75,
+          46.875,
+          47.125,
+          47.375
+        ],
+        "fontPx": 17,
+        "floorPx": 28,
+        "seconds": 6,
+        "elements": [
+          {
+            "selector": "#evidencia > div:nth-of-type(1) > div:nth-of-type(6)",
+            "text": "PROTOCOLO EXPERIMENTAL DOCUMENTADO",
+            "fontPx": 17,
+            "time": 46,
+            "seconds": 6
+          },
+          {
+            "selector": "div.native-metrics > div:nth-of-type(1) > span:nth-of-type(1)",
+            "text": "ESCENARIOS COMPARTIDOS",
+            "fontPx": 18.98,
+            "time": 46.75,
+            "seconds": 5.25
+          },
+          {
+            "selector": "#evidencia > div:nth-of-type(1) > div:nth-of-type(7) > span:nth-of-type(1)",
+            "text": "SIMULACIÓN ACADÉMICA · ESCENARIOS ILUSTRATIVOS",
+            "fontPx": 19,
+            "time": 46,
+            "seconds": 6
+          },
+          {
+            "selector": "#evidencia > div:nth-of-type(1) > div:nth-of-type(7) > span:nth-of-type(2)",
+            "text": "08 / 09",
+            "fontPx": 19,
+            "time": 46,
+            "seconds": 6
+          },
+          {
+            "selector": "div.native-metrics > div:nth-of-type(2) > span:nth-of-type(1)",
+            "text": "TÉCNICAS COMPARADAS",
+            "fontPx": 19,
+            "time": 46.875,
+            "seconds": 5.125
+          },
+          {
+            "selector": "div.native-metrics > div:nth-of-type(3) > span:nth-of-type(1)",
+            "text": "MISIONES Y GEOJSON",
+            "fontPx": 19,
+            "time": 47.125,
+            "seconds": 4.875
+          },
+          {
+            "selector": "div.native-metrics > div:nth-of-type(4) > span:nth-of-type(1)",
+            "text": "SIMULACIÓN TRAZABLE",
+            "fontPx": 19,
+            "time": 47.375,
+            "seconds": 4.625
+          },
+          {
+            "selector": "#evidencia > div:nth-of-type(1) > div:nth-of-type(3) > b:nth-of-type(1)",
+            "text": "A / R",
+            "fontPx": 21,
+            "time": 46,
+            "seconds": 6
+          },
+          {
+            "selector": "#evidencia > div:nth-of-type(1) > div:nth-of-type(3) > span:nth-of-type(1)",
+            "text": "ALG_RUTEO / VALPARAÍSO",
+            "fontPx": 21,
+            "time": 46,
+            "seconds": 6
+          },
+          {
+            "selector": "#evidencia > div:nth-of-type(1) > div:nth-of-type(3) > span:nth-of-type(2)",
+            "text": "TRÁILER DEL PROYECTO",
+            "fontPx": 21,
+            "time": 46,
+            "seconds": 6
+          },
+          {
+            "selector": "#evidencia-eyebrow",
+            "text": "08 / EVIDENCIA",
+            "fontPx": 23,
+            "time": 46.25,
+            "seconds": 5.75
+          }
+        ]
+      },
+      {
+        "code": "dead_stretch",
+        "severity": "warning",
+        "message": "Nothing on screen changes for 4.25 s (47.63–51.88 s): start the next move within 3 s, or put data-hold on the element whose stillness is deliberate; see references/motion.md.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0
+        },
+        "time": 47.625,
+        "seconds": 4.25,
+        "floorSeconds": 3,
+        "until": 51.875
+      },
+      {
+        "code": "text_below_floor",
+        "severity": "warning",
+        "message": "Type floor is 28 px (2.6% of the 1080 px short side, what a phone can read) and 7 text elements stay under it for 0.5 s or more, the smallest \"GRÁFICA ILUSTRATIVA · NO ES UNA RUTA ...\" at 17 px: set reading text to at least 28 px, or put data-layout-ignore on text that is texture rather than reading; see references/look.md.",
+        "text": "GRÁFICA ILUSTRATIVA · NO ES UNA RUTA CALCULADA",
+        "selector": "#cierre > div:nth-of-type(1) > div:nth-of-type(6)",
+        "dataAttributes": {},
+        "sourceFile": "compositions/cierre.html",
+        "bbox": {
+          "x": 1020,
+          "y": 900,
+          "width": 469.2,
+          "height": 23
+        },
+        "time": 52,
+        "times": [
+          52,
+          52,
+          52,
+          52,
+          52,
+          52,
+          52.25
+        ],
+        "fontPx": 17,
+        "floorPx": 28,
+        "seconds": 8,
+        "elements": [
+          {
+            "selector": "#cierre > div:nth-of-type(1) > div:nth-of-type(6)",
+            "text": "GRÁFICA ILUSTRATIVA · NO ES UNA RUTA CALCULADA",
+            "fontPx": 17,
+            "time": 52,
+            "seconds": 8
+          },
+          {
+            "selector": "#cierre > div:nth-of-type(1) > div:nth-of-type(7) > span:nth-of-type(1)",
+            "text": "SIMULACIÓN ACADÉMICA · ESCENARIOS ILUSTRATIVOS",
+            "fontPx": 19,
+            "time": 52,
+            "seconds": 8
+          },
+          {
+            "selector": "#cierre > div:nth-of-type(1) > div:nth-of-type(7) > span:nth-of-type(2)",
+            "text": "09 / 09",
+            "fontPx": 19,
+            "time": 52,
+            "seconds": 8
+          },
+          {
+            "selector": "#cierre > div:nth-of-type(1) > div:nth-of-type(3) > b:nth-of-type(1)",
+            "text": "A / R",
+            "fontPx": 21,
+            "time": 52,
+            "seconds": 8
+          },
+          {
+            "selector": "#cierre > div:nth-of-type(1) > div:nth-of-type(3) > span:nth-of-type(1)",
+            "text": "ALG_RUTEO / VALPARAÍSO",
+            "fontPx": 21,
+            "time": 52,
+            "seconds": 8
+          },
+          {
+            "selector": "#cierre > div:nth-of-type(1) > div:nth-of-type(3) > span:nth-of-type(2)",
+            "text": "TRÁILER DEL PROYECTO",
+            "fontPx": 21,
+            "time": 52,
+            "seconds": 8
+          },
+          {
+            "selector": "#cierre-eyebrow",
+            "text": "09 / EXPLORA EL PROYECTO",
+            "fontPx": 23,
+            "time": 52.25,
+            "seconds": 7.75
+          }
+        ]
+      }
+    ],
+    "enabled": true,
+    "step": 0.125,
+    "samples": 480
+  },
+  "audio": {
+    "ok": true,
+    "errorCount": 0,
+    "warningCount": 0,
+    "infoCount": 0,
+    "findings": []
+  },
+  "hdr": {
+    "autoPromotion": null,
+    "inspection": "available"
+  },
+  "snapshots": {
+    "enabled": false,
+    "files": [],
+    "times": [],
+    "findingFiles": []
+  }
+}

@@ -1,0 +1,488 @@
+{
+  "version": 1,
+  "historyId": "2e2b93e6-c29d-4eee-b5ef-781038a70324",
+  "currentRevision": "7c67944c-effd-4c61-a091-9009325b3ae5",
+  "pendingChanges": false,
+  "files": {
+    "NATIVE_STATUS.json": {
+      "hash": "ebba5e3f3c2de4e75d2f1d55b7f7f354e753bf53c6e890dfc5a733bb2b9db1dc",
+      "content": "/home/diego/.cache/hyperframes/history/2e2b93e6-c29d-4eee-b5ef-781038a70324/blobs/eb/ebba5e3f3c2de4e75d2f1d55b7f7f354e753bf53c6e890dfc5a733bb2b9db1dc"
+    },
+    "README.md": {
+      "hash": "c8018f779027491611e410475cbe35b0b226321d88700f8c19707e36c4b81382",
+      "content": "/home/diego/.cache/hyperframes/history/2e2b93e6-c29d-4eee-b5ef-781038a70324/blobs/c8/c8018f779027491611e410475cbe35b0b226321d88700f8c19707e36c4b81382"
+    },
+    "REVIEW.json": {
+      "hash": "2c62a4d1d37fc615bad8faf6eec33cd8deb970c2119e0fc8a3be470621c36287",
+      "content": "/home/diego/.cache/hyperframes/history/2e2b93e6-c29d-4eee-b5ef-781038a70324/blobs/2c/2c62a4d1d37fc615bad8faf6eec33cd8deb970c2119e0fc8a3be470621c36287"
+    },
+    "YOUTUBE.md": {
+      "hash": "507c13e3a6814124bd6e51972e136560591d07b5ca9ca8fb9d1def596ad1f8eb",
+      "content": "/home/diego/.cache/hyperframes/history/2e2b93e6-c29d-4eee-b5ef-781038a70324/blobs/50/507c13e3a6814124bd6e51972e136560591d07b5ca9ca8fb9d1def596ad1f8eb"
+    },
+    "__pycache__/produce.cpython-314.pyc": {
+      "hash": "f3702e166c1afaccbbd69cb7ed71925d960f3fefd262eb1681c5657103d3e3b5",
+      "content": "/home/diego/.cache/hyperframes/history/2e2b93e6-c29d-4eee-b5ef-781038a70324/blobs/f3/f3702e166c1afaccbbd69cb7ed71925d960f3fefd262eb1681c5657103d3e3b5"
+    },
+    "assets/area-estudio.geojson": {
+      "hash": "7d3a0472f2e7fdde88d6316f89c31d6da50914e06cabb6bf8bd270ce54c905b7",
+      "content": "/home/diego/.cache/hyperframes/history/2e2b93e6-c29d-4eee-b5ef-781038a70324/blobs/7d/7d3a0472f2e7fdde88d6316f89c31d6da50914e06cabb6bf8bd270ce54c905b7"
+    },
+    "assets/fonts/LICENSE-DejaVu.txt": {
+      "hash": "7a083b136e64d064794c3419751e5c7dd10d2f64c108fe5ba161eae5e5958a93",
+      "content": "/home/diego/.cache/hyperframes/history/2e2b93e6-c29d-4eee-b5ef-781038a70324/blobs/7a/7a083b136e64d064794c3419751e5c7dd10d2f64c108fe5ba161eae5e5958a93"
+    },
+    "assets/fonts/LICENSE-Noto.txt": {
+      "hash": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+      "content": "/home/diego/.cache/hyperframes/history/2e2b93e6-c29d-4eee-b5ef-781038a70324/blobs/c7/c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+    },
+    "assets/fonts/mono.ttf": {
+      "hash": "65b5e2b2c4a1fba9ae8be1f026cb35b03dcb8886d9b2a4147054fde12f7e767d",
+      "content": "/home/diego/.cache/hyperframes/history/2e2b93e6-c29d-4eee-b5ef-781038a70324/blobs/65/65b5e2b2c4a1fba9ae8be1f026cb35b03dcb8886d9b2a4147054fde12f7e767d"
+    },
+    "assets/fonts/titles.ttf": {
+      "hash": "586556501565e46ad356a5efcc2f6e81375230323ad5a2a1c4cc8211a6c5ef2e",
+      "content": "/home/diego/.cache/hyperframes/history/2e2b93e6-c29d-4eee-b5ef-781038a70324/blobs/58/586556501565e46ad356a5efcc2f6e81375230323ad5a2a1c4cc8211a6c5ef2e"
+    },
+    "assets/gsap.min.js": {
+      "hash": "96c01b81f44a3290e2b4532f55e2c9534b2adc43273a19f3756b2cb41f0fd0b6",
+      "content": "/home/diego/.cache/hyperframes/history/2e2b93e6-c29d-4eee-b5ef-781038a70324/blobs/96/96c01b81f44a3290e2b4532f55e2c9534b2adc43273a19f3756b2cb41f0fd0b6"
+    },
+    "assets/scene-01.jpg": {
+      "hash": "846377a32438aabc5271a78bd50b5dfc96aaf13d4fba453576dc4788d278dc04",
+      "content": "/home/diego/.cache/hyperframes/history/2e2b93e6-c29d-4eee-b5ef-781038a70324/blobs/84/846377a32438aabc5271a78bd50b5dfc96aaf13d4fba453576dc4788d278dc04"
+    },
+    "assets/scene-02.jpg": {
+      "hash": "a6c02000bfdf9c226966b067f6968859c15f9761cff5cb98d5dd30c9d97eeda2",
+      "content": "/home/diego/.cache/hyperframes/history/2e2b93e6-c29d-4eee-b5ef-781038a70324/blobs/a6/a6c02000bfdf9c226966b067f6968859c15f9761cff5cb98d5dd30c9d97eeda2"
+    },
+    "assets/scene-03.jpg": {
+      "hash": "2923708fb56a66f45df6dd05e6e9ee7775c2ad565a3464610853c706ce06c02d",
+      "content": "/home/diego/.cache/hyperframes/history/2e2b93e6-c29d-4eee-b5ef-781038a70324/blobs/29/2923708fb56a66f45df6dd05e6e9ee7775c2ad565a3464610853c706ce06c02d"
+    },
+    "assets/scene-04.jpg": {
+      "hash": "9b2fc33230f98b193733c6e99d0c0c3aa34d71f0c6f9e7aed5c52e88415eeb38",
+      "content": "/home/diego/.cache/hyperframes/history/2e2b93e6-c29d-4eee-b5ef-781038a70324/blobs/9b/9b2fc33230f98b193733c6e99d0c0c3aa34d71f0c6f9e7aed5c52e88415eeb38"
+    },
+    "assets/scene-05.jpg": {
+      "hash": "1dbb9bd3476d8fececa80d99e79c51bbe64fda80dcc8bbd7ec63c99e51740e23",
+      "content": "/home/diego/.cache/hyperframes/history/2e2b93e6-c29d-4eee-b5ef-781038a70324/blobs/1d/1dbb9bd3476d8fececa80d99e79c51bbe64fda80dcc8bbd7ec63c99e51740e23"
+    },
+    "assets/scene-06.jpg": {
+      "hash": "84673e2a8918393d8a1c0df5e1aea8b408059afd2068768766b55f303cef8cf9",
+      "content": "/home/diego/.cache/hyperframes/history/2e2b93e6-c29d-4eee-b5ef-781038a70324/blobs/84/84673e2a8918393d8a1c0df5e1aea8b408059afd2068768766b55f303cef8cf9"
+    },
+    "assets/scene-07.jpg": {
+      "hash": "259e485f63d0b37da239263509b22b1de7afc25c339704f4dfa4dff9f9f2bb6f",
+      "content": "/home/diego/.cache/hyperframes/history/2e2b93e6-c29d-4eee-b5ef-781038a70324/blobs/25/259e485f63d0b37da239263509b22b1de7afc25c339704f4dfa4dff9f9f2bb6f"
+    },
+    "assets/scene-08.jpg": {
+      "hash": "f965c51b27c9fee89287ecd758acee6368352b69d7664ae8b30fbbaa99c94bb5",
+      "content": "/home/diego/.cache/hyperframes/history/2e2b93e6-c29d-4eee-b5ef-781038a70324/blobs/f9/f965c51b27c9fee89287ecd758acee6368352b69d7664ae8b30fbbaa99c94bb5"
+    },
+    "assets/scene-09.jpg": {
+      "hash": "2afaf183b4f30d1df609a5d830115cb1353caab94c1adbe0c06121ef509cb05f",
+      "content": "/home/diego/.cache/hyperframes/history/2e2b93e6-c29d-4eee-b5ef-781038a70324/blobs/2a/2afaf183b4f30d1df609a5d830115cb1353caab94c1adbe0c06121ef509cb05f"
+    },
+    "assets/simulador-pov.png": {
+      "hash": "143895ba95624728fea2d0b9e6a8e9443e4811522cb6d0098dc69003087b39a4",
+      "content": "/home/diego/.cache/hyperframes/history/2e2b93e6-c29d-4eee-b5ef-781038a70324/blobs/14/143895ba95624728fea2d0b9e6a8e9443e4811522cb6d0098dc69003087b39a4"
+    },
+    "assets/simulador-terreno.png": {
+      "hash": "c0c1eeabb958e3b1b0af1e6dd19625735c91745bc96b7f26d0f549b91422d75a",
+      "content": "/home/diego/.cache/hyperframes/history/2e2b93e6-c29d-4eee-b5ef-781038a70324/blobs/c0/c0c1eeabb958e3b1b0af1e6dd19625735c91745bc96b7f26d0f549b91422d75a"
+    },
+    "build_native.py": {
+      "hash": "cb4fb3b9716f2ff1127347d47a20c61b38c1e06bca37127c510342f9e944f48b",
+      "content": "/home/diego/.cache/hyperframes/history/2e2b93e6-c29d-4eee-b5ef-781038a70324/blobs/cb/cb4fb3b9716f2ff1127347d47a20c61b38c1e06bca37127c510342f9e944f48b"
+    },
+    "compositions/amenazas.html": {
+      "hash": "77d6796a5d475fdd797fe7aad2aba8709ffb77656f4f4186951cd6d20b4b2cb7",
+      "content": "/home/diego/.cache/hyperframes/history/2e2b93e6-c29d-4eee-b5ef-781038a70324/blobs/77/77d6796a5d475fdd797fe7aad2aba8709ffb77656f4f4186951cd6d20b4b2cb7"
+    },
+    "compositions/cierre.html": {
+      "hash": "a84513721017c1b46fa1b79f5096a3ad1804e6664d38eb4a2542ffa07f2f455f",
+      "content": "/home/diego/.cache/hyperframes/history/2e2b93e6-c29d-4eee-b5ef-781038a70324/blobs/a8/a84513721017c1b46fa1b79f5096a3ad1804e6664d38eb4a2542ffa07f2f455f"
+    },
+    "compositions/comparar.html": {
+      "hash": "f53ced12a1f7351bb1857ab965c22f24593a071e1a813205b6e897e652f77732",
+      "content": "/home/diego/.cache/hyperframes/history/2e2b93e6-c29d-4eee-b5ef-781038a70324/blobs/f5/f53ced12a1f7351bb1857ab965c22f24593a071e1a813205b6e897e652f77732"
+    },
+    "compositions/desafio.html": {
+      "hash": "34f85699cab9e152215b748fcd19d6e31506ba879abe4fb81f7bece2c672013b",
+      "content": "/home/diego/.cache/hyperframes/history/2e2b93e6-c29d-4eee-b5ef-781038a70324/blobs/34/34f85699cab9e152215b748fcd19d6e31506ba879abe4fb81f7bece2c672013b"
+    },
+    "compositions/evidencia.html": {
+      "hash": "4c482d8136075df7970ce522580690e6d1ff4dc0f6fc8c614aee612332c275b6",
+      "content": "/home/diego/.cache/hyperframes/history/2e2b93e6-c29d-4eee-b5ef-781038a70324/blobs/4c/4c482d8136075df7970ce522580690e6d1ff4dc0f6fc8c614aee612332c275b6"
+    },
+    "compositions/planificar.html": {
+      "hash": "7ca6e916f540937f0937e3d90473b9777206eca6df7132eba15a69c2f2bec8a1",
+      "content": "/home/diego/.cache/hyperframes/history/2e2b93e6-c29d-4eee-b5ef-781038a70324/blobs/7c/7ca6e916f540937f0937e3d90473b9777206eca6df7132eba15a69c2f2bec8a1"
+    },
+    "compositions/retorno.html": {
+      "hash": "593c65411f577308736c6c9cd53587f5d75d0c18295006442fabb8e9cd202e81",
+      "content": "/home/diego/.cache/hyperframes/history/2e2b93e6-c29d-4eee-b5ef-781038a70324/blobs/59/593c65411f577308736c6c9cd53587f5d75d0c18295006442fabb8e9cd202e81"
+    },
+    "compositions/terreno.html": {
+      "hash": "617d2b17de3bd1177fcdbf383d9369eb726236a076ce580a5c4fc91fbbde411e",
+      "content": "/home/diego/.cache/hyperframes/history/2e2b93e6-c29d-4eee-b5ef-781038a70324/blobs/61/617d2b17de3bd1177fcdbf383d9369eb726236a076ce580a5c4fc91fbbde411e"
+    },
+    "compositions/territorio.html": {
+      "hash": "1493051366ff5754de7eafd145da498308e4bbed58caba0e4834f15fb37556ab",
+      "content": "/home/diego/.cache/hyperframes/history/2e2b93e6-c29d-4eee-b5ef-781038a70324/blobs/14/1493051366ff5754de7eafd145da498308e4bbed58caba0e4834f15fb37556ab"
+    },
+    "index.html": {
+      "hash": "78763da76e21dc281269e7b927f2daaf4f3f8be9d19af14d1a2c831cece05df2",
+      "content": "/home/diego/.cache/hyperframes/history/2e2b93e6-c29d-4eee-b5ef-781038a70324/blobs/78/78763da76e21dc281269e7b927f2daaf4f3f8be9d19af14d1a2c831cece05df2"
+    },
+    "package-lock.json": {
+      "hash": "ce027ac62617e505dd9ea3d7e9a9a25701d251dd82976f76fe95bf2aca447f6f",
+      "content": "/home/diego/.cache/hyperframes/history/2e2b93e6-c29d-4eee-b5ef-781038a70324/blobs/ce/ce027ac62617e505dd9ea3d7e9a9a25701d251dd82976f76fe95bf2aca447f6f"
+    },
+    "package.json": {
+      "hash": "4506b4098a8450e28edeebe248a5ceaf6f375a33d1995e929edff131980ba03e",
+      "content": "/home/diego/.cache/hyperframes/history/2e2b93e6-c29d-4eee-b5ef-781038a70324/blobs/45/4506b4098a8450e28edeebe248a5ceaf6f375a33d1995e929edff131980ba03e"
+    },
+    "prepare-assets.mjs": {
+      "hash": "8ba8e8caa61b738502569a9168778ea540446356e2fc0909c37dc05f5a2e7f0b",
+      "content": "/home/diego/.cache/hyperframes/history/2e2b93e6-c29d-4eee-b5ef-781038a70324/blobs/8b/8ba8e8caa61b738502569a9168778ea540446356e2fc0909c37dc05f5a2e7f0b"
+    },
+    "preview.html": {
+      "hash": "12df824260503658e15953b643109942241d62048cc049d6e4071bab469ff333",
+      "content": "/home/diego/.cache/hyperframes/history/2e2b93e6-c29d-4eee-b5ef-781038a70324/blobs/12/12df824260503658e15953b643109942241d62048cc049d6e4071bab469ff333"
+    },
+    "produce.py": {
+      "hash": "fcb0f5561f337b861106db73eafebd9e0796d4838dd0a5d4582ced04f26b9754",
+      "content": "/home/diego/.cache/hyperframes/history/2e2b93e6-c29d-4eee-b5ef-781038a70324/blobs/fc/fcb0f5561f337b861106db73eafebd9e0796d4838dd0a5d4582ced04f26b9754"
+    },
+    "render-hyperframes.sh": {
+      "hash": "a197acd65365dbbed686f6c72c5f8d7dd9bea531cdca0902de771c2c7eddb175",
+      "content": "/home/diego/.cache/hyperframes/history/2e2b93e6-c29d-4eee-b5ef-781038a70324/blobs/a1/a197acd65365dbbed686f6c72c5f8d7dd9bea531cdca0902de771c2c7eddb175"
+    },
+    "scenes.json": {
+      "hash": "76f94fa551143dd7bc3c78610a16b17ee352f7d6e4108691623cb60808a06bca",
+      "content": "/home/diego/.cache/hyperframes/history/2e2b93e6-c29d-4eee-b5ef-781038a70324/blobs/76/76f94fa551143dd7bc3c78610a16b17ee352f7d6e4108691623cb60808a06bca"
+    },
+    "assets/master.mp4": {
+      "hash": "8266b732cf5bd83a8b2ebb2627030f6e56b265f2a5a18877d0dd31a99428b041",
+      "content": "/home/diego/.cache/hyperframes/history/2e2b93e6-c29d-4eee-b5ef-781038a70324/blobs/82/8266b732cf5bd83a8b2ebb2627030f6e56b265f2a5a18877d0dd31a99428b041"
+    },
+    "assets/score-original.wav": {
+      "hash": "123d8d4ee4517a1cf89bd2df0fe788b53a325eab93fce90be3a769faba73f162",
+      "content": "/home/diego/.cache/hyperframes/history/2e2b93e6-c29d-4eee-b5ef-781038a70324/blobs/12/123d8d4ee4517a1cf89bd2df0fe788b53a325eab93fce90be3a769faba73f162"
+    },
+    "assembly-previous.html.txt": {
+      "hash": "dcf82335a9278406ec632fcf86fbd30ce1393f71b91dda6407b8e3d4dffe18f6",
+      "content": "/home/diego/.cache/hyperframes/history/2e2b93e6-c29d-4eee-b5ef-781038a70324/blobs/dc/dcf82335a9278406ec632fcf86fbd30ce1393f71b91dda6407b8e3d4dffe18f6"
+    }
+  },
+  "revisions": {
+    "7c67944c-effd-4c61-a091-9009325b3ae5": {
+      "actor": {
+        "kind": "outside",
+        "name": "Outside"
+      },
+      "label": "Changed outside the app",
+      "startedAt": 1794508503476,
+      "endedAt": 1794508503827,
+      "files": {
+        "assembly-previous.html": {
+          "before": "/home/diego/.cache/hyperframes/history/2e2b93e6-c29d-4eee-b5ef-781038a70324/blobs/dc/dcf82335a9278406ec632fcf86fbd30ce1393f71b91dda6407b8e3d4dffe18f6",
+          "after": null
+        },
+        "assembly-previous.html.txt": {
+          "before": null,
+          "after": "/home/diego/.cache/hyperframes/history/2e2b93e6-c29d-4eee-b5ef-781038a70324/blobs/dc/dcf82335a9278406ec632fcf86fbd30ce1393f71b91dda6407b8e3d4dffe18f6"
+        },
+        "README.md": {
+          "before": "/home/diego/.cache/hyperframes/history/2e2b93e6-c29d-4eee-b5ef-781038a70324/blobs/ea/ea975ef4c7f1c84177ae1df5e4414695c5f4f15da2e0ff60886a34de3af4c02f",
+          "after": "/home/diego/.cache/hyperframes/history/2e2b93e6-c29d-4eee-b5ef-781038a70324/blobs/c8/c8018f779027491611e410475cbe35b0b226321d88700f8c19707e36c4b81382"
+        }
+      }
+    }
+  },
+  "checks": {
+    "latest": {
+      "revision": "7c67944c-effd-4c61-a091-9009325b3ae5",
+      "id": "338654ed-ee81-478e-8d24-6f61ed24f089"
+    },
+    "revisions": {
+      "7c67944c-effd-4c61-a091-9009325b3ae5": [
+        {
+          "id": "338654ed-ee81-478e-8d24-6f61ed24f089",
+          "scope": "project",
+          "report": "/home/diego/Documentos/GitHub/Alg_Ruteo/presentacion/trailer_hyperframes/.hyperframes/artifacts/checks/338654ed-ee81-478e-8d24-6f61ed24f089.json",
+          "metadata": {
+            "ok": true,
+            "browserSkipped": false,
+            "options": {
+              "samples": 9,
+              "atTransitions": false,
+              "maxIssues": 80,
+              "collapseStatic": true,
+              "tolerance": 2,
+              "timeout": 45000,
+              "cache": true,
+              "contrast": true,
+              "craft": true,
+              "strict": false,
+              "snapshots": false,
+              "browserGpuMode": "auto",
+              "includeUnmounted": false
+            }
+          },
+          "createdAt": 1794508513298,
+          "contentHash": "774954f94809e213236f2053083492b9c3a393531aac596d1e3cfbb3cdd9322a",
+          "revision": "7c67944c-effd-4c61-a091-9009325b3ae5",
+          "inputFingerprint": "73520f07138856dd3292ab7cf323446d84a02bddef1085b31a20bc5ea429b660",
+          "inputScope": "local-project-files",
+          "attribution": "recorded-revision"
+        }
+      ]
+    },
+    "unversioned": [
+      {
+        "id": "f249a80c-afa1-4b8e-8247-9e85a369e5bf",
+        "scope": "project",
+        "report": "/home/diego/Documentos/GitHub/Alg_Ruteo/presentacion/trailer_hyperframes/.hyperframes/artifacts/checks/f249a80c-afa1-4b8e-8247-9e85a369e5bf.json",
+        "metadata": {
+          "ok": false,
+          "browserSkipped": false,
+          "options": {
+            "samples": 9,
+            "atTransitions": false,
+            "maxIssues": 80,
+            "collapseStatic": true,
+            "tolerance": 2,
+            "timeout": 45000,
+            "cache": true,
+            "contrast": true,
+            "craft": true,
+            "strict": false,
+            "snapshots": false,
+            "browserGpuMode": "auto",
+            "includeUnmounted": false
+          }
+        },
+        "createdAt": 1794508347652,
+        "contentHash": "a83f92d0f6335b09cb907fe8008f541ad0a1879e9ce1c27171700fd1e8a658c0",
+        "revision": null,
+        "inputFingerprint": "481ea2a233c98b778dac0ed3778e680ed6e4ef1f648c9d756b11726c88a1e71f",
+        "inputScope": "local-project-files",
+        "attribution": "unversioned"
+      }
+    ]
+  },
+  "snapshots": {
+    "latest": {
+      "revision": "7c67944c-effd-4c61-a091-9009325b3ae5",
+      "id": "712b6371-8f08-4f10-9690-0b3a5c52853e-9"
+    },
+    "revisions": {
+      "7c67944c-effd-4c61-a091-9009325b3ae5": [
+        {
+          "scope": "full",
+          "id": "712b6371-8f08-4f10-9690-0b3a5c52853e-0",
+          "image": "/home/diego/Documentos/GitHub/Alg_Ruteo/presentacion/trailer_hyperframes/.hyperframes/artifacts/snapshots/5c4d3894-7d77-43f8-b41c-6450689f3e58/frame-00-at-2s.png",
+          "time": 2,
+          "metadata": {
+            "width": 1920,
+            "height": 1080,
+            "zoomScale": 1,
+            "browserGpuMode": "auto",
+            "warnings": [],
+            "partial": false
+          },
+          "createdAt": 1794508519581,
+          "contentHash": "672d78daa65346a6eca113e88b98280d87f9fda4201dbe28ef5a312445bc5a0d",
+          "revision": "7c67944c-effd-4c61-a091-9009325b3ae5",
+          "inputFingerprint": "73520f07138856dd3292ab7cf323446d84a02bddef1085b31a20bc5ea429b660",
+          "inputScope": "local-project-files",
+          "attribution": "recorded-revision"
+        },
+        {
+          "scope": "full",
+          "id": "712b6371-8f08-4f10-9690-0b3a5c52853e-1",
+          "image": "/home/diego/Documentos/GitHub/Alg_Ruteo/presentacion/trailer_hyperframes/.hyperframes/artifacts/snapshots/5c4d3894-7d77-43f8-b41c-6450689f3e58/frame-01-at-7s.png",
+          "time": 7,
+          "metadata": {
+            "width": 1920,
+            "height": 1080,
+            "zoomScale": 1,
+            "browserGpuMode": "auto",
+            "warnings": [],
+            "partial": false
+          },
+          "createdAt": 1794508519581,
+          "contentHash": "7e83e6696ad8c4c8fc9a553a0c66c23246902ba35e23a17d10c175118c52fd1f",
+          "revision": "7c67944c-effd-4c61-a091-9009325b3ae5",
+          "inputFingerprint": "73520f07138856dd3292ab7cf323446d84a02bddef1085b31a20bc5ea429b660",
+          "inputScope": "local-project-files",
+          "attribution": "recorded-revision"
+        },
+        {
+          "scope": "full",
+          "id": "712b6371-8f08-4f10-9690-0b3a5c52853e-2",
+          "image": "/home/diego/Documentos/GitHub/Alg_Ruteo/presentacion/trailer_hyperframes/.hyperframes/artifacts/snapshots/5c4d3894-7d77-43f8-b41c-6450689f3e58/frame-02-at-13s.png",
+          "time": 13,
+          "metadata": {
+            "width": 1920,
+            "height": 1080,
+            "zoomScale": 1,
+            "browserGpuMode": "auto",
+            "warnings": [],
+            "partial": false
+          },
+          "createdAt": 1794508519581,
+          "contentHash": "879f8fc49842108f4eec7d1697f71cd3d931d075e5b92c87afeddb81bc6a713e",
+          "revision": "7c67944c-effd-4c61-a091-9009325b3ae5",
+          "inputFingerprint": "73520f07138856dd3292ab7cf323446d84a02bddef1085b31a20bc5ea429b660",
+          "inputScope": "local-project-files",
+          "attribution": "recorded-revision"
+        },
+        {
+          "scope": "full",
+          "id": "712b6371-8f08-4f10-9690-0b3a5c52853e-3",
+          "image": "/home/diego/Documentos/GitHub/Alg_Ruteo/presentacion/trailer_hyperframes/.hyperframes/artifacts/snapshots/5c4d3894-7d77-43f8-b41c-6450689f3e58/frame-03-at-20s.png",
+          "time": 20,
+          "metadata": {
+            "width": 1920,
+            "height": 1080,
+            "zoomScale": 1,
+            "browserGpuMode": "auto",
+            "warnings": [],
+            "partial": false
+          },
+          "createdAt": 1794508519582,
+          "contentHash": "b228e598f1a6aa1f2372f02a3ca1bf43690bda7323ea7747e3533ee788e27149",
+          "revision": "7c67944c-effd-4c61-a091-9009325b3ae5",
+          "inputFingerprint": "73520f07138856dd3292ab7cf323446d84a02bddef1085b31a20bc5ea429b660",
+          "inputScope": "local-project-files",
+          "attribution": "recorded-revision"
+        },
+        {
+          "scope": "full",
+          "id": "712b6371-8f08-4f10-9690-0b3a5c52853e-4",
+          "image": "/home/diego/Documentos/GitHub/Alg_Ruteo/presentacion/trailer_hyperframes/.hyperframes/artifacts/snapshots/5c4d3894-7d77-43f8-b41c-6450689f3e58/frame-04-at-28s.png",
+          "time": 28,
+          "metadata": {
+            "width": 1920,
+            "height": 1080,
+            "zoomScale": 1,
+            "browserGpuMode": "auto",
+            "warnings": [],
+            "partial": false
+          },
+          "createdAt": 1794508519582,
+          "contentHash": "827dbb67719e6db113604efa0b08d481456d836878bcb871d076b29f716643f8",
+          "revision": "7c67944c-effd-4c61-a091-9009325b3ae5",
+          "inputFingerprint": "73520f07138856dd3292ab7cf323446d84a02bddef1085b31a20bc5ea429b660",
+          "inputScope": "local-project-files",
+          "attribution": "recorded-revision"
+        },
+        {
+          "scope": "full",
+          "id": "712b6371-8f08-4f10-9690-0b3a5c52853e-5",
+          "image": "/home/diego/Documentos/GitHub/Alg_Ruteo/presentacion/trailer_hyperframes/.hyperframes/artifacts/snapshots/5c4d3894-7d77-43f8-b41c-6450689f3e58/frame-05-at-36s.png",
+          "time": 36,
+          "metadata": {
+            "width": 1920,
+            "height": 1080,
+            "zoomScale": 1,
+            "browserGpuMode": "auto",
+            "warnings": [],
+            "partial": false
+          },
+          "createdAt": 1794508519582,
+          "contentHash": "6aac72f99a64b421127d2a75de4eb3ba01906cd4e4dc22a3a04a024916fab786",
+          "revision": "7c67944c-effd-4c61-a091-9009325b3ae5",
+          "inputFingerprint": "73520f07138856dd3292ab7cf323446d84a02bddef1085b31a20bc5ea429b660",
+          "inputScope": "local-project-files",
+          "attribution": "recorded-revision"
+        },
+        {
+          "scope": "full",
+          "id": "712b6371-8f08-4f10-9690-0b3a5c52853e-6",
+          "image": "/home/diego/Documentos/GitHub/Alg_Ruteo/presentacion/trailer_hyperframes/.hyperframes/artifacts/snapshots/5c4d3894-7d77-43f8-b41c-6450689f3e58/frame-06-at-43s.png",
+          "time": 43,
+          "metadata": {
+            "width": 1920,
+            "height": 1080,
+            "zoomScale": 1,
+            "browserGpuMode": "auto",
+            "warnings": [],
+            "partial": false
+          },
+          "createdAt": 1794508519582,
+          "contentHash": "e244777418184ef13a52abb4cbfd530d75a95cae4e70b7794550bfdc7929385e",
+          "revision": "7c67944c-effd-4c61-a091-9009325b3ae5",
+          "inputFingerprint": "73520f07138856dd3292ab7cf323446d84a02bddef1085b31a20bc5ea429b660",
+          "inputScope": "local-project-files",
+          "attribution": "recorded-revision"
+        },
+        {
+          "scope": "full",
+          "id": "712b6371-8f08-4f10-9690-0b3a5c52853e-7",
+          "image": "/home/diego/Documentos/GitHub/Alg_Ruteo/presentacion/trailer_hyperframes/.hyperframes/artifacts/snapshots/5c4d3894-7d77-43f8-b41c-6450689f3e58/frame-07-at-49s.png",
+          "time": 49,
+          "metadata": {
+            "width": 1920,
+            "height": 1080,
+            "zoomScale": 1,
+            "browserGpuMode": "auto",
+            "warnings": [],
+            "partial": false
+          },
+          "createdAt": 1794508519582,
+          "contentHash": "3e67559f2ea89beea2431e5cdfbf03c8718fc2f30093d1765eacfb689ed41ce6",
+          "revision": "7c67944c-effd-4c61-a091-9009325b3ae5",
+          "inputFingerprint": "73520f07138856dd3292ab7cf323446d84a02bddef1085b31a20bc5ea429b660",
+          "inputScope": "local-project-files",
+          "attribution": "recorded-revision"
+        },
+        {
+          "scope": "full",
+          "id": "712b6371-8f08-4f10-9690-0b3a5c52853e-8",
+          "image": "/home/diego/Documentos/GitHub/Alg_Ruteo/presentacion/trailer_hyperframes/.hyperframes/artifacts/snapshots/5c4d3894-7d77-43f8-b41c-6450689f3e58/frame-08-at-56s.png",
+          "time": 56,
+          "metadata": {
+            "width": 1920,
+            "height": 1080,
+            "zoomScale": 1,
+            "browserGpuMode": "auto",
+            "warnings": [],
+            "partial": false
+          },
+          "createdAt": 1794508519582,
+          "contentHash": "866b2ddb439131529756fd127255ec2e08bb4e85b3e95ee290ac822a7d80197a",
+          "revision": "7c67944c-effd-4c61-a091-9009325b3ae5",
+          "inputFingerprint": "73520f07138856dd3292ab7cf323446d84a02bddef1085b31a20bc5ea429b660",
+          "inputScope": "local-project-files",
+          "attribution": "recorded-revision"
+        },
+        {
+          "scope": "full",
+          "id": "712b6371-8f08-4f10-9690-0b3a5c52853e-9",
+          "image": "/home/diego/Documentos/GitHub/Alg_Ruteo/presentacion/trailer_hyperframes/.hyperframes/artifacts/snapshots/5c4d3894-7d77-43f8-b41c-6450689f3e58/frame-09-at-59.75s.png",
+          "time": 59.75,
+          "metadata": {
+            "width": 1920,
+            "height": 1080,
+            "zoomScale": 1,
+            "browserGpuMode": "auto",
+            "warnings": [],
+            "partial": false
+          },
+          "createdAt": 1794508519582,
+          "contentHash": "a316de982121c5a00312285a41d6f21f4d8081493383245361478294c86b0d71",
+          "revision": "7c67944c-effd-4c61-a091-9009325b3ae5",
+          "inputFingerprint": "73520f07138856dd3292ab7cf323446d84a02bddef1085b31a20bc5ea429b660",
+          "inputScope": "local-project-files",
+          "attribution": "recorded-revision"
+        }
+      ]
+    },
+    "unversioned": []
+  }
+}

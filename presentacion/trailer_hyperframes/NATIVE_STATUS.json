@@ -1,0 +1,19 @@
+{
+  "native_source": true,
+  "scene_count": 9,
+  "duration_seconds": 60,
+  "resolution": [
+    1920,
+    1080
+  ],
+  "fps": 30,
+  "uses_previous_mp4": false,
+  "syntax_checks": "passed: 9 scene scripts, shell script, prepare-assets.mjs",
+  "timeline_structure": "passed: 9 adjacent scenes spanning 0–60 seconds",
+  "official_hyperframes_check": "not run",
+  "native_visual_qa": "not run: browser unavailable",
+  "native_render": "not produced",
+  "installation_attempt": "failed: npm EAI_AGAIN registry.npmjs.org/gsap",
+  "required_to_finish": "npm network access and Chrome execution",
+  "publishes_anywhere": false
+}

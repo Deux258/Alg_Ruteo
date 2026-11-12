@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ALG_RUTEO · Cada ruta es una decisión</title>
+<style>
+html,body { margin:0; padding:0; background:#060d17; width:1920px; height:1080px; overflow:hidden; }
+#root { position:relative; width:1920px; height:1080px; }
+video { position:absolute; inset:0; width:1920px; height:1080px; object-fit:contain; }
+</style>
+</head>
+<body>
+<!-- Native HyperFrames edit timeline. Source master is generated offline by produce.py.
+     HyperFrames CLI export has NOT been tested in this restricted environment.
+     Do not export over the source master: use renders/Alg_Ruteo_Hyperframes.mp4.
+     Motion is baked into the media; edit produce.py to change its individual layers. -->
+<div id="root" data-composition-id="alg-ruteo" data-width="1920" data-height="1080"
+     data-start="0" data-duration="60" data-no-timeline="true">
+  <video id="desafio" class="clip" data-start="0" data-duration="4" data-track-index="1" data-media-start="0" src="assets/master.mp4" muted playsinline></video>
+  <video id="territorio" class="clip" data-start="4" data-duration="6" data-track-index="1" data-media-start="4" src="assets/master.mp4" muted playsinline></video>
+  <video id="planificar" class="clip" data-start="10" data-duration="6" data-track-index="1" data-media-start="10" src="assets/master.mp4" muted playsinline></video>
+  <video id="comparar" class="clip" data-start="16" data-duration="8" data-track-index="1" data-media-start="16" src="assets/master.mp4" muted playsinline></video>
+  <video id="terreno" class="clip" data-start="24" data-duration="8" data-track-index="1" data-media-start="24" src="assets/master.mp4" muted playsinline></video>
+  <video id="amenazas" class="clip" data-start="32" data-duration="8" data-track-index="1" data-media-start="32" src="assets/master.mp4" muted playsinline></video>
+  <video id="retorno" class="clip" data-start="40" data-duration="6" data-track-index="1" data-media-start="40" src="assets/master.mp4" muted playsinline></video>
+  <video id="evidencia" class="clip" data-start="46" data-duration="6" data-track-index="1" data-media-start="46" src="assets/master.mp4" muted playsinline></video>
+  <video id="cierre" class="clip" data-start="52" data-duration="8" data-track-index="1" data-media-start="52" src="assets/master.mp4" muted playsinline></video>
+  <audio id="musica-original" class="clip" data-start="0" data-duration="60" data-track-index="2" data-volume="1" src="assets/score-original.wav"></audio>
+</div>
+</body>
+</html>

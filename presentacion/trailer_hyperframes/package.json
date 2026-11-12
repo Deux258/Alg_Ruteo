@@ -1,0 +1,13 @@
+{
+  "name": "alg-ruteo-trailer",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Trailer local de ALG_RUTEO: escenas nativas HyperFrames y GSAP",
+  "scripts": {
+    "prepare:assets": "node prepare-assets.mjs",
+    "check": "hyperframes check --json",
+    "preview": "hyperframes preview",
+    "render": "hyperframes render --output renders/Alg_Ruteo_Hyperframes.mp4 --fps 30 --quality high"
+  },
+  "dependencies": {"gsap": "3.13.0", "hyperframes": "0.9.38"}
+}

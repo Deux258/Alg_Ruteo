@@ -1,0 +1,18 @@
+{
+  "seed": 20261104,
+  "draws": [
+    {
+      "id": "A4:671",
+      "draw": 37.081347777526354,
+      "probability_pct": 10,
+      "active": false
+    },
+    {
+      "id": "A4:684",
+      "draw": 0.6515708933481412,
+      "probability_pct": 10,
+      "active": true
+    }
+  ],
+  "regla": "Falla cuando U < p; U en [0,100)"
+}

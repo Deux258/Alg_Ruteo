@@ -1,0 +1,6 @@
+renders/
+assets/*.wav
+__pycache__/
+assets/*.mp4
+node_modules/
+assets/gsap.min.js
