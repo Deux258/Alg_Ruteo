@@ -19,14 +19,18 @@ identificados por su run; no se reemplaza una publicación hasta terminar las ca
 
 ## Flujo principal
 
-1. Elegir base, hora UTC y un polígono dibujado o importado como GeoJSON.
+1. Elegir un sector en **Monitoreo de toda la zona** y pulsar **Planificar e iniciar sector**. El catálogo cubre toda el área de estudio; cada vuelo se valida antes de despegar. También se conserva el objetivo personalizado dibujado o importado.
 2. Ajustar altura AGL, viento, batería, presupuesto, riesgo y estaciones virtuales.
 3. Comparar Dijkstra por metros, Dijkstra con parámetros, Gurobi y recocido.
 4. Elegir circuitos distintos o comparar los resultados originales de las cuatro técnicas.
 5. Sortear amenazas con semilla, filtrar las activadas y replanificar.
 6. Reproducir, pausar, avanzar o reiniciar; usar la vista del dron y centrar el objetivo.
-   Marcar un foco sintético permite reproducir detección, reporte y regreso.
+   Los focos aparecen automáticamente con una tasa fija derivada de CONAF y un proceso de Poisson uniforme por área y tiempo. El dron solo detecta un foco después de su aparición, dentro de alcance y con línea de vista. Marcar un foco queda como diagnóstico avanzado.
 7. Ver edificios, agua, cobertura, árboles y curvas en 3D; exportar misión y capas.
+
+Al detectar se comparan cuatro técnicas desde la posición y batería actuales hacia el origen o la próxima estación viable. La probabilidad de incendio no la define el usuario: [fuentes, fórmula y limitaciones](docs/MONITOREO_AUTOMATICO.md). El control «Probabilidad de falla de amenaza» sigue siendo un escenario de infraestructura, separado del proceso de incendios.
+
+La cobertura simulada se acumula por celdas observadas y queda en `datos/runs/monitoreo/`. Particionar el área o atender un foco no equivale a completar el monitoreo. Sectores inviables y zonas no observadas siguen pendientes. [Contrato HTTP](docs/API_MONITOREO.md).
 
 OpenStreetMap vuelve como mapa base 2D, con calles y nombres. El panel **Cartografía
 y entorno** permite alternar al mapa vectorial local y controlar seis capas tanto

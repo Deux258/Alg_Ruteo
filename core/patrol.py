@@ -812,7 +812,13 @@ def validate_polygon(request, study):
     if len(target.exterior.coords)>1000 or sum(len(r.coords) for r in target.interiors)>1000:
         raise ValueError('Polígono demasiado complejo (máximo 1000 vértices)')
     if not study.covers(target):
-        raise ValueError('Polígono objetivo fuera del área de vigilancia')
+        # GEOS intersections of a shared geographic boundary can differ by
+        # floating-point roundoff. Admit only a micrometric boundary tolerance
+        # and < .01 m² outside, never a meaningful exterior surveillance area.
+        outside=target.difference(study)
+        outside_area=transform(FWD,outside.segmentize(.0001)).area
+        if not study.buffer(1e-10).covers(target) or outside_area>.01:
+            raise ValueError('Polígono objetivo fuera del área de vigilancia')
     target = transform(FWD,target)
     if not 1 <= target.area <= 4_000_000:
         raise ValueError('Área objetivo entre 1 m² y 4 km²; dividir objetivos mayores')
@@ -856,6 +862,8 @@ def calculate(model, request, conn=None, terrain_override=None):
     from core.mission_constraints import assess_constraints
     started=time.monotonic()
     if not isinstance(request,dict):raise ValueError('Solicitud JSON debe ser un objeto')
+    from core.patrol_monitoring import resolve
+    request=resolve(model,request)
     constraints=assess_constraints(model,request,_surface=terrain_override)
     actual=constraints['effective_profile'];p=dict(actual)
     p['battery_budget_s']=constraints['flight_budget_s']
@@ -968,7 +976,7 @@ def calculate(model, request, conn=None, terrain_override=None):
         if key not in geometries:
             points=e['coordinates'] if e['source']<e['target'] else list(reversed(e['coordinates']))
             geometries[key]=[[*INV(c[0],c[1]),c[2]] for c in points]
-    graph_rows=[dict(id=str(e['id']),source=str(e['source']),target=str(e['target']),time_s=e['time_s'],cost=e['cost'],horizontal_m=e['horizontal_m'],
+    graph_rows=[dict(id=str(e['id']),source=str(e['source']),target=str(e['target']),time_s=e['time_s'],cost=e['cost'],distance_m=e['distance_m'],probability=e['probability'],horizontal_m=e['horizontal_m'],
                      geometry_id=f"{min(e['source'],e['target'])}:{max(e['source'],e['target'])}",geometry_reversed=e['source']>e['target'],
                      hazard_ids=[hazards.rows[i]['id'] for i in e['hazard_ids']]) for e in graph.edges.values()]
     threats=[]
@@ -1011,7 +1019,10 @@ def map_data(model):
     preferred=next((a for a in admissible if iso(a['time'])>=observed),next(iter(admissible),None))
     validation=dict(default_time=preferred['time'] if preferred else model['reference_time'],
         default_constraints=preferred,weather=[dict(time=a['time'],admissible=a['admissible'],reasons=a['reasons'],probability_pct=a['probability_pct']) for a in hourly])
+    from core.patrol_monitoring import catalogue
+    from core.patrol_events import baseline
     return dict(schema_version='patrol-map-2',area=model['study_geometry'],flight_area=model['flight_geometry'],
+                monitoring=catalogue(model),fire_baseline=baseline(),
                 bases=bases,base_catalogue=model['records']['M1'],default_origin=home['geometry']['coordinates'],demo_polygon=demo,
                 weather=model['records']['M4'],reference_time=model['reference_time'],profile=p,validation=validation,
                 layers={k:model['records'][k] for k in ('M2','A2','A3','A4')},
@@ -1031,6 +1042,12 @@ def simulate(result, request, terrain_override=None):
     A failed link detected ahead triggers safe return from its source. This is
     explicitly an interrupted patrol, never counted as completed surveillance.
     """
+    if set(request)&{'probability','probability_pct','fire_probability','fire_probability_pct','fire_window','fire_rate','rate_per_km2_day'}:
+        raise ValueError('La probabilidad del foco se deriva de CONAF; no admite parámetros del usuario')
+    allowed={'sha256','method','route_set','scenario','seed','scenario_index','fire_mode','fire','return_destination','recovery_method'}
+    if set(request)-allowed:raise ValueError('Parámetros de simulación desconocidos')
+    if request.get('return_destination','auto') not in ('auto','origin','station') or request.get('recovery_method','dijkstra_weighted') not in METHODS:
+        raise ValueError('Política de recuperación desconocida')
     route_set=request.get('route_set','comparison')
     if route_set not in ('comparison','alternatives'):raise ValueError('route_set debe ser comparison o alternatives')
     available=result['routes'] if route_set=='comparison' else result.get('route_alternatives',{})
@@ -1052,7 +1069,10 @@ def simulate(result, request, terrain_override=None):
         draws.append(dict(id=threat['id'],draw=value,probability_pct=threat['probability_pct'],active=occurs))
         if occurs:
             active.add(threat['id'])
-    fire = request.get('fire')
+    fire_mode=request.get('fire_mode','manual' if request.get('fire') is not None else 'automatic')
+    if fire_mode not in ('manual','automatic'):raise ValueError('fire_mode debe ser automatic o manual')
+    if fire_mode=='automatic' and request.get('fire') is not None:raise ValueError('El modo automático no recibe coordenadas de foco')
+    fire = request.get('fire') if fire_mode=='manual' else None
     if fire is not None:
         if not isinstance(fire,list) or len(fire)!=2:
             raise ValueError('fire requiere [longitud,latitud]')
@@ -1103,6 +1123,14 @@ def simulate(result, request, terrain_override=None):
         if not active.intersection(e['hazard_ids']):
             adjacency[e['source']].append(i)
     initial_ascent = ascent_at(home)
+    from core.patrol_events import generate
+    horizon=max(0,(route.get('time_s') or sum(edges[i]['time_s'] for i in route['edge_ids']))-initial_ascent-landing_at(home))
+    fire_event=(generate(seed,scenario_index,transform(FWD,shape(result['target_polygon'])),initial_ascent,horizon,t)
+                if fire_mode=='automatic' else dict(mode='manual',occurs=bool(fire),coordinates=fire,appeared_at_s=0.,state='active' if fire else 'no_fire'))
+    if fire_mode=='automatic':
+        fire=fire_event['coordinates'] if fire_event.get('surface_m') is not None else None
+        fire_xy=FWD(*fire) if fire else None
+        fire_z=fire_event.get('surface_m')
     elapsed = initial_ascent
     remaining = p['battery_budget_s']-initial_ascent
     ground=[*nodes[home][:2],ground_at(home)]
@@ -1110,6 +1138,7 @@ def simulate(result, request, terrain_override=None):
                 dict(coordinates=nodes[home],time_s=elapsed,battery_pct=100*remaining/p['battery_budget_s'],phase='patrol')]
     current = home
     detection = None
+    recovery_comparison = None
     interrupted = False
     coordinate_index = 0
     station_stops = {s['coordinate_index']:s for s in route['stops']}
@@ -1182,6 +1211,20 @@ def simulate(result, request, terrain_override=None):
                     serial += 1
                     heapq.heappush(queue,(cost+edge['time_s'],serial,edge['target'],battery-edge['time_s'],path+[i],stops,mask))
         return recovery,base_targets
+    def compare_recovery(battery_remaining,mission_elapsed):
+        from core.patrol_recovery import compare
+        # Older persisted mission graphs did not export distance/probability.
+        for edge in edges.values():
+            if 'distance_m' not in edge:
+                coords=sample_edge(edge)
+                edge['distance_m']=sum(math.dist([*FWD(*a[:2]),a[2]],[*FWD(*b[:2]),b[2]]) for a,b in zip(coords,coords[1:]))
+            edge.setdefault('cost',edge['time_s'])
+        failed={r['id'] for r in result['failure_probabilities']['nodes'] if active.intersection(r['by_threat'])}
+        next_station=next((s['station_id'] for s in route['stops'] if s['station_id'] not in used_stations),None)
+        recovery=compare(edges,adjacency,current,home,result['stations'],battery_remaining,mission_elapsed,p,landing_at,
+                         failed,seed,next_station,request.get('return_destination','auto'),request.get('recovery_method','dijkstra_weighted'))
+        recovery['snapshot'].update(coordinates=nodes[current],active_threat_ids=sorted(active),report_reserve_s=p['verification_s'])
+        return recovery
     for completed_edges,ident in enumerate(route['edge_ids'],1):
         e = edges[ident]
         if active.intersection(e['hazard_ids']):
@@ -1191,7 +1234,11 @@ def simulate(result, request, terrain_override=None):
         points = sample_edge(e)
         hit = None
         if fire:
+            timings=segment_times(points);total=sum(timings);offset=0.
             for k,c in enumerate(points):
+                if k:offset+=timings[k-1]
+                observed_at=elapsed+(e['time_s']*offset/total if total else 0.)
+                if observed_at+1e-9<fire_event['appeared_at_s']:continue
                 xy = FWD(*c[:2])
                 if math.dist(xy,fire_xy)<=p['view_radius_m'] and t.visible([*xy,c[2]],[*fire_xy,fire_z]):
                     hit = k
@@ -1211,19 +1258,24 @@ def simulate(result, request, terrain_override=None):
                 if not math.isfinite(duration):
                     continue
                 edge_id = f'split-{name}'
-                edges[edge_id] = dict(source=current,target=target,coordinates=coords,time_s=duration,hazard_ids=[])
+                distance=sum(math.dist([*FWD(*a[:2]),a[2]],[*FWD(*b[:2]),b[2]]) for a,b in zip(coords,coords[1:]))
+                probability=e.get('probability',max(0.,(e.get('cost',e['time_s'])/e['time_s']-1)/p['risk_weight']) if e['time_s'] and p['risk_weight'] else 0.)
+                edges[edge_id] = dict(source=current,target=target,coordinates=coords,time_s=duration,
+                                     distance_m=distance,cost=duration*(1+p['risk_weight']*probability),probability=probability,hazard_ids=e['hazard_ids'])
                 adjacency[current].append(edge_id)
-            detection = dict(synthetic=True,fire_coordinates=fire,observer_coordinates=nodes[current],detected_at_s=elapsed,
+            fire_event.update(state='detected',detected_at_s=elapsed)
+            detection = dict(synthetic=True,mode=fire_mode,fire_coordinates=fire,observer_coordinates=nodes[current],detected_at_s=elapsed,
                              reported_at_s=None,verification_s=p['verification_s'],report_status='incomplete',report_completed=False,
                              detected_at_utc=(iso(result['time'])+timedelta(seconds=elapsed)).isoformat(),reported_at_utc=None)
             timeline.append(dict(coordinates=nodes[current],time_s=elapsed,battery_pct=max(0,100*remaining/p['battery_budget_s']),phase='detection'))
-            can_report,_=find_recovery(remaining-p['verification_s'],elapsed+p['verification_s'])
-            if can_report is not None:
+            recovery_comparison=compare_recovery(remaining-p['verification_s'],elapsed+p['verification_s'])
+            if recovery_comparison['selected'] is not None:
                 elapsed += p['verification_s'];remaining -= p['verification_s']
                 detection.update(reported_at_s=elapsed,reported_at_utc=(iso(result['time'])+timedelta(seconds=elapsed)).isoformat(),report_status='completed',report_completed=True)
                 timeline.append(dict(coordinates=nodes[current],time_s=elapsed,battery_pct=max(0,100*remaining/p['battery_budget_s']),phase='report'))
             else:
                 detection['report_incomplete_reason']='Unforeseen threat prevents report plus safe return within physical battery or mission budget; return takes priority'
+                recovery_comparison=compare_recovery(remaining,elapsed)
             break
         append_points(points,e['time_s'],'patrol')
         coordinate_index += len(points)-1
@@ -1237,9 +1289,19 @@ def simulate(result, request, terrain_override=None):
     state = 'completed'
     returned_to='origin'
     if detection or interrupted:
-        recovery,base_targets = find_recovery(remaining,elapsed)
+        if detection:
+            for candidate in recovery_comparison['candidates']:
+                if candidate['status']=='ready':
+                    coords=[]
+                    for ident in candidate['edge_ids']:
+                        segment=sample_edge(edges[ident]);coords.extend(segment if not coords else segment[1:])
+                    candidate['coordinates']=coords or [nodes[current]]
+            selected=recovery_comparison['selected']
+            recovery=(selected['edge_ids'],[],selected['node']) if selected else None
+            base_targets={home:'origin',**{str(s['node']):s['id'] for s in result['stations'] if str(s['node'])!=home}}
+        else:recovery,base_targets = find_recovery(remaining,elapsed)
         if recovery is None:
-            state = 'no_safe_return'
+            state = ('no_selected_recovery' if detection and any(r['status']=='ready' for r in recovery_comparison['candidates']) else 'no_safe_return')
         else:
             path,stops,landing_node = recovery
             returned_to=base_targets[landing_node]
@@ -1249,7 +1311,7 @@ def simulate(result, request, terrain_override=None):
                     battery_swap(stops[j][0],stops[j][1])
                 append_points(sample_edge(edges[i]),edges[i]['time_s'],'return')
             state = ('detected_and_returned' if detection['report_status']=='completed' else 'detected_report_incomplete_and_returned') if detection else 'interrupted_and_returned'
-    if state!='no_safe_return':
+    if state not in ('no_safe_return','no_selected_recovery'):
         landing=landing_at(landing_node)
         elapsed += landing
         remaining -= landing
@@ -1257,10 +1319,14 @@ def simulate(result, request, terrain_override=None):
         timeline.append(dict(coordinates=[last[0],last[1],ground_at(landing_node)],time_s=elapsed,battery_pct=max(0,100*remaining/p['battery_budget_s']),phase='landed'))
     for frame in timeline:
         frame['position_utm']=[*FWD(*frame['coordinates'][:2]),frame['coordinates'][2]]
-    return dict(schema_version='patrol-simulation-2',result_sha256=result['sha256'],method=method,route_set=route_set,scenario=scenario,
+    if fire_event['occurs'] and detection is None and fire_event['state']!='unknown_elevation':
+        fire_event['state']='not_yet_active_at_end' if fire_event['appeared_at_s']>elapsed else 'not_observed'
+    if detection and detection['report_completed']:fire_event['state']='reported'
+    return dict(schema_version='patrol-simulation-3',result_sha256=result['sha256'],method=method,route_set=route_set,scenario=scenario,
+                fire_event=fire_event,recovery=recovery_comparison,
                 seed=request.get('seed',p['seed']),scenario_index=scenario_index,rng_protocol='sha256/53-bit-uniform-v1',draws=draws,active_threat_ids=sorted(active),timeline=timeline,
                 detection=detection,status=state,time_s=elapsed,mission_completed=state in ('completed','detected_and_returned'),
-                fire_found=detection is not None,patrol_completed=state=='completed',return_base_id=returned_to if state!='no_safe_return' else None,hypothetical=True)
+                fire_found=detection is not None,patrol_completed=state=='completed',return_base_id=returned_to if state not in ('no_safe_return','no_selected_recovery') else None,hypothetical=True)
 
 
 def snapshot_context(path):

@@ -55,6 +55,7 @@ def main():
         checks.append(('webgl',page.locator('#terrain').is_visible() and page.evaluate("!!document.querySelector('#terrain').getContext('webgl')")))
         page.screenshot(path=str(folder/'terreno_3d.png'))
         page.locator('#view-toggle').click()
+        page.get_by_text('Diagnóstico de detección manual',exact=True).click()
         page.locator('#fire').click()
         # The selected rectangle's rendered SVG bounds provide a real map click.
         bounds=page.locator('#map').bounding_box()

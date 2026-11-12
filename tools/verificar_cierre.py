@@ -80,6 +80,7 @@ def main():
             try:route.fulfill(status=200,json=value)
             except BrowserError:pass # A cancelled browser request cannot consume its obsolete response.
         page.route('**/simular',hold)
+        page.get_by_text('Diagnóstico de detección manual',exact=True).click()
         page.locator('#fire').click();bounds=page.locator('#map').bounding_box();page.mouse.click(bounds['x']+bounds['width']/2,bounds['y']+bounds['height']/2)
         page.locator('#simulate').click();page.wait_for_function("document.querySelector('#simulate').disabled")
         wait_held(held)

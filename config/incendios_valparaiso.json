@@ -1,0 +1,22 @@
+{
+  "schema_version": "fire-baseline-1",
+  "id": "conaf-valparaiso-2026-06-01",
+  "scope": "Región de Valparaíso (no tasa comunal)",
+  "count": 575,
+  "observation_start": "2025-07-01",
+  "observation_end": "2026-06-01",
+  "end_convention": "Fecha de publicación usada como corte conservador; la noticia no precisa el día de extracción del conteo.",
+  "region_area_km2": 16396.1,
+  "retrieved_on": "2026-11-12",
+  "sources": [
+    {"publisher": "CONAF", "url": "https://www.conaf.cl/conaf-valparaiso-reconoce-la-labor-de-su-personal-en-el-periodo-de-mayor-riesgo-de-incendios-forestales-2025-2026/", "published_on": "2026-06-01", "facts": "575 incendios regionales desde el 1 de julio de 2025, registrados al publicar; temporada aún no terminada."},
+    {"publisher": "Ministerio de Agricultura", "url": "https://minagri.gob.cl/region-de-valparaiso/", "facts": "Superficie regional, incluido territorio insular: 16.396,1 km²."}
+  ],
+  "model": "Poisson homogéneo espacial y temporal; primer arribo exponencial y ubicación uniforme por superficie UTM.",
+  "limitations": [
+    "Estimación a partir de ocurrencia observada regional; no probabilidad medida para una comuna, predicción meteorológica ni calibración del sensor.",
+    "Promedia estacionalidad y heterogeneidad urbana, rural e insular; no representa focos que ya existían al despegar.",
+    "El corte del conteo puede preceder unos días a la publicación; no se presenta como una temporada anual completa.",
+    "No amplificar tasas para demostraciones. Un incendio nuevo durante un vuelo corto en un sector pequeño es infrecuente."
+  ]
+}

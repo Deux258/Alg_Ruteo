@@ -70,7 +70,7 @@ def main():
                         if response.status == 200: break
                 except OSError: time.sleep(.5)
             else: raise RuntimeError('Servidor QA no disponible')
-            for tool in ('verificar_patrullaje', 'verificar_recarga', 'verificar_entorno', 'verificar_reproductor', 'verificar_cierre', 'verificar_mejoras_3d'):
+            for tool in ('verificar_patrullaje', 'verificar_recarga', 'verificar_entorno', 'verificar_reproductor', 'verificar_cierre', 'verificar_mejoras_3d', 'verificar_monitoreo'):
                 execute(tool, [sys.executable, '-m', 'tools.'+tool, '--url', root, '--chrome', chrome,
                                '--output', str(folder/tool)])
         finally:

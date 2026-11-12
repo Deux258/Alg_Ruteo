@@ -80,6 +80,8 @@ class Fixtures:
         if path=='/api/aereo/patrullaje/mapa':
             cut=parse_qs(url.query).get('commune_id',[None])[0];value=manifest(cut)
             kind='old-commune' if cut=='05101' else 'map'
+        elif path=='/api/aereo/patrullaje/monitoreo':
+            value=dict(sectors=[],area_m2=10000,partition_percent=100,progress=dict(percent=0,pending_area_m2=10000))
         elif path=='/api/aereo/patrullaje/objetivo':
             kind='target-preview';value=target_preview()
         elif path=='/api/aereo/patrullaje/validar':
@@ -146,6 +148,7 @@ def main():
         page.locator('#undo-vertex').click();checks['undo_vertex_over_interactive_layer']=page.locator('#draw-tools').get_attribute('data-vertices')=='2'
         page.locator('#cancel-draw').click()
 
+        page.get_by_text('Diagnóstico de detección manual',exact=True).click()
         fixtures.delays.add('simulation');page.locator('#play').click();page.wait_for_timeout(100)
         page.locator('#clear-fire').click();fixtures.delays.remove('simulation');fixtures.release('simulation',simulation());page.wait_for_timeout(150)
         checks['cleared_focus_cannot_restore_old_flight']=page.locator('#player').get_attribute('data-phase')=='idle' and page.locator('#log').inner_text()==''

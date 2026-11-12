@@ -25,6 +25,11 @@
             <h2>01 · Misión</h2>
             <button id="demo" class="text">Cargar ejemplo</button>
           </div>
+          <label for="patrol-catalogue">Monitoreo de toda la zona</label>
+          <select id="patrol-catalogue"><option value="">Zona personalizada</option></select>
+          <label class="check"><input id="show-sectors" type="checkbox" checked> Mostrar todos los sectores</label>
+          <p id="monitoring-status" class="muted" role="status">Cargando cobertura de la zona…</p>
+          <div class="buttons"><button id="start-monitoring">Planificar e iniciar sector</button><button id="next-sector">Siguiente sector</button></div>
           <label for="base">Base de salida</label
           ><select id="base"></select>
           <div class="buttons">
@@ -84,7 +89,7 @@
                   step="0.1"
                   value="1" /></label
               ><label
-                >Recurrencia ×<select id="history">
+                >Riesgo de infraestructura ×<select id="history">
                   <option value="0.5">0,5 · bajo</option>
                   <option value="1" selected>1 · central</option>
                   <option value="2">2 · alto</option>
@@ -130,6 +135,9 @@
         </section>
         <section>
           <h2>03 · Simulación</h2>
+          <p id="fire-baseline" class="muted">Focos automáticos con tasa regional de CONAF.</p>
+          <label for="return-destination">Destino tras detectar</label><select id="return-destination"><option value="auto">Automático · origen o próxima estación viable</option><option value="origin">Volver al origen</option><option value="station">Próxima estación viable</option></select>
+          <label for="recovery-method">Técnica para el regreso</label><select id="recovery-method"><option value="dijkstra_weighted">Dijkstra · parámetros</option><option value="dijkstra_distance">Dijkstra · metros</option><option value="gurobi">Gurobi MILP</option><option value="annealing">Recocido simulado</option></select>
           <label for="chosen">Ruta a reproducir</label
           ><select id="chosen"></select>
           <div class="fields">
@@ -148,20 +156,24 @@
               </select></label
             >
           </div>
+          <label>Escenario de incendio<input id="scenario-index" type="number" value="0" min="0" max="2147483647"></label>
+          <details><summary>Diagnóstico de detección manual</summary>
+          <p class="muted">Solo para comprobar el detector. No modifica la tasa del monitoreo automático.</p>
           <div class="buttons">
-            <button id="fire">Marcar foco</button
+            <button id="fire">Marcar foco de prueba</button
             ><button id="clear-fire">Quitar foco</button>
           </div>
           <p id="fire-status" class="muted">
-            Foco sintético opcional: al detectarlo, reportar y regresar.
+            Monitoreo automático: el dron detecta focos al entrar en alcance y tener línea de vista.
           </p>
+          </details>
           <div class="buttons">
             <button id="hazard">Añadir amenaza</button
             ><button id="clear-hazards">Limpiar</button>
           </div>
           <div class="fields">
             <label
-              >Probabilidad (%)<input
+              >Probabilidad de falla de amenaza (%)<input
                 id="probability"
                 type="number"
                 min="0"
@@ -186,7 +198,7 @@
           </details>
           <div class="buttons">
             <button id="simulate" disabled>Sortear y reproducir</button
-            ><button id="replay-nominal" disabled>Preparar sin sorteo</button>
+            ><button id="replay-nominal" disabled>Preparar monitoreo sin fallas</button>
           </div>
           <button id="replan" disabled>
             Replanificar con amenazas activadas
@@ -200,6 +212,7 @@
           </div>
           <progress id="progress" max="100" value="0"></progress>
           <ol id="log"></ol>
+          <div id="recovery-results" aria-live="polite"></div>
         </section>
         <section class="geography-panel">
           <h2>04 · Cartografía y entorno</h2>

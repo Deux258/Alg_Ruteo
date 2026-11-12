@@ -100,6 +100,67 @@ let targetDisplay = null,
 let followSession = null;
 const candidateBasesLayer = L.layerGroup().addTo(map);
 const requests = createRequestCoordinator();
+const sectorsLayer = L.layerGroup().addTo(map);
+const recoveryLayer = L.layerGroup().addTo(map);
+const recoveryVisibility = new Map();
+let monitoring = null;
+function monitoringStatus() {
+  if (!monitoring) return;
+  const p = monitoring.progress;
+  $("monitoring-status").textContent = `${monitoring.sectors.length} sectores · partición ${monitoring.partition_percent.toFixed(2)} % de la zona. Cobertura simulada acumulada: ${(p?.percent || 0).toFixed(2)} %. Pendiente: ${((p?.pending_area_m2 ?? monitoring.area_m2)/1e6).toFixed(2)} km². Cada sector requiere validar vuelo y línea de vista.`;
+}
+function drawSectors() {
+  sectorsLayer.clearLayers();
+  if (!monitoring || !$("show-sectors").checked) return;
+  for (const sector of monitoring.sectors) L.geoJSON(sector.target_polygon, {
+    style: {color:(monitoring.progress?.sector_covered_area_m2?.[sector.id] || 0)>=sector.area_m2*.9999 ? "#237c55" : "#54867b",weight:1,fillOpacity:.015},
+  }).bindTooltip(sector.name).on("click", () => {
+    if (mode) return;
+    $("patrol-catalogue").value=sector.id; selectSector();
+  }).addTo(sectorsLayer);
+}
+function selectSector() {
+  if (calculating || simulationLoading) return;
+  const id=$("patrol-catalogue").value;
+  const sector=monitoring?.sectors.find(s=>s.id===id);
+  if (!sector) return;
+  if (sector.status==='pending_support') return message(sector.reason,true);
+  let base=model.bases.findIndex(b=>b.provider_id===sector.base_id);
+  if (base<0) {
+    base=model.bases.length;
+    model.bases.push({provider_id:sector.base_id,name:`Base ${sector.base_id}`,geometry:{type:"Point",coordinates:sector.origin}});
+    $("base").append(new Option(`Base ${sector.base_id}`,String(base)));
+  }
+  $("base").value=String(base);
+  setTarget(sector.target_polygon);
+  $("patrol-catalogue").value=id;
+  message(`${sector.name} seleccionado. Se comprobarán cobertura, terreno, batería y regreso.`);
+}
+$("patrol-catalogue").onchange=selectSector;
+$("show-sectors").onchange=drawSectors;
+$("next-sector").onclick=()=>{
+  if (!monitoring || calculating || simulationLoading) return;
+  const rows=monitoring.sectors.filter(s=>s.status!=="pending_support" && (monitoring.progress?.sector_covered_area_m2?.[s.id] || 0)<s.area_m2*.9999);
+  if (!rows.length) return message("Todos los sectores planificables tienen observaciones completas; revisa el área pendiente del certificado.");
+  const index=rows.findIndex(s=>s.id===$("patrol-catalogue").value);
+  $("patrol-catalogue").value=rows[(index+1)%rows.length]?.id || "";
+  selectSector();
+};
+$("start-monitoring").onclick=async()=>{
+  if (!$("patrol-catalogue").value) $("next-sector").click();
+  if (!$("patrol-catalogue").value || calculating || simulationLoading) return;
+  fire=null; fireLayer.clearLayers();
+  await calculate();
+  if (!fresh || result?.request?.patrol_id!==$("patrol-catalogue").value) return;
+  $("route-mode").value="comparison"; renderResults();
+  const key=result.routes.dijkstra_weighted?.status==='ready' ? 'dijkstra_weighted' : Object.keys(result.routes).find(k=>result.routes[k].status==='ready');
+  if (!key) return message("Sector pendiente: no hay recorrido viable con este perfil. Revisa los diagnósticos.",true);
+  $("chosen").value=key;
+  await preparePlayback("nominal");
+};
+for (const id of ["scenario-index","return-destination","recovery-method"])
+  $(id).onchange=simulationChanged;
+$("base").addEventListener("change",()=>{$("patrol-catalogue").value="";});
 const displayedRoutes = () =>
   !result
     ? {}
@@ -151,6 +212,9 @@ function cancelSimulation() {
   simulationLoading = false;
   playing = false;
   simulation = null;
+  recoveryLayer.clearLayers();
+  recoveryVisibility.clear();
+  $("recovery-results").replaceChildren();
   flightLayer.clearLayers();
   drone = null;
   clock = 0;
@@ -570,6 +634,7 @@ function invalidate() {
 function setTarget(geo) {
   const g = normalizeTarget(geo);
   target = g;
+  $("patrol-catalogue").value="";
   requests.cancel("target-display");
   targetDisplay = null;
   targetDisplayFor = "";
@@ -578,7 +643,7 @@ function setTarget(geo) {
   $("draw-tools").hidden = true;
   fire = null;
   fireLayer.clearLayers();
-  $("fire-status").textContent = "Sin foco sintético.";
+  $("fire-status").textContent = "Focos automáticos con tasa CONAF; sin foco de prueba.";
   $("focus-target").disabled = false;
   selection.clearLayers();
   L.geoJSON(g, {
@@ -590,7 +655,7 @@ function setTarget(geo) {
     },
   }).addTo(selection);
   $("area-status").textContent =
-    "Objetivo poligonal listo · barrido completo con radio de 100 m.";
+    "Objetivo listo · cobertura y factibilidad pendientes de cálculo.";
   invalidate();
   refreshTargetDisplay();
   focusTarget();
@@ -806,6 +871,7 @@ function stationIds() {
 }
 function request() {
   return {
+    patrol_id: $("patrol-catalogue").value || undefined,
     origin: model.bases[Number($("base").value)].geometry.coordinates,
     target_polygon: target,
     time: $("weather").value,
@@ -1183,11 +1249,17 @@ function update3d() {
   if (target && targetDisplay?.status === "known")
     for (const ring of targetPlaneRings(target, targetDisplay.level_m_egm2008))
       lines.push({ points: ring, color: [0.85, 0.35, 0.08], width: 3, target: true });
-  if (fire) {
-    const [x, y] = projectUTM(fire),
+  const detectedFire=simulation?.detection && clock>=simulation.detection.detected_at_s ? simulation.detection.fire_coordinates : null;
+  const shownFire=fire || detectedFire;
+  if (shownFire) {
+    const [x, y] = projectUTM(shownFire),
       z = meshHeight(x, y);
     if (z !== null)
       annotations.push({ id: "fire", kind: "fire", position_utm: [x, y, z + 8], label: "Foco de incendio" });
+  }
+  if (detectedFire && simulation.recovery) for (const [method,row] of Object.entries(simulation.recovery.recommendations)) {
+    if (recoveryVisibility.get(method)===false) continue;
+    lines.push({key:`recovery:${method}`,points:row.coordinates.map(c=>[...projectUTM(c),c[2]]),color:rgb(colors[method]),width:4});
   }
   terrainView.setAnnotations?.(annotations);
   terrainView.setRoutes(lines);
@@ -1620,6 +1692,7 @@ const phaseNames = {
 };
 function refreshPlaybackControls() {
   const busy = calculating || simulationLoading;
+  for (const id of ["patrol-catalogue","start-monitoring","next-sector"]) $(id).disabled=busy || !model;
   const editing = mode === "polygon";
   const ready =
     fresh &&
@@ -1662,12 +1735,61 @@ function refreshPlaybackControls() {
     $("player").dataset.playing = "false";
   }
 }
+function renderRecovery(detected) {
+  recoveryLayer.clearLayers();
+  $("recovery-results").replaceChildren();
+  if (!detected || !simulation?.recovery) return;
+  const recovery=simulation.recovery;
+  L.marker([simulation.detection.fire_coordinates[1],simulation.detection.fire_coordinates[0]],{
+    icon:L.divIcon({className:"drone-icon",html:"♨",iconSize:[25,25]}),
+  }).bindTooltip(simulation.detection.mode==="manual" ? "Foco de diagnóstico detectado" : "Foco detectado automáticamente").addTo(recoveryLayer);
+  const title=document.createElement("p");title.textContent="Foco detectado · alternativas desde la posición actual";title.setAttribute("role","alert");
+  $("recovery-results").append(title);
+  if (recovery.graph_scope) {
+    const scope=document.createElement("p");scope.className="muted";scope.textContent=`Grafo compartido: ${recovery.graph_scope.candidate_edges} enlaces candidatos de ${recovery.graph_scope.full_edges}. Preparación común: ${recovery.graph_scope.preparation_s.toFixed(3)} s. Óptimo de los corredores candidatos.`;$("recovery-results").append(scope);
+  }
+  const ready=Object.values(recovery.recommendations);
+  if (new Set(ready.map(r=>JSON.stringify(r.edge_ids))).size<ready.length) {
+    const note=document.createElement("p");note.className="muted";note.textContent="Algunas técnicas coinciden en la trayectoria. Se conservan sus resultados y tiempos de cálculo por separado.";$("recovery-results").append(note);
+  }
+  for (const method of ["dijkstra_distance","dijkstra_weighted","gurobi","annealing"]) {
+    const candidates=recovery.candidates.filter(r=>r.method===method);
+    const row=recovery.recommendations[method];
+    const card=document.createElement("div");card.className="route-card";card.style.setProperty("--route",colors[method]);
+    const label=document.createElement("label");label.className="check";
+    const check=document.createElement("input");check.type="checkbox";check.checked=recoveryVisibility.get(method)!==false;check.disabled=!row;
+    const name=method==="gurobi"?"Gurobi MILP":method==="annealing"?"Recocido simulado":method==="dijkstra_distance"?"Dijkstra · metros":"Dijkstra · parámetros";
+    label.append(check,document.createTextNode(name));card.append(label);
+    check.onchange=()=>{recoveryVisibility.set(method,check.checked);renderRecovery(true);update3d();};
+    if (row && check.checked) L.polyline(row.coordinates.map(c=>[c[1],c[0]]),{color:colors[method],weight:4,dashArray:"6 3"}).addTo(recoveryLayer);
+    const text=document.createElement("p");
+    text.textContent=row?`${row.destination_kind==="origin"?"Origen":`Estación ${row.destination_id}`} · ${row.time_s.toFixed(1)} s incluido aterrizaje · batería al llegar ${row.battery_remaining_s.toFixed(1)} s · cálculo ${row.compute_s.toFixed(3)} s`:'Sin candidata disponible para esta política.';
+    card.append(text);
+    if (row) {
+      const choose=document.createElement("button");choose.textContent="Reproducir desde la detección";
+      choose.onclick=async()=>{
+        const at=simulation.detection.detected_at_s,scenario=simulation.scenario;
+        $("recovery-method").value=method;$("return-destination").value=row.destination_kind;
+        await preparePlayback(scenario,false);
+        if (simulation) {seekFlight(Math.min(at,simulation.time_s));playing=true;refreshPlaybackControls();}
+      };
+      card.append(choose);
+    }
+    const detail=document.createElement("details"),summary=document.createElement("summary");summary.textContent="Comparar destinos y estado del algoritmo";detail.append(summary);
+    for (const candidate of candidates) {
+      const p=document.createElement("p");p.textContent=`${candidate.destination_id}: ${candidate.status==='ready'?`${candidate.time_s.toFixed(1)} s · ${candidate.distance_m.toFixed(0)} m · costo ${candidate.cost.toFixed(1)}`:`${candidate.solver.status}: ${candidate.solver.reason || 'sin solución disponible'}`}`;detail.append(p);
+    }
+    card.append(detail);$("recovery-results").append(card);
+  }
+}
 function updateFlightLog(sample) {
   const progress = detectionProgress(simulation.detection, sample.time_s);
   const signature = `${progress.detected}:${progress.reported}:${sample.ended}`;
   if (signature === lastLog) return;
   lastLog = signature;
   $("log").replaceChildren();
+  renderRecovery(progress.detected);
+  update3d();
   const add = (text) => {
     const li = document.createElement("li");
     li.textContent = text;
@@ -1675,9 +1797,12 @@ function updateFlightLog(sample) {
   };
   add(
     simulation.scenario === "nominal"
-      ? "Recorrido nominal sin sorteo de fallas."
+      ? "Recorrido sin fallas de infraestructura. El proceso de focos automáticos permanece activo."
       : `Semilla ${simulation.seed}: ${simulation.active_threat_ids.length} amenazas activadas. Distribución uniforme [0,100).`,
   );
+  if (simulation.fire_event?.mode==='automatic') {
+    add(`Foco automático · probabilidad estimada por misión: ${(100*simulation.fire_event.probability).toPrecision(3)} %; tasa regional CONAF, sin ajuste del usuario.`);
+  }
   if (progress.detected)
     add(
       `Foco detectado: ${simulation.detection.fire_coordinates.map((v) => v.toFixed(5)).join(", ")}. ${progress.incomplete ? "Reporte incompleto; se prioriza el regreso seguro." : `Verificando durante ${result?.effective_profile?.verification_s ?? 60} s.`}`,
@@ -1689,6 +1814,12 @@ function updateFlightLog(sample) {
     simulation.detection.report_incomplete_reason
   )
     add(simulation.detection.report_incomplete_reason);
+  if (sample.ended)
+    if (simulation.fire_event?.occurs && !simulation.detection) add("Terminó el vuelo sin observar un foco. El evento completo está en la exportación de auditoría.");
+  if (sample.ended && simulation.monitoring_progress) {
+    add(`Cobertura acumulada del sector: ${simulation.monitoring_progress.sector_percent.toFixed(2)} %. El área restante sigue pendiente.`);
+    api("/api/aereo/patrullaje/monitoreo").then(value=>{monitoring=value;monitoringStatus();drawSectors();}).catch(()=>{});
+  }
   if (sample.ended)
     add(
       `Fin: ${simulation.status} · servicio ${simulation.mission_completed ? "cumplido" : "interrumpido"}.`,
@@ -1779,6 +1910,10 @@ async function preparePlayback(scenario, autoplay = true) {
         route_set: set,
         scenario,
         seed: Number($("seed").value),
+        scenario_index: Number($("scenario-index").value),
+        fire_mode: fire ? "manual" : "automatic",
+        recovery_method: $("recovery-method").value,
+        return_destination: $("return-destination").value,
         fire: fire ? [...fire] : null,
       },
       { signal: token.signal },
@@ -1805,12 +1940,6 @@ async function preparePlayback(scenario, autoplay = true) {
         iconAnchor: [14, 14],
       }),
     }).addTo(flightLayer);
-    const returns = simulation.timeline.filter((f) => f.phase === "return");
-    if (returns.length)
-      L.polyline(
-        returns.map((f) => [f.coordinates[1], f.coordinates[0]]),
-        { color: "#d45732", weight: 3, dashArray: "6 4" },
-      ).addTo(flightLayer);
     clock = 0;
     lastFrame = 0;
     lastLog = "";
@@ -1819,7 +1948,7 @@ async function preparePlayback(scenario, autoplay = true) {
     message(
       scenario === "nominal"
         ? "Recorrido listo: despegue, vigilancia y aterrizaje."
-        : `Simulación lista: ${simulation.status}.`,
+        : "Simulación lista para reproducir el monitoreo.",
     );
   } catch (error) {
     if (!aborted(error) && requests.current(token)) {
@@ -2070,6 +2199,14 @@ for (const id of [
 (async () => {
   try {
     model = await api("/api/aereo/patrullaje/mapa?view=summary");
+    monitoring=await api("/api/aereo/patrullaje/monitoreo");
+    for (const sector of monitoring.sectors) $("patrol-catalogue").append(new Option(`${sector.name} · ${(sector.area_m2/1e6).toFixed(3)} km²`,sector.id));
+    monitoringStatus();drawSectors();
+    if (model.fire_baseline) {
+      const b=model.fire_baseline;
+      $("fire-baseline").textContent=`Focos automáticos: ${b.count} incendios regionales observados por CONAF / ${b.observation_days} días / ${b.region_area_km2.toLocaleString("es-CL")} km². Poisson uniforme por área y tiempo; estimación regional, no pronóstico comunal. En vuelos cortos es normal no encontrar focos.`;
+      const a=document.createElement("a");a.href=b.sources[0].url;a.textContent=" Fuente y período";a.target="_blank";a.rel="noopener";$("fire-baseline").append(a);
+    }
     displayModel = model;
     loadGeography();
     L.geoJSON(model.flight_area, {

@@ -229,7 +229,7 @@ def _map_key(model,commune_id):
     # Hash the entire public source context and effective defaults as well.
     identity=dict(scene=key,communes=index.identity_sha256,commune_id=commune_id,
         model={k:v for k,v in model.items() if not k.startswith('_')},profile=defaults(),
-        code={name:sha256(ROOT/name) for name in ('core/patrol.py','core/mission_constraints.py','core/communes.py','core/aerial_data.py','core/geo_transport.py','core/terrain_style.py','core/vertical_profile.py')},
+        code={name:sha256(ROOT/name) for name in ('core/patrol.py','core/patrol_events.py','core/patrol_monitoring.py','config/incendios_valparaiso.json','core/mission_constraints.py','core/communes.py','core/aerial_data.py','core/geo_transport.py','core/terrain_style.py','core/vertical_profile.py')},
         profile_config_sha256=sha256(ROOT/'config/patrullaje.json'))
     return 'map-summary-v3:'+hashlib.sha256(canonical(identity)).hexdigest()
 

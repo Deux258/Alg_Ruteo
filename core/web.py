@@ -140,6 +140,9 @@ class Handler(BaseHTTPRequestHandler):
                             if surface.source_sha256!=previous['geographic_scene']['surface_sha256']:
                                 raise ValueError('Las fuentes de la escena cambiaron: recalcular antes de simular')
                         result=simulate(previous,request)
+                        from core.patrol_monitoring import record
+                        from core.geographic_scene import surface_by_hash
+                        result['monitoring_progress']=record(previous,result,surface_by_hash(previous['geographic_scene']['sha256']))
                     else:
                         if 'previous_sha256' in request:
                             previous=previous_patrol(request['previous_sha256'])
@@ -212,13 +215,16 @@ class Handler(BaseHTTPRequestHandler):
             file=ROOT/'Sitio Web'/static[path]
             if file.is_file():
                 return self.reply(200,file.read_bytes(),mimetypes.guess_type(str(file))[0] or 'application/octet-stream')
-        if path in ('/api/aereo/patrullaje/mapa','/api/aereo/patrullaje/escena3d'):
+        if path in ('/api/aereo/patrullaje/mapa','/api/aereo/patrullaje/escena3d','/api/aereo/patrullaje/monitoreo'):
             try:
                 from core.patrol import map_data,scene_data
                 from core.geo_transport import map_summary,scene_summary,legacy_filtered_map
                 commune_id=params.get('commune_id',[None])[0] or None
                 summary=params.get('view')==['summary']
                 def build(model,engine):
+                    if path.endswith('/monitoreo'):
+                        from core.patrol_monitoring import catalogue
+                        return catalogue(model)
                     if path.endswith('/escena3d'):
                         result=scene_summary(model,commune_id) if summary or commune_id else scene_data(model)
                         return dict(result,engine=engine)
