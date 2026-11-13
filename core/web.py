@@ -123,7 +123,7 @@ class Handler(BaseHTTPRequestHandler):
                         assessment=assess_constraints(patrol_model(conn,current),request)
                 return self.json_reply(dict(valid=assessment['admissible'],violations=assessment['reasons'],constraints=assessment))
             if path.startswith('/api/aereo/patrullaje') or 'target_polygon' in request:
-                if not PATROL_LOCK.acquire(timeout=30):
+                if not PATROL_LOCK.acquire(timeout=90):
                     return self.reply(429,b'{"error":"Hay un patrullaje en calculo. Reintentar al finalizar."}')
                 try:
                     from core.patrol import calculate,simulate
@@ -370,14 +370,13 @@ def _prewarm_patrol():
         origin = b0.get('coordinates') or (b0.get('geometry') or {}).get('coordinates')
         if not origin:
             return
-        with PATROL_LOCK:
-            calculate(m, {
+        calculate(m, {
                 'origin': origin,
                 'target_polygon': md['demo_polygon'],
                 'station_ids': [b.get('id') or b.get('provider_id') for b in bases[:3]],
                 'mode': 'grid',
                 'preferences': {'drone': 'DJI Mavic 3T', 'station_inventory': 1},
-            })
+        })
         logging.info('Prewarm de modelo y geometria completado.')
     except Exception:
         logging.exception('Prewarm opcional omitido')

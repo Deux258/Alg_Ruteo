@@ -1305,10 +1305,9 @@ def calculate(model, request, conn=None, terrain_override=None):
         a3_geoms = [transform(FWD, shape(r['geometry'])) for r in model.get('records', {}).get('A3', []) if r.get('geometry')]
         risk_field_obj = compute_risk_field(model, target.buffer(150.0).intersection(area), terrain=surface, config=r_cfg, forest_zone_utm=graph.forest_zone, reference_time=clock.isoformat(), wind_profile=w_prof)
         adaptive_set = build_adaptive_tasks(graph, target, risk_field_obj, actual['swath_m'], a3_geoms_utm=a3_geoms, forest_zone_utm=graph.forest_zone, terrain=surface, risk_config=r_cfg, task_config=AdaptiveTaskConfig(min_cell_m=max(30.0, r_cfg.min_cell_m)), wind_direction_deg=weather.get('wind_direction_deg'))
-        tasks = adaptive_set.tasks if adaptive_set.tasks else sweep_tasks(target, graph)
-    else:
-        tasks=sweep_tasks(target,graph)
-    graph.routing_targets=sorted({home}|{s['node'] for s in stations}|{i for task in tasks for i in task['nodes']})
+    tasks = sweep_tasks(target, graph)
+    extra_nodes = {i for t in (adaptive_set.tasks if adaptive_set else []) for i in t['nodes']}
+    graph.routing_targets=sorted({home}|{s['node'] for s in stations}|{i for task in tasks for i in task['nodes']}|extra_nodes)
     result['timings']['setup_s']=time.monotonic()-started
     routes={};comparison_started=time.monotonic()
     for method in METHODS:
