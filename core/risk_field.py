@@ -195,6 +195,18 @@ def slope_wind_factor(
     tan_slope = min(float(config.max_tan_slope), math.hypot(dz_dx, dz_dy))
 
     wind_align = 0.0
+    if cfg_mode := getattr(config, 'wind_layer_mode', 'uniform_m4') == 'ecmwf_profile':
+        from core.wind_profile import rothermel_anisotropic_factor
+        return rothermel_anisotropic_factor(
+            wind_speed_ms=wind_speed_ms,
+            wind_direction_deg=wind_direction_deg,
+            dz_dx=dz_dx,
+            dz_dy=dz_dy,
+            beta1_slope=config.beta1_slope,
+            beta2_wind=config.beta2_wind,
+            max_tan_slope=config.max_tan_slope,
+        )
+
     if wind_speed_ms > 0.0 and tan_slope > 1e-6:
         vx, vy = wind_vector_xy(1.0, wind_direction_deg)
         ux = dz_dx / tan_slope
@@ -393,6 +405,8 @@ def compute_risk_field(
     buildings_utm: list[Any] | None = None,
     forest_zone_utm: Any = None,
     reference_time: str | None = None,
+    wind_profile: Any = None,
+    evaluation_time_s: float = 0.0,
 ) -> RiskField:
     """Compute fire risk field R(x, y, t) over ``area_utm`` (EPSG:32719).
 
@@ -413,10 +427,17 @@ def compute_risk_field(
     }
 
     if weather is None:
-        m4 = records.get('M4') or []
-        weather = m4[0] if m4 else {}
-        if not m4:
-            warnings.append('M4 clima ausente/vacío; viento asumido en 0 m/s.')
+        if wind_profile is not None:
+            weather = wind_profile.at(evaluation_time_s)
+        else:
+            m4 = records.get('M4') or []
+            if cfg.wind_layer_mode == 'ecmwf_profile' and len(m4) > 1:
+                from core.wind_profile import WindProfile
+                weather = WindProfile(m4, reference_time=reference_time or model.get('reference_time')).at(evaluation_time_s)
+            else:
+                weather = m4[0] if m4 else {}
+                if not m4:
+                    warnings.append('M4 clima ausente/vacío; viento asumido en 0 m/s.')
 
     wind_speed = float(weather.get('wind_speed_ms') or 0.0)
     wind_dir = float(weather.get('wind_direction_deg') or 0.0)
