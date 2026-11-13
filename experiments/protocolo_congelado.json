@@ -1,0 +1,53 @@
+{
+  "schema_version": "rrpp-protocol-1",
+  "frozen_at": "2026-11-13T03:22:00-03:00",
+  "run_id": "b80f9b83-cad7-53b8-a8b8-34a2a17e614c",
+  "seed": 20261104,
+  "n_ignitions": 1000,
+  "station_inventory_variants": [1, 20],
+  "drones": ["DJI Mavic 3T", "DJI Matrice 30T", "DJI Matrice 350 RTK"],
+  "default_drone": "DJI Mavic 3T",
+  "hours_utc": [
+    "2026-10-19T00:00:00+00:00",
+    "2026-10-19T12:00:00+00:00",
+    "2026-10-19T18:00:00+00:00"
+  ],
+  "methods": [
+    "dijkstra_distance",
+    "dijkstra_weighted",
+    "gurobi",
+    "annealing",
+    "alns_risk"
+  ],
+  "ablation_steps": [
+    "1_grid_uniform",
+    "2_adaptive_tasks",
+    "3_adaptive_plus_alns_latency",
+    "4_adaptive_plus_alns_plus_ecmwf_wind",
+    "5_adaptive_plus_alns_wind_cvar"
+  ],
+  "sensitivity_parameters": {
+    "a4_unknown_pct": [5.0, 10.0, 20.0],
+    "beta1_slope": [0.25, 0.50, 1.00],
+    "beta2_wind": [0.04, 0.08, 0.16],
+    "urban_decay_m": [150.0, 300.0, 600.0],
+    "normalization_mode": ["max", "log", "quantile"],
+    "lambda1_risk": [0.5, 1.0, 2.0],
+    "lambda2_recharge": [60.0, 120.0, 240.0],
+    "gamma_cvar": [0.0, 0.25, 0.50]
+  },
+  "metrics": [
+    "E[D]",
+    "CVaR_95(D)",
+    "risk_covered_T15_pct",
+    "risk_covered_T30_pct",
+    "recharges",
+    "energy_wh",
+    "drone_survival_pct",
+    "survival_wilson_ci95",
+    "unobservable_risk_pct",
+    "compute_s"
+  ],
+  "cvar_alpha": 0.95,
+  "missed_ignition_penalty_s": 14400.0
+}

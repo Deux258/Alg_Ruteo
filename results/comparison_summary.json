@@ -1,0 +1,547 @@
+{
+  "protocol_sha256": "0e60b5f32c8aa99274a38b779188905404351030ec10afd4844c93735ddfab63",
+  "run_id": "b80f9b83-cad7-53b8-a8b8-34a2a17e614c",
+  "n_ignitions": 1000,
+  "rows": [
+    {
+      "method": "dijkstra_distance",
+      "status": "ready",
+      "E_D_s": 13854.33,
+      "CVaR_95_s": 14400.0,
+      "robust_obj_s": 13854.33,
+      "detected_pct": 3.8,
+      "risk_covered_T15_pct": 54.97,
+      "risk_covered_T30_pct": 54.97,
+      "risk_curve": [
+        {
+          "t_min": 5,
+          "risk_covered_pct": 54.97
+        },
+        {
+          "t_min": 10,
+          "risk_covered_pct": 54.97
+        },
+        {
+          "t_min": 15,
+          "risk_covered_pct": 54.97
+        },
+        {
+          "t_min": 20,
+          "risk_covered_pct": 54.97
+        },
+        {
+          "t_min": 30,
+          "risk_covered_pct": 54.97
+        },
+        {
+          "t_min": 45,
+          "risk_covered_pct": 54.97
+        },
+        {
+          "t_min": 60,
+          "risk_covered_pct": 54.97
+        }
+      ],
+      "recharges": 0,
+      "energy_wh": 10.2,
+      "time_s": 158.95,
+      "distance_m": 1266.07,
+      "drone_survival_pct": 84.0,
+      "survival_wilson_ci95": [
+        81.6,
+        86.14
+      ],
+      "unobservable_risk_pct": 0.0,
+      "compute_s": 0.6766,
+      "station_inventory": 1,
+      "run_id": "b80f9b83-cad7-53b8-a8b8-34a2a17e614c",
+      "protocol_sha256": "0e60b5f32c8aa992"
+    },
+    {
+      "method": "dijkstra_weighted",
+      "status": "ready",
+      "E_D_s": 13854.33,
+      "CVaR_95_s": 14400.0,
+      "robust_obj_s": 13854.33,
+      "detected_pct": 3.8,
+      "risk_covered_T15_pct": 54.97,
+      "risk_covered_T30_pct": 54.97,
+      "risk_curve": [
+        {
+          "t_min": 5,
+          "risk_covered_pct": 54.97
+        },
+        {
+          "t_min": 10,
+          "risk_covered_pct": 54.97
+        },
+        {
+          "t_min": 15,
+          "risk_covered_pct": 54.97
+        },
+        {
+          "t_min": 20,
+          "risk_covered_pct": 54.97
+        },
+        {
+          "t_min": 30,
+          "risk_covered_pct": 54.97
+        },
+        {
+          "t_min": 45,
+          "risk_covered_pct": 54.97
+        },
+        {
+          "t_min": 60,
+          "risk_covered_pct": 54.97
+        }
+      ],
+      "recharges": 0,
+      "energy_wh": 10.2,
+      "time_s": 158.95,
+      "distance_m": 1266.07,
+      "drone_survival_pct": 84.0,
+      "survival_wilson_ci95": [
+        81.6,
+        86.14
+      ],
+      "unobservable_risk_pct": 0.0,
+      "compute_s": 0.7665,
+      "station_inventory": 1,
+      "run_id": "b80f9b83-cad7-53b8-a8b8-34a2a17e614c",
+      "protocol_sha256": "0e60b5f32c8aa992"
+    },
+    {
+      "method": "gurobi",
+      "status": "ready",
+      "E_D_s": 13854.15,
+      "CVaR_95_s": 14400.0,
+      "robust_obj_s": 13854.15,
+      "detected_pct": 3.8,
+      "risk_covered_T15_pct": 54.97,
+      "risk_covered_T30_pct": 54.97,
+      "risk_curve": [
+        {
+          "t_min": 5,
+          "risk_covered_pct": 54.97
+        },
+        {
+          "t_min": 10,
+          "risk_covered_pct": 54.97
+        },
+        {
+          "t_min": 15,
+          "risk_covered_pct": 54.97
+        },
+        {
+          "t_min": 20,
+          "risk_covered_pct": 54.97
+        },
+        {
+          "t_min": 30,
+          "risk_covered_pct": 54.97
+        },
+        {
+          "t_min": 45,
+          "risk_covered_pct": 54.97
+        },
+        {
+          "t_min": 60,
+          "risk_covered_pct": 54.97
+        }
+      ],
+      "recharges": 0,
+      "energy_wh": 10.24,
+      "time_s": 159.61,
+      "distance_m": 1266.07,
+      "drone_survival_pct": 84.0,
+      "survival_wilson_ci95": [
+        81.6,
+        86.14
+      ],
+      "unobservable_risk_pct": 0.0,
+      "compute_s": 0.6429,
+      "station_inventory": 1,
+      "run_id": "b80f9b83-cad7-53b8-a8b8-34a2a17e614c",
+      "protocol_sha256": "0e60b5f32c8aa992"
+    },
+    {
+      "method": "annealing",
+      "status": "ready",
+      "E_D_s": 13854.33,
+      "CVaR_95_s": 14400.0,
+      "robust_obj_s": 13854.33,
+      "detected_pct": 3.8,
+      "risk_covered_T15_pct": 54.97,
+      "risk_covered_T30_pct": 54.97,
+      "risk_curve": [
+        {
+          "t_min": 5,
+          "risk_covered_pct": 54.97
+        },
+        {
+          "t_min": 10,
+          "risk_covered_pct": 54.97
+        },
+        {
+          "t_min": 15,
+          "risk_covered_pct": 54.97
+        },
+        {
+          "t_min": 20,
+          "risk_covered_pct": 54.97
+        },
+        {
+          "t_min": 30,
+          "risk_covered_pct": 54.97
+        },
+        {
+          "t_min": 45,
+          "risk_covered_pct": 54.97
+        },
+        {
+          "t_min": 60,
+          "risk_covered_pct": 54.97
+        }
+      ],
+      "recharges": 0,
+      "energy_wh": 10.2,
+      "time_s": 158.95,
+      "distance_m": 1266.07,
+      "drone_survival_pct": 84.0,
+      "survival_wilson_ci95": [
+        81.6,
+        86.14
+      ],
+      "unobservable_risk_pct": 0.0,
+      "compute_s": 0.7635,
+      "station_inventory": 1,
+      "run_id": "b80f9b83-cad7-53b8-a8b8-34a2a17e614c",
+      "protocol_sha256": "0e60b5f32c8aa992"
+    },
+    {
+      "method": "alns_risk",
+      "status": "ready",
+      "E_D_s": 12388.81,
+      "CVaR_95_s": 14400.0,
+      "robust_obj_s": 12388.81,
+      "detected_pct": 14.1,
+      "risk_covered_T15_pct": 56.97,
+      "risk_covered_T30_pct": 56.97,
+      "risk_curve": [
+        {
+          "t_min": 5,
+          "risk_covered_pct": 53.16
+        },
+        {
+          "t_min": 10,
+          "risk_covered_pct": 56.97
+        },
+        {
+          "t_min": 15,
+          "risk_covered_pct": 56.97
+        },
+        {
+          "t_min": 20,
+          "risk_covered_pct": 56.97
+        },
+        {
+          "t_min": 30,
+          "risk_covered_pct": 56.97
+        },
+        {
+          "t_min": 45,
+          "risk_covered_pct": 56.97
+        },
+        {
+          "t_min": 60,
+          "risk_covered_pct": 56.97
+        }
+      ],
+      "recharges": 0,
+      "energy_wh": 38.44,
+      "time_s": 599.06,
+      "distance_m": 5281.46,
+      "drone_survival_pct": 84.0,
+      "survival_wilson_ci95": [
+        81.6,
+        86.14
+      ],
+      "unobservable_risk_pct": 0.0,
+      "compute_s": 6.0269,
+      "station_inventory": 1,
+      "run_id": "b80f9b83-cad7-53b8-a8b8-34a2a17e614c",
+      "protocol_sha256": "0e60b5f32c8aa992"
+    },
+    {
+      "method": "dijkstra_distance",
+      "status": "ready",
+      "E_D_s": 13854.33,
+      "CVaR_95_s": 14400.0,
+      "robust_obj_s": 13854.33,
+      "detected_pct": 3.8,
+      "risk_covered_T15_pct": 54.97,
+      "risk_covered_T30_pct": 54.97,
+      "risk_curve": [
+        {
+          "t_min": 5,
+          "risk_covered_pct": 54.97
+        },
+        {
+          "t_min": 10,
+          "risk_covered_pct": 54.97
+        },
+        {
+          "t_min": 15,
+          "risk_covered_pct": 54.97
+        },
+        {
+          "t_min": 20,
+          "risk_covered_pct": 54.97
+        },
+        {
+          "t_min": 30,
+          "risk_covered_pct": 54.97
+        },
+        {
+          "t_min": 45,
+          "risk_covered_pct": 54.97
+        },
+        {
+          "t_min": 60,
+          "risk_covered_pct": 54.97
+        }
+      ],
+      "recharges": 0,
+      "energy_wh": 10.2,
+      "time_s": 158.95,
+      "distance_m": 1266.07,
+      "drone_survival_pct": 84.0,
+      "survival_wilson_ci95": [
+        81.6,
+        86.14
+      ],
+      "unobservable_risk_pct": 0.0,
+      "compute_s": 0.6067,
+      "station_inventory": 20,
+      "run_id": "b80f9b83-cad7-53b8-a8b8-34a2a17e614c",
+      "protocol_sha256": "0e60b5f32c8aa992"
+    },
+    {
+      "method": "dijkstra_weighted",
+      "status": "ready",
+      "E_D_s": 13854.33,
+      "CVaR_95_s": 14400.0,
+      "robust_obj_s": 13854.33,
+      "detected_pct": 3.8,
+      "risk_covered_T15_pct": 54.97,
+      "risk_covered_T30_pct": 54.97,
+      "risk_curve": [
+        {
+          "t_min": 5,
+          "risk_covered_pct": 54.97
+        },
+        {
+          "t_min": 10,
+          "risk_covered_pct": 54.97
+        },
+        {
+          "t_min": 15,
+          "risk_covered_pct": 54.97
+        },
+        {
+          "t_min": 20,
+          "risk_covered_pct": 54.97
+        },
+        {
+          "t_min": 30,
+          "risk_covered_pct": 54.97
+        },
+        {
+          "t_min": 45,
+          "risk_covered_pct": 54.97
+        },
+        {
+          "t_min": 60,
+          "risk_covered_pct": 54.97
+        }
+      ],
+      "recharges": 0,
+      "energy_wh": 10.2,
+      "time_s": 158.95,
+      "distance_m": 1266.07,
+      "drone_survival_pct": 84.0,
+      "survival_wilson_ci95": [
+        81.6,
+        86.14
+      ],
+      "unobservable_risk_pct": 0.0,
+      "compute_s": 0.7758,
+      "station_inventory": 20,
+      "run_id": "b80f9b83-cad7-53b8-a8b8-34a2a17e614c",
+      "protocol_sha256": "0e60b5f32c8aa992"
+    },
+    {
+      "method": "gurobi",
+      "status": "ready",
+      "E_D_s": 13854.33,
+      "CVaR_95_s": 14400.0,
+      "robust_obj_s": 13854.33,
+      "detected_pct": 3.8,
+      "risk_covered_T15_pct": 54.97,
+      "risk_covered_T30_pct": 54.97,
+      "risk_curve": [
+        {
+          "t_min": 5,
+          "risk_covered_pct": 54.97
+        },
+        {
+          "t_min": 10,
+          "risk_covered_pct": 54.97
+        },
+        {
+          "t_min": 15,
+          "risk_covered_pct": 54.97
+        },
+        {
+          "t_min": 20,
+          "risk_covered_pct": 54.97
+        },
+        {
+          "t_min": 30,
+          "risk_covered_pct": 54.97
+        },
+        {
+          "t_min": 45,
+          "risk_covered_pct": 54.97
+        },
+        {
+          "t_min": 60,
+          "risk_covered_pct": 54.97
+        }
+      ],
+      "recharges": 0,
+      "energy_wh": 10.2,
+      "time_s": 158.95,
+      "distance_m": 1266.07,
+      "drone_survival_pct": 84.0,
+      "survival_wilson_ci95": [
+        81.6,
+        86.14
+      ],
+      "unobservable_risk_pct": 0.0,
+      "compute_s": 0.7691,
+      "station_inventory": 20,
+      "run_id": "b80f9b83-cad7-53b8-a8b8-34a2a17e614c",
+      "protocol_sha256": "0e60b5f32c8aa992"
+    },
+    {
+      "method": "annealing",
+      "status": "ready",
+      "E_D_s": 13854.33,
+      "CVaR_95_s": 14400.0,
+      "robust_obj_s": 13854.33,
+      "detected_pct": 3.8,
+      "risk_covered_T15_pct": 54.97,
+      "risk_covered_T30_pct": 54.97,
+      "risk_curve": [
+        {
+          "t_min": 5,
+          "risk_covered_pct": 54.97
+        },
+        {
+          "t_min": 10,
+          "risk_covered_pct": 54.97
+        },
+        {
+          "t_min": 15,
+          "risk_covered_pct": 54.97
+        },
+        {
+          "t_min": 20,
+          "risk_covered_pct": 54.97
+        },
+        {
+          "t_min": 30,
+          "risk_covered_pct": 54.97
+        },
+        {
+          "t_min": 45,
+          "risk_covered_pct": 54.97
+        },
+        {
+          "t_min": 60,
+          "risk_covered_pct": 54.97
+        }
+      ],
+      "recharges": 0,
+      "energy_wh": 10.2,
+      "time_s": 158.95,
+      "distance_m": 1266.07,
+      "drone_survival_pct": 84.0,
+      "survival_wilson_ci95": [
+        81.6,
+        86.14
+      ],
+      "unobservable_risk_pct": 0.0,
+      "compute_s": 0.7687,
+      "station_inventory": 20,
+      "run_id": "b80f9b83-cad7-53b8-a8b8-34a2a17e614c",
+      "protocol_sha256": "0e60b5f32c8aa992"
+    },
+    {
+      "method": "alns_risk",
+      "status": "ready",
+      "E_D_s": 12388.81,
+      "CVaR_95_s": 14400.0,
+      "robust_obj_s": 12388.81,
+      "detected_pct": 14.1,
+      "risk_covered_T15_pct": 56.97,
+      "risk_covered_T30_pct": 56.97,
+      "risk_curve": [
+        {
+          "t_min": 5,
+          "risk_covered_pct": 53.16
+        },
+        {
+          "t_min": 10,
+          "risk_covered_pct": 56.97
+        },
+        {
+          "t_min": 15,
+          "risk_covered_pct": 56.97
+        },
+        {
+          "t_min": 20,
+          "risk_covered_pct": 56.97
+        },
+        {
+          "t_min": 30,
+          "risk_covered_pct": 56.97
+        },
+        {
+          "t_min": 45,
+          "risk_covered_pct": 56.97
+        },
+        {
+          "t_min": 60,
+          "risk_covered_pct": 56.97
+        }
+      ],
+      "recharges": 0,
+      "energy_wh": 38.44,
+      "time_s": 599.06,
+      "distance_m": 5281.46,
+      "drone_survival_pct": 84.0,
+      "survival_wilson_ci95": [
+        81.6,
+        86.14
+      ],
+      "unobservable_risk_pct": 0.0,
+      "compute_s": 6.0992,
+      "station_inventory": 20,
+      "run_id": "b80f9b83-cad7-53b8-a8b8-34a2a17e614c",
+      "protocol_sha256": "0e60b5f32c8aa992"
+    }
+  ]
+}
