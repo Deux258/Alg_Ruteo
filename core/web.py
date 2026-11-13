@@ -351,5 +351,38 @@ class Handler(BaseHTTPRequestHandler):
         self.end_headers();self.wfile.write(body)
 
 
+def _prewarm_patrol():
+    try:
+        if os.getenv('PATROL_CONTEXT'):
+            m = patrol_model()
+        else:
+            with connect() as conn:
+                cur = status(conn)
+                if not cur:
+                    return
+                m = patrol_model(conn, cur)
+        from core.patrol import calculate, map_data
+        md = map_data(m)
+        bases = md.get('bases') or []
+        if not bases or not md.get('demo_polygon'):
+            return
+        b0 = bases[0]
+        origin = b0.get('coordinates') or (b0.get('geometry') or {}).get('coordinates')
+        if not origin:
+            return
+        with PATROL_LOCK:
+            calculate(m, {
+                'origin': origin,
+                'target_polygon': md['demo_polygon'],
+                'station_ids': [b.get('id') or b.get('provider_id') for b in bases[:3]],
+                'mode': 'grid',
+                'preferences': {'drone': 'DJI Mavic 3T', 'station_inventory': 1},
+            })
+        logging.info('Prewarm de modelo y geometria completado.')
+    except Exception:
+        logging.exception('Prewarm opcional omitido')
+
+
 if __name__=="__main__":
+    threading.Thread(target=_prewarm_patrol, daemon=True).start()
     ThreadingHTTPServer(("0.0.0.0",int(os.getenv("PORT","8000"))),Handler).serve_forever()

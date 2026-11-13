@@ -407,34 +407,45 @@ class Graph:
         if source == target:
             return []
         started=time.monotonic();self.path_queries+=1
-        if self.conn is not None:
-            from psycopg import sql
-            if metric not in self.sql_queries:
-                payload = [dict(id=e['id'],source=e['source'],target=e['target'],cost=e[metric]) for e in self.edges.values()]
-                literal = sql.Literal(json.dumps(payload)).as_string(self.conn)
-                self.sql_queries[metric] = f'SELECT id,source,target,cost,-1::float8 AS reverse_cost FROM jsonb_to_recordset({literal}::jsonb) AS e(id bigint,source bigint,target bigint,cost float8)'
-            targets = self.routing_targets or [target]
-            if source in targets and len(targets) > 1:
-                rows = self.conn.execute('SELECT start_vid,end_vid,edge FROM pgr_dijkstra(%s,%s::bigint[],%s::bigint[],true) ORDER BY start_vid,end_vid,seq',
-                                         (self.sql_queries[metric],targets,targets)).fetchall()
-                for s_vid in targets:
-                    for t_vid in targets:
-                        self.cache[s_vid,t_vid,metric] = [] if s_vid==t_vid else None
-                for row in rows:
-                    k = (row['start_vid'],row['end_vid'],metric)
-                    if self.cache[k] is None:self.cache[k] = []
-                    if row['edge'] != -1:self.cache[k].append(row['edge'])
-            else:
-                rows = self.conn.execute('SELECT end_vid,edge FROM pgr_dijkstra(%s,%s::bigint,%s::bigint[],true) ORDER BY end_vid,seq',
-                                         (self.sql_queries[metric],source,targets)).fetchall()
-                for t in targets:
-                    self.cache[source,t,metric] = [] if t==source else None
-                for row in rows:
-                    k = (source,row['end_vid'],metric)
-                    if self.cache[k] is None:self.cache[k] = []
-                    if row['edge'] != -1:self.cache[k].append(row['edge'])
-            result = self.cache.get(key)
-        else:
+        targets_list = list(self.routing_targets) if self.routing_targets else [target]
+        if target not in targets_list:
+            targets_list.append(target)
+        use_pgr = self.conn is not None and len(targets_list) <= 36
+        result = None
+        if use_pgr:
+            try:
+                from psycopg import sql
+                if metric not in self.sql_queries:
+                    payload = [dict(id=e['id'],source=e['source'],target=e['target'],cost=e[metric]) for e in self.edges.values()]
+                    literal = sql.Literal(json.dumps(payload)).as_string(self.conn)
+                    self.sql_queries[metric] = f'SELECT id,source,target,cost,-1::float8 AS reverse_cost FROM jsonb_to_recordset({literal}::jsonb) AS e(id bigint,source bigint,target bigint,cost float8)'
+                if source in targets_list and len(targets_list) > 1:
+                    rows = self.conn.execute('SELECT start_vid,end_vid,edge FROM pgr_dijkstra(%s,%s::bigint[],%s::bigint[],true) ORDER BY start_vid,end_vid,seq',
+                                             (self.sql_queries[metric],targets_list,targets_list)).fetchall()
+                    for s_vid in targets_list:
+                        for t_vid in targets_list:
+                            self.cache[s_vid,t_vid,metric] = [] if s_vid==t_vid else None
+                    for row in rows:
+                        k = (row['start_vid'],row['end_vid'],metric)
+                        if self.cache[k] is None:self.cache[k] = []
+                        if row['edge'] != -1:self.cache[k].append(row['edge'])
+                else:
+                    rows = self.conn.execute('SELECT end_vid,edge FROM pgr_dijkstra(%s,%s::bigint,%s::bigint[],true) ORDER BY end_vid,seq',
+                                             (self.sql_queries[metric],source,targets_list)).fetchall()
+                    for t in targets_list:
+                        self.cache[source,t,metric] = [] if t==source else None
+                    for row in rows:
+                        k = (source,row['end_vid'],metric)
+                        if self.cache[k] is None:self.cache[k] = []
+                        if row['edge'] != -1:self.cache[k].append(row['edge'])
+                result = self.cache.get(key)
+            except Exception:
+                try:
+                    self.conn.rollback()
+                except Exception:
+                    pass
+                use_pgr = False
+        if not use_pgr:
             targets = set(self.routing_targets) if (self.routing_targets and source in self.routing_targets) else {target}
             targets.add(target)
             pending = set(targets)
