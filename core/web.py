@@ -45,8 +45,11 @@ def patrol_model(conn=None, current=None):
     path = os.getenv('PATROL_CONTEXT')
     if path:
         return snapshot_context(path)
-    model=conn.execute('SELECT context FROM routing.aerial_models WHERE run_id=%s',(current['run_id'],)).fetchone()['context']
-    return dict(model,_run_id=current['run_id'])
+    if getattr(patrol_model, '_rid', None) != current['run_id']:
+        model = conn.execute('SELECT context FROM routing.aerial_models WHERE run_id=%s', (current['run_id'],)).fetchone()['context']
+        patrol_model._cache = dict(model, _run_id=current['run_id'])
+        patrol_model._rid = current['run_id']
+    return patrol_model._cache
 
 
 def safe_numbers(value):
@@ -120,7 +123,7 @@ class Handler(BaseHTTPRequestHandler):
                         assessment=assess_constraints(patrol_model(conn,current),request)
                 return self.json_reply(dict(valid=assessment['admissible'],violations=assessment['reasons'],constraints=assessment))
             if path.startswith('/api/aereo/patrullaje') or 'target_polygon' in request:
-                if not PATROL_LOCK.acquire(blocking=False):
+                if not PATROL_LOCK.acquire(timeout=30):
                     return self.reply(429,b'{"error":"Hay un patrullaje en calculo. Reintentar al finalizar."}')
                 try:
                     from core.patrol import calculate,simulate
@@ -236,6 +239,41 @@ class Handler(BaseHTTPRequestHandler):
             except Exception:
                 logging.exception('Mapa de patrullaje falló')
                 return self.reply(503,b'{"error":"No se pudo cargar el snapshot de patrullaje"}')
+        if path=='/api/aereo/patrullaje/riesgo':
+            try:
+                from shapely.geometry import box,shape
+                from shapely.ops import transform
+                from core.aerial_data import FWD,INV
+                from core.patrol import forest_zone_utm,terrain
+                from core.risk_field import RiskConfig,compute_risk_field
+                from core.geo_transport import ref_json
+                norm_mode=params.get('norm',['max'])[0]
+                if norm_mode not in ('max','log','quantile'):norm_mode='max'
+                cell_m=max(30.0,min(200.0,float(params.get('cell_m',['90'])[0])))
+                if os.getenv('PATROL_CONTEXT'):
+                    model=patrol_model()
+                else:
+                    with connect() as conn:
+                        current=status(conn)
+                        if not current:return self.reply(503,b'{"status":"not_ready"}')
+                        model=patrol_model(conn,current)
+                area_utm=transform(FWD,shape(model['flight_geometry']))
+                fzone=forest_zone_utm(model)
+                field=compute_risk_field(model,area_utm,terrain=terrain(),config=RiskConfig(grid_cell_m=cell_m,normalization_mode=norm_mode),forest_zone_utm=fzone)
+                half=field.cell_m*0.5
+                features=[]
+                for iy,yv in enumerate(field.ys):
+                    for ix,xv in enumerate(field.xs):
+                        if not field.forest_mask[iy,ix]:continue
+                        val=float(field.values[iy,ix])
+                        if val<=0.0:continue
+                        poly=transform(INV,box(float(xv)-half,float(yv)-half,float(xv)+half,float(yv)+half))
+                        features.append(dict(type='Feature',properties=dict(r=round(val,4),obs=bool(field.observable[iy,ix])),geometry=dict(type='Polygon',coordinates=[[list(c) for c in poly.exterior.coords]])))
+                ref=ref_json(dict(type='FeatureCollection',features=features))
+                return self.reply(200,json.dumps(dict(summary=field.summary(),diagnostics=field.diagnostics(),resource=ref),ensure_ascii=False,allow_nan=False).encode())
+            except Exception:
+                logging.exception('Campo de riesgo falló')
+                return self.reply(503,b'{"error":"No se pudo calcular el campo de riesgo"}')
         if path=='/health' and os.getenv('PATROL_CONTEXT'):
             return self.reply(200,b'{"status":"ready","mode":"patrol_snapshot","database":false}')
         if path not in ("/health","/api/topologia","/api/mapa","/api/ruta","/api/nodo","/api/aereo/mapa"):

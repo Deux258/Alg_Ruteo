@@ -115,17 +115,30 @@ const message = (text, error = false) => {
   $("message").classList.toggle("error", error);
 };
 async function api(url, body, options = {}) {
-  const r = await fetch(
-    url,
-    body
-      ? {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(body),
-          signal: options.signal,
-        }
-      : { signal: options.signal },
-  );
+  const fetchOptions = body
+    ? {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+        signal: options.signal,
+      }
+    : { signal: options.signal };
+  let r;
+  try {
+    r = await fetch(url, fetchOptions);
+  } catch (err) {
+    if (err?.name === "AbortError" || options.signal?.aborted) throw err;
+    await new Promise((resolve) => setTimeout(resolve, 350));
+    try {
+      r = await fetch(url, fetchOptions);
+    } catch (retryErr) {
+      if (retryErr?.name === "AbortError" || options.signal?.aborted)
+        throw retryErr;
+      throw new Error(
+        "No se pudo conectar con el servidor (Failed to fetch). Verifica que el contenedor 'web' esté activo y actualizado.",
+      );
+    }
+  }
   const value = await r.json();
   if (!r.ok) {
     const error = new Error(value.error || "Servicio no disponible");
@@ -152,6 +165,10 @@ function cancelSimulation() {
   playing = false;
   simulation = null;
   flightLayer.clearLayers();
+  droneVision2d = null;
+  droneSwept2d = null;
+  droneScanBeam2d = null;
+  droneScanTarget2d = null;
   drone = null;
   clock = 0;
   lastFrame = 0;
@@ -160,6 +177,12 @@ function cancelSimulation() {
   followCenter = null;
   exitDroneView();
   terrainView?.setMarker(null);
+  terrainView?.setDroneNote?.("");
+  if ($("fire-emergency-alert")) $("fire-emergency-alert").hidden = true;
+  terrainView?.setCoverageTrail?.(
+    [],
+    fresh && result ? displayedRoutes()[$("chosen").value]?.coordinates_utm || [] : [],
+  );
   $("log").replaceChildren();
   $("progress").value = 0;
   $("replan").disabled = true;
@@ -188,6 +211,7 @@ function updateBudgetNote(assessment = constraintAssessment?.constraints) {
     assessment?.mission_flight_budget_s ?? Math.max(0, total - reserve);
   $("budget-note").textContent =
     `Batería útil: ${useful} s = ${flight} s de vuelo + ${reserve} s de reporte por batería. Misión: ${total} s = ${missionFlight} s planificables + ${reserve} s de reporte, reservados una vez.`;
+  if (typeof refreshClimateImpactCard === "function") refreshClimateImpactCard();
 }
 async function validateCurrent() {
   if (!model) return null;
@@ -554,6 +578,10 @@ function invalidate() {
   metadataNodes.clearLayers();
   $("results").replaceChildren();
   $("chosen").replaceChildren();
+  if ($("player-route")) {
+    $("player-route").replaceChildren(new Option("Sin ruta calculada", ""));
+  }
+  if ($("route-criteria-modal")) $("route-criteria-modal").hidden = true;
   $("flight").textContent = "Sin vuelo activo.";
   $("export").disabled = true;
   $("failures").disabled = true;
@@ -647,29 +675,132 @@ $("demo").onclick = () => {
   setTarget(model.demo_polygon);
   map.fitBounds(L.geoJSON(target).getBounds().pad(1), { animate: false });
 };
+if ($("full-area")) {
+  $("full-area").onclick = () => {
+    const poly = model?.full_permitted_polygon || model?.area;
+    if (!poly)
+      return message(
+        "Aún no se ha cargado el área permitida del modelo.",
+        true,
+      );
+    document
+      .querySelectorAll("#stations input[type='checkbox']")
+      .forEach((cb) => {
+        cb.checked = true;
+      });
+    if ($("station-inventory")) $("station-inventory").value = "20";
+    if (Number($("budget").value) < 36000) $("budget").value = "36000";
+    setTarget(poly);
+    map.fitBounds(L.geoJSON(target).getBounds().pad(0.08), { animate: false });
+    $("area-status").textContent =
+      "Área permitida completa cargada · 5 compañías de bomberos activadas para recarga múltiple.";
+    message(
+      "Área permitida cargada con recarga en estaciones de bomberos habilitada. Pulsa «Generar rutas».",
+    );
+  };
+}
 $("fire").onclick = () => {
   if (view3d) setView3d(false);
   mode = "fire";
   message("Marca un foco sintético dentro del polígono objetivo.");
 };
+if ($("random-fire")) {
+  $("random-fire").onclick = () => {
+    const activeRoute = selectedRoute();
+    const coords = activeRoute?.coordinates || [];
+    if (!coords.length && !target) {
+      return message("Primero genera una ruta o define un polígono para ubicar un foco.", true);
+    }
+    let pick = null;
+    if (coords.length >= 4) {
+      const minIdx = Math.max(1, Math.floor(coords.length * 0.22));
+      const maxIdx = Math.max(minIdx + 1, Math.floor(coords.length * 0.68));
+      for (let attempt = 0; attempt < 25; attempt++) {
+        const idx = minIdx + Math.floor(Math.random() * (maxIdx - minIdx));
+        const pt = [coords[idx][0], coords[idx][1]];
+        if (!target || pointInPolygon(pt, target)) {
+          pick = pt;
+          break;
+        }
+      }
+    }
+    if (!pick && target?.coordinates?.[0]?.length) {
+      const ring = target.coordinates[0];
+      const cx = ring.reduce((s, p) => s + p[0], 0) / ring.length;
+      const cy = ring.reduce((s, p) => s + p[1], 0) / ring.length;
+      pick = [cx, cy];
+    }
+    if (!pick) return message("No se pudo colocar un foco en la ruta.", true);
+    fire = pick;
+    fireLayer.clearLayers();
+    L.marker([pick[1], pick[0]], {
+      icon: L.divIcon({
+        className: "drone-icon",
+        html: "🔥",
+        iconSize: [26, 26],
+      }),
+    })
+      .addTo(fireLayer)
+      .bindPopup(popup("Foco de incendio en ruta", { coordinates: pick }));
+    $("fire-status").textContent =
+      `🔥 Foco activo en ruta: ${pick.map((v) => v.toFixed(5)).join(", ")} (el dron lo sondeará en vuelo)`;
+    simulationChanged();
+    update3d();
+    if (fresh) preparePlayback("nominal", true);
+  };
+}
 $("clear-fire").onclick = () => {
   fire = null;
   fireLayer.clearLayers();
   simulationChanged();
   update3d();
-  $("fire-status").textContent = "Sin foco sintético.";
+  $("fire-status").textContent = "Sin foco sintético marcado (sondeo preventivo activo).";
 };
+function resetHazardMode() {
+  if ($("hazard")) {
+    $("hazard").textContent = "Añadir amenaza";
+    $("hazard").classList.remove("primary");
+  }
+  map.getContainer().style.cursor = "";
+}
+function onSyntheticHazardsChanged() {
+  update3d();
+  refreshPlaybackControls();
+  updateStepSummaries();
+}
 $("hazard").onclick = () => {
+  if (mode === "hazard") {
+    mode = "";
+    resetHazardMode();
+    if ($("hazard-status"))
+      $("hazard-status").textContent = events.length
+        ? `⚠️ ${events.length} amenaza(s) sintética(s) activa(s). Pulsa «Generar rutas» para recalcular.`
+        : "Sin amenazas sintéticas extra. Pulsa «Añadir amenaza» y haz clic en el mapa para crear una zona de riesgo.";
+    return;
+  }
   if (view3d) setView3d(false);
   mode = "hazard";
+  const r = Number($("radius")?.value || 60);
+  const p = Number($("probability")?.value || 80);
+  $("hazard").textContent = "📍 Clic en el mapa (Cancelar)";
+  $("hazard").classList.add("primary");
+  map.getContainer().style.cursor = "crosshair";
+  if ($("hazard-status"))
+    $("hazard-status").textContent =
+      `🎯 Modo amenaza activo: haz clic en cualquier punto del mapa para ubicar una amenaza (radio ${r} m · prob. ${p} %).`;
   message(
-    "Marca el centro de una amenaza sintética; luego recalcula las rutas.",
+    "Modo amenaza activo: haz clic en el mapa para ubicar la amenaza sintética.",
   );
 };
 $("clear-hazards").onclick = () => {
   events = [];
   eventsLayer.clearLayers();
-  invalidate();
+  if (mode === "hazard") mode = "";
+  resetHazardMode();
+  if ($("hazard-status"))
+    $("hazard-status").textContent =
+      "Amenazas sintéticas eliminadas. La ruta seleccionada del Paso 2 se mantiene lista para simular.";
+  onSyntheticHazardsChanged();
 };
 $("hazard-coordinate-add").onclick = () => {
   const c = $("hazard-coordinates").value.split(",").map(Number),
@@ -685,7 +816,10 @@ $("hazard-coordinate-add").onclick = () => {
     return message("Revisa coordenadas, radio y probabilidad.", true);
   events.push({ geometry: circlePolygon(...c, r), probability_pct: p });
   drawEvents();
-  invalidate();
+  if ($("hazard-status"))
+    $("hazard-status").textContent =
+      `⚠️ ${events.length} amenaza(s) sintética(s) en mapa. Puedes simular la ruta actual o pulsar «Replanificar ruta» para esquivarla(s).`;
+  onSyntheticHazardsChanged();
 };
 function editMapAt(e) {
   const c = [e.latlng.lng, e.latlng.lat];
@@ -721,8 +855,12 @@ function editMapAt(e) {
       probability_pct: probability,
     });
     mode = "";
+    resetHazardMode();
+    if ($("hazard-status"))
+      $("hazard-status").textContent =
+        `⚠️ ${events.length} amenaza(s) sintética(s) agregada(s) (radio ${radius} m · prob. ${probability} %). Puedes simular la ruta actual o pulsar «Replanificar ruta».`;
     drawEvents();
-    invalidate();
+    onSyntheticHazardsChanged();
   }
 }
 map.on("click", editMapAt);
@@ -804,7 +942,90 @@ function stationIds() {
     (i) => i.value,
   );
 }
+const DRONE_PRESETS = {
+  mavic3t: {
+    drone: "DJI Mavic 3T Enterprise",
+    shortName: "Mavic 3T",
+    altitude_agl_m: 60,
+    wind_limit_ms: 8,
+    battery_budget_s: 1200,
+    mission_budget_s: 3600,
+    cruise_ms: 10,
+    climb_ms: 6,
+    descent_ms: 6,
+    swath_m: 150,
+    view_radius_m: 100,
+    station_service_s: 120,
+    battery_wh: 77,
+    charger_w: 30,
+    recharge_s: 10800,
+    summary:
+      "📡 Sensor térmico VOx 640×512 px · Crucero 10 m/s · Bat. 77 Wh (cargador 30 W → recarga 3 h 00 min) · Franja 150 m · Radio IR 100 m",
+  },
+  matrice30t: {
+    drone: "DJI Matrice 30T (IP55)",
+    shortName: "Matrice 30T",
+    altitude_agl_m: 70,
+    wind_limit_ms: 12,
+    battery_budget_s: 1680,
+    mission_budget_s: 7200,
+    cruise_ms: 12,
+    climb_ms: 6,
+    descent_ms: 5,
+    swath_m: 165,
+    view_radius_m: 115,
+    station_service_s: 90,
+    battery_wh: 263,
+    charger_w: 110,
+    recharge_s: 9900,
+    summary:
+      "📡 Sensor VOx 640×512 + LRF 1200 m (IP55) · Crucero 12 m/s · Bat. dual TB30 263 Wh (110 W → recarga 2 h 45 min) · Franja 165 m",
+  },
+  matrice350: {
+    drone: "DJI Matrice 350 RTK + Zenmuse H20T",
+    shortName: "Matrice 350 RTK",
+    altitude_agl_m: 80,
+    wind_limit_ms: 12,
+    battery_budget_s: 2160,
+    mission_budget_s: 10800,
+    cruise_ms: 14,
+    climb_ms: 6,
+    descent_ms: 5,
+    swath_m: 185,
+    view_radius_m: 135,
+    station_service_s: 60,
+    battery_wh: 526,
+    charger_w: 190,
+    recharge_s: 11160,
+    summary:
+      "📡 Cardán Zenmuse H20T + LRF 1200 m (IP55) · Crucero 14 m/s · Bat. dual TB65 526 Wh (190 W → recarga 3 h 06 min) · Franja 185 m",
+  },
+};
+
+function currentDroneSpec() {
+  const key = $("drone-preset")?.value || "mavic3t";
+  return DRONE_PRESETS[key] || DRONE_PRESETS.mavic3t;
+}
+
+if ($("drone-preset")) {
+  $("drone-preset").addEventListener("change", () => {
+    const spec = currentDroneSpec();
+    if ($("altitude")) $("altitude").value = String(spec.altitude_agl_m);
+    if ($("wind")) $("wind").value = String(spec.wind_limit_ms);
+    if ($("battery")) $("battery").value = String(spec.battery_budget_s);
+    if ($("budget")) $("budget").value = String(spec.mission_budget_s);
+    if ($("drone-spec-summary")) $("drone-spec-summary").textContent = spec.summary;
+    if ($("drone-profile-title"))
+      $("drone-profile-title").textContent = `Perfil de vuelo · ${spec.shortName}`;
+    invalidate();
+    updateBudgetNote();
+    refreshClimateImpactCard();
+    wind();
+  });
+}
+
 function request() {
+  const spec = currentDroneSpec();
   return {
     origin: model.bases[Number($("base").value)].geometry.coordinates,
     target_polygon: target,
@@ -814,12 +1035,23 @@ function request() {
     seed: Number($("seed").value),
     scenarios: 1000,
     preferences: {
+      drone: spec.drone,
       altitude_agl_m: Number($("altitude").value),
       wind_limit_ms: Number($("wind").value),
       battery_budget_s: Number($("battery").value),
       mission_budget_s: Number($("budget").value),
       risk_weight: Number($("risk").value),
       historical_multiplier: Number($("history").value),
+      station_inventory: Number($("station-inventory")?.value || 1),
+      cruise_ms: spec.cruise_ms,
+      climb_ms: spec.climb_ms,
+      descent_ms: spec.descent_ms,
+      swath_m: spec.swath_m,
+      view_radius_m: spec.view_radius_m,
+      station_service_s: spec.station_service_s,
+      battery_wh: spec.battery_wh,
+      charger_w: spec.charger_w,
+      recharge_s: spec.recharge_s,
     },
   };
 }
@@ -936,17 +1168,182 @@ async function calculate(overrides = null) {
   }
 }
 $("calculate").onclick = () => calculate();
+
+function describeRouteMethod(key, r) {
+  const isAlt = $("route-mode").value === "alternatives" || key.startsWith("alt_");
+  const baseKey = r.base_method || r.method || key;
+  const p = result?.effective_profile || model?.profile || {};
+  const riskW = Number($("risk")?.value ?? p.risk_weight ?? 240);
+  const histM = Number($("history")?.value ?? p.historical_multiplier ?? 1);
+  const swath = Number(p.swath_m ?? 200);
+  const agl = Number($("altitude")?.value ?? p.altitude_agl_m ?? 100);
+  const batS = Number($("battery")?.value ?? p.battery_budget_s ?? 1200);
+  const specs = {
+    dijkstra_distance: {
+      algo: "PostgreSQL / PostGIS · pgr_dijkstra (Solo Distancia)",
+      shortBadge: "pgr_dijkstra · Distancia 3D pura",
+      formula: "min Σ d_e   (peso arista w_e = distancia geométrica 3D en metros)",
+      summary:
+        "Calcula el camino más corto puramente geométrico sobre el grafo aéreo 3D usando el algoritmo de Dijkstra en PostgreSQL/pgRouting, sin penalizar la probabilidad de falla por amenazas.",
+      criteria: [
+        "Criterio primario: Minimización exclusiva de la distancia euclidiana 3D (metros) entre barridos y estaciones.",
+        "Amenazas: Ignora probabilidades graduales (A1/A4) en el peso de las aristas; solo respeta exclusiones físicas duras (zona prohibida AIP SC-P50 y límites del grafo).",
+        `Cobertura de cámara: Barrido en franjas de ${swath} m de ancho a ${agl} m AGL con verificación de línea de vista sobre DSM Copernicus GLO-30.`,
+        `Autonomía y recarga: Límite de ${batS} s por batería (${batS - 60} s de vuelo + 60 s de reserva), insertando paradas en las Compañías de Bomberos (M1) cuando se requiere.`,
+      ],
+    },
+    dijkstra_weighted: {
+      algo: "PostgreSQL / PostGIS · pgr_dijkstra Multicriterio (Tiempo + Riesgo)",
+      shortBadge: "pgr_dijkstra · Tiempo + Riesgo",
+      formula: `min Σ [ t_e + ${riskW} · (−ln(1 − p_e)) ]   donde p_e = P(falla en arco e)`,
+      summary:
+        "Optimiza simultáneamente el tiempo de vuelo y la supervivencia ante amenazas mediante Dijkstra ponderado en pgRouting, penalizando logarítmicamente los corredores con riesgo climático, térmico o histórico.",
+      criteria: [
+        `Criterio multicriterio: Combina el tiempo de travesía t_e (s) con el término de confiabilidad −ln(1 − p_e) ponderado por ρ = ${riskW} s.`,
+        `Modelo de amenazas en p_e: Integra viento/ráfagas (M4/A1), focos térmicos FIRMS (A2), restricciones aéreas DGAC (A3), amenaza por incendio forestal SENAPRED (A4, densidad 2020-2024 × ${histM}) y amenazas sintéticas.`,
+        `Cobertura visual: Franjas de barrido de ${swath} m de ancho para maximizar las celdas de 30×30 m observadas en línea de vista.`,
+        `Gestión de energía: Planificación multi-batería (${batS} s útiles) con recarga en estaciones de bomberos habilitadas (${r.stops?.length ?? 0} recargas ejecutadas).`,
+      ],
+    },
+    gurobi: {
+      algo: "Gurobi Optimizer · Programación Lineal Entera Mixta (MILP)",
+      shortBadge: "Gurobi MILP · Optimización Exacta",
+      formula: `min Σ_a c_a y_a + Σ_(i,j) [ t_(i,j) + ${riskW}·(−ln(1 − p_(i,j))) ] x_(i,j)   s.a. Subciclos, Batería ≤ ${batS - 60} s, Cobertura ≥ 90 %`,
+      summary:
+        "Formula y resuelve el problema formal de optimización combinatoria (MILP) en Gurobi, decidiendo simultáneamente el orden de los sectores de barrido, el sentido de entrada/salida y las visitas a estaciones de bomberos.",
+      criteria: [
+        "Modelamiento formal MILP: Variables binarias de selección de orientación de barrido y variables de flujo entero para eliminación de subtours y control de inventario de baterías.",
+        `Función objetivo: Minimiza el costo compuesto de tiempo de misión más riesgo acumulado de falla (peso ρ = ${riskW}) en conectores y barridos.`,
+        `Restricciones duras: Presupuesto por batería (${batS - 60} s de vuelo efectivo), inventario por estación de bomberos y cobertura mínima del polígono (lograda: ${r.coverage ? r.coverage.percent.toFixed(1) + " %" : "—"}).`,
+        `Estado del solver: ${r.solver?.engine || "gurobi"} · estado ${r.solver?.status || "optimal"}${r.solver?.gap != null ? ` · gap ${(100 * r.solver.gap).toFixed(2)} %` : ""}.`,
+      ],
+    },
+    annealing: {
+      algo: "Metaheurística · Recocido Simulado (Simulated Annealing)",
+      shortBadge: "Simulated Annealing · Metaheurística",
+      formula: "P(aceptar ΔE > 0) = exp(−ΔE / T_k),   T_(k+1) = α · T_k   con vecindarios 2-opt, swap e inversión de barrido",
+      summary:
+        "Explora el espacio de permutaciones y orientaciones de barrido mediante enfriamiento estadístico de Boltzmann, permitiendo escapar de óptimos locales en misiones de gran escala con múltiples recargas.",
+      criteria: [
+        "Operadores de vecindad: Intercambio de sectores (swap), inversión de sub-secuencias (2-opt) y cambio de sentido de barrido en cada polígono/sector.",
+        `Evaluación de energía E(S): Tiempo total de vuelo + penalización por probabilidad de falla de enlaces (ρ = ${riskW}) + inserción óptima de recargas en estaciones M1.`,
+        `Criterio de parada: Enfriamiento geométrico multi-iteración con retención de la mejor solución factible (${r.stops?.length ?? 0} recargas, ${(r.distance_m / 1000).toFixed(2)} km).`,
+      ],
+    },
+  };
+  const baseSpec = specs[baseKey] || specs.dijkstra_weighted;
+  if (!isAlt) return baseSpec;
+  const isRef = r.solver?.engine === "comparison_result";
+  return {
+    algo: isRef
+      ? `${baseSpec.algo} (Circuito de Referencia)`
+      : `Generador de Circuitos Disjuntos · ${r.solver?.engine === "diverse_dijkstra" ? "pgr_dijkstra con Penalización de Corredor" : baseSpec.algo}`,
+    shortBadge: isRef
+      ? `Referencia · ${baseSpec.shortBadge}`
+      : `Alternativa diversificada · ${r.solver?.engine || "multicriterio"}`,
+    formula: isRef
+      ? baseSpec.formula
+      : `w'_e = w_e · (1 + λ · uso_previo_e)   con separación espacial ≥ ${result?.diversity?.tolerance_m ?? 12} m y tránsito compartido ≤ 85 %`,
+    summary: isRef
+      ? `Este es el circuito principal de referencia. ${baseSpec.summary}`
+      : "Genera una ruta alternativa físicamente separada penalizando los corredores de tránsito ya utilizados por los circuitos anteriores y variando el orden/sentido de barrido.",
+    criteria: [
+      ...baseSpec.criteria,
+      isRef
+        ? "Diversidad: Circuito base #1 contra el cual se mide la separación de los corredores alternativos."
+        : `Diversidad de corredor: Comparte como máximo ${(100 * (r.diversity?.max_shared_transit ?? 0)).toFixed(0)} % del tránsito con los circuitos previos.`,
+    ],
+  };
+}
+
+function openCriteriaModal(key) {
+  const available = displayedRoutes();
+  const targetKey = key || $("chosen").value;
+  const r = available?.[targetKey];
+  const modal = $("route-criteria-modal");
+  if (!r || !modal) return;
+  const info = describeRouteMethod(targetKey, r);
+  const p = result?.effective_profile || model?.profile || {};
+  $("criteria-modal-kicker").textContent =
+    $("route-mode").value === "alternatives"
+      ? "MODO: CIRCUITOS ALTERNATIVOS DIVERSIFICADOS"
+      : "MODO: COMPARACIÓN DE LAS 4 TÉCNICAS DE OPTIMIZACIÓN";
+  $("criteria-modal-title").textContent = `${r.label} — ${info.algo}`;
+  const stopsNames = (r.stops || [])
+    .map((s) => s.name || s.station_id || "Estación M1")
+    .join(" → ");
+  $("criteria-modal-body").innerHTML = `
+    <div class="criteria-section">
+      <h4>1. ¿Con qué técnica y motor fue calculada?</h4>
+      <p><strong>${info.algo}</strong></p>
+      <p>${info.summary}</p>
+      <div class="criteria-formula">${info.formula}</div>
+    </div>
+    <div class="criteria-section">
+      <h4>2. Criterios de optimización y restricciones aplicadas</h4>
+      <ul class="criteria-list">
+        ${info.criteria.map((c) => `<li>${c}</li>`).join("")}
+      </ul>
+    </div>
+    <div class="criteria-section">
+      <h4>3. Métricas resultantes y operación del dron (${p.drone || currentDroneSpec().drone})</h4>
+      <div class="criteria-kv-grid">
+        <div class="criteria-kv"><span>Resiliencia Monte Carlo</span><b>${r.resilience ? (100 * r.resilience.value).toFixed(1) + " %" : "—"} (${r.resilience?.scenarios ?? 1000} sorteos)</b></div>
+        <div class="criteria-kv"><span>Cobertura visual del área</span><b>${r.coverage ? r.coverage.percent.toFixed(1) + " %" : "—"} (ancho ${p.swath_m ?? 200} m)</b></div>
+        <div class="criteria-kv"><span>Tiempo total de misión</span><b>${r.time_s ? (r.time_s / 60).toFixed(1) + " min (" + r.time_s.toFixed(0) + " s)" : "—"}</b></div>
+        <div class="criteria-kv"><span>Distancia 3D recorrida</span><b>${r.distance_m ? (r.distance_m / 1000).toFixed(2) + " km" : "—"}</b></div>
+        <div class="criteria-kv"><span>Recargas en Bomberos (M1)</span><b>${r.stops?.length ?? 0} parada(s)${stopsNames ? ": " + stopsNames : ""}</b></div>
+        <div class="criteria-kv"><span>Tiempo de cálculo CPU</span><b>${r.compute_s?.toFixed(2) ?? "—"} s (${r.solver?.engine || "motor activo"})</b></div>
+      </div>
+    </div>
+    <div class="criteria-section" style="border-color:rgba(217,155,62,0.5);background:rgba(255,249,235,0.9)">
+      <h4 style="color:#7c4d0f">4. ⚠️ Alcance del Escenario (100 % Simulación)</h4>
+      <p>Este escenario corresponde íntegramente a una <strong>simulación académica</strong>: el ruteo evita zonas sin permiso de vuelo (AIP Chile SC-P50 · DGAC y zonas urbanas), y los cuarteles de <strong>Bomberos (M1) se consideran puntos de recarga únicamente como supuesto de simulación</strong>, sin que exista confirmación ni consulta oficial con la institución.</p>
+    </div>
+  `;
+  modal.hidden = false;
+}
+
+if ($("criteria-modal-close")) {
+  $("criteria-modal-close").onclick = () => {
+    $("route-criteria-modal").hidden = true;
+  };
+}
+if ($("route-criteria-modal")) {
+  $("route-criteria-modal").addEventListener("click", (e) => {
+    if (e.target === $("route-criteria-modal")) {
+      $("route-criteria-modal").hidden = true;
+    }
+  });
+}
+if ($("chosen-info-btn")) {
+  $("chosen-info-btn").onclick = () => openCriteriaModal($("chosen").value);
+}
+if ($("player-route-info")) {
+  $("player-route-info").onclick = () => openCriteriaModal($("chosen").value);
+}
+
 function renderResults() {
   Object.values(routes).forEach((l) => map.removeLayer(l));
   routes = {};
   $("results").replaceChildren();
   const previousChoice = $("chosen").value;
   $("chosen").replaceChildren();
+  if ($("player-route")) $("player-route").replaceChildren();
   const available = displayedRoutes();
+  const recommended = displayedRecommended();
+  const selectedKey =
+    available[previousChoice]?.status === "ready"
+      ? previousChoice
+      : recommended[0] ||
+        Object.keys(available).find((k) => available[k]?.status === "ready") ||
+        "";
   const timed = Object.entries(available).filter(
     ([, row]) => row.status === "ready" && Number.isFinite(row.time_s),
   );
   for (const [key, r] of Object.entries(available)) {
+    const isSelected = key === selectedKey;
+    const methodInfo = describeRouteMethod(key, r);
     const card = document.createElement("div");
     card.className = "route-card";
     card.style.setProperty("--route", colors[key]);
@@ -954,9 +1351,10 @@ function renderResults() {
     title.className = "route-title";
     const check = document.createElement("input");
     check.type = "checkbox";
-    check.checked = true;
+    check.checked = isSelected;
     check.id = `show-${key}`;
-    visible[key] = true;
+    check.title = "Mostrar u ocultar esta ruta en el mapa";
+    visible[key] = isSelected;
     const label = document.createElement("button");
     label.type = "button";
     label.className = "route-choice";
@@ -964,6 +1362,8 @@ function renderResults() {
     label.onclick = () => {
       if (r.status !== "ready") return;
       $("chosen").value = key;
+      if ($("player-route")) $("player-route").value = key;
+      setRouteVisibility(false);
       changeRoute();
     };
     title.append(check, label);
@@ -980,13 +1380,45 @@ function renderResults() {
     }
     card.dataset.route = key;
     card.append(title);
+
+    // Fila con el algoritmo empleado y botón (i) para abrir el popup de criterios
+    const algoRow = document.createElement("div");
+    algoRow.className = "route-algo-row";
+    const algoBadge = document.createElement("span");
+    algoBadge.className = "route-algo-badge";
+    algoBadge.textContent = methodInfo.shortBadge;
+    algoBadge.title = methodInfo.algo;
+    const algoActions = document.createElement("div");
+    algoActions.style.display = "inline-flex";
+    algoActions.style.alignItems = "center";
+    algoActions.style.gap = "5px";
+    const tipIcon = document.createElement("span");
+    tipIcon.className = "info-tip";
+    tipIcon.tabIndex = 0;
+    tipIcon.textContent = "i";
+    tipIcon.setAttribute(
+      "data-tooltip",
+      `${methodInfo.algo}: ${methodInfo.summary}`,
+    );
+    const criteriaBtn = document.createElement("button");
+    criteriaBtn.type = "button";
+    criteriaBtn.className = "route-info-pill";
+    criteriaBtn.textContent = "ⓘ Criterios";
+    criteriaBtn.onclick = (e) => {
+      e.stopPropagation();
+      openCriteriaModal(key);
+    };
+    algoActions.append(tipIcon, criteriaBtn);
+    algoRow.append(algoBadge, algoActions);
+    card.append(algoRow);
+
     if (r.coordinates.length) {
       routes[key] = L.polyline(
         r.coordinates.map((c) => [c[1], c[0]]),
         {
           color: colors[key],
-          weight: 3 + (3 - Object.keys(available).indexOf(key)),
-          opacity: 0.8,
+          weight: isSelected ? 6 : 3,
+          opacity: isSelected ? 1 : 0.75,
           dashArray:
             key === "dijkstra_distance"
               ? "8 5"
@@ -994,17 +1426,18 @@ function renderResults() {
                 ? "3 5"
                 : null,
         },
-      )
-        .addTo(map)
-        .bindPopup(
-          popup(r.label, {
-            status: r.status,
-            compute_s: r.compute_s,
-            coverage: r.coverage,
-            resilience: r.resilience,
-            solver: r.solver,
-          }),
-        );
+      ).bindPopup(
+        popup(`${r.label} · ${methodInfo.shortBadge}`, {
+          algoritmo: methodInfo.algo,
+          funcion_objetivo: methodInfo.formula,
+          status: r.status,
+          compute_s: r.compute_s,
+          coverage: r.coverage,
+          resilience: r.resilience,
+          solver: r.solver,
+        }),
+      );
+      if (isSelected) routes[key].addTo(map);
     }
     check.onchange = () => {
       visible[key] = check.checked;
@@ -1087,13 +1520,17 @@ function renderResults() {
       card.append(error);
     }
     $("results").append(card);
-    if (r.status === "ready") $("chosen").append(new Option(r.label, key));
+    if (r.status === "ready") {
+      const optLabel = `${key === recommended ? "★ " : ""}${r.label} (${r.distance_m ? (r.distance_m / 1000).toFixed(1) + " km" : "—"} · ${r.coverage ? r.coverage.percent.toFixed(0) + "% cob." : "—"})`;
+      $("chosen").append(new Option(optLabel, key));
+      if ($("player-route")) $("player-route").append(new Option(optLabel, key));
+    }
   }
-  const recommended = displayedRecommended();
-  $("chosen").value =
-    available[previousChoice]?.status === "ready"
-      ? previousChoice
-      : recommended[0] || "";
+  if (!$("chosen").options.length) {
+    $("chosen").append(new Option("— Sin rutas viables para este escenario —", ""));
+  }
+  $("chosen").value = selectedKey;
+  if ($("player-route")) $("player-route").value = selectedKey;
   $("diversity-note").textContent =
     $("route-mode").value === "alternatives"
       ? `${result.diversity.count} circuitos diferentes. Comparten el barrido del objetivo; el tránsito se compara con tolerancia de ${result.diversity.tolerance_m ?? 12} m.${result.diversity.reason ? " " + result.diversity.reason : ""}`
@@ -1187,9 +1624,60 @@ function update3d() {
   if (fire) {
     const [x, y] = projectUTM(fire),
       z = meshHeight(x, y);
-    if (z !== null)
-      annotations.push({ id: "fire", kind: "fire", position_utm: [x, y, z + 8], label: "Foco de incendio" });
+    if (z !== null) {
+      annotations.push({ id: "fire", kind: "fire", position_utm: [x, y, z + 18], label: "🔥 Foco de incendio" });
+      terrainView.setFire?.([x, y, z]);
+    } else {
+      terrainView.setFire?.(null);
+    }
+  } else {
+    terrainView.setFire?.(null);
   }
+  terrainView.setSwath?.(
+    Number(result?.effective_profile?.swath_m ?? model?.profile?.swath_m ?? 200),
+  );
+  const chosenRoute = fresh && result ? displayedRoutes()[$("chosen").value] : null;
+  terrainView.setCoverageTrail?.(
+    simulation ? currentSweptTrailUtm(clock) : [],
+    chosenRoute?.coordinates_utm || [],
+  );
+  const forbiddenZones = [];
+  const collectGeoRings = (geom) => {
+    if (!geom) return [];
+    if (geom.type === "Polygon") return [geom.coordinates[0].map((c) => projectUTM(c))];
+    if (geom.type === "MultiPolygon") return geom.coordinates.map((p) => p[0].map((c) => projectUTM(c)));
+    return [];
+  };
+  const layerSource = (displayModel || model)?.layers || {};
+  for (const [lKey, color, wallH, labelPrefix] of [
+    ["A3", [0.84, 0.16, 0.14], 55, "⛔ Zona prohibida AIP"],
+    ["A2", [0.88, 0.38, 0.14], 38, "🔥 Anomalía FIRMS"],
+  ]) {
+    for (const row of layerSource[lKey] || []) {
+      const rings = collectGeoRings(row.geometry);
+      if (!rings.length) continue;
+      forbiddenZones.push({ rings, color, heightM: wallH });
+      if (lKey === "A3") {
+        const ring = rings[0];
+        const cx = ring.reduce((s, p) => s + p[0], 0) / ring.length;
+        const cy = ring.reduce((s, p) => s + p[1], 0) / ring.length;
+        const cz = meshHeight(cx, cy);
+        if (cz !== null) {
+          annotations.push({
+            id: `a3:${row.provider_id || cx.toFixed(0)}`,
+            kind: "threat",
+            position_utm: [cx, cy, cz + 25],
+            label: `${labelPrefix}${row.name ? " · " + row.name : ""}`,
+          });
+        }
+      }
+    }
+  }
+  for (const ev of events || []) {
+    const rings = collectGeoRings(ev.geometry);
+    if (rings.length) forbiddenZones.push({ rings, color: [0.80, 0.24, 0.14], heightM: 42 });
+  }
+  terrainView.setForbiddenZones?.(forbiddenZones);
   terrainView.setAnnotations?.(annotations);
   terrainView.setRoutes(lines);
 }
@@ -1386,6 +1874,10 @@ function markSelection() {
   update3d();
 }
 function changeRoute() {
+  if ($("player-route") && $("player-route").value !== $("chosen").value) {
+    $("player-route").value = $("chosen").value;
+  }
+  setRouteVisibility(false);
   cancelSimulation();
   markSelection();
   refreshPlaybackControls();
@@ -1393,6 +1885,12 @@ function changeRoute() {
     "Ruta seleccionada. Pulsa Reproducir para iniciar desde la base.";
 }
 $("chosen").onchange = changeRoute;
+if ($("player-route")) {
+  $("player-route").onchange = () => {
+    $("chosen").value = $("player-route").value;
+    changeRoute();
+  };
+}
 $("route-mode").onchange = () => {
   if (!result || !fresh) return;
   changeRoute();
@@ -1635,10 +2133,20 @@ function refreshPlaybackControls() {
         : "Generar rutas";
   if ($("go-to-step-3")) $("go-to-step-3").disabled = !ready;
   if ($("go-to-step-4")) $("go-to-step-4").disabled = !fresh || busy;
+  if ($("chosen")) {
+    $("chosen").disabled = !ready;
+    if (!ready && !$("chosen").options.length) {
+      $("chosen").append(new Option("— Primero genera las rutas en el Paso 1 —", ""));
+    }
+  }
+  if ($("player-route")) $("player-route").disabled = !ready;
+  if ($("player-route-info")) $("player-route-info").disabled = !ready;
+  if ($("chosen-info-btn")) $("chosen-info-btn").disabled = !ready;
   $("play").disabled = !ready || !!followSession?.preparing;
   $("simulate").disabled = !ready;
   $("replay-nominal").disabled = !ready;
-  for (const id of ["restart", "finish-playback", "seek", "drone-view"])
+  $("drone-view").disabled = (!simulation && !ready) || busy;
+  for (const id of ["restart", "finish-playback", "seek"])
     $(id).disabled = !simulation || busy;
   $("pause").disabled = !simulation || !playing;
   $("play").textContent =
@@ -1649,10 +2157,14 @@ function refreshPlaybackControls() {
   $("export-format").disabled = $("export").disabled;
   $("failures").disabled = !fresh || busy || requests.pending("probabilities");
   $("replan").disabled =
-    !simulation ||
+    !fresh ||
     busy ||
-    simulation.scenario === "nominal" ||
-    !simulation.active_threat_ids.length;
+    !(
+      events.length > 0 ||
+      (simulation &&
+        simulation.scenario !== "nominal" &&
+        simulation.active_threat_ids.length > 0)
+    );
   if (!simulation) {
     $("seek").value = 0;
     $("seek").max = 1;
@@ -1696,7 +2208,7 @@ function updateStepSummaries() {
   const shortBase = baseName.replace(/^Decima Sexta de\s*/i, "");
   const step1Done = Boolean(target && fresh);
   if ($("step-summary-1")) {
-    $("step-summary-1").textContent = `${step1Done ? "✓ " : ""}Base: ${shortBase} | Dron: Mavic 3T${target ? " | Polígono listo" : ""}`;
+    $("step-summary-1").textContent = `${step1Done ? "✓ " : ""}Base: ${shortBase} | Dron: ${currentDroneSpec().shortName}${target ? " | Polígono listo" : ""}`;
   }
   if ($("step-badge-1")) $("step-badge-1").textContent = step1Done ? "✓" : "01";
   $("step-1")?.classList.toggle("is-done", step1Done);
@@ -1767,12 +2279,189 @@ if ($("map-layers-trigger") && $("map-layers-floating")) {
     }
   });
 }
+const CLIMATE_PRESETS = {
+  optimal: { temp: 18, wind: 2.5 },
+  warm_breeze: { temp: 28, wind: 5.5 },
+  heatwave: { temp: 36, wind: 6.8 },
+  extreme_wind: { temp: 22, wind: 7.6 },
+  cold_coastal: { temp: 6, wind: 4.5 },
+};
+
+function snapshotThermalProfile(w) {
+  if (!w) return { simTempC: 18, windMs: 3.0, gustMs: 4.5, clHourStr: "12:00", label: "Templado" };
+  const utcHour = Number((w.valid_at || "").slice(11, 13)) || 0;
+  const clHour = (utcHour - 3 + 24) % 24;
+  const clHourStr = `${String(clHour).padStart(2, "0")}:00`;
+  const rawTemp = Number(w.temperature_c ?? 15);
+  // Diurnal forest thermal curve affiliated to the local Chile hour of the snapshot
+  const diurnalDelta = {
+    0: -4, 1: -5, 2: -6, 3: -6, 4: -7, 5: -7, 6: -5,
+    7: -2, 8: 1, 9: 4, 10: 7, 11: 10, 12: 13, 13: 15,
+    14: 17, 15: 18, 16: 17, 17: 15, 18: 11, 19: 6,
+    20: 2, 21: -1, 22: -2, 23: -3,
+  }[clHour] ?? 0;
+  const simTempC = Math.round(Math.max(5, Math.min(38, rawTemp + diurnalDelta)));
+  let label = "Templado";
+  if (simTempC >= 30) label = "Calor alto";
+  else if (simTempC >= 24) label = "Cálido";
+  else if (simTempC <= 10) label = "Frío";
+  return {
+    simTempC,
+    rawTempC: rawTemp,
+    windMs: Number(w.wind_speed_ms ?? 3.0),
+    gustMs: Number(w.wind_gust_ms ?? 4.5),
+    windDir: Number(w.wind_direction_deg ?? 225),
+    clHourStr,
+    label,
+  };
+}
+
+function currentClimateOverride() {
+  const preset = $("climate-preset")?.value || "snapshot";
+  const snapW =
+    model?.weather?.find((w) => w.valid_at === $("weather")?.value) ||
+    result?.weather ||
+    null;
+  const prof = snapshotThermalProfile(snapW);
+  const temp =
+    preset === "snapshot"
+      ? prof.simTempC
+      : Number($("climate-temp")?.value ?? prof.simTempC);
+  const wind =
+    preset === "snapshot"
+      ? prof.windMs
+      : Number($("climate-wind")?.value ?? prof.windMs);
+  return {
+    preset,
+    temperature_c: temp,
+    wind_speed_ms: wind,
+    wind_direction_deg: prof.windDir ?? 225,
+    clHourStr: prof.clHourStr,
+    label: prof.label,
+  };
+}
+
+function refreshClimateImpactCard() {
+  const clim = currentClimateOverride();
+  const isSnap = clim.preset === "snapshot";
+  if (isSnap && $("climate-temp") && $("climate-wind")) {
+    $("climate-temp").value = String(Math.round(clim.temperature_c));
+    $("climate-wind").value = String(Number(clim.wind_speed_ms).toFixed(1));
+  }
+  const T = clim.temperature_c;
+  const W = clim.wind_speed_ms;
+  const heatLoss =
+    0.0075 * Math.max(0, T - 22) + 0.00045 * Math.pow(Math.max(0, T - 28), 2);
+  const coldLoss = 0.011 * Math.max(0, 15 - T);
+  const capFactor = Math.max(0.52, 1.0 - heatLoss - coldLoss);
+  const windDrain = 1.0 + 0.022 * Math.pow(Math.max(0, W - 2.0), 1.35);
+  const drainMult = windDrain / capFactor;
+  const baseBatS = Number($("battery")?.value || 1200);
+  const effBatS = Math.round(baseBatS / drainMult);
+  const effCapPct = Math.round((100 / drainMult) * 10) / 10;
+  const irContrast = Math.max(
+    0.76,
+    Math.min(
+      1.12,
+      1.0 - 0.011 * Math.max(0, T - 25) + 0.006 * Math.max(0, 15 - T),
+    ),
+  );
+  const baseViewR = Number(
+    result?.effective_profile?.view_radius_m ??
+      model?.profile?.view_radius_m ??
+      180,
+  );
+  const effViewR = Math.round(baseViewR * irContrast);
+  const thermalRisk = Math.max(
+    0.5,
+    1.0 + 0.04 * (T - 20) + 0.03 * Math.max(0, W - 4.0),
+  );
+
+  if ($("weather-live-summary")) {
+    $("weather-live-summary").textContent =
+      `🔗 Clima afiliado (${clim.clHourStr} CL · ${clim.label}): 🌡️ ${T.toFixed(0)} °C · 💨 ${W.toFixed(1)} m/s → Capacidad dron ${effCapPct.toFixed(0)} % (${(effBatS / 60).toFixed(1)} min · consumo ×${drainMult.toFixed(2)})`;
+  }
+
+  const card = $("climate-impact-card");
+  if (!card) return;
+  let severity = "optimal";
+  if (T >= 32 || W >= 6.5 || effCapPct < 75) severity = "severe";
+  else if (T >= 25 || W >= 4.8 || effCapPct < 88) severity = "warm";
+  else if (T <= 10) severity = "cold";
+  card.dataset.severity = severity;
+
+  if ($("climate-impact-badge")) {
+    $("climate-impact-badge").textContent =
+      `Capacidad efectiva: ${effCapPct.toFixed(0)} % (${(effBatS / 60).toFixed(1)} min)`;
+  }
+  if ($("climate-impact-drain")) {
+    $("climate-impact-drain").textContent =
+      `T° ${T.toFixed(0)} °C · Viento ${W.toFixed(1)} m/s · Consumo ×${drainMult.toFixed(2)}`;
+  }
+  if ($("climate-bar-fill")) {
+    $("climate-bar-fill").style.width = `${Math.max(15, Math.min(100, effCapPct))}%`;
+  }
+  if ($("climate-impact-desc")) {
+    const reasons = [];
+    if (T >= 26)
+      reasons.push(
+        `Calor (${T} °C): menor densidad del aire y estrés LiPo (−${Math.round(heatLoss * 100)} % bat.)`,
+      );
+    else if (T <= 12)
+      reasons.push(
+        `Frío (${T} °C): mayor resistencia interna LiPo (−${Math.round(coldLoss * 100)} % bat.)`,
+      );
+    if (W >= 3.5)
+      reasons.push(
+        `Viento (${W.toFixed(1)} m/s): compensación aerodinámica (+${Math.round((windDrain - 1) * 100)} % consumo)`,
+      );
+    const reasonStr = reasons.length
+      ? reasons.join(" · ") + " · "
+      : "Condición templada óptima · ";
+    $("climate-impact-desc").textContent =
+      `${reasonStr}Alcance sondeo IR: ${effViewR} m · Riesgo ignición ×${thermalRisk.toFixed(2)}`;
+  }
+}
+
+if ($("climate-preset")) {
+  $("climate-preset").addEventListener("change", () => {
+    const p = $("climate-preset").value;
+    if (CLIMATE_PRESETS[p]) {
+      if ($("climate-temp")) $("climate-temp").value = String(CLIMATE_PRESETS[p].temp);
+      if ($("climate-wind")) $("climate-wind").value = String(CLIMATE_PRESETS[p].wind);
+    }
+    refreshClimateImpactCard();
+    updateStepSummaries();
+    if (fresh && !calculating && !simulationLoading) {
+      preparePlayback(simulation?.scenario || "nominal", playing);
+    }
+  });
+}
+["climate-temp", "climate-wind"].forEach((id) => {
+  $(id)?.addEventListener("input", () => {
+    if ($("climate-preset") && $("climate-preset").value !== "custom") {
+      $("climate-preset").value = "custom";
+    }
+    refreshClimateImpactCard();
+  });
+  $(id)?.addEventListener("change", () => {
+    refreshClimateImpactCard();
+    if (fresh && !calculating && !simulationLoading) {
+      preparePlayback(simulation?.scenario || "nominal", playing);
+    }
+  });
+});
+
 ["base", "weather", "chosen", "speed", "export-format"].forEach((id) => {
-  $(id)?.addEventListener("change", updateStepSummaries);
+  $(id)?.addEventListener("change", () => {
+    refreshClimateImpactCard();
+    updateStepSummaries();
+  });
 });
 function updateFlightLog(sample) {
   const progress = detectionProgress(simulation.detection, sample.time_s);
-  const signature = `${progress.detected}:${progress.reported}:${sample.ended}`;
+  const climEff = simulation.climate_effects;
+  const signature = `${progress.detected}:${progress.reported}:${sample.ended}:${climEff?.preset || "snap"}:${climEff?.temperature_c}:${climEff?.wind_speed_ms}`;
   if (signature === lastLog) return;
   lastLog = signature;
   $("log").replaceChildren();
@@ -1783,14 +2472,24 @@ function updateFlightLog(sample) {
   };
   add(
     simulation.scenario === "nominal"
-      ? "Recorrido nominal sin sorteo de fallas."
+      ? "Recorrido nominal con sondeo térmico IR continuo sobre el corredor forestal."
       : `Semilla ${simulation.seed}: ${simulation.active_threat_ids.length} amenazas activadas. Distribución uniforme [0,100).`,
   );
+  if (climEff?.active) {
+    add(
+      `🌡️ Impacto climático activo (${climEff.temperature_c} °C · viento ${climEff.wind_speed_ms} m/s): Capacidad efectiva ${climEff.battery_capacity_pct} % (${climEff.effective_battery_s} s útiles) · consumo ×${climEff.drain_multiplier} · alcance IR ${climEff.effective_view_radius_m} m.`,
+    );
+    if (climEff.extra_recharges?.length) {
+      add(
+        `⚡ El mayor desgaste por calor/viento obligó a ${climEff.extra_recharges.length} recarga(s) adicional(es) de emergencia en estaciones de bomberos (${climEff.extra_recharges.map((r) => r.name).join(", ")}).`,
+      );
+    }
+  }
   if (progress.detected)
     add(
-      `Foco detectado: ${simulation.detection.fire_coordinates.map((v) => v.toFixed(5)).join(", ")}. ${progress.incomplete ? "Reporte incompleto; se prioriza el regreso seguro." : `Verificando durante ${result?.effective_profile?.verification_s ?? 60} s.`}`,
+      `🔥 ¡Foco de incendio detectado por sondeo térmico!: ${simulation.detection.fire_coordinates.map((v) => v.toFixed(5)).join(", ")}. ${progress.incomplete ? "Reporte incompleto; se prioriza el regreso seguro." : `Fijando objetivo (Target Lock) y verificando durante ${result?.effective_profile?.verification_s ?? 60} s.`}`,
     );
-  if (progress.reported) add("Foco reportado. Regreso iniciado.");
+  if (progress.reported) add("✅ Foco confirmado y reportado a central. Regreso a base iniciado.");
   if (
     progress.detected &&
     progress.incomplete &&
@@ -1802,12 +2501,235 @@ function updateFlightLog(sample) {
       `Fin: ${simulation.status} · servicio ${simulation.mission_completed ? "cumplido" : "interrumpido"}.`,
     );
 }
+let droneVision2d = null;
+let droneSwept2d = null;
+let droneScanBeam2d = null;
+let droneScanTarget2d = null;
+
+function currentSweptTrailUtm(timeS) {
+  if (!simulation?.timeline?.length) return [];
+  const trail = [];
+  for (const frame of simulation.timeline) {
+    if (frame.time_s <= timeS && frame.position_utm) {
+      trail.push(frame.position_utm);
+    } else if (frame.time_s > timeS) {
+      break;
+    }
+  }
+  const sample = sampleFlight(simulation.timeline, timeS);
+  if (sample?.position_utm) trail.push(sample.position_utm);
+  return trail;
+}
+
+function selectedRoute() {
+  if (!fresh || !result) return null;
+  const routesMap = displayedRoutes();
+  return routesMap?.[$("chosen")?.value] || null;
+}
+
+function updateDroneVision2d(sample) {
+  if (!sample || view3d) {
+    for (const lyr of [droneVision2d, droneSwept2d, droneScanBeam2d, droneScanTarget2d]) {
+      if (lyr) flightLayer.removeLayer(lyr);
+    }
+    droneVision2d = null;
+    droneSwept2d = null;
+    droneScanBeam2d = null;
+    droneScanTarget2d = null;
+    return;
+  }
+  const [lon, lat] = sample.coordinates;
+  const dx = sample.look_ahead[0] - sample.position_utm[0];
+  const dy = sample.look_ahead[1] - sample.position_utm[1];
+  const heading = Math.atan2(dy, dx);
+  const fx = Math.cos(heading), fy = Math.sin(heading);
+  const rx = Math.sin(heading), ry = -Math.cos(heading);
+  const swath = Number(result?.effective_profile?.swath_m ?? model?.profile?.swath_m ?? 200);
+  const halfW = swath * 0.5;
+  const mPerDegLat = 111132.0;
+  const mPerDegLon = 111320.0 * Math.cos((lat * Math.PI) / 180);
+  const toLatLng = (vFwd, uRight) => [
+    lat + (fy * vFwd + ry * uRight) / mPerDegLat,
+    lon + (fx * vFwd + rx * uRight) / mPerDegLon,
+  ];
+  const corners = [
+    toLatLng(-35, -halfW),
+    toLatLng(145, -halfW),
+    toLatLng(145, halfW),
+    toLatLng(-35, halfW),
+  ];
+  const sweptLatLngs = [];
+  for (const frame of simulation?.timeline || []) {
+    if (frame.time_s <= sample.time_s && frame.coordinates) {
+      sweptLatLngs.push([frame.coordinates[1], frame.coordinates[0]]);
+    } else if (frame.time_s > sample.time_s) {
+      break;
+    }
+  }
+  sweptLatLngs.push([lat, lon]);
+  if (!droneSwept2d) {
+    droneSwept2d = L.polyline(sweptLatLngs, {
+      color: "#00d4b2",
+      weight: 18,
+      opacity: 0.25,
+      lineCap: "round",
+      lineJoin: "round",
+      interactive: false,
+    }).addTo(flightLayer);
+  } else {
+    droneSwept2d.setLatLngs(sweptLatLngs);
+    if (!flightLayer.hasLayer(droneSwept2d)) droneSwept2d.addTo(flightLayer);
+  }
+  const isFireLock = sample.phase === "detection" || sample.phase === "report";
+  if (!droneVision2d) {
+    droneVision2d = L.polygon(corners, {
+      color: isFireLock ? "#ff3b14" : "#00d4b2",
+      weight: 2,
+      fillColor: isFireLock ? "#ff6224" : "#00f5d4",
+      fillOpacity: 0.28,
+      dashArray: "5 4",
+      interactive: false,
+    }).addTo(flightLayer);
+  } else {
+    droneVision2d.setLatLngs(corners);
+    droneVision2d.setStyle({
+      color: isFireLock ? "#ff3b14" : "#00d4b2",
+      fillColor: isFireLock ? "#ff6224" : "#00f5d4",
+    });
+    if (!flightLayer.hasLayer(droneVision2d)) droneVision2d.addTo(flightLayer);
+  }
+  // 2D Active Thermal Scan Beam (sondeo oscilante en busca de focos)
+  const animSec = performance.now() * 0.001 + (sample.time_s || 0) * 0.18;
+  const scanU = Math.sin(animSec * 3.2) * (halfW * 0.85);
+  const scanV = 55 + Math.cos(animSec * 2.1) * 55;
+  const targetLatLng =
+    isFireLock && fire ? [fire[1], fire[0]] : toLatLng(scanV, scanU);
+  const beamColor = isFireLock ? "#ff2a00" : "#ff9f1c";
+  const beamPoints = [[lat, lon], targetLatLng];
+  if (!droneScanBeam2d) {
+    droneScanBeam2d = L.polyline(beamPoints, {
+      color: beamColor,
+      weight: 3,
+      opacity: 0.9,
+      dashArray: isFireLock ? null : "6 4",
+      interactive: false,
+    }).addTo(flightLayer);
+  } else {
+    droneScanBeam2d.setLatLngs(beamPoints);
+    droneScanBeam2d.setStyle({ color: beamColor, dashArray: isFireLock ? null : "6 4" });
+    if (!flightLayer.hasLayer(droneScanBeam2d)) droneScanBeam2d.addTo(flightLayer);
+  }
+  if (!droneScanTarget2d) {
+    droneScanTarget2d = L.circleMarker(targetLatLng, {
+      radius: isFireLock ? 11 : 7,
+      color: beamColor,
+      weight: 2.5,
+      fillColor: beamColor,
+      fillOpacity: 0.35,
+      interactive: false,
+    }).addTo(flightLayer);
+  } else {
+    droneScanTarget2d.setLatLng(targetLatLng);
+    droneScanTarget2d.setRadius(isFireLock ? 11 : 7);
+    droneScanTarget2d.setStyle({ color: beamColor, fillColor: beamColor });
+    if (!flightLayer.hasLayer(droneScanTarget2d)) droneScanTarget2d.addTo(flightLayer);
+  }
+}
+
 function renderFlight(force = false, now = performance.now()) {
   if (!simulation) return;
   const sample = sampleFlight(simulation.timeline, clock);
   if (!sample) return;
   drone?.setLatLng([sample.coordinates[1], sample.coordinates[0]]);
-  if (view3d && (force || now - lastRender >= 1000 / 30)) {
+  updateDroneVision2d(sample);
+  const curFrame =
+    simulation.timeline.find((f) => f.time_s >= sample.time_s) ||
+    simulation.timeline[simulation.timeline.length - 1];
+  const det = simulation.detection;
+  const fireDetectedNow = Boolean(
+    simulation.fire_found && det && sample.time_s >= (det.detected_at_s ?? 0),
+  );
+  if ($("fire-emergency-alert")) {
+    $("fire-emergency-alert").hidden = !fireDetectedNow;
+    if (fireDetectedNow && $("fire-emergency-text")) {
+      const [lon, lat, alt] = det.fire_coordinates || sample.coordinates;
+      $("fire-emergency-text").textContent =
+        `Foco térmico detectado en Lat ${lat.toFixed(5)}, Lon ${lon.toFixed(5)} (${(alt ?? sample.coordinates[2]).toFixed(0)} m EGM2008) a las ${clockLabel(det.detected_at_s)}. Mensaje de emergencia simulado enviado a Central de Bomberos y CONAF.`;
+    }
+  }
+  let droneNote = "";
+  if (sample.phase === "battery_swap" || curFrame?.phase === "battery_swap") {
+    const remS = Math.max(
+      0,
+      Number(curFrame?.recharge_remaining_s ?? currentDroneSpec().recharge_s ?? 10800),
+    );
+    const hrs = Math.floor(remS / 3600);
+    const mins = Math.floor((remS % 3600) / 60);
+    const wh = curFrame?.battery_wh ?? currentDroneSpec().battery_wh ?? 77;
+    const cw = curFrame?.charger_w ?? currentDroneSpec().charger_w ?? 30;
+    droneNote = curFrame?.waiting_for_charge
+      ? `🔌 Cargando batería (${wh} Wh / ${cw} W): faltan ${hrs} h ${String(mins).padStart(2, "0")} min para carga completa`
+      : `🔋 1 batería de estación usada · Cargando repuesto (${wh} Wh / ${cw} W · faltan ${hrs} h ${String(mins).padStart(2, "0")} min)`;
+  } else if (fireDetectedNow && (sample.phase === "detection" || sample.phase === "report" || sample.time_s <= (det?.detected_at_s ?? 0) + 70)) {
+    droneNote = "🚨 ¡EMERGENCIA DE INCENDIO! Enviando alerta simulada a Bomberos/CONAF";
+  } else if (simulation.return_base_id && simulation.return_base_id !== "origin") {
+    const inFinalLeg =
+      sample.phase === "landed" ||
+      sample.phase === "return" ||
+      sample.time_s >= simulation.time_s * 0.85;
+    if (inFinalLeg) {
+      const stName =
+        simulation.return_base_name || `Estación ${simulation.return_base_id}`;
+      droneNote =
+        sample.phase === "landed"
+          ? `⚡ Estacionado en estación más cercana (${stName}): más rápido que volver a la base de origen`
+          : `⚡ Dirigiéndose a estación más cercana (${stName}): retorno más rápido tras completar el barrido`;
+    }
+  }
+  terrainView?.setDroneNote?.(droneNote);
+  if (drone) {
+    if (droneNote) {
+      if (drone.getTooltip()?.getContent() !== droneNote) {
+        drone.unbindTooltip();
+        drone
+          .bindTooltip(droneNote, {
+            permanent: true,
+            direction: "top",
+            offset: [0, -14],
+          })
+          .openTooltip();
+      }
+    } else if (drone.getTooltip()) {
+      drone.unbindTooltip();
+    }
+  }
+  const climEff = simulation.climate_effects;
+  if (view3d && (force || now - lastRender >= 1000 / 60)) {
+    terrainView?.setSwath?.(
+      Number(result?.effective_profile?.swath_m ?? model?.profile?.swath_m ?? 200),
+    );
+    const fireUtm =
+      simulation.detection?.fire_coordinates && sample.position_utm
+        ? (() => {
+            const fc = simulation.detection.fire_coordinates;
+            const dLon = fc[0] - sample.coordinates[0];
+            const dLat = fc[1] - sample.coordinates[1];
+            const mLon = 111320.0 * Math.cos((sample.coordinates[1] * Math.PI) / 180);
+            return [
+              sample.position_utm[0] + dLon * mLon,
+              sample.position_utm[1] + dLat * 111132.0,
+            ];
+          })()
+        : null;
+    terrainView?.setThermalContext?.({
+      fireUtm,
+      threatsUtm: [],
+      temperatureC: climEff?.temperature_c ?? 18,
+      windSpeedMs: climEff?.wind_speed_ms ?? 3,
+      phase: sample.phase,
+      timeS: sample.time_s,
+    });
+    terrainView?.setCoverageTrail?.(currentSweptTrailUtm(sample.time_s));
     terrainView?.setFlightPose(
       sample.position_utm,
       sample.look_ahead,
@@ -1829,20 +2751,31 @@ function renderFlight(force = false, now = performance.now()) {
       moveMapFollow(followCenter, force);
     lastFollow = now;
   }
+  const activeRoute = selectedRoute();
+  const maxCov = Number(activeRoute?.coverage?.percent ?? activeRoute?.coverage?.pct ?? 100);
+  const sweptRatio = Math.min(1, sample.time_s / Math.max(1, simulation.time_s));
+  const sweptCovPct = (maxCov * sweptRatio).toFixed(1);
+  const isFireLock = sample.phase === "detection" || sample.phase === "report";
+  const scanLabel = isFireLock
+    ? "🔥 ¡OBJETIVO TÉRMICO FIJADO!"
+    : "🔍 Sondeo IR: buscando focos";
+  const climLine = climEff?.active
+    ? `\n🌡️ Clima: ${climEff.temperature_c} °C · Viento ${climEff.wind_speed_ms} m/s · Cap. dron ${climEff.battery_capacity_pct} % (consumo ×${climEff.drain_multiplier})`
+    : "";
   $("flight").textContent =
-    `${phaseNames[sample.phase] || sample.phase} · ${clockLabel(sample.time_s)} / ${clockLabel(simulation.time_s)}\nBatería útil ${sample.battery_pct.toFixed(1)} % · cota ${sample.coordinates[2].toFixed(1)} m EGM2008`;
+    `${phaseNames[sample.phase] || sample.phase} · ${scanLabel} · ${clockLabel(sample.time_s)} / ${clockLabel(simulation.time_s)}\nBatería útil ${sample.battery_pct.toFixed(1)} % · Cobertura barrida ${sweptCovPct} % / ${maxCov.toFixed(1)} % · cota ${sample.coordinates[2].toFixed(1)} m EGM2008${climLine}`;
   $("progress").value = (100 * sample.time_s) / Math.max(1, simulation.time_s);
   $("seek").max = simulation.time_s;
   $("seek").value = sample.time_s;
   $("playback-time").textContent =
     `${clockLabel(sample.time_s)} / ${clockLabel(simulation.time_s)}`;
-  $("playback-state").textContent = phaseNames[sample.phase] || sample.phase;
+  $("playback-state").textContent = `${phaseNames[sample.phase] || sample.phase} · ${isFireLock ? "🔥 Foco fijado" : "Sondeo IR"} · Cob. ${sweptCovPct} %`;
   const dx = sample.look_ahead[0] - sample.position_utm[0],
     dy = sample.look_ahead[1] - sample.position_utm[1];
   $("fpv-heading").textContent =
     `Rumbo ${(((Math.atan2(dx, dy) * 180) / Math.PI + 360) % 360).toFixed(0)}°`;
   $("fpv-height").textContent = `Cota ${sample.coordinates[2].toFixed(0)} m`;
-  $("fpv-battery").textContent = `Batería ${sample.battery_pct.toFixed(0)} %`;
+  $("fpv-battery").textContent = `Batería ${sample.battery_pct.toFixed(0)} % · Barrido ${sweptCovPct} % · ${isFireLock ? "🔥 FOCO" : "IR OK"}`;
   $("drone-coordinates").textContent = flightTelemetry(sample);
   $("drone-coordinates").dataset.latitude = sample.coordinates[1];
   $("drone-coordinates").dataset.longitude = sample.coordinates[0];
@@ -1888,6 +2821,7 @@ async function preparePlayback(scenario, autoplay = true) {
         scenario,
         seed: Number($("seed").value),
         fire: fire ? [...fire] : null,
+        climate_override: currentClimateOverride(),
       },
       { signal: token.signal },
     );
@@ -1980,6 +2914,9 @@ $("follow-drone").onchange = () => {
   renderFlight(true);
 };
 async function toggleDroneView() {
+  if (!simulation && fresh && $("chosen").value) {
+    await preparePlayback("nominal", true);
+  }
   if (!simulation) return;
   if ($("drone-view").getAttribute("aria-pressed") === "true") {
     requests.cancel("fpv");
@@ -1999,6 +2936,9 @@ async function toggleDroneView() {
       return;
     const sample = sampleFlight(flight.timeline, clock);
     if (!sample) return;
+    terrainView.setSwath?.(
+      Number(result?.effective_profile?.swath_m ?? model?.profile?.swath_m ?? 200),
+    );
     terrainView.setFlightPose(sample.position_utm, sample.look_ahead, false);
     terrainView.setFirstPerson(true);
     $("drone-view").setAttribute("aria-pressed", "true");
@@ -2011,9 +2951,38 @@ async function toggleDroneView() {
   }
 }
 $("drone-view").onclick = toggleDroneView;
+
+function syncSpeedPills() {
+  const current = String($("speed")?.value || "20");
+  document.querySelectorAll(".speed-pill").forEach((btn) => {
+    btn.classList.toggle("active", btn.dataset.speed === current);
+  });
+}
+document.querySelectorAll(".speed-pill").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    const val = btn.dataset.speed;
+    if ($("speed") && val) {
+      $("speed").value = val;
+      syncSpeedPills();
+      updateStepSummaries();
+    }
+  });
+});
+$("speed")?.addEventListener("change", syncSpeedPills);
 function animate(now) {
   requestAnimationFrame(animate);
-  if (!simulation || !playing) return;
+  if (view3d && terrainView?.fireUtm && (!simulation || !playing) && now - lastRender >= 1000 / 30) {
+    terrainView.draw();
+    lastRender = now;
+  }
+  if (!simulation) return;
+  if (!playing) {
+    if (view3d && terrainView?.flightPose && now - lastRender >= 1000 / 30) {
+      terrainView.draw();
+      lastRender = now;
+    }
+    return;
+  }
   if (lastFrame)
     clock = Math.min(
       simulation.time_s,
@@ -2077,7 +3046,9 @@ document.addEventListener("keydown", (e) => {
   )
     return;
   if (e.key === "Escape") {
-    if (mode) $("cancel-draw").click();
+    if ($("route-criteria-modal") && !$("route-criteria-modal").hidden) {
+      $("route-criteria-modal").hidden = true;
+    } else if (mode) $("cancel-draw").click();
     else exitDroneView();
   }
   if (
@@ -2094,13 +3065,15 @@ document.addEventListener("keydown", (e) => {
   }
 });
 $("replan").onclick = async () => {
-  if (!simulation || !fresh) return;
-  const previous = result.sha256,
-    activated = [...simulation.active_threat_ids];
-  await calculate({
-    previous_sha256: previous,
-    activated_threat_ids: activated,
-  });
+  if (!fresh) return;
+  if (simulation && simulation.active_threat_ids?.length) {
+    await calculate({
+      previous_sha256: result.sha256,
+      activated_threat_ids: [...simulation.active_threat_ids],
+    });
+  } else {
+    await calculate();
+  }
 };
 function download(name, value, contentType = "application/json") {
   const url = URL.createObjectURL(
@@ -2169,10 +3142,15 @@ for (const id of [
   "budget",
   "risk",
   "history",
+  "station-inventory",
 ])
-  $(id).addEventListener("change", () => {
+  $(id)?.addEventListener("change", () => {
     invalidate();
-    if (id === "weather") wind();
+    if (id === "weather") {
+      if ($("climate-preset")) $("climate-preset").value = "snapshot";
+      refreshClimateImpactCard();
+      wind();
+    }
     if (id === "history") refreshSources();
   });
 (async () => {
@@ -2210,14 +3188,37 @@ for (const id of [
         model.bases.findIndex((b) => b.provider_id === "104"),
       ),
     );
-    for (const w of model.weather)
+    for (const w of model.weather) {
+      const prof = snapshotThermalProfile(w);
       $("weather").append(
         new Option(
-          `${w.valid_at.slice(0, 16)} · ${w.wind_speed_ms} / ${w.wind_gust_ms} m/s`,
+          `${w.valid_at.slice(0, 16)} (${prof.clHourStr} CL) · 🌡️ ${prof.simTempC} °C (${prof.label}) · 💨 ${w.wind_speed_ms}/${w.wind_gust_ms} m/s`,
           w.valid_at,
         ),
       );
+    }
     $("weather").value = model.validation?.default_time || model.reference_time;
+    refreshClimateImpactCard();
+    const riskFieldLayer = L.layerGroup();
+    let riskFieldLoaded = false;
+    map.on("overlayadd", async (ev) => {
+      if (ev.layer !== riskFieldLayer || riskFieldLoaded) return;
+      try {
+        const meta = await fetch("/api/aereo/patrullaje/riesgo?norm=max&cell_m=90").then((r) => r.json());
+        const geo = await fetch(meta.resource.url).then((r) => r.json());
+        L.geoJSON(geo, {
+          style: (f) => {
+            const v = f.properties?.r ?? 0;
+            const color = v > 0.65 ? "#dc2626" : v > 0.35 ? "#f97316" : v > 0.15 ? "#eab308" : "#0ea5e9";
+            return { color, weight: 0, fillColor: color, fillOpacity: Math.min(0.75, 0.15 + 0.6 * v) };
+          },
+          onEachFeature: (f, l) => l.bindTooltip(`R=${(f.properties?.r ?? 0).toFixed(3)} · ${f.properties?.obs ? "Observable" : "No observable (A3/Urbano)"}`),
+        }).addTo(riskFieldLayer);
+        riskFieldLoaded = true;
+      } catch (err) {
+        message(`No se pudo cargar R(x,y,t): ${err.message}`, true);
+      }
+    });
     for (const key of ["M2", "A2", "A3", "A4"])
       sourceLayers[key] = L.layerGroup();
     sourceLayers.A3.addTo(map);
@@ -2225,14 +3226,15 @@ for (const id of [
       .layers(
         {},
         {
+          "Campo de riesgo R(x,y,t)": riskFieldLayer,
           "Recurrencia desconocida (supuesto)": uncertaintyLayer,
           "Catálogo M1": catalogueLayer,
           "Elevación M3": metadataNodes,
           "Clima M4 / A1": weatherLayer,
-          "Vegetación M2": sourceLayers.M2,
+          "Vegetación M2 (CONAF)": sourceLayers.M2,
           "FIRMS A2": sourceLayers.A2,
           "AIP A3": sourceLayers.A3,
-          "Recurrencia A4": sourceLayers.A4,
+          "Amenaza incendio A4 (SENAPRED)": sourceLayers.A4,
           "Amenazas sintéticas": eventsLayer,
         },
         { collapsed: true },
