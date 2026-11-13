@@ -1,0 +1,6 @@
+step,E_D_s,CVaR_95_s,detected_pct,risk_covered_T15_pct,recharges,energy_wh,time_s,compute_s
+1_grid_uniform,13854.33,14400.0,3.8,54.97,0,10.2,158.95,0.6891
+2_adaptive_tasks_nn,12871.64,14400.0,10.7,55.05,0,33.31,519.19,0.0061
+3_adaptive_plus_alns_latency,12871.64,14400.0,10.7,55.05,0,33.31,519.19,8.4001
+4_adaptive_plus_alns_plus_ecmwf_wind,12758.23,14400.0,11.5,57.38,0,34.49,537.44,8.7681
+5_adaptive_plus_alns_wind_discounted,12758.23,14400.0,11.5,57.38,0,34.49,537.44,8.7055

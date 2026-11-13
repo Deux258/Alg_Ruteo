@@ -20,6 +20,24 @@
     </header>
     <main>
       <aside class="stepper" aria-label="Asistente de planificación de misión">
+        <!-- AVISO GLOBAL DE SIMULACIÓN ACADÉMICA (Progressive Disclosure) -->
+        <details class="sim-disclaimer-banner" role="note">
+          <summary>
+            <span class="sim-disclaimer-icon" aria-hidden="true">⚠️</span>
+            <span class="sim-disclaimer-text">
+              <b>Escenario 100 % simulado:</b> evita zonas sin permiso de vuelo y usa recarga hipotética en Bomberos.
+            </span>
+            <span class="sim-disclaimer-pill">ⓘ Supuestos</span>
+          </summary>
+          <div class="sim-disclaimer-body">
+            <ul>
+              <li><b>Simulación integral:</b> Las trayectorias, el sondeo térmico y los escenarios climáticos son estrictamente académicos y no constituyen autorización de vuelo real.</li>
+              <li><b>Exclusión de zonas sin permiso:</b> El planificador evita automáticamente el espacio aéreo restringido/prohibido (AIP Chile SC-P50 · DGAC) y la mancha urbana no admitida.</li>
+              <li><b>Puntos de recarga hipotéticos:</b> Las Compañías de Bomberos (M1) se consideran puntos de recarga únicamente como supuesto matemático de la simulación; <b>no existe confirmación, consulta previa ni convenio</b> con el Cuerpo de Bomberos.</li>
+            </ul>
+          </div>
+        </details>
+
         <!-- PASO 1: CONFIGURACIÓN DE LA MISIÓN -->
         <section class="step-card is-open" id="step-1" data-step="1">
           <div class="step-header" role="button" tabindex="0" aria-expanded="true" data-step-toggle="1">
@@ -37,38 +55,56 @@
             <label for="base">Base de salida</label>
             <select id="base"></select>
 
-            <label class="label-with-tip">
-              <span>Área objetivo de vigilancia</span>
-              <span class="info-tip" tabindex="0" data-tooltip="Dibuja un polígono dentro del área de vigilancia o importa un archivo GeoJSON. El objetivo 3D se proyecta sobre un plano horizontal a +30 m sobre la cota máxima del terreno.">?</span>
-            </label>
-            <div class="buttons">
-              <button id="draw" class="btn-secondary">Dibujar objetivo</button>
-              <button id="finish" class="btn-secondary" disabled>Cerrar polígono</button>
+            <div class="target-zone-card">
+              <div class="label-with-tip target-zone-header">
+                <span class="target-zone-title">🗺️ Área objetivo de vigilancia</span>
+                <span class="info-tip" tabindex="0" data-tooltip="Dibuja un polígono dentro del área de vigilancia o importa un archivo GeoJSON. El objetivo 3D se proyecta sobre un plano horizontal a +30 m sobre la cota máxima del terreno.">?</span>
+              </div>
+              <div class="buttons">
+                <button id="draw" class="btn-secondary">✏️ Dibujar objetivo</button>
+                <button id="finish" class="btn-secondary" disabled>✓ Cerrar polígono</button>
+              </div>
+              <button type="button" id="full-area" class="btn-secondary btn-hero-action">
+                🌲 Cubrir toda el área permitida
+              </button>
+              <div class="buttons draw-tools" id="draw-tools" hidden>
+                <button id="undo-vertex" class="btn-secondary">↩ Deshacer vértice</button>
+                <button id="cancel-draw" class="btn-danger">✕ Cancelar</button>
+              </div>
+              <label class="file">
+                <span>📂 Importar polígono GeoJSON</span>
+                <input id="import" type="file" accept=".json,.geojson" />
+              </label>
+              <p id="area-status" class="muted status-compact">Dibuja un polígono dentro de vigilancia.</p>
+              <p id="target-height" class="muted target-height status-compact">El objetivo 3D se mostrará sobre un plano horizontal.</p>
             </div>
-            <div class="buttons draw-tools" id="draw-tools" hidden>
-              <button id="undo-vertex" class="btn-secondary">Deshacer vértice</button>
-              <button id="cancel-draw" class="btn-danger">Cancelar</button>
-            </div>
-            <label class="file btn-secondary">
-              Importar polígono GeoJSON
-              <input id="import" type="file" accept=".json,.geojson" />
-            </label>
-            <p id="area-status" class="muted status-compact">Dibuja un polígono dentro de vigilancia.</p>
-            <p id="target-height" class="muted target-height status-compact">El objetivo 3D se mostrará sobre un plano horizontal.</p>
 
-            <label for="weather">Hora del snapshot · UTC</label>
+            <label for="weather" class="label-with-tip">
+              <span>Hora del snapshot · UTC (afilia temperatura y viento)</span>
+              <span class="info-tip" tabindex="0" data-tooltip="Al elegir una hora del snapshot, su temperatura (°C) y velocidad de viento (m/s) se vinculan automáticamente al modelo físico de batería y sondeo térmico en la simulación.">?</span>
+            </label>
             <select id="weather"></select>
+            <p id="weather-live-summary" class="muted status-compact">Sincronizando clima del snapshot…</p>
 
-            <details>
+            <details open>
               <summary>
-                <span>Perfil de vuelo · Mavic 3T</span>
-                <span class="info-tip" tabindex="0" onclick="event.stopPropagation()" data-tooltip="10 m/s · 25 min nominales de planificación · reserva 20 %. Radio de observación supuesto: 100 m. Altura sobre la superficie modelada: DSM y obstáculos, EGM2008.">?</span>
+                <span id="drone-profile-title">Perfil de vuelo · Aeronave real</span>
+                <span class="info-tip" tabindex="0" onclick="event.stopPropagation()" data-tooltip="Especificaciones reales de fabricante (DJI Enterprise): puedes elegir entre DJI Mavic 3T (compacto), DJI Matrice 30T (táctico IP55) o DJI Matrice 350 RTK + Zenmuse H20T (largo alcance forestal).">?</span>
               </summary>
+              <label for="drone-preset">Aeronave de vigilancia térmica (Especificaciones reales)</label>
+              <select id="drone-preset">
+                <option value="mavic3t" selected>DJI Mavic 3T Enterprise (Compacto · 10 m/s · 20 min útiles · Viento 8 m/s)</option>
+                <option value="matrice30t">DJI Matrice 30T IP55 (Táctico Todo-Clima · 12 m/s · 28 min útiles · Viento 12 m/s)</option>
+                <option value="matrice350">DJI Matrice 350 RTK + H20T (Industrial Forestal · 14 m/s · 36 min útiles · Viento 12 m/s)</option>
+              </select>
+              <p id="drone-spec-summary" class="muted status-compact" style="margin:4px 0 8px">
+                📡 Sensor térmico VOx 640×512 px · Crucero 10 m/s · Ascenso/Descenso 6/6 m/s · Franja 150 m · Radio IR 100 m
+              </p>
               <div class="fields">
                 <label>Despeje mínimo (m)<input id="altitude" type="number" min="20" max="120" value="60" /></label>
-                <label>Viento máximo (m/s)<input id="wind" type="number" min="0.01" step="0.1" value="8" /></label>
-                <label>Batería útil (s)<input id="battery" type="number" min="1" max="1200" value="1200" /></label>
-                <label>Tiempo total (s)<input id="budget" type="number" min="1" max="14400" value="3600" /></label>
+                <label>Viento máximo (m/s)<input id="wind" type="number" min="0.01" max="15" step="0.1" value="8" /></label>
+                <label>Batería útil (s)<input id="battery" type="number" min="1" max="3600" value="1200" /></label>
+                <label>Tiempo total (s)<input id="budget" type="number" min="1" max="172800" value="3600" /></label>
                 <label>Peso del riesgo λ<input id="risk" type="number" min="0" max="10" step="0.1" value="1" /></label>
                 <label>Recurrencia ×<select id="history">
                   <option value="0.5">0,5 · bajo</option>
@@ -81,11 +117,27 @@
 
             <details>
               <summary>
-                <span>Estaciones hipotéticas de recarga</span>
-                <span class="info-tip" tabindex="0" onclick="event.stopPropagation()" data-tooltip="Una batería por estación y 120 s de cambio. Son supuestos académicos de planificación, no cargadores verificados.">?</span>
+                <span>Estaciones de bomberos · Recarga (Simulado)</span>
+                <span class="info-tip" tabindex="0" onclick="event.stopPropagation()" data-tooltip="Supuesto exclusivo de simulación: las compañías de bomberos se modelan como puntos de recarga hipotéticos (120 s por cambio de batería) sin confirmación ni consulta oficial con Bomberos.">?</span>
               </summary>
+              <p class="muted status-compact" style="margin:2px 0 6px;color:#7a5219">
+                ⚠️ Supuesto de simulación: estaciones consideradas sin consulta ni confirmación oficial de Bomberos.
+              </p>
+              <label for="station-inventory">Baterías iniciales listas por estación (luego espera carga ~3 h)</label>
+              <select id="station-inventory">
+                <option value="1" selected>1 batería lista por estación + espera recarga (~3 h · según modelo/Wh/cargador)</option>
+                <option value="2">2 baterías listas por estación</option>
+                <option value="5">5 baterías listas por estación</option>
+                <option value="20">20 baterías listas por estación (simulación continua)</option>
+              </select>
               <div id="stations"></div>
             </details>
+
+            <label for="patrol-mode">Modo de optimización de patrullaje</label>
+            <select id="patrol-mode" style="margin-bottom:8px">
+              <option value="grid" selected>Grilla uniforme (4 Baselines)</option>
+              <option value="risk_adaptive">Riesgo-adaptativo RRPP (Quadtree + ALNS)</option>
+            </select>
 
             <button id="calculate" class="primary btn-primary" disabled>
               Generar rutas
@@ -147,27 +199,78 @@
             <span class="step-chevron" aria-hidden="true"></span>
           </div>
           <div class="step-body">
-            <div class="fields">
-              <label for="chosen">Ruta a reproducir<select id="chosen"></select></label>
-              <label for="speed">Velocidad<select id="speed">
-                <option value="1">Tiempo real</option>
-                <option value="20" selected>20×</option>
-                <option value="100">100×</option>
-              </select></label>
+            <label for="chosen" class="label-with-tip">
+              <span>Circuito a volar en simulación</span>
+              <button type="button" id="chosen-info-btn" class="route-info-pill" title="Ver con qué algoritmo y criterios se calculó esta ruta" disabled>ⓘ Ver algoritmo y criterios</button>
+            </label>
+            <select id="chosen" disabled>
+              <option value="">— Primero genera las rutas en el Paso 1 —</option>
+            </select>
+
+            <label for="speed">Velocidad de reproducción del vuelo</label>
+            <select id="speed">
+              <option value="1">1× (Tiempo real)</option>
+              <option value="2">2×</option>
+              <option value="4">4×</option>
+              <option value="8">8×</option>
+              <option value="16">16×</option>
+              <option value="20" selected>20×</option>
+              <option value="32">32×</option>
+              <option value="64">64×</option>
+              <option value="100">100×</option>
+              <option value="200">200×</option>
+            </select>
+
+            <div class="climate-sim-panel" id="climate-sim-panel">
+              <label for="climate-preset" class="label-with-tip">
+                <span>🌡️ Clima en simulación (Grados y Viento)</span>
+                <span class="info-tip" tabindex="0" data-tooltip="Por defecto se afilia automáticamente a la temperatura y viento de la Hora del Snapshot elegida en el Paso 1. También puedes probar olas de calor o ráfagas extremas.">?</span>
+              </label>
+              <select id="climate-preset">
+                <option value="snapshot" selected>🔗 Afiliado a Hora del Snapshot UTC (Automático)</option>
+                <option value="optimal">🌤️ Templado óptimo · 18 °C · Viento 2,5 m/s</option>
+                <option value="warm_breeze">☀️ Cálido ventoso · 28 °C · Viento 5,5 m/s</option>
+                <option value="heatwave">🔥 Ola de calor (30-30-30) · 36 °C · Viento 6,8 m/s</option>
+                <option value="extreme_wind">💨 Ráfagas fuertes · 22 °C · Viento 7,6 m/s</option>
+                <option value="cold_coastal">❄️ Frío costero · 6 °C · Viento 4,5 m/s</option>
+                <option value="custom">⚙️ Personalizado (ajustar °C y m/s)</option>
+              </select>
+              <div class="fields" style="margin-top:4px">
+                <label>Temperatura (°C)<input id="climate-temp" type="number" min="-5" max="45" step="1" value="18" /></label>
+                <label>Viento (m/s)<input id="climate-wind" type="number" min="0" max="12" step="0.2" value="3.0" /></label>
+              </div>
+              <div class="climate-impact-card" id="climate-impact-card" data-severity="optimal">
+                <div class="climate-impact-header">
+                  <span id="climate-impact-badge">Capacidad Dron: 100 %</span>
+                  <span id="climate-impact-drain">Consumo ×1,00</span>
+                </div>
+                <div class="climate-bar-track">
+                  <div class="climate-bar-fill" id="climate-bar-fill" style="width:100%"></div>
+                </div>
+                <p id="climate-impact-desc" class="muted status-compact">
+                  Autonomía efectiva: 20,0 min (1200 s) · Sondeo IR: 180 m · Riesgo térmico ×1,00
+                </p>
+              </div>
             </div>
 
             <label class="label-with-tip">
-              <span>Amenazas dinámicas y foco de incendio</span>
-              <span class="info-tip" tabindex="0" data-tooltip="Foco sintético opcional: al detectarlo en línea de vista, el dron verifica durante 60 s, reporta la coordenada y regresa a la base. También puedes añadir amenazas puntuales en el mapa.">?</span>
+              <span>🔥 Sondeo de foco de incendio y amenazas</span>
+              <span class="info-tip" tabindex="0" data-tooltip="El dron realiza un barrido térmico oscilante con su cámara LWIR buscando anomalías de calor. Al detectar un foco en línea de vista, fija el objetivo (Target Lock), verifica durante 60 s, reporta la coordenada y regresa a base.">?</span>
             </label>
             <div class="buttons">
               <button id="fire" class="btn-secondary">Marcar foco</button>
-              <button id="clear-fire" class="btn-danger">Quitar foco</button>
+              <button id="random-fire" class="btn-secondary" title="Coloca un foco de incendio en un punto forestal de la ruta para probar el sondeo del dron">🎲 Foco en ruta</button>
+              <button id="clear-fire" class="btn-danger">Quitar</button>
             </div>
-            <p id="fire-status" class="muted status-compact">Sin foco sintético marcado.</p>
+            <p id="fire-status" class="muted status-compact">Sin foco sintético marcado (sondeo preventivo activo).</p>
             <div class="buttons">
               <button id="hazard" class="btn-secondary">Añadir amenaza</button>
               <button id="clear-hazards" class="btn-danger">Limpiar</button>
+            </div>
+            <p id="hazard-status" class="muted status-compact">Sin amenazas sintéticas extra. Pulsa «Añadir amenaza» y haz clic en el mapa para crear una zona de riesgo.</p>
+            <div id="fire-emergency-alert" hidden style="margin:8px 0;padding:10px 12px;border-radius:10px;background:#fef2f2;border:1.5px solid #dc2626;color:#991b1b;font-size:12px;line-height:1.45">
+              <strong style="display:block;font-size:12.5px;margin-bottom:2px">🚨 ALERTA SIMULADA DE EMERGENCIA DE INCENDIO</strong>
+              <span id="fire-emergency-text">Foco térmico detectado.</span>
             </div>
 
             <details class="advanced-config">
@@ -289,9 +392,46 @@
         </div>
 
         <div id="player" class="player" aria-label="Reproductor de vuelo">
-          <div class="player-buttons"><button id="restart" disabled title="Ir al inicio">⏮ Inicio</button><button id="play" disabled>▶ Reproducir</button><button id="pause" disabled>⏸ Pausar</button><button id="finish-playback" disabled title="Ir al aterrizaje final">Fin ⏭</button><button id="drone-view" disabled aria-pressed="false">Vista del dron</button><label class="check"><input id="follow-drone" type="checkbox"> Seguir dron</label></div>
+          <div class="player-buttons">
+            <button id="restart" disabled title="Ir al inicio">⏮ Inicio</button>
+            <button id="play" disabled>▶ Reproducir</button>
+            <button id="pause" disabled>⏸ Pausar</button>
+            <button id="finish-playback" disabled title="Ir al aterrizaje final">Fin ⏭</button>
+            <button id="drone-view" disabled aria-pressed="false" title="Ver cámara de seguimiento del dron con malla de visión de 200 m">👁 Vista del dron</button>
+            <div class="player-speed-group" role="group" aria-label="Velocidad de reproducción">
+              <span class="player-speed-label">Vel:</span>
+              <button type="button" class="speed-pill" data-speed="1">1×</button>
+              <button type="button" class="speed-pill" data-speed="2">2×</button>
+              <button type="button" class="speed-pill" data-speed="4">4×</button>
+              <button type="button" class="speed-pill" data-speed="8">8×</button>
+              <button type="button" class="speed-pill active" data-speed="20">20×</button>
+              <button type="button" class="speed-pill" data-speed="64">64×</button>
+              <button type="button" class="speed-pill" data-speed="100">100×</button>
+            </div>
+            <div class="player-route-group">
+              <select id="player-route" aria-label="Seleccionar ruta visible" disabled title="Cambiar ruta visible en el mapa">
+                <option value="">Sin ruta calculada</option>
+              </select>
+              <button type="button" id="player-route-info" class="route-info-pill" disabled title="Ver con qué algoritmo y bajo qué criterios fue calculada la ruta">ⓘ Criterios</button>
+            </div>
+            <label class="check"><input id="follow-drone" type="checkbox"> Seguir dron</label>
+          </div>
           <div class="player-track"><output id="playback-time">00:00 / 00:00</output><input id="seek" aria-label="Posición de reproducción" type="range" min="0" max="1" step="0.1" value="0" disabled><span id="playback-state">Selecciona una ruta</span></div>
           <output id="drone-coordinates" class="drone-coordinates" aria-label="Coordenadas del dron">Lat — · Lon — · Cota —</output>
+        </div>
+
+        <!-- POPUP / MODAL DE CRITERIOS DE CÁLCULO DE LA RUTA -->
+        <div id="route-criteria-modal" class="criteria-modal-backdrop" hidden role="dialog" aria-modal="true" aria-labelledby="criteria-modal-title">
+          <div class="criteria-modal-card">
+            <div class="criteria-modal-header">
+              <div>
+                <span class="criteria-modal-kicker" id="criteria-modal-kicker">FICHA TÉCNICA DE OPTIMIZACIÓN</span>
+                <h3 id="criteria-modal-title">Criterios de cálculo de la ruta</h3>
+              </div>
+              <button type="button" id="criteria-modal-close" class="criteria-modal-close" aria-label="Cerrar">✕</button>
+            </div>
+            <div id="criteria-modal-body" class="criteria-modal-body"></div>
+          </div>
         </div>
         <div id="fpv-hud" hidden><span id="fpv-heading">Rumbo —</span><span id="fpv-height">Cota —</span><span id="fpv-battery">Batería —</span><span id="fpv-coordinates">Lat — · Lon — · Cota —</span></div>
         <div id="fpv-propellers" aria-hidden="true" hidden data-spinning="false">

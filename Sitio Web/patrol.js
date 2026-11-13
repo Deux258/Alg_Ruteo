@@ -1033,6 +1033,7 @@ function request() {
     station_ids: stationIds(),
     events,
     seed: Number($("seed").value),
+    mode: $("patrol-mode")?.value || "grid",
     scenarios: 1000,
     preferences: {
       drone: spec.drone,
@@ -1228,6 +1229,18 @@ function describeRouteMethod(key, r) {
         "Operadores de vecindad: Intercambio de sectores (swap), inversión de sub-secuencias (2-opt) y cambio de sentido de barrido en cada polígono/sector.",
         `Evaluación de energía E(S): Tiempo total de vuelo + penalización por probabilidad de falla de enlaces (ρ = ${riskW}) + inserción óptima de recargas en estaciones M1.`,
         `Criterio de parada: Enfriamiento geométrico multi-iteración con retención de la mejor solución factible (${r.stops?.length ?? 0} recargas, ${(r.distance_m / 1000).toFixed(2)} km).`,
+      ],
+    },
+    alns_risk: {
+      algo: "RRPP · Adaptive Large Neighborhood Search (ALNS) por Latencia Ponderada",
+      shortBadge: "ALNS RRPP · Latencia Ponderada por R(x,y,t)",
+      formula: "min Σ r_i · a_i + λ1 · Σ P_ij · t_ij · x_ij + λ2 · N_recargas",
+      summary:
+        "Prioriza la detección temprana en celdas quadtree de alto riesgo de incendio R(x,y,t) (SENAPRED A4 × CONAF M2 × Rothermel S × interfaz urbana U + FIRMS A2), minimizando el retraso ponderado de primera visita a_i con recargas reales en M1 y bloqueo duro A3.",
+      criteria: [
+        "Separación de riesgos: el riesgo de incendio R(x,y,t) actúa como premio r_i en la latencia ponderada, mientras que el riesgo para el dron (A1 viento AGL, A3, sintéticas) penaliza o bloquea los arcos.",
+        "Operadores Destroy/Repair adaptativos: remoción aleatoria, peor r_i·a_i y cluster geográfico; inserción greedy, regret-2 y regret-3 ponderada por r_i.",
+        `Cobertura y energía: preserva cobertura total permitida (${r.coverage ? r.coverage.percent.toFixed(1) + " %" : "—"}), excluye A3 (riesgo inobservable reportado aparte) y respeta inventario de baterías M1 (${r.stops?.length ?? 0} recargas).`,
       ],
     },
   };
