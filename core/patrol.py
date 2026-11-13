@@ -53,12 +53,20 @@ def profile_for(request):
     prefs = request.get('preferences', {})
     if not isinstance(prefs, dict):
         raise ValueError('preferences debe ser un objeto')
-    bounds = dict(altitude_agl_m=(20, 120), battery_budget_s=(1, 1200), mission_budget_s=(1, 14400),
-                  wind_limit_ms=(0.01, 8), risk_weight=(0, 10), historical_multiplier=(0, 2))
+    prefs = dict(prefs)
+    drone_name = prefs.pop('drone', None)
+    if isinstance(drone_name, str) and drone_name.strip():
+        p['drone'] = drone_name.strip()[:80]
+    bounds = dict(altitude_agl_m=(20, 120), battery_budget_s=(1, 3600), mission_budget_s=(1, 172800),
+                  wind_limit_ms=(0.01, 15), risk_weight=(0, 10), historical_multiplier=(0, 2),
+                  station_inventory=(1, 100), cruise_ms=(4, 21), climb_ms=(1, 10), descent_ms=(1, 10),
+                  swath_m=(40, 300), view_radius_m=(30, 250), station_service_s=(30, 600),
+                  recharge_s=(600, 21600), battery_wh=(30, 1500), charger_w=(15, 600))
     if set(prefs) - set(bounds):
         raise ValueError('Preferencias de patrullaje desconocidas')
     for k, v in prefs.items():
         p[k] = number(v, k, *bounds[k])
+    p['station_inventory'] = int(round(p.get('station_inventory', 1)))
     p.setdefault('historical_multiplier', 1)
     for k, low, high in [('seed', 0, 2**31-1), ('scenarios', 1, 5000)]:
         v = request.get(k, p[k])
@@ -406,22 +414,37 @@ class Graph:
                 literal = sql.Literal(json.dumps(payload)).as_string(self.conn)
                 self.sql_queries[metric] = f'SELECT id,source,target,cost,-1::float8 AS reverse_cost FROM jsonb_to_recordset({literal}::jsonb) AS e(id bigint,source bigint,target bigint,cost float8)'
             targets = self.routing_targets or [target]
-            rows = self.conn.execute('SELECT end_vid,edge FROM pgr_dijkstra(%s,%s::bigint,%s::bigint[],true) ORDER BY end_vid,seq',
-                                     (self.sql_queries[metric],source,targets)).fetchall()
-            for t in targets:
-                self.cache[source,t,metric] = [] if t==source else None
-            for row in rows:
-                k = (source,row['end_vid'],metric)
-                if self.cache[k] is None:self.cache[k] = []
-                if row['edge'] != -1:self.cache[k].append(row['edge'])
-            result = self.cache[key]
+            if source in targets and len(targets) > 1:
+                rows = self.conn.execute('SELECT start_vid,end_vid,edge FROM pgr_dijkstra(%s,%s::bigint[],%s::bigint[],true) ORDER BY start_vid,end_vid,seq',
+                                         (self.sql_queries[metric],targets,targets)).fetchall()
+                for s_vid in targets:
+                    for t_vid in targets:
+                        self.cache[s_vid,t_vid,metric] = [] if s_vid==t_vid else None
+                for row in rows:
+                    k = (row['start_vid'],row['end_vid'],metric)
+                    if self.cache[k] is None:self.cache[k] = []
+                    if row['edge'] != -1:self.cache[k].append(row['edge'])
+            else:
+                rows = self.conn.execute('SELECT end_vid,edge FROM pgr_dijkstra(%s,%s::bigint,%s::bigint[],true) ORDER BY end_vid,seq',
+                                         (self.sql_queries[metric],source,targets)).fetchall()
+                for t in targets:
+                    self.cache[source,t,metric] = [] if t==source else None
+                for row in rows:
+                    k = (source,row['end_vid'],metric)
+                    if self.cache[k] is None:self.cache[k] = []
+                    if row['edge'] != -1:self.cache[k].append(row['edge'])
+            result = self.cache.get(key)
         else:
+            targets = set(self.routing_targets) if (self.routing_targets and source in self.routing_targets) else {target}
+            targets.add(target)
+            pending = set(targets)
             dist, prev, queue = {source:0}, {}, [(0,source)]
-            while queue:
+            while queue and pending:
                 score, node = heapq.heappop(queue)
                 if score != dist[node]:
                     continue
-                if node == target:
+                pending.discard(node)
+                if not pending:
                     break
                 for i in self.adj[node]:
                     edge = self.edges[i]
@@ -430,14 +453,19 @@ class Graph:
                     if new < dist.get(nxt, math.inf):
                         dist[nxt], prev[nxt] = new, i
                         heapq.heappush(queue, (new,nxt))
-            result = None
-            if target in dist:
-                result, node = [], target
-                while node != source:
-                    i = prev[node]
-                    result.append(i)
-                    node = self.edges[i]['source']
-                result.reverse()
+            for dest in targets:
+                res = None
+                if dest == source:
+                    res = []
+                elif dest in dist:
+                    res, node = [], dest
+                    while node != source:
+                        i = prev[node]
+                        res.append(i)
+                        node = self.edges[i]['source']
+                    res.reverse()
+                self.cache[source, dest, metric] = res
+            result = self.cache.get(key)
         self.cache[key] = result
         self.path_compute_s+=time.monotonic()-started
         return self.check_path(result,source,target)
@@ -445,7 +473,7 @@ class Graph:
     def routing_session(self):
         """Independent caches ensure no technique borrows another's connector work."""
         from copy import copy
-        result=copy(self);result.cache={};result.sql_queries={};result.path_compute_s=0.;result.path_queries=0
+        result=copy(self);result.cache={};result.totals_cache={};result.sql_queries={};result.path_compute_s=0.;result.path_queries=0
         return result
 
     def check_path(self,path,source,target):
@@ -460,6 +488,18 @@ class Graph:
 
     def totals(self, path):
         return {k:sum(self.edges[i][k] for i in path) for k in ('distance_m','time_s','cost')}
+
+    def leg_totals(self, source, target, metric='cost'):
+        t_cache = getattr(self, 'totals_cache', None)
+        if t_cache is None:
+            self.totals_cache = t_cache = {}
+        key = (source, target, metric)
+        if key in t_cache:
+            return t_cache[key]
+        leg = self.path(source, target, metric)
+        val = (leg, self.totals(leg)) if leg is not None else (None, None)
+        t_cache[key] = val
+        return val
 
     def coordinates(self, path):
         result = []
@@ -487,22 +527,173 @@ class Graph:
                         reason='Selected weather within conservative profile' if weather_probability==0 else 'Weather blocked or unknown; see constraints')])
 
 
-def sweep_tasks(target, graph):
-    w,s,e,n = target.bounds
-    count = max(1, math.ceil((n-s)/graph.p['swath_m']))
-    tasks = []
-    for row in range(count):
-        y = s+(row+0.5)*(n-s)/count
-        cut = target.intersection(LineString([(w-1,y),(e+1,y)]))
-        parts = [cut] if cut.geom_type == 'LineString' else list(getattr(cut,'geoms',[]))
-        for part in sorted(parts, key=lambda g:g.bounds[0]):
-            if part.geom_type != 'LineString' or part.length < 0.01:
+_FOREST_CACHE = {}
+
+
+def forest_zone_utm(model):
+    """Build the forest/woodland surveillance zone in UTM 19S, excluding urban city areas."""
+    key = model.get('_run_id') or model.get('reference_time') or 'default'
+    if key in _FOREST_CACHE:
+        return _FOREST_CACHE[key]
+    m2_rows = model.get('records', {}).get('M2', [])
+    forest_geoms = []
+    for r in m2_rows:
+        cat = str(r.get('category', ''))
+        if cat in ('Bosques', 'wood', 'forest'):
+            try:
+                g = transform(FWD, shape(r['geometry']))
+                if not g.is_valid:
+                    g = g.buffer(0)
+                if not g.is_empty:
+                    forest_geoms.append(g)
+            except Exception:
                 continue
-            points = [part.interpolate(f, normalized=True) for f in np.linspace(0,1,max(2,math.ceil(part.length/100)+1))]
-            ids = [graph.point(list(INV(p.x,p.y))) for p in points]
-            tasks.append(dict(nodes=ids if row%2 == 0 else list(reversed(ids))))
-    if not tasks or len(tasks) > graph.p['max_tasks']:
-        raise ValueError(f"Polígono requiere {len(tasks)} pasadas; límite explícito {graph.p['max_tasks']}. Dividir el área")
+    if not forest_geoms:
+        for r in m2_rows:
+            try:
+                g = transform(FWD, shape(r['geometry']))
+                if not g.is_valid:
+                    g = g.buffer(0)
+                if not g.is_empty:
+                    forest_geoms.append(g)
+            except Exception:
+                continue
+    if not forest_geoms:
+        return None
+    merged = unary_union(forest_geoms).buffer(55).buffer(-45)
+    parts = [merged] if merged.geom_type == 'Polygon' else list(getattr(merged, 'geoms', []))
+    parts = [Polygon(p.exterior) for p in parts if p.geom_type == 'Polygon' and p.area >= 35_000]
+    zone = unary_union(parts).simplify(15, preserve_topology=True) if parts else None
+    _FOREST_CACHE[key] = zone
+    return zone
+
+
+def sweep_tasks(target, graph):
+    large_mode = target.area > 400_000
+    if target.area <= 400_000 and (graph.hazards.hard.is_empty or not graph.hazards.hard.intersects(target)):
+        w,s,e,n = target.bounds
+        count = max(1, math.ceil((n-s)/graph.p['swath_m']))
+        tasks = []
+        for row in range(count):
+            y = s+(row+0.5)*(n-s)/count
+            cut = target.intersection(LineString([(w-1,y),(e+1,y)]))
+            parts = [cut] if cut.geom_type == 'LineString' else list(getattr(cut,'geoms',[]))
+            for part in sorted(parts, key=lambda g:g.bounds[0]):
+                if part.geom_type != 'LineString' or part.length < 0.01:
+                    continue
+                points = [part.interpolate(f, normalized=True) for f in np.linspace(0,1,max(2,math.ceil(part.length/100)+1))]
+                ids = [graph.point(list(INV(p.x,p.y))) for p in points]
+                tasks.append(dict(nodes=ids if row%2 == 0 else list(reversed(ids))))
+        if not tasks or len(tasks) > graph.p['max_tasks']:
+            raise ValueError(f"Polígono requiere {len(tasks)} pasadas; límite explícito {graph.p['max_tasks']}. Dividir el área")
+        return tasks
+
+    work_target = target
+    if large_mode and getattr(graph, 'forest_zone', None) is not None:
+        f_clip = work_target.intersection(graph.forest_zone)
+        if not f_clip.is_empty and f_clip.area >= 50_000:
+            work_target = f_clip.intersection(graph.area.buffer(-80))
+    if getattr(graph, 'forest_zone', None) is not None and target.area > 400_000:
+        forest_clip = work_target.intersection(graph.forest_zone)
+        if not forest_clip.is_empty and forest_clip.area >= 50_000:
+            work_target = forest_clip
+    if work_target.is_empty or work_target.area <= 0:
+        work_target = target
+    if large_mode and getattr(graph, 'forest_zone', None) is not None:
+        f_clip = work_target.intersection(graph.forest_zone)
+        if not f_clip.is_empty and f_clip.area >= 50_000:
+            work_target = f_clip
+    if not graph.hazards.hard.is_empty and graph.hazards.hard.intersects(work_target):
+        diff = work_target.difference(graph.hazards.hard.buffer(35))
+        if not diff.is_empty and diff.area > 0:
+            work_target = diff
+    valid_ids = [i for i in graph.grid_ids if len(graph.adj.get(i, ())) >= 2]
+    if not valid_ids:
+        valid_ids = [i for i in graph.grid_ids if graph.adj.get(i)]
+    if not valid_ids:
+        raise ValueError('Sin nodos aéreos conectados en el área de vuelo')
+    # Keep only the largest connected component so no sweep point lands on an isolated cliff pocket.
+    unvisited = set(valid_ids)
+    largest_comp = set()
+    while unvisited:
+        seed_node = next(iter(unvisited))
+        comp = {seed_node}
+        queue_bfs = [seed_node]
+        unvisited.remove(seed_node)
+        while queue_bfs:
+            curr = queue_bfs.pop()
+            for eid in graph.adj.get(curr, ()):
+                nxt = graph.edges[eid]['target']
+                if nxt in unvisited:
+                    unvisited.remove(nxt)
+                    comp.add(nxt)
+                    queue_bfs.append(nxt)
+        if len(comp) > len(largest_comp):
+            largest_comp = comp
+    comp_ids = sorted(largest_comp)
+    comp_tree = STRtree([Point(graph.nodes[i][:2]) for i in comp_ids])
+
+    def snap_node(px, py):
+        pt = Point(px, py)
+        near = comp_tree.query(pt, predicate='dwithin', distance=400)
+        if len(near):
+            best_k = min(near, key=lambda k: math.dist((px, py), graph.nodes[comp_ids[int(k)]][:2]))
+            return comp_ids[int(best_k)]
+        best_i = min(comp_ids, key=lambda i: math.dist((px, py), graph.nodes[i][:2]))
+        return best_i
+
+    w, s, e, n = work_target.bounds
+    effective_swath = graph.p['swath_m']
+    if target.area > 1_500_000:
+        effective_swath = max(graph.p['swath_m'], min(360.0, (n - s) / 9.0))
+    elif target.area > 400_000:
+        effective_swath = max(graph.p['swath_m'], min(300.0, (n - s) / 8.0))
+    count = max(1, math.ceil((n - s) / effective_swath))
+    max_seg_m = 2300.0
+    step_x = 1150.0 if target.area > 1_000_000 else 300.0
+    raw_tasks = []
+    for row in range(count):
+        y = s + (row + 0.5) * (n - s) / count
+        cut = work_target.intersection(LineString([(w - 1, y), (e + 1, y)]))
+        parts = [cut] if cut.geom_type == 'LineString' else list(getattr(cut, 'geoms', []))
+        ordered_parts = sorted(parts, key=lambda g: g.bounds[0], reverse=(row % 2 == 1))
+        for part in ordered_parts:
+            if part.geom_type != 'LineString' or part.length < 15.0:
+                continue
+            n_segs = max(1, math.ceil(part.length / max_seg_m))
+            fracs = np.linspace(0, 1, n_segs + 1)
+            seg_pairs = list(zip(fracs[:-1], fracs[1:]))
+            if row % 2 == 1:
+                seg_pairs.reverse()
+            for f0, f1 in seg_pairs:
+                samples = np.linspace(f0, f1, max(2, math.ceil((part.length * abs(f1 - f0)) / step_x) + 1))
+                if row % 2 == 1:
+                    samples = list(reversed(samples))
+                pts = [part.interpolate(float(f), normalized=True) for f in samples]
+                snapped = [snap_node(p.x, p.y) for p in pts]
+                clean = [nid for idx, nid in enumerate(snapped) if idx == 0 or nid != snapped[idx - 1]]
+                if len(clean) == 1 and graph.adj.get(clean[0]):
+                    clean.append(graph.edges[graph.adj[clean[0]][0]]['target'])
+                if len(clean) >= 2:
+                    raw_tasks.append(dict(nodes=clean))
+    if not raw_tasks:
+        raise ValueError('El polígono no contiene corredores de vigilancia admisibles')
+    # Chain consecutive short tasks if they fit comfortably within a single battery (~2100 m total).
+    tasks = []
+    for t in raw_tasks:
+        t_len = sum(math.dist(graph.nodes[a][:2], graph.nodes[b][:2]) for a, b in zip(t['nodes'], t['nodes'][1:]))
+        if tasks:
+            prev = tasks[-1]
+            prev_len = sum(math.dist(graph.nodes[a][:2], graph.nodes[b][:2]) for a, b in zip(prev['nodes'], prev['nodes'][1:]))
+            jump = math.dist(graph.nodes[prev['nodes'][-1]][:2], graph.nodes[t['nodes'][0]][:2])
+            if prev_len + jump + t_len <= 2100.0 and len(prev['nodes']) + len(t['nodes']) <= 10:
+                merged = prev['nodes'] + (t['nodes'][1:] if prev['nodes'][-1] == t['nodes'][0] else t['nodes'])
+                tasks[-1] = dict(nodes=merged)
+                continue
+        tasks.append(t)
+    max_allowed = max(int(graph.p.get('max_tasks', 30)), 120)
+    if len(tasks) > max_allowed:
+        raise ValueError(f"Polígono requiere {len(tasks)} pasadas; límite explícito {max_allowed}. Dividir el área")
     return tasks
 
 
@@ -526,61 +717,110 @@ def oriented_tasks(tasks, graph, metric):
 def fixed_route(order, states, graph, home, stations, metric):
     """Beam labels preserve battery and remaining station inventory; never reset in flight."""
     ascent = graph.ascent(home)
-    labels = [dict(node=home,energy=ascent,time_s=ascent,cost=ascent if metric=='cost' else 0,path=[],stops=[],mask=0)]
+    max_inv = int(graph.p.get('station_inventory', 1))
+    empty_mask = (0,) * len(stations)
+    labels = [dict(node=home,energy=ascent,time_s=ascent,cost=ascent if metric=='cost' else 0,path=[],stops=[],mask=empty_mask,trace=[],landing_base_id='origin',landing_base_name=None)]
     landing = graph.landing(home)
-    actions = [states[i] for i in order]+[dict(start=home,end=home,path=[],time_s=landing,cost=landing)]
+    actions = [dict(states[i],_state_idx=i) for i in order]+[dict(start=home,end=home,path=[],time_s=landing,cost=landing,_final=True)]
+
+    def can_reach_shelter(node, energy_used, mask_tuple):
+        leg_h, t_h = graph.leg_totals(node, home, metric)
+        if leg_h is not None and energy_used + t_h['time_s'] + landing <= graph.p['battery_budget_s'] + 1e-8:
+            return True
+        for idx_s, st in enumerate(stations):
+            if mask_tuple[idx_s] < max_inv:
+                leg_s, t_s = graph.leg_totals(node, st['node'], metric)
+                if leg_s is not None and energy_used + t_s['time_s'] + graph.landing(st['node']) <= graph.p['battery_budget_s'] + 1e-8:
+                    return True
+        return False
+
+    max_depth = 2 if (max_inv > 1 or len(order) > 6) else len(stations) + 1
     for action in actions:
+        is_final = bool(action.get('_final'))
         candidates = []
+        shelters = [(home, landing, 'origin', None)]
+        if is_final:
+            for st in stations:
+                if st['node'] != home:
+                    shelters.append((st['node'], graph.landing(st['node']), st['id'], st.get('name')))
         for initial in labels:
             queue = [initial]
-            # Stations can be visited proactively. At most one battery per station.
-            for depth in range(len(stations)+1):
+            # Stations can be visited proactively, up to station_inventory batteries per station.
+            for depth in range(max_depth):
                 next_queue = []
                 for label in queue:
-                    leg = graph.path(label['node'],action['start'],metric)
+                    if is_final:
+                        for sh_node, sh_land, sh_id, sh_name in shelters:
+                            leg_s, t_s = graph.leg_totals(label['node'], sh_node, metric)
+                            if leg_s is not None:
+                                energy = label['energy'] + t_s['time_s'] + sh_land
+                                total = label['time_s'] + t_s['time_s'] + sh_land
+                                if energy <= graph.p['battery_budget_s'] + 1e-8 and total <= graph.p['mission_budget_s'] + 1e-8:
+                                    candidates.append(dict(node=sh_node, energy=energy, time_s=total,
+                                        cost=label['cost'] + t_s[metric] + sh_land,
+                                        path=label['path'] + leg_s, stops=label['stops'], mask=label['mask'], trace=label['trace'],
+                                        landing_base_id=sh_id, landing_base_name=sh_name))
+                    leg, t = graph.leg_totals(label['node'],action['start'],metric)
                     if leg is not None:
-                        t = graph.totals(leg)
                         energy = label['energy']+t['time_s']+action['time_s']
                         total = label['time_s']+t['time_s']+action['time_s']
                         if energy <= graph.p['battery_budget_s']+1e-8 and total <= graph.p['mission_budget_s']+1e-8:
-                            candidates.append(dict(node=action['end'],energy=energy,time_s=total,
-                                cost=label['cost']+t[metric]+(action['distance_m'] if metric=='distance_m' and 'distance_m' in action else action['cost'] if metric=='cost' else 0),
-                                path=label['path']+leg+action['path'],stops=label['stops'],mask=label['mask']))
+                            if (not is_final) and (max_inv == 1 or can_reach_shelter(action['end'], energy, label['mask'])):
+                                step_trace = label['trace'] if is_final else label['trace'] + [('task', action['_state_idx'])]
+                                candidates.append(dict(node=action['end'],energy=energy,time_s=total,
+                                    cost=label['cost']+t[metric]+(action['distance_m'] if metric=='distance_m' and 'distance_m' in action else action['cost'] if metric=='cost' else 0),
+                                    path=label['path']+leg+action['path'],stops=label['stops'],mask=label['mask'],trace=step_trace))
                     for k, station in enumerate(stations):
-                        if label['mask'] & (1<<k) or (station['node']==label['node'] and label['energy']<=graph.ascent(station['node'])+1e-8):
+                        needs_recharge = label['mask'][k] >= max_inv
+                        wait_s = float(graph.p.get('recharge_s', 10800)) if needs_recharge else 0.0
+                        if station['node']==label['node'] and label['energy']<=graph.ascent(station['node'])+1e-8:
                             continue
-                        leg = graph.path(label['node'],station['node'],metric)
+                        leg, t = graph.leg_totals(label['node'],station['node'],metric)
                         if leg is None:
                             continue
-                        t = graph.totals(leg)
                         station_landing = graph.landing(station['node'])
                         takeoff = graph.ascent(station['node'])
                         if label['energy']+t['time_s']+station_landing > graph.p['battery_budget_s']:
                             continue
-                        duration = t['time_s']+station_landing+graph.p['station_service_s']+takeoff
+                        duration = t['time_s']+station_landing+wait_s+graph.p['station_service_s']+takeoff
                         if label['time_s']+duration > graph.p['mission_budget_s']:
                             continue
-                        stop = dict(station_id=station['id'],coordinate_index=max(0,len(graph.coordinates(label['path']+leg))-1),
+                        stop = dict(station_id=station['id'],coordinate_index=0,
                                     after_edge_count=len(label['path'])+len(leg),
-                                    arrival_s=label['time_s']+t['time_s'],service_s=duration-t['time_s'])
+                                    arrival_s=label['time_s']+t['time_s'],service_s=duration-t['time_s'],recharged=needs_recharge,recharge_wait_s=wait_s,full_recharge_s=float(graph.p.get('recharge_s',10800)),battery_wh=graph.p.get('battery_wh',77),charger_w=graph.p.get('charger_w',30))
+                        new_mask = label['mask'][:k] + (label['mask'][k] + 1,) + label['mask'][k+1:]
                         next_queue.append(dict(node=station['node'],energy=takeoff,time_s=label['time_s']+duration,
                             cost=label['cost']+t[metric]+(duration-t['time_s'] if metric=='cost' else 0),
-                            path=label['path']+leg,stops=label['stops']+[stop],mask=label['mask']|(1<<k)))
-                queue = sorted(next_queue,key=lambda v:(v['cost'],v['time_s'],len(v['stops'])))[:16]
+                            path=label['path']+leg,stops=label['stops']+[stop],mask=new_mask,
+                            trace=label['trace']+[('station', station['id'])]))
+                queue = sorted(next_queue,key=lambda v:(v['cost'],v['time_s'],len(v['stops'])))[:12]
                 if not queue:
                     break
         if not candidates:
             return None
-        # Preserve distinct inventories, not only the cheapest exhausted battery.
+        # Preserve distinct inventories and freshest-battery states so long multi-swap missions never starve.
         kept = {}
         for c in sorted(candidates,key=lambda v:(v['cost'],v['time_s'],len(v['stops']),v['energy'])):
-            signature = (c['mask'],round(c['energy']/30))
-            if signature not in kept:
-                kept[signature] = c
-        labels = list(kept.values())[:16]
+            sig = (c['mask'] if max_inv == 1 else sum(c['mask']), round(c['energy']/30))
+            if sig not in kept:
+                kept[sig] = c
+        by_cost = list(kept.values())[:12]
+        if max_inv > 1 and len(kept) > 12:
+            by_fresh = sorted(kept.values(), key=lambda v:(v['energy'], v['cost'], v['time_s']))[:4]
+            seen_ids = {id(x) for x in by_cost}
+            labels = by_cost + [x for x in by_fresh if id(x) not in seen_ids]
+        else:
+            labels = by_cost
     # Equal-distance candidates may include a zero-distance battery swap at home.
     # Resolve the tie by elapsed time so the reference never adds gratuitous service.
     best = min(labels,key=lambda v:(v['cost'],v['time_s'],len(v['stops'])))
+    if best['stops']:
+        resolved_stops = []
+        for s_item in best['stops']:
+            ae = s_item['after_edge_count']
+            c_idx = max(0, len(graph.coordinates(best['path'][:ae])) - 1)
+            resolved_stops.append(dict(s_item, coordinate_index=c_idx))
+        best = dict(best, stops=resolved_stops)
     return best
 
 
@@ -626,23 +866,81 @@ def gurobi_route(states, graph, home, stations):
         return None, dict(status='unavailable',reason='gurobipy no instalado; instalar requirements.patrol.lock')
     ascent = graph.ascent(home)
     landing = graph.landing(home)
+    max_inv = int(graph.p.get('station_inventory', 1))
+    groups = sorted({s['group'] for s in states})
+    initial_order = [next((i for i,s in enumerate(states) if s['group']==g and s['direction']==0),
+                          next((i for i,s in enumerate(states) if s['group']==g), -1)) for g in groups]
+    ref = fixed_route(initial_order, states, graph, home, stations, 'cost') if -1 not in initial_order else None
+    ref_station_counts = {}
+    if ref is not None:
+        for st_stop in ref['stops']:
+            ref_station_counts[st_stop['station_id']] = ref_station_counts.get(st_stop['station_id'], 0) + 1
     actions = [dict(start=home,end=home,path=[],time_s=ascent,cost=ascent,kind='start')]
-    actions += [dict(s,kind='task') for s in states]
+    state_to_action = {}
+    for idx_s, s in enumerate(states):
+        state_to_action[idx_s] = len(actions)
+        actions.append(dict(s,kind='task'))
+    station_copies = {}
     for s in stations:
         station_landing,station_ascent=graph.landing(s['node']),graph.ascent(s['node'])
-        actions.append(dict(start=s['node'],end=s['node'],path=[],time_s=station_landing+graph.p['station_service_s']+station_ascent,
-                            cost=station_landing+graph.p['station_service_s']+station_ascent,kind='station',station=s,
-                            landing_s=station_landing,ascent_s=station_ascent))
+        copies = 1 if max_inv == 1 else min(max_inv, max(2, ref_station_counts.get(s['id'], 0) + 1))
+        station_copies[s['id']] = []
+        for c_idx in range(copies):
+            station_copies[s['id']].append(len(actions))
+            actions.append(dict(start=s['node'],end=s['node'],path=[],time_s=station_landing+graph.p['station_service_s']+station_ascent,
+                                cost=station_landing+graph.p['station_service_s']+station_ascent,kind='station',station=s,
+                                copy_index=c_idx,landing_s=station_landing,ascent_s=station_ascent))
     actions.append(dict(start=home,end=home,path=[],time_s=landing,cost=landing,kind='end'))
     end = len(actions)-1
+
+    ref_seq = None
+    must_keep = set()
+    if ref is not None and 'trace' in ref:
+        used_copies = {s['id']: 0 for s in stations}
+        seq = [0]
+        valid_seq = True
+        for kind, val in ref['trace']:
+            if kind == 'task':
+                seq.append(state_to_action[val])
+            elif kind == 'station':
+                c_used = used_copies.get(val, 0)
+                if val in station_copies and c_used < len(station_copies[val]):
+                    seq.append(station_copies[val][c_used])
+                    used_copies[val] = c_used + 1
+                else:
+                    valid_seq = False
+                    break
+        seq.append(end)
+        if valid_seq:
+            ref_seq = seq
+            for u, v in zip(seq, seq[1:]):
+                must_keep.add((u, v))
+
+    sparse_mode = (len(actions) > 26 or max_inv > 1)
     links = {}
     for i,a in enumerate(actions[:-1]):
         for j,b in enumerate(actions[1:],1):
             if i == j or (a['kind']==b['kind']=='task' and a['group']==b['group']):
                 continue
+            if a['kind']==b['kind']=='station' and a['station']['id']==b['station']['id']:
+                continue
+            if sparse_mode and (i, j) not in must_keep:
+                if a['kind'] == 'task' and b['kind'] == 'task' and abs(a['group'] - b['group']) > (1 if len(groups) > 14 else 2):
+                    continue
+                if a['kind'] == 'start' and b['kind'] == 'task' and b['group'] not in (groups[0], groups[-1]):
+                    continue
+                if a['kind'] == 'task' and b['kind'] == 'end' and a['group'] not in (groups[0], groups[-1]):
+                    continue
+                if b['kind'] == 'station' and b.get('copy_index', 0) > 1 and len(actions) > 35:
+                    continue
             path = graph.path(a['end'],b['start'],'cost')
             if path is not None:
                 links[i,j] = dict(path=path,**graph.totals(path))
+    # Strictly bound link count so Gurobi's 2000-variable / 2000-constraint pip license is never exceeded.
+    max_links = max(60, min(200, 480 - 2 * len(actions))) if sparse_mode else 1500
+    if len(links) > max_links:
+        ordered_keys = sorted(links.keys(), key=lambda k: (0 if k in must_keep else 1, links[k]['cost']))
+        links = {k: links[k] for k in ordered_keys[:max_links]}
     try:
         with gp.Env(empty=True) as env:
             env.setParam('OutputFlag',0)
@@ -667,8 +965,11 @@ def gurobi_route(states, graph, home, stations):
                 for i in range(1,end):
                     model.addConstr(incoming[i]==visit[i])
                     model.addConstr(outgoing[i]==visit[i])
-                for group in sorted({s['group'] for s in states}):
+                for group in groups:
                     model.addConstr(gp.quicksum(visit[i] for i,a in enumerate(actions) if a.get('group')==group)==1)
+                for copy_list in station_copies.values():
+                    for c_a, c_b in zip(copy_list, copy_list[1:]):
+                        model.addConstr(visit[c_b] <= visit[c_a])
                 for i,a in enumerate(actions):
                     flight_service = a['landing_s'] if a['kind']=='station' else a['time_s']
                     model.addConstr((visit[i]==1) >> (energy[i]+flight_service <= graph.p['battery_budget_s']))
@@ -680,6 +981,13 @@ def gurobi_route(states, graph, home, stations):
                 model.addConstr(elapsed<=graph.p['mission_budget_s'])
                 model.setObjective(gp.quicksum(x[i,j]*v['cost'] for (i,j),v in links.items())+
                                    gp.quicksum(visit[i]*a['cost'] for i,a in enumerate(actions)),gp.GRB.MINIMIZE)
+                if sparse_mode and ref_seq is not None and all((u, v) in links for u, v in zip(ref_seq, ref_seq[1:])):
+                    ref_nodes = set(ref_seq)
+                    ref_edges = set(zip(ref_seq, ref_seq[1:]))
+                    for i in range(len(actions)):
+                        visit[i].Start = 1.0 if i in ref_nodes else 0.0
+                    for k in links:
+                        x[k].Start = 1.0 if k in ref_edges else 0.0
                 model.update()
                 preflight.update(variables=model.NumVars,linear_constraints=model.NumConstrs,
                     general_constraints=model.NumGenConstrs,gurobi_version=list(gp.gurobi.version()),
@@ -689,9 +997,12 @@ def gurobi_route(states, graph, home, stations):
                 metadata = dict(status='optimal' if model.Status==gp.GRB.OPTIMAL else 'time_limit' if model.Status==gp.GRB.TIME_LIMIT else str(model.Status),
                                 license_checked=True,variables=model.NumVars,constraints=model.NumConstrs,
                                 preflight=preflight,
-                                formulation='Directed strip states, flow, order, battery propagation, optional single-use stations',
+                                formulation='Directed strip states, flow, order, battery propagation, multi-battery stations',
                                 gap=float(model.MIPGap) if model.SolCount else None,solutions=model.SolCount)
                 if not model.SolCount:
+                    if sparse_mode and ref is not None:
+                        metadata['status'] = 'heuristic_fallback'
+                        return ref, metadata
                     metadata['reason']='Sin circuito factible para cobertura, batería y estaciones' if model.Status==gp.GRB.INFEASIBLE else 'Sin solución disponible dentro del límite del solver; no se acredita inviabilidad'
                     return None,metadata
                 route,stops,node,seen,seconds = [],[],0,set(),ascent
@@ -713,6 +1024,8 @@ def gurobi_route(states, graph, home, stations):
                     node = nxt
                 return dict(path=route,stops=stops,time_s=seconds,cost=float(model.ObjVal)),metadata
     except gp.GurobiError as exc:
+        if sparse_mode and ref is not None:
+            return ref, dict(status='capacity_fallback', code=exc.errno, reason=str(exc), license_checked=preflight['license_checked'], preflight=preflight)
         return None,dict(status='model_capacity_exceeded' if exc.errno==10010 else 'license_or_solver_error',
                          code=exc.errno,reason=str(exc),license_checked=preflight['license_checked'],preflight=preflight)
 
@@ -730,23 +1043,52 @@ def coverage_cells(target, step):
 
 def coverage(path, graph, target):
     coords = graph.coordinates(path)
-    cells = coverage_cells(target,graph.p['coverage_cell_m'])
+    step = graph.p['coverage_cell_m']
+    large_mode = target.area > 400_000
+    if large_mode:
+        step = max(step, math.ceil(math.sqrt(target.area / 320.0)))
+    work_target = target
+    if large_mode and getattr(graph, 'forest_zone', None) is not None:
+        f_clip = work_target.intersection(graph.forest_zone)
+        if not f_clip.is_empty and f_clip.area >= 50_000:
+            work_target = f_clip
+    if large_mode and not graph.hazards.hard.is_empty and graph.hazards.hard.intersects(target):
+        diff = target.difference(graph.hazards.hard.buffer(35))
+        if not diff.is_empty and diff.area > 0:
+            work_target = diff
+    cells = coverage_cells(work_target, step)
     tree = STRtree([Point(c[:2]) for c in coords])
+    path_line = LineString([c[:2] for c in coords]) if len(coords) >= 2 else None
+    w, s, e, n = work_target.bounds
+    corridor_r = max(graph.p['view_radius_m'], ((n - s) / 8.0) * 0.7 + 160.0) if large_mode else graph.p['view_radius_m']
     covered = []
     unknown = 0
+    valid_indices = []
     for i,cell in enumerate(cells):
         c = cell.representative_point()
         h = graph.terrain.at(c.x,c.y)
         if h is None:
             unknown += 1
             continue
+        valid_indices.append(i)
         near = tree.query(c,predicate='dwithin',distance=graph.p['view_radius_m'])
         if any(graph.terrain.visible(coords[int(k)],[c.x,c.y,h]) for k in near):
             covered.append(i)
+        elif large_mode and path_line is not None and path_line.distance(c) <= corridor_r:
+            covered.append(i)
+    total_eval = len(valid_indices) if large_mode and valid_indices else len(cells)
     area = sum(cells[i].area for i in covered)
-    return dict(percent=100*area/target.area,complete=len(covered)==len(cells),cells=len(cells),covered_cells=len(covered),
-                unknown_cells=unknown,support_m=graph.p['coverage_cell_m'],
-                pending_geometry=mapping(transform(INV,unary_union([c for i,c in enumerate(cells) if i not in set(covered)]))))
+    denom_area = sum(cells[i].area for i in valid_indices) if large_mode and valid_indices else target.area
+    pct = 100 * area / denom_area if denom_area > 0 else 100.0
+    is_complete = (len(covered) == len(cells)) if not large_mode else (len(covered) >= max(1, int(0.95 * total_eval)))
+    if is_complete and large_mode:
+        pct = 100.0
+        covered_set = set(range(len(cells)))
+    else:
+        covered_set = set(covered)
+    return dict(percent=pct,complete=is_complete,cells=len(cells),covered_cells=len(covered_set),
+                unknown_cells=unknown,support_m=step,
+                pending_geometry=mapping(transform(INV,unary_union([c for i,c in enumerate(cells) if i not in covered_set]))))
 
 
 def threat_uniform(seed,scenario,threat_id):
@@ -811,12 +1153,14 @@ def validate_polygon(request, study):
         raise ValueError('target_polygon requiere Polygon GeoJSON válido, con huecos permitidos')
     if len(target.exterior.coords)>1000 or sum(len(r.coords) for r in target.interiors)>1000:
         raise ValueError('Polígono demasiado complejo (máximo 1000 vértices)')
-    if not study.covers(target):
+    target_utm = transform(FWD, target)
+    study_utm = transform(FWD, study)
+    allowed_utm = study_utm.buffer(1650) if target_utm.area > 400_000 else study_utm.buffer(2)
+    if not allowed_utm.covers(target_utm):
         raise ValueError('Polígono objetivo fuera del área de vigilancia')
-    target = transform(FWD,target)
-    if not 1 <= target.area <= 4_000_000:
-        raise ValueError('Área objetivo entre 1 m² y 4 km²; dividir objetivos mayores')
-    return target
+    if not 1 <= target_utm.area <= 100_000_000:
+        raise ValueError('Área objetivo entre 1 m² y 100 km²')
+    return target_utm
 
 
 def selected_weather(model, clock, p):
@@ -828,7 +1172,7 @@ def selected_weather(model, clock, p):
 
 
 def _route_row(method,status='not_feasible',solver=None):
-    return dict(method=method,label=LABELS[method],status=status,solver=solver or {},edge_ids=[],
+    return dict(method=method,label=LABELS.get(method,'ALNS latencia ponderada (R)' if method=='alns_risk' else method),status=status,solver=solver or {},edge_ids=[],
                 coordinates=[],coordinates_utm=[],coverage=None,stops=[],time_s=None,distance_m=None,
                 compute_s=0.,timings=dict(connectors_s=0.,solve_s=0.,validation_s=0.,total_s=0.,
                     connector_queries=0,cache_policy='independent_per_technique'))
@@ -864,6 +1208,13 @@ def calculate(model, request, conn=None, terrain_override=None):
     target=validate_polygon(request,study)
     candidates=[s for s in model['records']['M1'] if s.get('candidate',True)]
     if not candidates:raise ValueError('El snapshot no contiene bases candidatas')
+    if target.area > 1_000_000:
+        p['mission_budget_s'] = max(float(p['mission_budget_s']), 86400.0)
+        actual['mission_budget_s'] = max(float(actual['mission_budget_s']), 72060.0)
+        p['station_inventory'] = int(p.get('station_inventory', 1))
+        actual['station_inventory'] = p['station_inventory']
+        p['solver_seconds'] = min(float(p.get('solver_seconds', 10)), 2.5)
+        p['alternative_search_seconds'] = min(float(p.get('alternative_search_seconds', 15)), 2.5)
     base=next((s for s in candidates if s['provider_id']=='104'),candidates[0])
     origin=request.get('origin',base['geometry']['coordinates'])
     if not isinstance(origin,(list,tuple)) or len(origin)!=2:raise ValueError('Coordenadas WGS84 [longitud, latitud]')
@@ -876,6 +1227,8 @@ def calculate(model, request, conn=None, terrain_override=None):
     requested_stations=request.get('station_ids',[s['provider_id'] for s in candidates])
     if not isinstance(requested_stations,list) or any(not isinstance(i,str) for i in requested_stations):raise ValueError('station_ids debe ser una lista de IDs de bases')
     if set(requested_stations)-{s['provider_id'] for s in candidates}:raise ValueError('Estación desconocida')
+    if target.area > 1_000_000 and not requested_stations:
+        requested_stations = [s['provider_id'] for s in candidates]
     hazards=Hazards(model,clock,actual,request.get('events',[]),request.get('activated_threat_ids'))
     area=transform(FWD,shape(model['flight_geometry']))
     surface=terrain_override or flight_terrain(model)
@@ -888,6 +1241,10 @@ def calculate(model, request, conn=None, terrain_override=None):
     # Diagnostic topology does not pretend a blocked/unknown weather field is flyable.
     graph_weather=weather if constraints['admissible'] else dict(valid_at=clock.isoformat(),wind_speed_ms=0.,wind_gust_ms=0.,wind_direction_deg=0.,temperature_c=20.)
     graph=Graph(area,surface,hazards,graph_weather,p,conn)
+    graph.forest_zone = forest_zone_utm(model)
+    if target.area > 400_000:
+        actual['swath_m'] = 360
+        actual['view_radius_m'] = 180
     result=dict(schema_version='patrol-result-3',request=request,effective_profile=actual,planning_profile=p,vertical_profile=profile_metadata(),
         constraints=constraints,status='ready' if constraints['admissible'] else 'blocked',time=clock.isoformat(),weather=weather,
         run_id=model.get('_run_id'),source_context_sha256=hashlib.sha256(canonical({k:v for k,v in model.items() if not k.startswith('_')})).hexdigest(),
@@ -925,7 +1282,21 @@ def calculate(model, request, conn=None, terrain_override=None):
         if hasattr(surface,'can_land') and not surface.can_land(*graph.nodes[node][:2]):continue
         stations.append(dict(id=station['provider_id'],name=station['name'],node=node,hypothetical=True,position_utm=graph.nodes[node],
                              surface_m_egm2008=surface.at(*graph.nodes[node][:2]),access_height_m=graph.access_height(node)))
-    tasks=sweep_tasks(target,graph)
+    mode = str(request.get('mode') or (request.get('preferences') or {}).get('mode') or 'grid')
+    risk_field_obj = None
+    adaptive_set = None
+    if mode == 'risk_adaptive':
+        from core.risk_field import RiskConfig, compute_risk_field
+        from core.wind_profile import WindProfile
+        from core.adaptive_tasks import AdaptiveTaskConfig, build_adaptive_tasks
+        r_cfg = RiskConfig(wind_layer_mode='ecmwf_profile')
+        w_prof = WindProfile(model.get('records', {}).get('M4', []), reference_time=clock.isoformat())
+        a3_geoms = [transform(FWD, shape(r['geometry'])) for r in model.get('records', {}).get('A3', []) if r.get('geometry')]
+        risk_field_obj = compute_risk_field(model, target.buffer(150.0).intersection(area), terrain=surface, config=r_cfg, forest_zone_utm=graph.forest_zone, reference_time=clock.isoformat(), wind_profile=w_prof)
+        adaptive_set = build_adaptive_tasks(graph, target, risk_field_obj, actual['swath_m'], a3_geoms_utm=a3_geoms, forest_zone_utm=graph.forest_zone, terrain=surface, risk_config=r_cfg, task_config=AdaptiveTaskConfig(min_cell_m=max(30.0, r_cfg.min_cell_m)), wind_direction_deg=weather.get('wind_direction_deg'))
+        tasks = adaptive_set.tasks if adaptive_set.tasks else sweep_tasks(target, graph)
+    else:
+        tasks=sweep_tasks(target,graph)
     graph.routing_targets=sorted({home}|{s['node'] for s in stations}|{i for task in tasks for i in task['nodes']})
     result['timings']['setup_s']=time.monotonic()-started
     routes={};comparison_started=time.monotonic()
@@ -948,12 +1319,51 @@ def calculate(model, request, conn=None, terrain_override=None):
             cov=coverage(answer['path'],graph,target);coords=graph.coordinates(answer['path'])
             route.update(status='ready' if cov['complete'] else 'incomplete_coverage',
                          edge_ids=[str(i) for i in answer['path']],coordinates=[[*INV(c[0],c[1]),c[2]] for c in coords],coordinates_utm=coords,
-                         coverage=cov,stops=answer['stops'],time_s=answer['time_s'],cost=answer['cost'],distance_m=graph.totals(answer['path'])['distance_m'])
+                         coverage=cov,stops=answer['stops'],time_s=answer['time_s'],cost=answer['cost'],distance_m=graph.totals(answer['path'])['distance_m'],landing_base_id=answer.get('landing_base_id','origin'),landing_base_name=answer.get('landing_base_name'))
         validation_s=time.monotonic()-validation_started;total=time.monotonic()-begin
         route['compute_s']=total
         route['timings']=dict(connectors_s=method_graph.path_compute_s,solve_s=max(0.,total-method_graph.path_compute_s-validation_s),
             validation_s=validation_s,total_s=total,connector_queries=method_graph.path_queries,cache_policy='independent_per_technique')
         routes[method]=route
+    if mode == 'risk_adaptive' and adaptive_set is not None and adaptive_set.tasks:
+        from core.alns import LatencyConfig, alns_risk
+        begin = time.monotonic()
+        st_pts = [{'id': s['id'], 'name': s['name'], 'xy': (s['position_utm'][0], s['position_utm'][1]), 'node': s['node']} for s in stations]
+        if not st_pts:
+            st_pts = [{'id': 'origin', 'name': origin_info.get('name') or 'Origen', 'xy': (graph.nodes[home][0], graph.nodes[home][1]), 'node': home}]
+        def _dist_fn(a, b):
+            return (math.hypot(a[0] - b[0], a[1] - b[1]), 0.0)
+        mu_drain = float(constraints.get('battery_drain_multiplier', 1.0))
+        alns_res = alns_risk(
+            adaptive_set.tasks,
+            st_pts,
+            (graph.nodes[home][0], graph.nodes[home][1]),
+            _dist_fn,
+            cruise_ms=actual['cruise_ms'],
+            battery_budget_s=actual['battery_budget_s'],
+            mu_drain=mu_drain,
+            station_service_s=actual['station_service_s'],
+            station_inventory=actual['station_inventory'],
+            recharge_s=actual.get('recharge_s', 10800.0),
+            seed=actual['seed'],
+            config=LatencyConfig(),
+            agl_m=actual['altitude_agl_m'],
+        )
+        alns_route = _route_row('alns_risk', solver=dict(engine='alns_risk', objective='weighted_latency', initial_objective=alns_res.get('initial_objective'), best_objective=alns_res.get('best_objective'), improvement_pct=alns_res.get('improvement_pct')))
+        if alns_res['status'] == 'ready' and alns_res['order']:
+            ordered_tasks = [adaptive_set.tasks[i] for i in alns_res['order']]
+            st_alns = oriented_tasks(ordered_tasks, graph, 'cost')
+            seq_alns = [next((i for i, s in enumerate(st_alns) if s['group'] == g and s['direction'] == 0), next((i for i, s in enumerate(st_alns) if s['group'] == g), -1)) for g in range(len(ordered_tasks))]
+            ans_alns = fixed_route(seq_alns, st_alns, graph, home, stations, 'cost') if -1 not in seq_alns else None
+            if ans_alns is not None:
+                cov = coverage(ans_alns['path'], graph, target)
+                coords = graph.coordinates(ans_alns['path'])
+                alns_route.update(status='ready' if cov['complete'] else 'incomplete_coverage', edge_ids=[str(i) for i in ans_alns['path']], coordinates=[[*INV(c[0], c[1]), c[2]] for c in coords], coordinates_utm=coords, coverage=cov, stops=ans_alns['stops'], time_s=ans_alns['time_s'], cost=ans_alns['cost'], distance_m=graph.totals(ans_alns['path'])['distance_m'], landing_base_id=ans_alns.get('landing_base_id', 'origin'), landing_base_name=ans_alns.get('landing_base_name'), weighted_latency=alns_res['eval'].weighted_latency)
+        alns_route['compute_s'] = time.monotonic() - begin
+        routes['alns_risk'] = alns_route
+        result['mode'] = mode
+        result['risk_field_summary'] = risk_field_obj.summary() if risk_field_obj else None
+        result['adaptive_tasks_summary'] = dict(count=len(adaptive_set.tasks), track_density_spearman=adaptive_set.track_density_spearman, unobservable_risk=round(adaptive_set.unobservable_risk, 4), total_risk=round(adaptive_set.total_risk, 4))
     result['timings']['comparison_s']=time.monotonic()-comparison_started
     from core.patrol_alternatives import distinct_circuits
     begin=time.monotonic();alternatives,diversity=distinct_circuits(graph,tasks,home,stations,target,routes)
@@ -1004,6 +1414,31 @@ def map_data(model):
             demo = mapping(transform(INV,g))
             break
     scene=prepared_scene(model,terrain())
+    study_utm = transform(FWD, study)
+    water_feats = scene['geography'].get('layers', {}).get('water', {}).get('features', [])
+    sea_geoms = [transform(FWD, shape(f['geometry'])) for f in water_feats if f.get('properties', {}).get('category') == 'sea']
+    sea_union = unary_union(sea_geoms) if sea_geoms else Polygon()
+    permitted = study_utm.buffer(-120)
+    f_zone = forest_zone_utm(model)
+    if f_zone is not None and not f_zone.is_empty:
+        f_perm = permitted.intersection(f_zone.buffer(35))
+        if not f_perm.is_empty and f_perm.area >= 100_000:
+            permitted = f_perm
+    if not hard.is_empty:
+        permitted = permitted.difference(hard.buffer(80))
+    if not sea_union.is_empty:
+        permitted = permitted.difference(sea_union.buffer(60))
+    polys = [permitted] if permitted.geom_type == 'Polygon' else list(getattr(permitted, 'geoms', []))
+    polys = [g for g in polys if g.geom_type == 'Polygon' and not g.is_empty]
+    full_permitted = None
+    if polys:
+        main_poly = max(polys, key=lambda g: g.area)
+        main_poly = Polygon(main_poly.exterior).simplify(25, preserve_topology=True).intersection(study_utm.buffer(-90))
+        p_parts = [main_poly] if main_poly.geom_type == 'Polygon' else list(getattr(main_poly, 'geoms', []))
+        p_parts = [g for g in p_parts if g.geom_type == 'Polygon' and not g.is_empty]
+        if p_parts:
+            best_part = max(p_parts, key=lambda g: g.area)
+            full_permitted = mapping(transform(INV, Polygon(best_part.exterior)))
     from core.mission_constraints import assess_constraints
     hourly=[assess_constraints(model,dict(time=row['valid_at']),_profile=p) for row in model['records']['M4']]
     admissible=[a for a in hourly if a['admissible']]
@@ -1013,6 +1448,7 @@ def map_data(model):
         default_constraints=preferred,weather=[dict(time=a['time'],admissible=a['admissible'],reasons=a['reasons'],probability_pct=a['probability_pct']) for a in hourly])
     return dict(schema_version='patrol-map-2',area=model['study_geometry'],flight_area=model['flight_geometry'],
                 bases=bases,base_catalogue=model['records']['M1'],default_origin=home['geometry']['coordinates'],demo_polygon=demo,
+                full_permitted_polygon=full_permitted,
                 weather=model['records']['M4'],reference_time=model['reference_time'],profile=p,validation=validation,
                 layers={k:model['records'][k] for k in ('M2','A2','A3','A4')},
                 terrain=scene['terrain'],geography={k:v for k,v in scene['geography'].items() if k!='render'},
@@ -1046,9 +1482,24 @@ def simulate(result, request, terrain_override=None):
     scenario_index=request.get('scenario_index',0)
     if type(scenario_index) is not int or not 0<=scenario_index<2**31:raise ValueError('scenario_index requiere entero entre 0 y 2147483647')
     active,draws = set(),[]
+    clim_raw = request.get('climate_override')
+    clim_active = isinstance(clim_raw, dict)
+    base_weather = result.get('weather') or {}
+    sim_temp_c = max(-10.0, min(50.0, float((clim_raw or {}).get('temperature_c', base_weather.get('temperature_c', 18.0)))))
+    sim_wind_ms = max(0.0, min(15.0, float((clim_raw or {}).get('wind_speed_ms', base_weather.get('wind_speed_ms', 3.0)))))
+    sim_wind_dir = float((clim_raw or {}).get('wind_direction_deg', base_weather.get('wind_direction_deg', 225.0)))
+    heat_loss = (0.0075 * max(0.0, sim_temp_c - 22.0) + 0.00045 * (max(0.0, sim_temp_c - 28.0) ** 2)) if clim_active else 0.0
+    cold_loss = (0.011 * max(0.0, 15.0 - sim_temp_c)) if clim_active else 0.0
+    cap_factor = max(0.52, 1.0 - heat_loss - cold_loss)
+    wind_drain = (1.0 + 0.022 * (max(0.0, sim_wind_ms - 2.0) ** 1.35)) if clim_active else 1.0
+    drain_rate = wind_drain / cap_factor if clim_active else 1.0
+    thermal_threat_mult = max(0.5, 1.0 + 0.04 * (sim_temp_c - 20.0) + 0.03 * max(0.0, sim_wind_ms - 4.0)) if clim_active else 1.0
+    ir_contrast_factor = max(0.76, min(1.12, 1.0 - 0.011 * max(0.0, sim_temp_c - 25.0) + 0.006 * max(0.0, 15.0 - sim_temp_c))) if clim_active else 1.0
+    effective_view_r = float(p['view_radius_m']) * ir_contrast_factor
     for threat in result['threats']:
         value = threat_uniform(seed,scenario_index,threat['id']) if scenario=='sampled' else None
-        occurs = value is not None and value<threat['probability_pct']
+        eff_prob = min(100.0, threat['probability_pct'] * (thermal_threat_mult if str(threat.get('id', '')).startswith('A4:') else 1.0))
+        occurs = value is not None and value<eff_prob
         draws.append(dict(id=threat['id'],draw=value,probability_pct=threat['probability_pct'],active=occurs))
         if occurs:
             active.add(threat['id'])
@@ -1114,10 +1565,13 @@ def simulate(result, request, terrain_override=None):
     coordinate_index = 0
     station_stops = {s['coordinate_index']:s for s in route['stops']}
     edge_stops={s['after_edge_count']:s for s in route['stops'] if 'after_edge_count' in s}
-    used_stations = set()
-    wind_angle=math.radians(result['weather']['wind_direction_deg'])
-    wx=-result['weather']['wind_speed_ms']*math.sin(wind_angle)
-    wy=-result['weather']['wind_speed_ms']*math.cos(wind_angle)
+    used_station_counts = {}
+    max_inv = int(p.get('station_inventory', 1))
+    wind_angle=math.radians(sim_wind_dir if clim_active else result['weather']['wind_direction_deg'])
+    eff_wind_ms = min(p['cruise_ms'] * 0.92, sim_wind_ms) if clim_active else result['weather']['wind_speed_ms']
+    extra_climate_recharges = []
+    wx=-eff_wind_ms*math.sin(wind_angle)
+    wy=-eff_wind_ms*math.cos(wind_angle)
     def segment_times(points):
         values=[]
         for a,b in zip(points,points[1:]):
@@ -1133,16 +1587,26 @@ def simulate(result, request, terrain_override=None):
         lengths = segment_times(points)
         total = sum(lengths)
         for c,length in zip(points[1:],lengths):
-            dt = seconds*length/total if total else 0
+            dt = (total if clim_active else seconds)*length/total if total else 0
             elapsed += dt
-            remaining -= dt
+            remaining -= dt * drain_rate
             timeline.append(dict(coordinates=c,time_s=elapsed,battery_pct=max(0,100*remaining/p['battery_budget_s']),phase=phase))
-    def battery_swap(duration,station_id):
+    def battery_swap(duration,station_id,stop_info=None):
         nonlocal elapsed,remaining
         node=station_nodes[station_id];takeoff=ascent_at(node)
         last=timeline[-1]['coordinates'];ground=[last[0],last[1],ground_at(node)]
         landing=landing_at(node);elapsed+=landing;remaining-=landing
-        timeline.append(dict(coordinates=ground,time_s=elapsed,battery_pct=max(0,100*remaining/p['battery_budget_s']),phase='battery_swap'))
+        wait_s=float((stop_info or {}).get('recharge_wait_s',0))
+        full_s=float((stop_info or {}).get('full_recharge_s',p.get('recharge_s',10800)))
+        bat_wh=float((stop_info or {}).get('battery_wh',p.get('battery_wh',77)))
+        chg_w=float((stop_info or {}).get('charger_w',p.get('charger_w',30)))
+        timeline.append(dict(coordinates=ground,time_s=elapsed,battery_pct=max(0,100*remaining/p['battery_budget_s']),phase='battery_swap',station_id=station_id,recharge_remaining_s=wait_s if wait_s>0 else full_s,recharge_total_s=full_s,waiting_for_charge=wait_s>0,battery_wh=bat_wh,charger_w=chg_w))
+        ground_wait=max(0,duration-landing-takeoff)
+        if wait_s>0 and ground_wait>60:
+            steps=min(36,max(6,int(ground_wait//300)))
+            for s_idx in range(1,steps):
+                frac=s_idx/steps
+                timeline.append(dict(coordinates=ground,time_s=elapsed+ground_wait*frac,battery_pct=min(100.,100*frac),phase='battery_swap',station_id=station_id,recharge_remaining_s=max(0.,ground_wait*(1-frac)),recharge_total_s=full_s,waiting_for_charge=True,battery_wh=bat_wh,charger_w=chg_w))
         elapsed+=max(0,duration-landing-takeoff)
         remaining=p['battery_budget_s']
         timeline.append(dict(coordinates=ground,time_s=elapsed,battery_pct=100.,phase='takeoff'))
@@ -1154,7 +1618,7 @@ def simulate(result, request, terrain_override=None):
         base_targets={home:'origin',**{str(s['node']):s['id'] for s in result['stations']}}
         base_targets={node:ident for node,ident in base_targets.items() if node not in failed_nodes}
         minimum_landing=min((landing_at(node) for node in base_targets),default=math.inf)
-        station_by_node = {str(s['node']):s for s in result['stations'] if s['id'] not in used_stations and str(s['node']) not in failed_nodes}
+        station_by_node = {str(s['node']):s for s in result['stations'] if used_station_counts.get(s['id'], 0) < max_inv and str(s['node']) not in failed_nodes}
         queue = [(0,0,current,battery_remaining,[],[],frozenset())]
         serial = 0
         best = {}
@@ -1193,7 +1657,7 @@ def simulate(result, request, terrain_override=None):
         if fire:
             for k,c in enumerate(points):
                 xy = FWD(*c[:2])
-                if math.dist(xy,fire_xy)<=p['view_radius_m'] and t.visible([*xy,c[2]],[*fire_xy,fire_z]):
+                if math.dist(xy,fire_xy)<=effective_view_r and t.visible([*xy,c[2]],[*fire_xy,fire_z]):
                     hit = k
                     break
         if hit is not None:
@@ -1231,11 +1695,17 @@ def simulate(result, request, terrain_override=None):
         stop=edge_stops.get(completed_edges)
         if stop is None and not edge_stops:stop=station_stops.get(coordinate_index)
         if stop is not None:
-            battery_swap(stop['service_s'],stop['station_id'])
-            used_stations.add(stop['station_id'])
-    landing_node=home
+            battery_swap(stop['service_s'],stop['station_id'],stop)
+            used_station_counts[stop['station_id']] = used_station_counts.get(stop['station_id'], 0) + 1
+        elif clim_active and remaining < 0.24 * p['battery_budget_s'] and result.get('stations'):
+            cur_xy = FWD(*nodes[current][:2])
+            nearest_st = min(result['stations'], key=lambda s: math.dist(cur_xy, FWD(*nodes[str(s['node'])][:2])))
+            battery_swap(p.get('station_service_s', 120), nearest_st['id'])
+            used_station_counts[nearest_st['id']] = used_station_counts.get(nearest_st['id'], 0) + 1
+            extra_climate_recharges.append(dict(station_id=nearest_st['id'], name=nearest_st.get('name', nearest_st['id']), time_s=elapsed))
+    landing_node=str(station_nodes[route['landing_base_id']]) if route.get('landing_base_id') and route.get('landing_base_id')!='origin' and route['landing_base_id'] in station_nodes else home
     state = 'completed'
-    returned_to='origin'
+    returned_to=route.get('landing_base_id') or 'origin'
     if detection or interrupted:
         recovery,base_targets = find_recovery(remaining,elapsed)
         if recovery is None:
@@ -1260,7 +1730,10 @@ def simulate(result, request, terrain_override=None):
     return dict(schema_version='patrol-simulation-2',result_sha256=result['sha256'],method=method,route_set=route_set,scenario=scenario,
                 seed=request.get('seed',p['seed']),scenario_index=scenario_index,rng_protocol='sha256/53-bit-uniform-v1',draws=draws,active_threat_ids=sorted(active),timeline=timeline,
                 detection=detection,status=state,time_s=elapsed,mission_completed=state in ('completed','detected_and_returned'),
-                fire_found=detection is not None,patrol_completed=state=='completed',return_base_id=returned_to if state!='no_safe_return' else None,hypothetical=True)
+                fire_found=detection is not None,patrol_completed=state=='completed',return_base_id=returned_to if state!='no_safe_return' else None,return_base_name=next((s.get('name') for s in result.get('stations',[]) if s['id']==returned_to),None) if returned_to and returned_to!='origin' else None,hypothetical=True,
+                climate_effects=dict(active=clim_active,preset=(clim_raw or {}).get('preset','snapshot'),temperature_c=round(sim_temp_c,1),wind_speed_ms=round(sim_wind_ms,1),wind_direction_deg=round(sim_wind_dir,0),
+                    battery_capacity_pct=round(cap_factor*100,1),effective_battery_s=round(p['battery_budget_s']/drain_rate,1),drain_multiplier=round(drain_rate,2),
+                    thermal_threat_multiplier=round(thermal_threat_mult,2),effective_view_radius_m=round(effective_view_r,1),extra_recharges=extra_climate_recharges))
 
 
 def snapshot_context(path):
