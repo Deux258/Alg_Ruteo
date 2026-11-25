@@ -13,7 +13,12 @@ export function terrainLighting(mesh) {
         for (const k of face) for (let axis = 0; axis < 3; axis++) normals[k][axis] += n[axis];
       }
     }
-  const lighting = normals.map((n) => .68 + .32 * Math.abs((-.35 * n[0] - .35 * n[1] + .87 * n[2]) / (Math.hypot(...n) || 1)));
+  const lighting = normals.map((n) => {
+    const len = Math.hypot(...n) || 1;
+    const sun = Math.max(0, (-.42 * n[0] - .38 * n[1] + .82 * n[2]) / len);
+    const sky = .5 + .5 * (n[2] / len);
+    return .52 + .36 * sun + .14 * sky;
+  });
   const colorsAt = (position, baseColor = null) => {
     let shade = .68 + .32 * .87;
     if (width > 1 && height > 1) {
@@ -22,7 +27,7 @@ export function terrainLighting(mesh) {
       const a = iy * width + ix, b = a + 1, c = a + width, d = c + 1;
       shade = tx + ty <= 1 ? (1 - tx - ty) * lighting[a] + tx * lighting[b] + ty * lighting[c] : (1 - ty) * lighting[b] + (tx + ty - 1) * lighting[d] + (1 - tx) * lighting[c];
     }
-    const h = position[2], palette = baseColor || [.59 + h / 10000, .63 + h / 12000, .48];
+    const h = position[2], t = Math.max(0, Math.min(1, h / 520)), palette = baseColor || [.54 + .12 * t, .62 + .06 * t, .44 + .05 * t];
     return palette.map((v) => Math.max(0, Math.min(255, Math.round(v * shade * 255))) / 255);
   };
   const gridColors = elevations.map((h, i) => Number.isFinite(h) ? colorsAt(point(i)) : null);
@@ -82,8 +87,8 @@ vec4 project(vec3 position){if(firstPerson){vec3 p=position-eye;float z=dot(p,fo
 
 const annotationPaths = {
   drone: '<path d="M5 5l14 14M5 19 19 5" stroke-width="2.8"/><circle cx="5" cy="5" r="4" fill="#fff"/><circle cx="19" cy="5" r="4" fill="#fff"/><circle cx="5" cy="19" r="4" fill="#fff"/><circle cx="19" cy="19" r="4" fill="#fff"/><rect x="9" y="7" width="6" height="10" rx="2" fill="currentColor"/><path d="m12 1-2 4h4Z" fill="currentColor"/>',
-  base: '<path d="M3 11 12 3l9 8v10H3Z"/><path d="M9 21v-8h6v8M5 8h14"/>',
-  station: '<path d="M5 21V4h12v17M3 21h16M17 8h3l1 3v7h-4"/><path d="m12 6-4 6h4l-1 5 5-7h-4Z" fill="currentColor"/>',
+  base: '<path d="M3 12 12 4l9 8v9H3Z" fill="#fff" fill-opacity="0.92"/><path d="M8 21v-6a4 4 0 0 1 8 0v6"/><path d="M12 6.8c1.3 2-.5 2.8.4 4.2.7-.3 1.1-1 1.1-1.8 1.9 2.1.9 4.8-1.5 4.8-2.4 0-3.4-2.7-1.5-4.8-.2 1.1.5 1.5.8 2 .5-1.3-.5-2.3.7-4.4Z" fill="#dc2626" stroke="none"/>',
+  station: '<path d="M12 2 4 5.5v6.5c0 5 3.4 9.2 8 10.5 4.6-1.3 8-5.5 8-10.5V5.5L12 2Z" fill="#fff" fill-opacity="0.94"/><path d="M12 5.8c1.6 2.5-.8 3.5.5 5.3.9-.4 1.4-1.3 1.4-2.2 2.4 2.6 1.1 6-2 6-3 0-4.2-3.4-1.9-6-.2 1.4.7 1.8 1.1 2.5.7-1.6-.6-2.9.9-5.6Z" fill="#dc2626" stroke="none"/><path d="M16.5 14.5h3l-1.8 3.2h2.1l-3.6 4.3 1.1-3.3h-2.1Z" fill="#d97706" stroke="none"/>',
   fire: '<path d="M13 2c2 6-3 6 1 10 2-1 3-3 3-5 7 8 3 15-5 15C3 22 1 14 8 7c-1 5 2 5 3 7 3-5-2-7 2-12Z"/>',
   threat: '<path d="m12 3 10 18H2Z"/><path d="M12 9v5M12 17v1"/>',
 };
@@ -120,10 +125,15 @@ export class TerrainView {
     this.firstPerson = false;
     this.flightPose = null;
     this.fpvYaw = 0;
-    this.fpvPitch = -0.18;
+    this.fpvPitch = -0.32;
+    this.fpvDistance = 58;
+    this.swathM = 200;
     this.fov = 70;
     this.annotations = [];
     this.annotationNodes = new Map();
+    this.droneNote = "";
+    this.fireUtm = null;
+    this.forbiddenZoneBuffers = [];
     const gl = (this.gl = canvas.getContext("webgl", {
       antialias: true,
       preserveDrawingBuffer: true,
@@ -143,7 +153,7 @@ export class TerrainView {
     );
     const fs = shader(
       gl.FRAGMENT_SHADER,
-      `precision mediump float;varying vec3 tint;void main(){gl_FragColor=vec4(tint,1.);}`,
+      `precision mediump float;varying vec3 tint;uniform float opacity;void main(){gl_FragColor=vec4(tint,opacity>0.0?opacity:1.0);}`,
     );
     const program = (this.program = gl.createProgram());
     gl.attachShader(program, vs);
@@ -165,6 +175,7 @@ export class TerrainView {
       right: gl.getUniformLocation(program, "right"),
       up: gl.getUniformLocation(program, "up"),
       focal: gl.getUniformLocation(program, "focal"),
+      opacity: gl.getUniformLocation(program, "opacity"),
     };
     const routeVs = shader(gl.VERTEX_SHADER, `attribute vec3 routeStart;attribute vec3 routeEnd;attribute vec2 corner;uniform vec2 viewport;uniform float routeWidth;uniform bool symbol;${cameraProjection}
 void main(){vec4 a=project(routeStart),b=project(routeEnd);if(firstPerson){if(a.w<1.&&b.w<1.){gl_Position=vec4(2.,2.,2.,1.);return;}if(a.w<1.)a=mix(a,b,(1.-a.w)/(b.w-a.w));if(b.w<1.)b=mix(b,a,(1.-b.w)/(a.w-b.w));}vec2 delta=(b.xy/b.w-a.xy/a.w)*viewport;float size=length(delta);vec2 direction=size>.0001?delta/size:vec2(1.,0.);vec2 normal=vec2(-direction.y,direction.x);vec4 p=symbol?a:mix(a,b,corner.x);vec2 shift=symbol?(direction*corner.x+normal*corner.y)*routeWidth:(normal*corner.y*routeWidth*.5);p.xy+=shift*2./viewport*p.w;gl_Position=p;}`);
@@ -429,7 +440,8 @@ void main(){vec4 a=project(routeStart),b=project(routeEnd);if(firstPerson){if(a.
     this.sceneRequest?.abort();
     this.events.abort();
     this.observer?.disconnect();
-    this.deleteBuffers([this.terrain, ...this.routeBuffers]);
+    this.deleteBuffers([this.terrain, ...this.routeBuffers, ...this.forbiddenZoneBuffers]);
+    this.forbiddenZoneBuffers = [];
     for (const buffers of Object.values(this.groups))
       this.deleteBuffers(buffers);
     this.gl.deleteBuffer(this.dynamic);
@@ -542,8 +554,70 @@ void main(){vec4 a=project(routeStart),b=project(routeEnd);if(firstPerson){if(a.
   }
   zoomBy(factor) {
     if (this.disposed || !Number.isFinite(factor) || factor <= 0) return;
-    if (this.firstPerson) this.fov = Math.max(40, Math.min(100, this.fov / factor));
+    if (this.firstPerson) {
+      this.fov = Math.max(40, Math.min(100, this.fov / factor));
+      this.fpvDistance = Math.max(18, Math.min(165, (this.fpvDistance || 58) / factor));
+    }
     else this.zoom = Math.max(.3, Math.min(60, this.zoom * factor));
+    this.draw();
+  }
+  setFire(posUtm) {
+    if (this.disposed) return;
+    this.fireUtm = posUtm ? [...posUtm] : null;
+    this.draw();
+  }
+  setDroneNote(note) {
+    if (this.disposed) return;
+    const next = String(note || "");
+    if (this.droneNote === next) return;
+    this.droneNote = next;
+    this.reconcileAnnotations();
+  }
+  setForbiddenZones(zones) {
+    if (this.disposed) return;
+    this.deleteBuffers(this.forbiddenZoneBuffers);
+    this.forbiddenZoneBuffers = [];
+    const m = this.mesh, gl = this.gl;
+    if (!m || !zones?.length) {
+      this.draw();
+      return;
+    }
+    const ox = m.origin_utm[0], oy = m.origin_utm[1];
+    const wallTris = [], topLines = [], baseLines = [];
+    const pushV = (arr, pt, col) => arr.push(pt[0], pt[1], pt[2], col[0], col[1], col[2]);
+    const pushTri = (arr, p1, p2, p3, col) => { pushV(arr, p1, col); pushV(arr, p2, col); pushV(arr, p3, col); };
+    const pushLine = (arr, p1, p2, col) => { pushV(arr, p1, col); pushV(arr, p2, col); };
+    for (const z of zones) {
+      const col = z.color || [0.85, 0.16, 0.14];
+      const wallH = Number.isFinite(z.heightM) ? z.heightM : 45;
+      for (const ring of z.rings || []) {
+        if (!ring || ring.length < 3) continue;
+        const pts = ring.map(([x, y]) => {
+          const g = this.sampleElevation(x, y);
+          return [x - ox, y - oy, g];
+        });
+        for (let i = 0; i < pts.length - 1; i++) {
+          const a = pts[i], b = pts[i + 1];
+          const a0 = [a[0], a[1], a[2] + 2.5], b0 = [b[0], b[1], b[2] + 2.5];
+          const a1 = [a[0], a[1], a[2] + wallH], b1 = [b[0], b[1], b[2] + wallH];
+          pushTri(wallTris, a0, b0, b1, col);
+          pushTri(wallTris, a0, b1, a1, col);
+          pushLine(baseLines, a0, b0, col);
+          pushLine(topLines, a1, b1, col);
+        }
+        // Cross-hatch diagonals across bounding/ring vertices for 3D area fill legibility
+        if (pts.length >= 4) {
+          const step = Math.max(1, Math.floor(pts.length / 8));
+          for (let i = 0; i < Math.floor(pts.length / 2); i += step) {
+            const pA = pts[i], pB = pts[(i + Math.floor(pts.length / 2)) % (pts.length - 1)];
+            if (pA && pB) pushLine(baseLines, [pA[0], pA[1], pA[2] + 3.0], [pB[0], pB[1], pB[2] + 3.0], col);
+          }
+        }
+      }
+    }
+    if (wallTris.length) this.forbiddenZoneBuffers.push({ ...this.makeBuffer(wallTris, gl.TRIANGLES), opacity: 0.24 });
+    if (topLines.length) this.forbiddenZoneBuffers.push({ ...this.makeBuffer(topLines, gl.LINES), opacity: 0.92 });
+    if (baseLines.length) this.forbiddenZoneBuffers.push({ ...this.makeBuffer(baseLines, gl.LINES), opacity: 0.85 });
     this.draw();
   }
   setAnnotations(items) {
@@ -556,7 +630,7 @@ void main(){vec4 a=project(routeStart),b=project(routeEnd);if(firstPerson){if(a.
   annotationItems() {
     const items = this.annotations;
     if (!this.marker) return items;
-    return [...items.filter((item) => item.kind !== 'drone'), { id: '__flight_drone', kind: 'drone', position_utm: this.marker, label: 'Dron', selected: true }];
+    return [...items.filter((item) => item.kind !== 'drone'), { id: '__flight_drone', kind: 'drone', position_utm: this.marker, label: 'Dron', note: this.droneNote || '', selected: true }];
   }
   reconcileAnnotations() {
     if (!this.annotationLayer) return;
@@ -565,20 +639,27 @@ void main(){vec4 a=project(routeStart),b=project(routeEnd);if(firstPerson){if(a.
       wanted.add(item.id);
       let node = this.annotationNodes.get(item.id);
       if (!node) {
-        const element = document.createElement('div'), icon = document.createElement('span'), label = document.createElement('span');
+        const element = document.createElement('div'), note = document.createElement('span'), icon = document.createElement('span'), label = document.createElement('span');
+        note.className = 'terrain-annotation-note';
+        Object.assign(note.style, { maxWidth: '280px', background: '#fff7ed', color: '#9a3412', border: '1px solid rgba(234,88,12,0.45)', borderRadius: '6px', padding: '3px 7px', font: '600 11px/1.25 system-ui,sans-serif', boxShadow: '0 2px 6px rgba(0,0,0,0.16)', textAlign: 'center', whiteSpace: 'normal' });
+        note.hidden = true;
         element.className = 'terrain-annotation'; icon.className = 'terrain-annotation-icon'; label.className = 'terrain-annotation-label';
         Object.assign(element.style, { position: 'absolute', top: '0', left: '0', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '3px', pointerEvents: 'none', willChange: 'transform' });
         Object.assign(icon.style, { display: 'block', width: item.kind === 'drone' ? '36px' : '28px', height: item.kind === 'drone' ? '36px' : '28px', filter: 'drop-shadow(0 1px 2px #ffffff) drop-shadow(0 0 2px #ffffff)' });
         Object.assign(label.style, { maxWidth: '230px', background: '#ffffffeb', color: '#173d33', borderRadius: '3px', padding: '2px 5px', font: '600 11px system-ui,sans-serif', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' });
-        element.append(icon, label); this.annotationLayer.append(element);
-        node = { element, icon, label }; this.annotationNodes.set(item.id, node);
+        element.append(note, icon, label); this.annotationLayer.append(element);
+        node = { element, note, icon, label }; this.annotationNodes.set(item.id, node);
       }
-      const color = item.kind === 'fire' || item.kind === 'threat' ? '#b74720' : item.kind === 'station' ? '#80560f' : item.kind === 'drone' ? '#a73d18' : '#1a5941';
+      const color = item.kind === 'fire' || item.kind === 'threat' ? '#b74720' : item.kind === 'station' ? '#b91c1c' : item.kind === 'drone' ? '#a73d18' : '#1a5941';
       node.element.dataset.kind = item.kind; node.element.dataset.selected = String(!!item.selected);
       node.icon.style.color = color;
       if (node.kind !== item.kind) {
         node.icon.innerHTML = `<svg viewBox="0 0 24 24" width="100%" height="100%" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${annotationPaths[item.kind]}</svg>`;
         node.kind = item.kind;
+      }
+      if (node.note) {
+        if (node.note.textContent !== (item.note || '')) node.note.textContent = item.note || '';
+        node.note.hidden = !item.note;
       }
       if (node.label.textContent !== (item.label || '')) node.label.textContent = item.label || '';
       node.label.hidden = !item.label;
@@ -670,7 +751,9 @@ void main(){vec4 a=project(routeStart),b=project(routeEnd);if(firstPerson){if(a.
     this.firstPerson = !!enabled;
     if (enabled) {
       this.fpvYaw = 0;
-      this.fpvPitch = -0.18;
+      this.fpvPitch = -0.32;
+    this.fpvDistance = 58;
+    this.swathM = 200;
     }
     this.draw();
   }
@@ -726,13 +809,377 @@ void main(){vec4 a=project(routeStart),b=project(routeEnd);if(firstPerson){if(a.
       0,
     );
   }
+  setSwath(swathM) {
+    if (Number.isFinite(swathM) && swathM > 10) this.swathM = swathM;
+  }
+  setThermalContext(ctx) {
+    this.thermalCtx = ctx || null;
+  }
+  setCoverageTrail(trailPoints, plannedPoints = undefined) {
+    this.coverageTrail = Array.isArray(trailPoints) ? trailPoints : [];
+    if (plannedPoints !== undefined) {
+      this.plannedCorridor = Array.isArray(plannedPoints) ? plannedPoints : [];
+    }
+    this.draw();
+  }
+  buildTerrainCorridor(pts, halfW, colFill, colEdge, zLift = 1.9) {
+    const tris = [], lines = [];
+    if (!pts || pts.length < 2) return { tris, lines };
+    const m = this.mesh, ox = m.origin_utm[0], oy = m.origin_utm[1];
+    const samples = [pts[0]];
+    const stepM = 135;
+    for (let i = 1; i < pts.length; i++) {
+      const a = samples[samples.length - 1], b = pts[i];
+      if (!a || !b || !Number.isFinite(b[0]) || !Number.isFinite(b[1])) continue;
+      const dist = Math.hypot(b[0] - a[0], b[1] - a[1]);
+      if (dist < 28 && i < pts.length - 1) continue;
+      if (dist > stepM) {
+        const nSteps = Math.min(14, Math.ceil(dist / stepM));
+        for (let s = 1; s <= nSteps; s++) {
+          const f = s / nSteps;
+          samples.push([a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f]);
+        }
+      } else {
+        samples.push([b[0], b[1]]);
+      }
+    }
+    if (samples.length < 2) return { tris, lines };
+    const COLS = 4;
+    const rows = [];
+    for (let i = 0; i < samples.length; i++) {
+      const p = samples[i];
+      const prev = samples[Math.max(0, i - 1)];
+      const next = samples[Math.min(samples.length - 1, i + 1)];
+      let dx = next[0] - prev[0], dy = next[1] - prev[1];
+      const len = Math.hypot(dx, dy) || 1;
+      dx /= len; dy /= len;
+      const rx = dy, ry = -dx;
+      const row = [];
+      for (let c = 0; c <= COLS; c++) {
+        const u = -halfW + (2 * halfW * c) / COLS;
+        const wx = p[0] + rx * u, wy = p[1] + ry * u;
+        const wz = this.sampleElevation(wx, wy) + zLift;
+        row.push([wx - ox, wy - oy, wz]);
+      }
+      rows.push(row);
+    }
+    const pushV = (arr, pt, col) => arr.push(pt[0], pt[1], pt[2], col[0], col[1], col[2]);
+    const pushTri = (arr, p1, p2, p3, col) => { pushV(arr, p1, col); pushV(arr, p2, col); pushV(arr, p3, col); };
+    const pushLine = (arr, p1, p2, col) => { pushV(arr, p1, col); pushV(arr, p2, col); };
+    for (let r = 0; r < rows.length - 1; r++) {
+      for (let c = 0; c < COLS; c++) {
+        pushTri(tris, rows[r][c], rows[r + 1][c], rows[r + 1][c + 1], colFill);
+        pushTri(tris, rows[r][c], rows[r + 1][c + 1], rows[r][c + 1], colFill);
+      }
+      pushLine(lines, rows[r][0], rows[r + 1][0], colEdge);
+      pushLine(lines, rows[r][COLS], rows[r + 1][COLS], colEdge);
+      if (r % 2 === 0) {
+        for (let c = 0; c < COLS; c++) pushLine(lines, rows[r][c], rows[r][c + 1], colEdge);
+      }
+    }
+    return { tris, lines };
+  }
+  sampleElevation(xUtm, yUtm) {
+    const m = this.mesh;
+    if (!m || m.width < 2 || m.height < 2) return this.mean || 0;
+    const dx = (m.x[1] - m.x[0]) || 1, dy = (m.y[1] - m.y[0]) || 1;
+    const fx = Math.max(0, Math.min(m.width - 1.001, (xUtm - m.origin_utm[0]) / dx));
+    const fy = Math.max(0, Math.min(m.height - 1.001, (yUtm - m.origin_utm[1]) / dy));
+    const ix = Math.floor(fx), iy = Math.floor(fy), tx = fx - ix, ty = fy - iy;
+    const idx = iy * m.width + ix;
+    const h00 = m.elevations[idx], h10 = m.elevations[idx + 1], h01 = m.elevations[idx + m.width], h11 = m.elevations[idx + m.width + 1];
+    if (![h00, h10, h01, h11].every(Number.isFinite)) return Number.isFinite(h00) ? h00 : (this.mean || 0);
+    return (1 - tx) * (1 - ty) * h00 + tx * (1 - ty) * h10 + (1 - tx) * ty * h01 + tx * ty * h11;
+  }
+  drawDroneVision(camera) {
+    const gl = this.gl, m = this.mesh;
+    const swath = Math.max(60, Math.min(420, this.swathM || 200));
+    const halfW = swath * 0.5;
+    gl.useProgram(this.program);
+    this.applyCamera(this.locations, camera);
+    this.bind(this.dynamic);
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+    gl.depthMask(false);
+
+    if (this.plannedCorridor?.length >= 2) {
+      const planned = this.buildTerrainCorridor(
+        this.plannedCorridor,
+        halfW,
+        [0.06, 0.78, 0.54],
+        [0.14, 0.88, 0.66],
+        1.5,
+      );
+      if (planned.tris.length) {
+        gl.uniform1f(this.locations.opacity, this.flightPose ? 0.12 : 0.22);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(planned.tris), gl.DYNAMIC_DRAW);
+        gl.drawArrays(gl.TRIANGLES, 0, planned.tris.length / 6);
+      }
+      if (planned.lines.length) {
+        gl.uniform1f(this.locations.opacity, this.flightPose ? 0.32 : 0.55);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(planned.lines), gl.DYNAMIC_DRAW);
+        gl.drawArrays(gl.LINES, 0, planned.lines.length / 6);
+      }
+    }
+
+    if (this.coverageTrail?.length >= 2) {
+      const swept = this.buildTerrainCorridor(
+        this.coverageTrail,
+        halfW,
+        [0.02, 0.94, 0.76],
+        [0.25, 1.0, 0.88],
+        2.0,
+      );
+      if (swept.tris.length) {
+        gl.uniform1f(this.locations.opacity, 0.34);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(swept.tris), gl.DYNAMIC_DRAW);
+        gl.drawArrays(gl.TRIANGLES, 0, swept.tris.length / 6);
+      }
+      if (swept.lines.length) {
+        gl.uniform1f(this.locations.opacity, 0.76);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(swept.lines), gl.DYNAMIC_DRAW);
+        gl.drawArrays(gl.LINES, 0, swept.lines.length / 6);
+      }
+    }
+
+    if (!this.flightPose) {
+      gl.depthMask(true);
+      gl.disable(gl.BLEND);
+      return;
+    }
+    const { position: p, ahead: a } = this.flightPose;
+    if (!p || !a || !p.every(Number.isFinite)) return;
+    const ox = m.origin_utm[0], oy = m.origin_utm[1];
+    const heading = Math.atan2(a[1] - p[1], a[0] - p[0]);
+    const fx = Math.cos(heading), fy = Math.sin(heading);
+    const rx = Math.sin(heading), ry = -Math.cos(heading);
+    const dx = p[0] - ox, dy = p[1] - oy, dz = p[2];
+    const apex = [dx + fx * 1.1, dy + fy * 1.1, dz - 1.0];
+    const vMin = -35, vMax = 145;
+    const ROWS = 10, COLS = 10;
+    const grid = [];
+    for (let r = 0; r <= ROWS; r++) {
+      const row = [];
+      const v = vMin + (vMax - vMin) * (r / ROWS);
+      for (let c = 0; c <= COLS; c++) {
+        const u = -halfW + swath * (c / COLS);
+        const wx = p[0] + fx * v + rx * u;
+        const wy = p[1] + fy * v + ry * u;
+        const wz = Math.min(dz - 4, this.sampleElevation(wx, wy) + 2.2);
+        row.push([wx - ox, wy - oy, wz]);
+      }
+      grid.push(row);
+    }
+    const pushV = (arr, pt, col) => arr.push(pt[0], pt[1], pt[2], col[0], col[1], col[2]);
+    const pushTri = (arr, p1, p2, p3, col) => { pushV(arr, p1, col); pushV(arr, p2, col); pushV(arr, p3, col); };
+    const pushLine = (arr, p1, p2, col) => { pushV(arr, p1, col); pushV(arr, p2, col); };
+
+    const groundTris = [];
+    const tCtx = this.thermalCtx || {};
+    const animSec = performance.now() * 0.001 + (tCtx.timeS || 0) * 0.18;
+    const scanColF = ((Math.sin(animSec * 3.2) + 1) * 0.5) * COLS;
+    const scanRowF = ((Math.cos(animSec * 2.1) + 1) * 0.5) * (ROWS - 1);
+    const scanColIdx = Math.min(COLS - 1, Math.max(0, Math.floor(scanColF)));
+    const scanRowIdx = Math.min(ROWS - 1, Math.max(0, Math.floor(scanRowF)));
+    const fireUtm = tCtx.fireUtm;
+    const threatsUtm = tCtx.threatsUtm || [];
+    const isFireLock = Boolean(
+      tCtx.phase === "detection" ||
+      tCtx.phase === "report" ||
+      (fireUtm && Math.hypot(fireUtm[0] - p[0], fireUtm[1] - p[1]) <= swath * 0.85),
+    );
+
+    for (let r = 0; r < ROWS; r++) {
+      for (let c = 0; c < COLS; c++) {
+        const isFront = r === ROWS - 1;
+        const cellCenter = [
+          (grid[r][c][0] + grid[r + 1][c + 1][0]) * 0.5 + ox,
+          (grid[r][c][1] + grid[r + 1][c + 1][1]) * 0.5 + oy,
+        ];
+        const distScan = Math.hypot(c - scanColF + 0.5, (r - scanRowF + 0.5) * 0.65);
+        const nearThreat = threatsUtm.some(
+          (th) => Math.hypot(th[0] - cellCenter[0], th[1] - cellCenter[1]) < 140,
+        );
+        const nearFire =
+          fireUtm && Math.hypot(fireUtm[0] - cellCenter[0], fireUtm[1] - cellCenter[1]) < 95;
+        let col;
+        if (nearFire) {
+          col = [1.0, 0.22, 0.05];
+        } else if (distScan < 1.35) {
+          col = nearThreat ? [1.0, 0.36, 0.08] : [1.0, 0.68, 0.14];
+        } else if (c === scanColIdx) {
+          col = [0.95, 0.82, 0.22];
+        } else if (nearThreat) {
+          col = [0.92, 0.48, 0.16];
+        } else {
+          col = isFront
+            ? [0.18, 1.0, 0.90]
+            : (r + c) % 2 === 0
+              ? [0.0, 0.92, 0.78]
+              : [0.04, 0.78, 0.70];
+        }
+        pushTri(groundTris, grid[r][c], grid[r + 1][c], grid[r + 1][c + 1], col);
+        pushTri(groundTris, grid[r][c], grid[r + 1][c + 1], grid[r][c + 1], col);
+      }
+    }
+
+    const coneTris = [];
+    const coneCol = isFireLock ? [1.0, 0.35, 0.08] : [0.02, 0.88, 0.84];
+    for (let c = 0; c < COLS; c++) {
+      pushTri(coneTris, apex, grid[ROWS][c], grid[ROWS][c + 1], coneCol);
+      pushTri(coneTris, apex, grid[0][c + 1], grid[0][c], coneCol);
+    }
+    for (let r = 0; r < ROWS; r++) {
+      pushTri(coneTris, apex, grid[r][0], grid[r + 1][0], coneCol);
+      pushTri(coneTris, apex, grid[r + 1][COLS], grid[r][COLS], coneCol);
+    }
+    // Active thermal scan curtain inside the cone (sondeo IR en busca de foco)
+    const scanColClamped = Math.min(COLS, Math.max(0, Math.round(scanColF)));
+    const scanCurtainCol = isFireLock ? [1.0, 0.25, 0.05] : [1.0, 0.65, 0.12];
+    for (let r = 0; r < ROWS; r++) {
+      pushTri(coneTris, apex, grid[r][scanColClamped], grid[r + 1][scanColClamped], scanCurtainCol);
+    }
+
+    const gridLines = [];
+    const lineCol = [0.06, 0.98, 0.86];
+    const borderCol = [0.48, 1.0, 0.96];
+    for (let r = 0; r <= ROWS; r++) {
+      const col = r === 0 || r === ROWS ? borderCol : lineCol;
+      for (let c = 0; c < COLS; c++) pushLine(gridLines, grid[r][c], grid[r][c + 1], col);
+    }
+    for (let c = 0; c <= COLS; c++) {
+      const col =
+        c === scanColClamped
+          ? [1.0, 0.72, 0.16]
+          : c === 0 || c === COLS
+            ? borderCol
+            : lineCol;
+      for (let r = 0; r < ROWS; r++) pushLine(gridLines, grid[r][c], grid[r + 1][c], col);
+    }
+    const rayCol = [0.16, 0.96, 0.90];
+    const midR = Math.floor(ROWS / 2), midC = Math.floor(COLS / 2);
+    for (const corner of [
+      grid[0][0], grid[0][COLS], grid[ROWS][0], grid[ROWS][COLS],
+      grid[ROWS][midC], grid[0][midC], grid[midR][0], grid[midR][COLS],
+    ]) {
+      pushLine(gridLines, apex, corner, rayCol);
+    }
+    // Thermal probe laser & reticle on the ground (sondeo activo de focos)
+    let probeTarget;
+    if (isFireLock && fireUtm) {
+      const fz = this.sampleElevation(fireUtm[0], fireUtm[1]) + 2.6;
+      probeTarget = [fireUtm[0] - ox, fireUtm[1] - oy, fz];
+    } else {
+      const pr = grid[scanRowIdx][scanColIdx];
+      const pr2 = grid[scanRowIdx + 1][scanColIdx + 1];
+      probeTarget = [
+        (pr[0] + pr2[0]) * 0.5,
+        (pr[1] + pr2[1]) * 0.5,
+        (pr[2] + pr2[2]) * 0.5 + 0.6,
+      ];
+    }
+    const probeCol = isFireLock ? [1.0, 0.18, 0.04] : [1.0, 0.74, 0.14];
+    pushLine(gridLines, apex, probeTarget, probeCol);
+    pushLine(gridLines, grid[0][scanColClamped], grid[ROWS][scanColClamped], probeCol);
+    const ringRadii = isFireLock ? [14, 28, 44] : [12, 24];
+    const ringSegs = 12;
+    for (const rad of ringRadii) {
+      for (let s = 0; s < ringSegs; s++) {
+        const a0 = (s / ringSegs) * Math.PI * 2;
+        const a1 = ((s + 1) / ringSegs) * Math.PI * 2;
+        const p0 = [
+          probeTarget[0] + Math.cos(a0) * rad,
+          probeTarget[1] + Math.sin(a0) * rad,
+          probeTarget[2] + 0.5,
+        ];
+        const p1 = [
+          probeTarget[0] + Math.cos(a1) * rad,
+          probeTarget[1] + Math.sin(a1) * rad,
+          probeTarget[2] + 0.5,
+        ];
+        pushLine(gridLines, p0, p1, probeCol);
+      }
+    }
+
+    // 3D Quadcopter Drone Mesh at (dx, dy, dz)
+    const droneTris = [], droneLines = [];
+    const localPt = (f, r, u) => [dx + fx * f + rx * r, dy + fy * f + ry * r, dz + u];
+    const bodyCol = [0.15, 0.20, 0.24], topCol = [0.24, 0.30, 0.35], gimbalCol = [0.88, 0.22, 0.52];
+    const nose = localPt(3.4, 0, 0.2), tail = localPt(-3.2, 0, 0.2);
+    const leftB = localPt(0, -1.6, 0.2), rightB = localPt(0, 1.6, 0.2);
+    const topB = localPt(0.2, 0, 1.15), botB = localPt(0.4, 0, -1.05);
+    pushTri(droneTris, topB, nose, rightB, topCol);
+    pushTri(droneTris, topB, rightB, tail, bodyCol);
+    pushTri(droneTris, topB, tail, leftB, bodyCol);
+    pushTri(droneTris, topB, leftB, nose, topCol);
+    pushTri(droneTris, botB, rightB, nose, gimbalCol);
+    pushTri(droneTris, botB, tail, rightB, bodyCol);
+    pushTri(droneTris, botB, leftB, tail, bodyCol);
+    pushTri(droneTris, botB, nose, leftB, gimbalCol);
+
+    const armCoords = [[4.2, 4.6], [4.2, -4.6], [-4.0, 4.6], [-4.0, -4.6]];
+    const armCol = [0.10, 0.14, 0.18], rotorCol = [0.12, 0.96, 0.88];
+    for (const [af, ar] of armCoords) {
+      const hub = localPt(af, ar, 0.35);
+      pushLine(droneLines, localPt(af * 0.2, ar * 0.2, 0.2), hub, armCol);
+      pushLine(droneLines, localPt(af, ar, -1.2), hub, armCol);
+      const R = 2.4, segs = 10;
+      for (let s = 0; s < segs; s++) {
+        const a0 = (s / segs) * Math.PI * 2, a1 = ((s + 1) / segs) * Math.PI * 2;
+        const p0 = localPt(af + Math.cos(a0) * R, ar + Math.sin(a0) * R, 0.5);
+        const p1 = localPt(af + Math.cos(a1) * R, ar + Math.sin(a1) * R, 0.5);
+        pushLine(droneLines, p0, p1, rotorCol);
+        pushTri(droneTris, hub, p0, p1, [0.06, 0.85, 0.78]);
+      }
+    }
+
+    gl.useProgram(this.program);
+    this.applyCamera(this.locations, camera);
+    this.bind(this.dynamic);
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+    gl.depthMask(false);
+
+    if (groundTris.length) {
+      gl.uniform1f(this.locations.opacity, 0.28);
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(groundTris), gl.DYNAMIC_DRAW);
+      gl.drawArrays(gl.TRIANGLES, 0, groundTris.length / 6);
+    }
+    if (coneTris.length) {
+      gl.uniform1f(this.locations.opacity, 0.16);
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(coneTris), gl.DYNAMIC_DRAW);
+      gl.drawArrays(gl.TRIANGLES, 0, coneTris.length / 6);
+    }
+    if (gridLines.length) {
+      gl.uniform1f(this.locations.opacity, 0.88);
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(gridLines), gl.DYNAMIC_DRAW);
+      gl.drawArrays(gl.LINES, 0, gridLines.length / 6);
+    }
+
+    gl.depthMask(true);
+    if (droneTris.length) {
+      gl.uniform1f(this.locations.opacity, 0.94);
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(droneTris), gl.DYNAMIC_DRAW);
+      gl.drawArrays(gl.TRIANGLES, 0, droneTris.length / 6);
+    }
+    if (droneLines.length) {
+      gl.uniform1f(this.locations.opacity, 1.0);
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(droneLines), gl.DYNAMIC_DRAW);
+      gl.drawArrays(gl.LINES, 0, droneLines.length / 6);
+    }
+    gl.disable(gl.BLEND);
+    this.canvas.dataset.visionGrid = "true";
+  }
   cameraState(width, height, aspect = width / height) {
     const state = { width, height, aspect, origin: this.mesh.origin_utm, center: this.center,
       yaw: this.yaw, pitch: this.pitch, scale: this.zoom / this.extent,
       fpv: !!(this.firstPerson && this.flightPose), focal: 1 / Math.tan(this.fov * Math.PI / 360) };
     if (state.fpv) {
       const { position: p, ahead: a } = this.flightPose, heading = Math.atan2(a[1] - p[1], a[0] - p[0]) + this.fpvYaw;
-      state.eye = [p[0] - state.origin[0], p[1] - state.origin[1], p[2] + 1.2];
+      const dist = this.fpvDistance || 58, lift = Math.max(14, dist * 0.44);
+      const ex = p[0] - Math.cos(heading) * dist, ey = p[1] - Math.sin(heading) * dist;
+      const groundZ = this.sampleElevation(ex, ey);
+      state.eye = [ex - state.origin[0], ey - state.origin[1], Math.max(p[2] + lift, groundZ + 12)];
       state.forward = [Math.cos(heading) * Math.cos(this.fpvPitch), Math.sin(heading) * Math.cos(this.fpvPitch), Math.sin(this.fpvPitch)];
       state.right = [Math.sin(heading), -Math.cos(heading), 0];
       state.up = [state.right[1] * state.forward[2], -state.right[0] * state.forward[2], state.right[0] * state.forward[1] - state.right[1] * state.forward[0]];
@@ -745,10 +1192,82 @@ void main(){vec4 a=project(routeStart),b=project(routeEnd);if(firstPerson){if(a.
     gl.uniform4f(locations.camera, camera.yaw, camera.pitch, camera.scale, 0);
     gl.uniform1f(locations.aspect, camera.aspect);
     gl.uniform1i(locations.firstPerson, camera.fpv ? 1 : 0);
+    if (locations.opacity) gl.uniform1f(locations.opacity, 1.0);
     if (camera.fpv) {
       for (const key of ['eye', 'forward', 'right', 'up']) gl.uniform3f(locations[key], ...camera[key]);
       gl.uniform1f(locations.focal, camera.focal);
     }
+  }
+  drawAnimatedFire(camera) {
+    const f = this.fireUtm, m = this.mesh, gl = this.gl;
+    if (!f || !m) return;
+    const ox = m.origin_utm[0], oy = m.origin_utm[1];
+    const cx = f[0] - ox, cy = f[1] - oy;
+    const cz = (Number.isFinite(f[2]) ? f[2] : this.sampleElevation(f[0], f[1])) + 0.8;
+    const t = performance.now() * 0.001;
+    const tris = [], lines = [];
+    const pushV = (arr, pt, col) => arr.push(pt[0], pt[1], pt[2], col[0], col[1], col[2]);
+    const pushTri = (arr, p1, p2, p3, col) => { pushV(arr, p1, col); pushV(arr, p2, col); pushV(arr, p3, col); };
+    const pushLine = (arr, p1, p2, col) => { pushV(arr, p1, col); pushV(arr, p2, col); };
+    const layers = [
+      { r: 16, h: 36 + 9 * Math.sin(t * 7.2), col: [0.95, 0.22, 0.03], sway: 5.5, speed: 5.1, segs: 8 },
+      { r: 10.5, h: 27 + 7 * Math.cos(t * 9.4), col: [1.0, 0.56, 0.06], sway: 4.0, speed: 6.8, segs: 7 },
+      { r: 5.5, h: 18 + 5 * Math.sin(t * 13.1), col: [1.0, 0.92, 0.28], sway: 2.2, speed: 9.2, segs: 6 },
+    ];
+    for (let li = 0; li < layers.length; li++) {
+      const L = layers[li];
+      const apex = [
+        cx + Math.sin(t * L.speed + li) * L.sway,
+        cy + Math.cos(t * (L.speed * 0.85) + li) * L.sway,
+        cz + L.h,
+      ];
+      for (let s = 0; s < L.segs; s++) {
+        const a0 = (s / L.segs) * Math.PI * 2 + t * (li % 2 ? 1.2 : -0.9);
+        const a1 = ((s + 1) / L.segs) * Math.PI * 2 + t * (li % 2 ? 1.2 : -0.9);
+        const p0 = [cx + Math.cos(a0) * L.r, cy + Math.sin(a0) * L.r, cz];
+        const p1 = [cx + Math.cos(a1) * L.r, cy + Math.sin(a1) * L.r, cz];
+        pushTri(tris, p0, p1, apex, L.col);
+      }
+    }
+    // Rising glowing embers & smoke puffs
+    for (let e = 0; e < 7; e++) {
+      const phase = ((t * 0.75 + e * 0.143) % 1);
+      const ez = cz + 12 + phase * 48;
+      const ex = cx + Math.sin(t * 3.1 + e * 1.9) * (6 + phase * 10);
+      const ey = cy + Math.cos(t * 2.7 + e * 2.3) * (6 + phase * 10);
+      const sz = 2.6 * (1 - phase * 0.5);
+      const ecol = phase < 0.55 ? [1.0, 0.72, 0.15] : [0.42, 0.36, 0.34];
+      pushTri(tris, [ex - sz, ey, ez], [ex + sz, ey, ez], [ex, ey, ez + sz * 1.6], ecol);
+    }
+    // Pulsing thermal ground rings
+    for (let ri = 0; ri < 2; ri++) {
+      const pPhase = ((t * 0.9 + ri * 0.5) % 1);
+      const rad = 14 + pPhase * 34;
+      const segs = 16;
+      const rcol = [1.0, 0.25 + 0.35 * (1 - pPhase), 0.05];
+      for (let s = 0; s < segs; s++) {
+        const a0 = (s / segs) * Math.PI * 2, a1 = ((s + 1) / segs) * Math.PI * 2;
+        pushLine(lines, [cx + Math.cos(a0) * rad, cy + Math.sin(a0) * rad, cz + 0.6], [cx + Math.cos(a1) * rad, cy + Math.sin(a1) * rad, cz + 0.6], rcol);
+      }
+    }
+    gl.useProgram(this.program);
+    this.applyCamera(this.locations, camera);
+    this.bind(this.dynamic);
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+    gl.depthMask(false);
+    if (tris.length) {
+      gl.uniform1f(this.locations.opacity, 0.88);
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(tris), gl.DYNAMIC_DRAW);
+      gl.drawArrays(gl.TRIANGLES, 0, tris.length / 6);
+    }
+    if (lines.length) {
+      gl.uniform1f(this.locations.opacity, 0.92);
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(lines), gl.DYNAMIC_DRAW);
+      gl.drawArrays(gl.LINES, 0, lines.length / 6);
+    }
+    gl.depthMask(true);
+    gl.disable(gl.BLEND);
   }
   draw() {
     if (this.disposed) return;
@@ -764,7 +1283,7 @@ void main(){vec4 a=project(routeStart),b=project(routeEnd);if(firstPerson){if(a.
       c.height = height;
     }
     gl.viewport(0, 0, width, height);
-    gl.clearColor(0.88, 0.92, 0.91, 1);
+    gl.clearColor(0.82, 0.89, 0.93, 1);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     gl.enable(gl.DEPTH_TEST);
     gl.depthFunc(gl.LEQUAL);
@@ -791,7 +1310,7 @@ void main(){vec4 a=project(routeStart),b=project(routeEnd);if(firstPerson){if(a.
       .filter((k) => this.visibility[k])
       .join(",");
     for (const item of this.routeBuffers) {
-      if (fpv && !item.target && !item.point) continue;
+      if (fpv && item.symbol) continue;
       if (item.screenRoute) {
         const locations = this.routeLocations;
         gl.useProgram(this.routeProgram); this.applyCamera(locations, camera);
@@ -834,6 +1353,22 @@ void main(){vec4 a=project(routeStart),b=project(routeEnd);if(firstPerson){if(a.
       );
       gl.drawArrays(gl.POINTS, 0, 1);
     }
+    if (this.forbiddenZoneBuffers.length) {
+      gl.useProgram(this.program);
+      this.applyCamera(this.locations, camera);
+      gl.enable(gl.BLEND);
+      gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+      gl.depthMask(false);
+      for (const zb of this.forbiddenZoneBuffers) {
+        gl.uniform1f(this.locations.opacity, zb.opacity ?? 0.3);
+        this.bindItem(zb);
+        gl.drawArrays(zb.mode, 0, zb.count);
+      }
+      gl.depthMask(true);
+      gl.disable(gl.BLEND);
+    }
+    if (this.flightPose || this.plannedCorridor?.length || this.coverageTrail?.length) this.drawDroneVision(camera);
+    if (this.fireUtm) this.drawAnimatedFire(camera);
     this.updateAnnotations(camera);
     c.dataset.zoom = this.zoom.toFixed(6);
     c.dataset.fov = this.fov.toFixed(3);

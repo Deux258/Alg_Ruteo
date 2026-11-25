@@ -90,13 +90,14 @@ def distinct_circuits(graph,tasks,home,stations,target,comparison):
             solver=solver,origin_method=origin,edge_ids=[str(i) for i in path],
             coordinates=[[*INV(c[0],c[1]),c[2]] for c in coordinates],coordinates_utm=coordinates,
             coverage=cov,stops=answer['stops'],time_s=answer['time_s'],cost=answer.get('cost'),
+            landing_base_id=answer.get('landing_base_id','origin'),landing_base_name=answer.get('landing_base_name'),
             distance_m=graph.totals(path)['distance_m'],compute_s=time.monotonic()-start,
             diversity=dict(max_shared_transit=max(overlaps,default=0),compared_with=[r['method'] for r in accepted],
                            tolerance_m=tolerance,excludes='surveillance polygon + 5 m and first 20 m around base'))
         accepted.append(row);geometries.append(geom);return True
 
     for row in [reference,*[r for r in raw if r is not reference]]:
-        accept(dict(path=[int(i) for i in row['edge_ids']],stops=row['stops'],time_s=row['time_s'],cost=row.get('cost'),coverage=row['coverage']),
+        accept(dict(path=[int(i) for i in row['edge_ids']],stops=row['stops'],time_s=row['time_s'],cost=row.get('cost'),coverage=row['coverage'],landing_base_id=row.get('landing_base_id','origin'),landing_base_name=row.get('landing_base_name')),
                row['method'],dict(engine='comparison_result',method=row['method'],description='Resultado original de la técnica'))
     outside={};expanded_target=target.buffer(5)
     for i,e in graph.edges.items():
